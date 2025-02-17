@@ -1,0 +1,26 @@
+import discord
+from discord.ext import commands
+from config import GUILDID
+
+
+class Sync(commands.Cog):
+
+    def __init__(self, bot):
+
+        self.bot = bot
+
+    @discord.slash_command(name="sync", description="Sync commands", guild=discord.Object(id=int(GUILDID))) #type: ignore
+    async def sync(self, ctx: discord.ApplicationContext):
+        
+        if ctx.author.id != 1220815634515099718:
+            await ctx.respond("You're not the owner")
+        try:
+            print("syncing commands") 
+            await self.bot.sync_commands(guild_ids=[int(GUILDID)]) # type: ignore 
+            print(f"commands are synced") 
+        except Exception as e:
+            print(f"Error: {e}")
+
+    
+def setup(bot):
+    bot.add_cog(Sync(bot))

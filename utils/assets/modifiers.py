@@ -1,0 +1,21 @@
+modifiers = {
+  "speedMultiplier": "Bloon Speed",
+  "moabSpeedMultiplier": "Moab Speed",
+  "bossSpeedMultiplier": "Boss Speed",
+  "regrowRateMultiplier": "Regrow Rate",
+  "bloons": "Ceramic Health",
+  "moabs": "Moab Health",
+  "boss": "Boss Health",
+  "allCamo": "All Camo",
+  "allRegen": "All Regen",
+  "MKDisabled": "MK Disabled",
+  "NoSelling": "No Selling",
+  "AbilityCooldown": "Abilitycooldownrate",
+  "NoContinues": "No Continues",
+  "MaxTowers": "Tower Limit",
+  "MaxParagons": "Paragon Limit",
+  "LeastCash": "Cash Limit",
+  "LeastTiers": "Tiers Max",
+  "PowersDisabled": "No Powers",
+  "RemovableCost": "Removable Cost"
+}

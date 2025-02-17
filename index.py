@@ -21,6 +21,6 @@ def load_cogs(bot) -> None:
 def main() -> None:
 
     load_cogs(bot)
-    print("hi")
+    print("testing")
     bot.run(BOTTOKEN)
 main()

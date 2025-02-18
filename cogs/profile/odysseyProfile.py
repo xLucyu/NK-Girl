@@ -1,9 +1,10 @@
 from cogs.basecommand import baseCommand
+from cogs.eventNumber import currentEventNumber
+from cogs.regex import *
 from utils.filter.filteredmodifiers import filtermodifiers
 from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
 from api.metadata import getMetaData
-import math, re
 
 def validateTitle(stats, difficulty):
 
@@ -13,13 +14,6 @@ def validateTitle(stats, difficulty):
         title = f"Difficulty: {difficulty.title()}"
  
     return title
-
-def currenteventnumber(startTimeStamp):
-    
-    firstTimeStamp = 1593532800000
-    timeDifference = startTimeStamp - firstTimeStamp
-    current_Number = math.floor(timeDifference / (7 * 24 * 60 * 60 * 1000))
-    return round(current_Number)
 
 
 def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
@@ -32,10 +26,12 @@ def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
         mapList = getMetaData(map)
         modifiers = filtermodifiers(mapList.get("Modifiers"), emotes) #type: ignore
         
-        mode = re.findall(r'[A-Z][a-z]*', map.get("mode"))
-        mapName = re.findall(r'[A-Z][a-z]*', map.get("map"))
+        mode = splitUppercase(map.get("mode"))
+        difficulty = splitUppercase(map.get("Difficulty"))
+        mapName = splitUppercase(map.get("map"))
 
-        title = f"{index+1}. {' '.join(mapName)} ({map.get('difficulty')}, {' '.join(mode)})"
+
+        title = f"{index+1}. {mapName} ({difficulty}, {mode})"
         value = [f"<:cash:1338140224353603635> ${map.get('startingCash'):,}, round {map.get('startRound')}/{map.get('endRound')}\n{', '.join(modifiers)}", False]
         
         eventData[title] = value
@@ -83,7 +79,8 @@ def odysseyProfile(index, difficulty):
 
     filtermaps(maps, eventData, emotes) #add the maps data -> each difficulty has a set amount of maps
     currentTimeStamp = api.get("TimeStamp", None)
-    eventNumber = currenteventnumber(currentTimeStamp)
+    firstTimeStamp = 1593532800000
+    eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
     embed = filterembed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
     names = api.get("Names", None)
 

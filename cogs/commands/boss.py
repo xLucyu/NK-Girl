@@ -21,18 +21,18 @@ class Boss(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
          
-        embed, names = bossProfile(index=0, difficulty=difficulty.lower()) #type: ignore
+        embed, names = bossProfile(index=0, difficulty=difficulty.lower()) #type: ignore 
 
         data = {
-            "Author": ctx.author.id,
-            "EventName": "Boss",
-            "PreviousEvents": names,
+            "Author": ctx.author.id, 
+            "EventName": ["Boss"],
+            "PreviousEvents": [names],
             "Function": bossProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Emoji": "<:BossChallenge:1338550202889404487>",
+            "Emoji": ["<:BossChallenge:1338550202889404487>"], 
             "Button": [
-                    ["Normal", "normal", "success"],
+                    ["Normal", "standard", "success"],
                     ["Elite", "elite", "danger"]
                 ]
             }

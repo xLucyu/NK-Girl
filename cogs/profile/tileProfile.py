@@ -1,25 +1,12 @@
-from api.fetchid import getID, getData
+from cogs.regex import splitUppercase
+from api.fetchid import getData
 from api.metadata import getMetaData
 from api.emojis import getEmojis
 from utils.filter.filteredtowers import filtertowers
 from utils.filter.filteredmodifiers import filtermodifiers
 from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
-import math, re
 from config import TILESURL, BOTID
-
-def getCurrentEvent():
-
-    ctIndex = getID(url="https://data.ninjakiwi.com/btd6/ct", index=0)
-
-    if not ctIndex:
-        return None
-     
-    startTimeStamp = 1660082400000
-    currentTimeStamp = ctIndex.get("TimeStamp", None) 
-    timeDifference = currentTimeStamp - startTimeStamp
-    current_Number = math.floor(timeDifference / (14 * 24 * 60 * 60 * 1000)) #ct is only every 2 weeks
-    return round(current_Number)
 
 
 def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
@@ -51,20 +38,20 @@ def getHeadData(gameType: list, gameData: dict):
         "Hard": 100
     }
 
-    map = re.findall(r'[A-Z][a-z]*', gameData.get("selectedMap", None))
-    mode = re.findall(r'[A-Z][a-z]*', gameData.get("selectedMode", None))
-    difficulty = gameData.get("selectedDifficulty", None)
+    map = splitUppercase(gameData.get("selectedMap", None))
+    mode = splitUppercase(gameData.get("selectedMode", None))
+    difficulty = splitUppercase(gameData.get("selectedDifficulty", None))
     lives = livesfordifficulty[difficulty]
 
     if gameType[0] == "Boss":
         bossname = bossType.get(gameData["bossData"]["bossBloon"], None)
         eventURL = EVENTURLS["Boss"]["standard"]["Image"][bossname]
         bossTiers = gameData["bossData"]["TierCount"]
-        head = f"{' '.join(map)} - {difficulty} {bossname} {bossTiers} Tier"
+        head = f"{map} - {difficulty} {bossname} {bossTiers} Tier"
         endRound = 40 if bossTiers == 1 else 60 #only 2 boss tiers possible
     else:
         eventURL = EVENTURLS[gameType[0]][gameType[1]]
-        head = f"{' '.join(map)} - {difficulty}, {' '.join(mode)}"
+        head = f"{map} - {difficulty}, {mode}"
         endRound = gameData["dcModel"]["startRules"]["endRound"]
 
     return head, eventURL, lives, endRound

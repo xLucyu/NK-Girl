@@ -1,4 +1,4 @@
-import re
+from cogs.regex import removeNumbers
 from api.fetchid import getID
 from api.metadata import getBody 
 from utils.assets.tierhp import bosshp
@@ -66,7 +66,7 @@ def bossdetailsProfile(difficulty, players):
         return
     
     bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
-    name = re.sub(r'\d+', '', api.get("Name")) #type: ignore
+    name = removeNumbers(api.get("Name")) 
     bossIndex = bosshp[difficulty][name]
     bossemote = "<:bossIncrease:1335339243345809478>" if bossHpMultiplier >= 1 else "<:bossDecrease:1335339614080204873>"
     

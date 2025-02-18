@@ -1,7 +1,8 @@
 import discord 
 from discord.ext import commands
 from config import GUILDID
-from cogs.profile.tileProfile import getCurrentEvent, tileProfile
+from cogs.profile.tileProfile import tileProfile
+from cogs.eventNumber import getCurrentCTEvent
 from utils.discord.viewmenu import SelectView
 
 class Tile(commands.Cog):
@@ -16,7 +17,7 @@ class Tile(commands.Cog):
     async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0):
         
         if event == 0:
-            eventIndex = getCurrentEvent()
+            eventIndex = getCurrentCTEvent()
         else:
             eventIndex = event
 

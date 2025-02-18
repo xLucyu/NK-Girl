@@ -20,7 +20,6 @@ def load_cogs(bot) -> None:
 
 def main() -> None:
 
-    load_cogs(bot)
-    print("testing")
+    load_cogs(bot) 
     bot.run(BOTTOKEN)
 main()

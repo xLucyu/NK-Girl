@@ -1,18 +1,10 @@
 from cogs.basecommand import baseCommand
+from cogs.regex import *
 from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
-import re
-
-def bossnumber(BossName):
-    
-    number = "".join([n for n in BossName if n.isdigit()])
-    name = "".join([l for l in BossName if not l.isdigit()])
-    return f"{name} #{number}"
-
 
 def bossProfile(index, difficulty):
-    
-    
+     
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extensions": f"metadata/{difficulty}"
@@ -32,11 +24,14 @@ def bossProfile(index, difficulty):
     if not api or not stats or not emotes or not modifiers or not towers:
         return
 
-    name = re.sub(r'\d+', '', api.get("Name"))
+    name = removeNumbers(api.get("Name"))
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][name]
+    map = splitUppercase(stats.get("Map")) 
+    modeDifficulty = splitUppercase(stats.get("Difficulty"))
+    mode = splitUppercase(stats.get("Mode"))  
 
     eventData = { 
-        f"{difficulty.title()} Difficulty": [f"{stats.get('Map')}, {stats.get('Difficulty')} - {stats.get('Mode')}", False],
+        f"{difficulty.title()} Difficulty": [f"{map}, {modeDifficulty} - {mode}", False],
         "Modifiers": ["\n".join(modifiers), False],
         "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
         "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
@@ -50,11 +45,11 @@ def bossProfile(index, difficulty):
         }
  
     
-    eventNumber = bossnumber(api.get("Name"))
+    eventNumber = splitNumbers(api.get("Name"))
     embed = filterembed(eventData, eventURL, title=f"{eventNumber}")
     names = list()
 
     for name in api.get("Names"):
-        names.append(bossnumber(name))
+        names.append(splitNumbers(name))
 
     return embed, names

@@ -12,19 +12,19 @@ class Race(commands.Cog):
         self.bot = bot
 
 
-    @discord.slash_command(name="race", description="Show Race Data", guild=discord.Object(id=int(GUILDID))) #type: ignore 
+    @discord.slash_command(name="race", description="Show Race Data", guild=discord.Object(id=int(GUILDID))) 
     async def race(self, ctx: discord.ApplicationContext):
          
         embed, names = raceProfile(index=0, difficulty=None) #type: ignore
 
         data = {
             "Author": ctx.author.id,
-            "EventName": "Race",
-            "PreviousEvents": names,
+            "EventName": ["Race"],
+            "PreviousEvents": [names],
             "Function": raceProfile,
             "Difficulty": None,
             "Message": None,
-            "Emoji": "<:EventRace:1338550190390382694>"
+            "Emoji": ["<:EventRace:1338550190390382694>"]
         }
 
         view = SelectView(data)

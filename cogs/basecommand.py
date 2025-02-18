@@ -29,10 +29,10 @@ def baseCommand(urls, index):
         
         if odysseymapsKey:
             maps = getBody(url=odysseymapsKey)
-            towers = filtertowers(stats["Odyssey"]["AvailableTowers"], emotes)
+            towers = filtertowers(stats["Odyssey"]["AvailableTowers"], emotes) #type: ignore
             modifiers = None
         else:
-            towers = filtertowers(stats.get("Towers"), emotes) 
+            towers = filtertowers(stats.get("Towers"), emotes) #type: ignore
             modifiers = filtermodifiers(stats.get("Modifiers"), emotes) #type: ignore
             maps = None 
 

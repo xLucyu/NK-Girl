@@ -22,7 +22,7 @@ def getID(url, index):
     selectedID = ids[index]
     
     apiData = {
-        "Names": [name.get("name", None) for name in ids],
+        "Names": [name.get("name") for name in ids],
         "ID": selectedID.get("id", None),
         "TimeStamp": selectedID.get("start", None),
         "LBType": selectedID.get("scoringType", None),

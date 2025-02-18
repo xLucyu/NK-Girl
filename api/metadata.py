@@ -26,7 +26,7 @@ def getMetaData(Body: dict) -> dict:
         "EndRound": Body.get("endRound", 0),
         "Towers": Body.get("_towers", None),
         "Map": Body.get("map", None),
-        "Maps": Body.get("maps", None),
+        "Maps": Body.get("maps", None), 
         "Modifiers": {
                 "Bloon_Modifiers": Body.get("_bloonModifiers", None),
                 "MKDisabled": Body.get("disableMK", False),

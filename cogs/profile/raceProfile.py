@@ -1,23 +1,17 @@
 from cogs.basecommand import baseCommand
 from utils.filter.embedfilter import filterembed 
 from utils.assets.urls import EVENTURLS
-import math
+from cogs.eventNumber import currentEventNumber
+from cogs.regex import splitUppercase
 
-def currenteventnumber(startTimeStamp):
-    
-    firstTimeStamp = 1544601600000
-    timeDifference = startTimeStamp - firstTimeStamp
-    current_Number = math.floor(timeDifference / (7 * 24 * 60 * 60 * 1000))
-    return round(current_Number)
-
-def raceProfile(index, difficulty=None):
-
+def raceProfile(index, difficulty):
+     
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/races",
         "extensions": "metadata"
     }
 
-    NKDATA = baseCommand(urls, index)
+    NKDATA = baseCommand(urls, index)    
 
     if not NKDATA:
         return 
@@ -27,12 +21,17 @@ def raceProfile(index, difficulty=None):
     modifiers = NKDATA.get("Modifiers")
     towers = NKDATA.get("Towers")
     eventURL = EVENTURLS["Race"]["race"]
-    
+     
     if not stats or not towers or not api:
+        print("hello")
         return 
 
+    map = splitUppercase(stats.get("Map"))
+    difficulty = splitUppercase(stats.get("Difficulty"))
+    mode = splitUppercase(stats.get("Mode"))
+
     eventData = { 
-        api.get("Name"): [f"{stats.get('Map')}, {stats.get('Difficulty')} - {stats.get('Mode')}", False],
+        api.get("Name"): [f"{map}, {difficulty} - {mode}", False],
         "Modifiers": ["\n".join(modifiers), False], #type: ignore
         "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
         "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
@@ -45,10 +44,11 @@ def raceProfile(index, difficulty=None):
         "Support": ["\n".join(towers[4]), True],
         } 
     
-    currentTimeStamp = api.get("TimeStamp", None) #type: ignore
-    eventNumber = currenteventnumber(currentTimeStamp)
+    currentTimeStamp = api.get("TimeStamp") 
+    firstTimeStamp = 1544601600000
+    eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
     embed = filterembed(eventData, eventURL, title=f"Race #{eventNumber}")
-    names = api.get("Names", None)
+    names = api.get("Names", None) 
 
     return embed, names
 

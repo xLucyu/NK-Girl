@@ -22,12 +22,12 @@ class Odyssey(commands.Cog):
 
         data = {
             "Author": ctx.author.id,
-            "EventName": "Odyssey",
-            "PreviousEvents": names,
+            "EventName": ["Odyssey"],
+            "PreviousEvents": [names],
             "Function": odysseyProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Emoji": "<:OdysseyCrewBtn:1338551267043180635>>",
+            "Emoji": ["<:OdysseyCrewBtn:1338551267043180635>>"],
             "Button": [
                 ["Easy", "easy", "success"],
                 ["Medium", "medium", "primary"],

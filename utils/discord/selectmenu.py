@@ -2,15 +2,15 @@ import discord
 
 class SelectMenu(discord.ui.Select):
 
-    def __init__(self, *components):
+    def __init__(self, **components):
 
-        self.parentView = components[0]  
-        self.eventName = components[1] 
-        self.difficulty = components[2]
-        self.userID = components[3]
-        self.function = components[4]
-        self.emoji = components[5]
-        self.eventNames = components[6] 
+        self.parentView = components.get("View", None)  
+        self.eventName = components.get("Event", None) 
+        self.difficulty = components.get("Difficulty", None)
+        self.userID = components.get("UserID", None)
+        self.function = components.get("Function", None)
+        self.emoji = components.get("Emoji", None)
+        self.eventNames = components.get("EventNames", None)
         
         options = [
             discord.SelectOption(label=str(name), value=str(eventindex), emoji=self.emoji)
@@ -24,31 +24,30 @@ class SelectMenu(discord.ui.Select):
         )
         
     async def callback(self, interaction:discord.Interaction):
-        
+         
         userID = interaction.user.id #type: ignore
 
         if userID != self.userID:
-            await interaction.response.send_message("You are not the original User", ephemeral=True)
+            await interaction.response.send_message("You are not the original User of this command.", ephemeral=True)
             return 
 
         try:
-            data = self.parentView.index.get(userID, None)
+            if userID not in self.parentView.index:
+                self.parentView.index[userID] = {}
+            
+            data = self.parentView.index[userID]
             selectedIndex = int(self.values[0]) #type: ignore
 
-            if data is None:
-                data = self.parentView.index[userID] = dict()
-
-            data["EventIndex"] = selectedIndex
-            difficulty = data.get("Difficulty", None)
-        
-            if difficulty is None:
-                data["Difficulty"] = self.difficulty
-
-            if type(self.eventNames[-1]) == int:
+            data["EventIndex"] = selectedIndex #insert Eventindex into the parentView
+            difficulty = data.get("Difficulty", self.difficulty)
+            data["Difficulty"] = difficulty 
+            
+            if type(self.eventNames[-1]) == int and self.eventName != "Coop Mode": #coop passes a list of integers 
                 embed, _ = self.function(self.eventNames[-1], self.eventNames[selectedIndex])
-            else:
+            else: 
                 embed, _ = self.function(selectedIndex, difficulty)
-                await interaction.response.edit_message(embed=embed)
 
-        except:
-            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)
+            await interaction.response.edit_message(embed=embed)
+
+        except Exception as e:
+            await interaction.response.send_message(content=e, ephemeral=True)

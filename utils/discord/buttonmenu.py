@@ -2,16 +2,17 @@ import discord
 
 class ButtonMenu(discord.ui.Button):
 
-    def __init__(self, *components):
+    def __init__(self, **components):
         
-        self.parentView = components[0]
-        self.userID = components[1]
-        self.function = components[2]
-        
+        self.parentView = components.get("View", None)
+        self.userID = components.get("UserID", None)
+        self.function = components.get("Function", None)
+        self.layout = components.get("Layout", None)
+         
         super().__init__(
-            label=components[3][0],
-            custom_id=components[3][1],
-            style=getattr(discord.ButtonStyle, components[3][2])
+            label=(self.layout[0]),
+            custom_id=self.layout[1],
+            style=getattr(discord.ButtonStyle, self.layout[2])
         )
 
     async def callback(self, interaction:discord.Interaction):
@@ -35,6 +36,4 @@ class ButtonMenu(discord.ui.Button):
             await interaction.response.edit_message(embed=embed)
 
         except:
-            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)
-
-        
+            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)   

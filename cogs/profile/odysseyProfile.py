@@ -25,12 +25,9 @@ def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
 
         mapList = getMetaData(map)
         modifiers = filtermodifiers(mapList.get("Modifiers"), emotes) #type: ignore
-        
         mode = splitUppercase(map.get("mode"))
-        difficulty = splitUppercase(map.get("Difficulty"))
+        difficulty = splitUppercase(map.get("difficulty"))
         mapName = splitUppercase(map.get("map"))
-
-
         title = f"{index+1}. {mapName} ({difficulty}, {mode})"
         value = [f"<:cash:1338140224353603635> ${map.get('startingCash'):,}, round {map.get('startRound')}/{map.get('endRound')}\n{', '.join(modifiers)}", False]
         

@@ -1,4 +1,4 @@
-from cogs.regex import removeNumbers
+from cogs.regex import removeNumbers, splitNumbers
 from api.fetchid import getID
 from api.metadata import getBody 
 from utils.assets.tierhp import bosshp
@@ -53,14 +53,17 @@ def bossnumber(BossName):
     return f"{name} #{number}"
 
 
-def bossdetailsProfile(difficulty, players):
+def bossdetailsProfile(players, difficulty):
+    
+    modes = [1, 2, 3, 4]
+    players = modes[players]
         
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extensions": f"metadata/{difficulty}"
     } 
     
-    api, body = getBossData(urls) #type: ignore
+    api, body = getBossData(urls) #type: ignore 
     
     if not body:
         return
@@ -81,5 +84,7 @@ def bossdetailsProfile(difficulty, players):
     bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][name]
     eventNumber = bossnumber(api.get("Name"))
     embed = filterembed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
+    embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
+    embed.set_image(url=bannerURL) 
 
-    return embed, bannerURL
+    return embed, modes

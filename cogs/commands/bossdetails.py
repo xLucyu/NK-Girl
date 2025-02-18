@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from config import GUILDID
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
+from utils.discord.viewmenu import SelectView
 
 
 class BossDetails(commands.Cog):
@@ -29,12 +30,28 @@ class BossDetails(commands.Cog):
                           players: int = 1):
 
         if difficulty == "Normal":
-            difficulty = "standard"
+            difficulty = "Standard"
 
-        embed, bannerURL = bossdetailsProfile(difficulty.lower(), players) # type: ignore
-        embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
-        embed.set_image(url=bannerURL)
-        await ctx.respond(embed=embed)
+        embed, modes = bossdetailsProfile(players-1, difficulty.lower()) # type: ignore
+
+        data = {
+            "Author": ctx.author.id, 
+            "EventName": ["Coop Mode"],
+            "PreviousEvents": [modes],
+            "Function": bossdetailsProfile,
+            "Difficulty": difficulty.lower(),
+            "Message": None,
+            "Emoji": ["<:Coop:1341515962410598521>"], 
+            "Button": [
+                    ["Normal", "standard", "success"],
+                    ["Elite", "elite", "danger"]
+                ]
+            }
+
+         
+        view = SelectView(data)
+        message = await ctx.respond(embed=embed, view=view)
+        view.message = message   
 
         
 

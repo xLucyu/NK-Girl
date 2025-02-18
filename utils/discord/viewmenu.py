@@ -19,27 +19,27 @@ class SelectView(discord.ui.View):
         self.handleViewMenus()
     
     def handleViewMenus(self):
-
-        if type(self.eventNames[0][-1]) == int:
+ 
+        if type(self.eventNames[0][-1]) == int and self.event[0] != "Coop Mode":
             for num in range(len(self.eventNames)):
                 self.addSelectMenu(num)
         else: 
-            if self.event[0] in ["Boss", "Odyssey"]:
+            if self.event[0] in ["Boss", "Odyssey", "Coop Mode"]: 
                 self.addButtonMenu()
-
+            
             self.addSelectMenu(0)
 
  
     def addSelectMenu(self, num):
 
         selectMenuView = SelectMenu(
-            self,
-            self.event[num],
-            self.difficulty,
-            self.userID,
-            self.function,
-            self.emoji[num],
-            self.eventNames[num], 
+                View = self,
+                Event = self.event[num],
+                Difficulty = self.difficulty,
+                UserID = self.userID,
+                Function = self.function,
+                Emoji = self.emoji[num],
+                EventNames = self.eventNames[num]
         )
 
         self.add_item(selectMenuView)
@@ -48,10 +48,10 @@ class SelectView(discord.ui.View):
 
         for layout in self.buttonLayout:
             selectButtonView = ButtonMenu(
-                self,
-                self.userID,
-                self.function,
-                layout 
+                View = self,
+                UserID = self.userID,
+                Function = self.function,
+                Layout = layout 
             )
             self.add_item(selectButtonView)
 

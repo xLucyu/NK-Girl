@@ -1,8 +1,9 @@
 from cogs.basecommand import baseCommand
-from utils.filter.embedfilter import filterembed 
-from utils.assets.urls import EVENTURLS
 from cogs.eventNumber import currentEventNumber
 from cogs.regex import splitUppercase
+from utils.filter.embedfilter import filterembed 
+from utils.assets.urls import EVENTURLS
+
 
 def raceProfile(index, difficulty):
      
@@ -20,15 +21,14 @@ def raceProfile(index, difficulty):
     stats = NKDATA.get("Stats") 
     modifiers = NKDATA.get("Modifiers")
     towers = NKDATA.get("Towers")
-    eventURL = EVENTURLS["Race"]["race"]
+    eventURL = EVENTURLS["Race"]["race"] 
      
-    if not stats or not towers or not api:
-        print("hello")
+    if not stats or not towers or not api: 
         return 
 
     map = splitUppercase(stats.get("Map"))
     difficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode"))
+    mode = splitUppercase(stats.get("Mode")) 
 
     eventData = { 
         api.get("Name"): [f"{map}, {difficulty} - {mode}", False],
@@ -47,7 +47,7 @@ def raceProfile(index, difficulty):
     currentTimeStamp = api.get("TimeStamp") 
     firstTimeStamp = 1544601600000
     eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
-    embed = filterembed(eventData, eventURL, title=f"Race #{eventNumber}")
+    embed = filterembed(eventData, eventURL, title=f"Race #{eventNumber}") 
     names = api.get("Names", None) 
 
     return embed, names

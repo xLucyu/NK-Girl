@@ -99,7 +99,7 @@ def getCTdata(urls: dict, tileCode: str, eventIndex: int):
 
 
 def tileProfile(eventIndex: int, tileCode: str):
-
+     
     urls = {
         "base": TILESURL,
         "extensions": f"{eventIndex}/tiles.json"

@@ -54,7 +54,7 @@ def getHeadData(gameType: list, gameData: dict):
         head = f"{map} - {difficulty}, {mode}"
         endRound = gameData["dcModel"]["startRules"]["endRound"]
 
-    return head, eventURL, lives, endRound
+    return head, eventURL, lives, endRound, map
 
 
 def getSpecialTiles(body: dict, eventIndex: int):
@@ -126,7 +126,7 @@ def tileProfile(eventIndex: int, tileCode: str):
     if not gameType: 
         return
     
-    head, eventURL, lives, endRound = getHeadData(gameType, gameData)  
+    head, eventURL, lives, endRound, map = getHeadData(gameType, gameData)  
     emoteid = getEmoteID(tileType, emotes, relicType)
  
     activeModifiers = { 
@@ -152,8 +152,7 @@ def tileProfile(eventIndex: int, tileCode: str):
         "Magic": ["\n". join(towers[3]), True],
         "Support": ["\n".join(towers[4]), True],
         } 
-    
-         
+     
     embed = filterembed(eventData, eventURL, title=f"{emoteid} Contested Territory #{eventIndex} - Tile {tileCode.upper()}")
     embed.set_image(url=EVENTURLS["Maps"][map])
     return embed, categorizedTiles 

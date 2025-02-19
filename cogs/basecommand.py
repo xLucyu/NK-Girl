@@ -8,13 +8,13 @@ from config import BOTID
 def baseCommand(urls, index):
     
     try:
-        api = getID(url=urls.get("base"), index=index)
+        api = getID(urls, index=index) 
 
         if not api:
             return 
 
-        ID = api.get("ID", None)
-        body = getBody(url=f"{urls.get('base')}/{ID}/{urls.get('extensions')}")
+        metaData = api.get("MetaData", None)
+        body = getBody(url=metaData)
          
         if not body:
             return 

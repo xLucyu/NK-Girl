@@ -3,8 +3,7 @@ import re
 def splitUppercase(string):
 
     if string == "Tutorial":
-        string = "MonkeyMeadows"
-
+        string = "MonkeyMeadows" 
 
     split = re.findall(r"[A-Z][a-z]*", string)
     return " ".join(split)

@@ -26,6 +26,10 @@ def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
         mapList = getMetaData(map)
         modifiers = filtermodifiers(mapList.get("Modifiers"), emotes) #type: ignore
         mode = splitUppercase(map.get("mode"))
+
+        if mode == "Clicks":
+            mode = "CHIMPS"
+
         difficulty = splitUppercase(map.get("difficulty"))
         mapName = splitUppercase(map.get("map"))
         title = f"{index+1}. {mapName} ({difficulty}, {mode})"
@@ -38,7 +42,7 @@ def odysseyProfile(index, difficulty):
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/odyssey",
-        "extensions": difficulty
+        "extension": f"metadata_{difficulty}"
     }
 
     NKDATA = baseCommand(urls, index)
@@ -62,7 +66,6 @@ def odysseyProfile(index, difficulty):
         f"Max Seats: {stats.get('MaxTowers')}\n"
         f"Max Monkeys: {stats.get('MaxSlots')}"
     )
-
 
     eventData = {
         api.get("Name"): [title, False],

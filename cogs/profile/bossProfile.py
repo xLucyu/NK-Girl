@@ -7,7 +7,7 @@ def bossProfile(index, difficulty):
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
-        "extensions": f"metadata/{difficulty}"
+        "extension": f"metadata{difficulty.title()}"
     }
 
     NKDATA = baseCommand(urls, index)

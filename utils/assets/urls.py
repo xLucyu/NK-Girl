@@ -124,9 +124,11 @@ EVENTURLS = {
         "Sulfur Springs": "https://static.wikia.nocookie.net/b__/images/1/1c/Sulfur_Springs_No_UI.png/revision/latest?cb=20240207064930&path-prefix=bloons",
         "Sunken Columns": "https://static.wikia.nocookie.net/b__/images/3/38/Sunken_Columns_No_UI.png/revision/latest?cb=20220217181915&path-prefix=bloons",
         "The Cabin": "https://static.wikia.nocookie.net/b__/images/b/b3/TheCabin_No_UI.png/revision/latest?cb=20211022045656&path-prefix=bloons",
+        "Tinkerton": "https://static.wikia.nocookie.net/b__/images/a/af/Tinkerton_No_UI.png/revision/latest?cb=20240529062923&path-prefix=bloons",
         "Town Centre": "https://static.wikia.nocookie.net/b__/images/8/89/TownCenter_No_UI.png/revision/latest?cb=20200519013110&path-prefix=bloons",
         "Tree Stump": "https://static.wikia.nocookie.net/b__/images/b/b4/TreeStump_No_UI.png/revision/latest?cb=20200519013110&path-prefix=bloons",
         "Underground": "https://static.wikia.nocookie.net/b__/images/5/59/Underground_No_UI.png/revision/latest?cb=20200519013124&path-prefix=bloons",
+        "Water Park": "https://static.wikia.nocookie.net/b__/images/4/46/WaterPark_No_UI.png/revision/latest?cb=20230726125928&path-prefix=bloons",
         "Winter Park": "https://static.wikia.nocookie.net/b__/images/6/69/WinterPark_No_UI.png/revision/latest?cb=20200519013125&path-prefix=bloons",
         "Workshop": "https://static.wikia.nocookie.net/b__/images/b/ba/Workshop_No_UI.png/revision/latest?cb=20200519013125&path-prefix=bloons",
         "X Factor": "https://static.wikia.nocookie.net/b__/images/7/7c/MapSelectXFactorButton.png/revision/latest?cb=20201203040004&path-prefix=bloons"

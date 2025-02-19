@@ -9,7 +9,7 @@ def raceProfile(index, difficulty):
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/races",
-        "extensions": "metadata"
+        "extension": "metadata"
     }
 
     NKDATA = baseCommand(urls, index)    

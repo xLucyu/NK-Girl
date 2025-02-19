@@ -11,9 +11,9 @@ def getData(url):
     except requests.exceptions.RequestException:
         return 
 
-def getID(url, index):
+def getID(urls, index):
     
-    data = getData(url)
+    data = getData(urls.get("base"))
 
     if data is None:
         return None
@@ -26,7 +26,8 @@ def getID(url, index):
         "ID": selectedID.get("id", None),
         "TimeStamp": selectedID.get("start", None),
         "LBType": selectedID.get("scoringType", None),
-        "Name": selectedID.get("name", None)
+        "Name": selectedID.get("name", None),
+        "MetaData": selectedID.get(urls.get("extension"))
     }
 
     return apiData

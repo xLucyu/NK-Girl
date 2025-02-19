@@ -155,4 +155,5 @@ def tileProfile(eventIndex: int, tileCode: str):
     
          
     embed = filterembed(eventData, eventURL, title=f"{emoteid} Contested Territory #{eventIndex} - Tile {tileCode.upper()}")
+    embed.set_image(url=EVENTURLS["Maps"][map])
     return embed, categorizedTiles 

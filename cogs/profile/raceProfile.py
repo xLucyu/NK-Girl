@@ -47,7 +47,8 @@ def raceProfile(index, difficulty):
     currentTimeStamp = api.get("TimeStamp") 
     firstTimeStamp = 1544601600000
     eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
-    embed = filterembed(eventData, eventURL, title=f"Race #{eventNumber}") 
+    embed = filterembed(eventData, eventURL, title=f"Race #{eventNumber}")
+    embed.set_image(url=EVENTURLS["Maps"][map])
     names = api.get("Names", None) 
 
     return embed, names

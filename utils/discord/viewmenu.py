@@ -14,8 +14,8 @@ class SelectView(discord.ui.View):
         self.emoji = data.get("Emoji")
         self.difficulty = data.get("Difficulty") 
         self.buttonLayout = data.get("Button")
-        self.function = data.get("Function")
-        self.index = dict()
+        self.function = data.get("Function") 
+        self.index = dict() 
         self.handleViewMenus()
     
     def handleViewMenus(self):
@@ -66,8 +66,3 @@ class SelectView(discord.ui.View):
                 await self.message.edit(view=self)
             except discord.NotFound:
                 pass
-
- 
-
-        
-     

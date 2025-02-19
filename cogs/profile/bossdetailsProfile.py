@@ -1,4 +1,4 @@
-from cogs.regex import removeNumbers, splitNumbers
+from cogs.regex import removeNumbers
 from api.fetchid import getID
 from api.metadata import getBody 
 from utils.assets.tierhp import bosshp
@@ -71,8 +71,8 @@ def bossdetailsProfile(players, difficulty):
     bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
     name = removeNumbers(api.get("Name")) 
     bossIndex = bosshp[difficulty][name]
-    bossemote = "<:bossIncrease:1335339243345809478>" if bossHpMultiplier >= 1 else "<:bossDecrease:1335339614080204873>"
-    
+    bossemote = "<:bossIncrease:1335339243345809478>" if bossHpMultiplier >= 1 else "<:bossDecrease:1335339614080204873>"   
+
     eventData = {
         "Players": [players, False],
         "Skulls": [bossIndex["Skulls"], False],
@@ -80,9 +80,15 @@ def bossdetailsProfile(players, difficulty):
     }
     
     tierfilter(bossHpMultiplier, bossIndex, eventData, players)
+
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][name]
     bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][name]
+    
+    if difficulty == "standard":
+        difficulty = "normal"
+
     eventNumber = bossnumber(api.get("Name"))
+
     embed = filterembed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
     embed.set_image(url=bannerURL) 

@@ -28,7 +28,10 @@ def bossProfile(index, difficulty):
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][name]
     map = splitUppercase(stats.get("Map")) 
     modeDifficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode"))  
+    mode = splitUppercase(stats.get("Mode")) 
+
+    if difficulty == "standard":
+        difficulty = "normal"
 
     eventData = { 
         f"{difficulty.title()} Difficulty": [f"{map}, {modeDifficulty} - {mode}", False],
@@ -47,6 +50,7 @@ def bossProfile(index, difficulty):
     
     eventNumber = splitNumbers(api.get("Name"))
     embed = filterembed(eventData, eventURL, title=f"{eventNumber}")
+    embed.set_image(url=EVENTURLS["Maps"][map])
     names = list()
 
     for name in api.get("Names"):

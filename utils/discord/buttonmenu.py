@@ -17,22 +17,22 @@ class ButtonMenu(discord.ui.Button):
 
     async def callback(self, interaction:discord.Interaction):
         
+        messageID = self.parentView.message.id
         userID = interaction.user.id #type: ignore
 
         if userID != self.userID:
             await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
             return
-
+         
         try:
             difficulty = self.custom_id
-            data = self.parentView.index.get(userID, None)
+            if messageID not in self.parentView.index:
+                self.parentView.index[messageID] = dict() 
             
-            if data is None:
-                data = self.parentView.index[userID] = dict()
-
-            data["Difficulty"] = difficulty
+            data = self.parentView.index[messageID] 
+            data["Difficulty"] = difficulty 
             selectedIndex = data.get("EventIndex", 0)
-            embed, _ = self.function(selectedIndex, difficulty)
+            embed, _ = self.function(selectedIndex, difficulty.lower()) #type: ignore
             await interaction.response.edit_message(embed=embed)
 
         except:

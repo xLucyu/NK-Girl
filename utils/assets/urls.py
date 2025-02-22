@@ -52,6 +52,10 @@ EVENTURLS = {
         "medium": "https://static.wikia.nocookie.net/b__/images/6/66/OdysseyModeMediumBtn.png/revision/latest?cb=20201219224311&path-prefix=bloons",
         "hard": "https://static.wikia.nocookie.net/b__/images/f/f4/OdysseyModeHardBtn.png/revision/latest?cb=20201219224317&path-prefix=bloons"
     },
+    "Challenge": {
+            "daily": "https://static.wikia.nocookie.net/b__/images/b/bf/DailyChallengeBtn.png/revision/latest?cb=20200601042405&path-prefix=bloons",
+            "challenge": "https://static.wikia.nocookie.net/b__/images/8/86/CreateChallengeIcon.png/revision/latest?cb=20200601042401&path-prefix=bloons"
+    },
     "Maps": {
         "Adora's Temple": "https://static.wikia.nocookie.net/b__/images/0/0a/AdorasTemple_No_UI.png/revision/latest?cb=20200519012904&path-prefix=bloons",
         "Alpine Run": "https://static.wikia.nocookie.net/b__/images/0/07/AlpineRun_No_UI.png/revision/latest?cb=20200519012905&path-prefix=bloons",
@@ -76,7 +80,7 @@ EVENTURLS = {
         "Downstream": "https://static.wikia.nocookie.net/b__/images/1/18/Downstream_No_UI.png/revision/latest?cb=20200519012911&path-prefix=bloons",
         "Enchanted Glade": "https://static.wikia.nocookie.net/b__/images/b/b8/EnchantedGlade_No_UI.png/revision/latest?cb=20250205084253&path-prefix=bloons",
         "Encrypted": "https://static.wikia.nocookie.net/b__/images/e/e5/MapSelectEncryptedButton.png/revision/latest?cb=20201016000424&path-prefix=bloons",
-        "End of the Road": "https://static.wikia.nocookie.net/b__/images/e/e1/EndoftheRoad_No_UI.png/revision/latest?cb=20200519012912&path-prefix=bloons",
+        "End Of The Road": "https://static.wikia.nocookie.net/b__/images/e/e1/EndoftheRoad_No_UI.png/revision/latest?cb=20200519012912&path-prefix=bloons",
         "Erosion": "https://static.wikia.nocookie.net/b__/images/1/12/Erosion_No_UI.png/revision/latest?cb=20230607074521&path-prefix=bloons",
         "Firing Range": "https://static.wikia.nocookie.net/b__/images/4/42/FiringRange_No_UI.png/revision/latest?cb=20240701035311&path-prefix=bloons",
         "Flooded Valley": "https://static.wikia.nocookie.net/b__/images/9/96/Flooded_Valley_No_UI.png/revision/latest?cb=20200908030039&path-prefix=bloons",
@@ -132,6 +136,5 @@ EVENTURLS = {
         "Winter Park": "https://static.wikia.nocookie.net/b__/images/6/69/WinterPark_No_UI.png/revision/latest?cb=20200519013125&path-prefix=bloons",
         "Workshop": "https://static.wikia.nocookie.net/b__/images/b/ba/Workshop_No_UI.png/revision/latest?cb=20200519013125&path-prefix=bloons",
         "X Factor": "https://static.wikia.nocookie.net/b__/images/7/7c/MapSelectXFactorButton.png/revision/latest?cb=20201203040004&path-prefix=bloons"
-
     }
 }

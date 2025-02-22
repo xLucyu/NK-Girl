@@ -2,14 +2,13 @@ import requests
 
 def getData(url):
 
-    try:
-    
+    try: 
         data = requests.get(url)
         if data.status_code == 200:
             return data.json() 
 
-    except requests.exceptions.RequestException:
-        return 
+    except:
+        return None 
 
 def getID(urls, index):
     
@@ -22,8 +21,7 @@ def getID(urls, index):
     selectedID = ids[index]
     
     apiData = {
-        "Names": [name.get("name") for name in ids],
-        "ID": selectedID.get("id", None),
+        "Names": [name.get("name") for name in ids], 
         "TimeStamp": selectedID.get("start", None),
         "LBType": selectedID.get("scoringType", None),
         "Name": selectedID.get("name", None),

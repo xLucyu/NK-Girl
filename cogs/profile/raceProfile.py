@@ -17,14 +17,12 @@ def raceProfile(index, difficulty):
     if not NKDATA:
         return 
     
-    api = NKDATA.get("Api") 
-    stats = NKDATA.get("Stats") 
-    modifiers = NKDATA.get("Modifiers")
-    towers = NKDATA.get("Towers")
+    api = NKDATA.get("Api", None) 
+    stats = NKDATA.get("Stats", None) 
+    modifiers = NKDATA.get("Modifiers", None)
+    towers = NKDATA.get("Towers", None)
     eventURL = EVENTURLS["Race"]["race"] 
      
-    if not stats or not towers or not api: 
-        return 
 
     map = splitUppercase(stats.get("Map"))
     difficulty = splitUppercase(stats.get("Difficulty"))
@@ -32,10 +30,10 @@ def raceProfile(index, difficulty):
 
     eventData = { 
         api.get("Name"): [f"{map}, {difficulty} - {mode}", False],
-        "Modifiers": ["\n".join(modifiers), False], #type: ignore
+        "Modifiers": ["\n".join(modifiers), False], 
         "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
         "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
-        "Rounds": [f"{stats.get('StartRound')}/{stats.get('EndRound')}", True],
+        "Rounds": [f"<:Round:1342535466855038976> {stats.get('StartRound')}/{stats.get('EndRound')}", True],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],
         "Military": ["\n".join(towers[2]), True],

@@ -6,24 +6,23 @@ from utils.assets.urls import EVENTURLS
 from utils.filter.embedfilter import filterembed 
 
 def getBossData(urls):
-
     try:
-        api = getID(url=urls.get("base"), index=0)
+        api = getID(urls, index=0) 
 
         if not api:
             return 
-        
-        ID = api.get("ID", None)
-        body = getBody(url=f"{urls.get('base')}/{ID}/{urls.get('extensions')}")
-        
+
+        metaData = api.get("MetaData", None)
+        body = getBody(url=metaData)
+         
         if not body:
             return
 
+        return api, body
+
     except:
-        return
-
-    return api, body
-
+        return 
+ 
 
 def tierfilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int) -> None:
 
@@ -60,8 +59,8 @@ def bossdetailsProfile(players, difficulty):
         
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
-        "extensions": f"metadata/{difficulty}"
-    } 
+        "extension": f"metadata{difficulty.title()}"
+    }
     
     api, body = getBossData(urls) #type: ignore 
     

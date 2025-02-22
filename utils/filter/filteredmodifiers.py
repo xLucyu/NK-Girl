@@ -1,5 +1,6 @@
 from utils.assets.modifiers import modifiers
 
+NOKEYS = ["MaxParagons", "MaxTowers", "LeastTiers"]
 
 def modifieremotefilter(activemodifiers: dict, emotes: dict) -> list:
     
@@ -7,7 +8,7 @@ def modifieremotefilter(activemodifiers: dict, emotes: dict) -> list:
  
     for modifier, multiplier in activemodifiers.items():
 
-        key = "" if modifier in ["MaxParagons", "MaxTowers", "LeastTiers"] or multiplier is True else "Decrease" if multiplier > 100 else "Decrease"
+        key = "" if modifier in NOKEYS or multiplier is True else "Increase" if multiplier > 100 else "Decrease"
         
         modifierName = f"{modifier}{key}"
         emoteid = emotes.get(modifierName, None)
@@ -53,7 +54,7 @@ def handlemodifiers(modifiers: dict) -> dict:
                 if modifier == "MaxTowers" and multiplier == 0:
                     continue
 
-                value = (multiplier if modifier in ["MaxParagons", "MaxTowers", "LeastTiers"] else int(multiplier*100)) 
+                value = (multiplier if modifier in NOKEYS else int(multiplier*100)) 
 
                 activemodifiers[modifier] = value
 

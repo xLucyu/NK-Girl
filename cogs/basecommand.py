@@ -8,18 +8,25 @@ from config import BOTID
 def baseCommand(urls, index):
     
     try:
-        api = getID(urls, index=index) 
+        if index: 
+            api = getID(urls, index=index) 
 
-        if not api:
-            return 
+            if not api:
+                return 
 
-        metaData = api.get("MetaData", None)
+            metaData = api.get("MetaData", None) 
+
+        else:
+            metaData = urls #really only needed for challenge look up
+            api = None
+
         body = getBody(url=metaData)
          
         if not body:
             return 
 
         stats = getMetaData(body)
+
         if not stats:
             return 
 
@@ -29,7 +36,7 @@ def baseCommand(urls, index):
         
         if odysseymapsKey:
             maps = getBody(url=odysseymapsKey)
-            towers = filtertowers(stats["Odyssey"]["AvailableTowers"], emotes) #type: ignore
+            towers = filtertowers(stats["Odyssey"]["AvailableTowers"], emotes) #type: ignore 
             modifiers = None
         else:
             towers = filtertowers(stats.get("Towers"), emotes) #type: ignore
@@ -37,15 +44,13 @@ def baseCommand(urls, index):
             maps = None 
 
     except:
-        return 
+        return None 
 
     return {
-
         "Api": api,
         "Stats": stats,
         "Emotes": emotes,
         "Maps": maps,
         "Towers": towers,
         "Modifiers": modifiers
-
     }

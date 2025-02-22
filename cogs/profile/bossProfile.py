@@ -38,7 +38,7 @@ def bossProfile(index, difficulty):
         "Modifiers": ["\n".join(modifiers), False],
         "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
         "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
-        "Rounds": [f"{stats.get('StartRound')}/{stats.get('EndRound')}", True],
+        "Rounds": [f"<:Round:1342535466855038976> {stats.get('StartRound')}/{stats.get('EndRound')}", True],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],
         "Military": ["\n".join(towers[2]), True],

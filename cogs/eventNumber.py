@@ -9,8 +9,12 @@ def currentEventNumber(startTimeStamp, firstTimeStamp):
 
 
 def getCurrentCTEvent(): #this is really just for clean up 
+    
+    urls = {
+        "base": "https://data.ninjakiwi.com/btd6/ct"
+    }
 
-    ctIndex = getID(url="https://data.ninjakiwi.com/btd6/ct", index=0)
+    ctIndex = getID(urls, index=0)
 
     if not ctIndex:
         return None

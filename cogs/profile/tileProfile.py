@@ -143,7 +143,7 @@ def tileProfile(eventIndex: int, tileCode: str):
         head: ["\n", False],
         "Lives": [f"<:Lives:1337794403019915284> {lives}", True],
         "Cash": [f"<:cash:1338140224353603635> ${gameData['dcModel']['startRules']['cash']}", True],
-        "Rounds": [f"{gameData['dcModel']['startRules']['round']}/{endRound}", True],
+        "Rounds": [f"<:Round:1342535466855038976> {gameData['dcModel']['startRules']['round']}/{endRound}", True],
         "Modifiers": ["\n".join(modifiers), False],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],

@@ -27,13 +27,10 @@ def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
         modifiers = filtermodifiers(mapList.get("Modifiers"), emotes) #type: ignore
         mode = splitUppercase(map.get("mode"))
 
-        if mode == "Clicks":
-            mode = "CHIMPS"
-
         difficulty = splitUppercase(map.get("difficulty"))
         mapName = splitUppercase(map.get("map"))
         title = f"{index+1}. {mapName} ({difficulty}, {mode})"
-        value = [f"<:cash:1338140224353603635> ${map.get('startingCash'):,}, round {map.get('startRound')}/{map.get('endRound')}\n{', '.join(modifiers)}", False]
+        value = [f"<:cash:1338140224353603635> ${map.get('startingCash'):,}, <:Round:1342535466855038976> {map.get('startRound')}/{map.get('endRound')}\n{', '.join(modifiers)}", False]
         
         eventData[title] = value
 
@@ -50,15 +47,12 @@ def odysseyProfile(index, difficulty):
     if not NKDATA:
         return 
     
-    api = NKDATA.get("Api") 
+    api = NKDATA.get("Api", None) 
     stats = NKDATA["Stats"]["Odyssey"]  
-    towers = NKDATA.get("Towers")
-    emotes = NKDATA.get("Emotes")
-    maps = NKDATA.get("Maps")
+    towers = NKDATA.get("Towers", None)
+    emotes = NKDATA.get("Emotes", None)
+    maps = NKDATA.get("Maps", None)
     eventURL = EVENTURLS["Odyssey"][difficulty]
-    
-    if not stats or not towers or not api or not emotes or not maps:
-        return  
 
     title = (
         f"{validateTitle(stats, difficulty)}\n"

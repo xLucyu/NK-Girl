@@ -19,7 +19,8 @@ class Challenge(commands.Cog):
     )
     async def lookup(self, ctx:discord.ApplicationContext, code: str):
 
-        await ctx.respond(code)
+        embed = challengeProfile(index=code)
+        await ctx.respond(embed=embed)
 
     @challenge.command(name="daily", description="look up a challenge", guild=discord.Object(id=int(GUILDID)))
     @discord.option(
@@ -30,8 +31,11 @@ class Challenge(commands.Cog):
         )
     async def daily(self, ctx:discord.ApplicationContext, difficulty: str = "Advanced"):
 
-        embed = challengeProfile(index=0, difficulty="daily")
-        await ctx.respond(difficulty)
+        if difficulty == "Co-op":
+            difficulty = "coop"
+        
+        embed = challengeProfile(index=None, difficulty=difficulty)
+        await ctx.respond(embed=embed)
 
 def setup(bot):
     bot.add_cog(Challenge(bot))

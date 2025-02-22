@@ -51,6 +51,11 @@ def getMetaData(Body: dict) -> dict:
             "TileType": Body.get("TileType", None),
             "Relic": Body.get("RelicType", None),
             "GameData": Body.get("GameData", None)
+        },
+        "Challenge": {
+            "Name": Body.get("name", None),
+            "ID": Body.get("id", None),
+            "Creator": Body.get("creator", None)
         }
     }
  

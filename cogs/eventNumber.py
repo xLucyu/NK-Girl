@@ -24,3 +24,9 @@ def getCurrentCTEvent(): #this is really just for clean up
     timeDifference = currentTimeStamp - startTimeStamp
     current_Number = math.floor(timeDifference / (14 * 24 * 60 * 60 * 1000)) #ct is only every 2 weeks
     return round(current_Number)
+
+def getcurrentDailyNumber(firstTimeStamp, currentTimeStamp):
+    
+    timeDifference = currentTimeStamp - firstTimeStamp 
+    current_Number = math.floor(timeDifference / (24 * 60 * 60 * 1000)) #daily challenges
+    return round(current_Number) 

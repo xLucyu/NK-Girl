@@ -47,14 +47,12 @@ class BossDetails(commands.Cog):
                     ["Elite", "ELITE", "danger"]
                 ]
             }
-
          
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)
         view.message = message   
 
         
-
 def setup(bot):
     bot.add_cog(BossDetails(bot))
 

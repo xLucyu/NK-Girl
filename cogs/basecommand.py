@@ -5,10 +5,12 @@ from utils.filter.filteredtowers import filtertowers
 from utils.filter.filteredmodifiers import filtermodifiers
 from config import BOTID
 
-def baseCommand(urls, index):
+def baseCommand(urls, index=None):
     
+
     try:
-        if index: 
+        if index is not None:
+
             api = getID(urls, index=index) 
 
             if not api:

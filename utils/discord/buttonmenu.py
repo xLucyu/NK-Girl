@@ -31,7 +31,7 @@ class ButtonMenu(discord.ui.Button):
             
             data = self.parentView.index[messageID] 
             data["Difficulty"] = difficulty 
-            selectedIndex = data.get("EventIndex", 0)
+            selectedIndex = data.get("EventIndex", 0) 
             embed, _ = self.function(selectedIndex, difficulty.lower()) #type: ignore
             await interaction.response.edit_message(embed=embed)
 

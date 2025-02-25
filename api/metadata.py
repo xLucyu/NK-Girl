@@ -55,7 +55,10 @@ def getMetaData(Body: dict) -> dict:
         "Challenge": {
             "Name": Body.get("name", None),
             "ID": Body.get("id", None),
-            "Creator": Body.get("creator", None)
+            "Creator": Body.get("creator", None),
+            "Wins": Body.get("wins", None),
+            "Losses": Body.get("losses", None), 
+            
         }
     }
  

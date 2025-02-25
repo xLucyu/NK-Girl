@@ -24,10 +24,10 @@ class SelectView(discord.ui.View):
             for num in range(len(self.eventNames)):
                 self.addSelectMenu(num)
         else: 
-            if self.event[0] in ["Boss", "Odyssey", "Coop Mode"]: 
+            if self.event[0] in ["Boss", "Odyssey", "Coop Mode", None]: 
                 self.addButtonMenu()
-            
-            self.addSelectMenu(0)
+            if self.event[0] is not None: 
+                self.addSelectMenu(0)
 
  
     def addSelectMenu(self, num):

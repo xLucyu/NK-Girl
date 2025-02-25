@@ -1,6 +1,6 @@
 bosshp = {
     "standard": {
-        "Blonnarius": {
+        "Bloonarius": {
             "TierHP": [20_000, 75_000, 350_000, 750_000, 3_000_000],
             "Skulls": 4
         },
@@ -28,7 +28,7 @@ bosshp = {
         }
     },
     "elite": {
-        "Blonnarius": {
+        "Bloonarius": {
             "TierHP": [50_000, 300_000, 2_000_000, 8_000_000, 40_000_000],
             "Skulls": 8
         },

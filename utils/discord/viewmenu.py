@@ -57,12 +57,11 @@ class SelectView(discord.ui.View):
 
 
     async def on_timeout(self):
-
-        self.clear_items()
+ 
         self.index.clear()
 
         if self.message:
             try:
-                await self.message.edit(view=self)
+                await self.message.edit(view=None)
             except discord.NotFound:
                 pass

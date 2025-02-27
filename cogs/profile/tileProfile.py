@@ -9,6 +9,28 @@ from utils.assets.urls import EVENTURLS
 from config import TILESURL, BOTID
 
 
+def getCTdata(urls: dict, tileCode: str, eventIndex: int):
+     
+    try: 
+        body = getData(url=f"{urls.get('base')}/{urls.get('extensions')}") 
+        emotes = getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis")
+
+
+        if not body:
+            raise ValueError("CTNotFound") 
+        
+        if tileCode.upper() not in body:
+            raise ValueError("TileNotFound")
+
+        data = getMetaData(body.get(tileCode.upper()))
+        categorizedTiles = getSpecialTiles(body, eventIndex) 
+        
+        return data, emotes, categorizedTiles
+        
+    except Exception as e:
+        raise ValueError(e)
+
+
 def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
 
     match tileType:
@@ -80,24 +102,6 @@ def getSpecialTiles(body: dict, eventIndex: int):
     return categorizedTiles
 
 
-def getCTdata(urls: dict, tileCode: str, eventIndex: int):
-     
-    try:
-        body = getData(url=f"{urls.get('base')}/{urls.get('extensions')}")
-        emotes = getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis")
-
-        if not body:
-            return 
-        
-        categorizedTiles = getSpecialTiles(body, eventIndex) 
-        data = getMetaData(body.get(tileCode.upper()))
-        
-        return data, emotes, categorizedTiles
-        
-    except:
-        return 
-
-
 def tileProfile(eventIndex: int, tileCode: str):
      
     urls = {
@@ -114,8 +118,8 @@ def tileProfile(eventIndex: int, tileCode: str):
 
     NKDATA, emotes, categorizedTiles = getCTdata(urls, tileCode, eventIndex) #type: ignore   
 
-    if not NKDATA or not emotes:
-        return 
+    if not NKDATA or not emotes: 
+        return  
 
     gameData = NKDATA["CT"]["GameData"]
     availableTowers = gameData["dcModel"]["towers"]["_items"]

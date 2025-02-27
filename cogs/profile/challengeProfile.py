@@ -43,7 +43,7 @@ def challengeProfile(index=None, difficulty=None):
  
      
     if difficulty is None:
-        urls = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}" #challenge code 
+        urls = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}" #challenge code
         NKDATA = baseCommand(urls, index=None)
 
     else:
@@ -55,7 +55,7 @@ def challengeProfile(index=None, difficulty=None):
         NKDATA = baseCommand(urls, currentDaily)
  
     if not NKDATA:
-        return 
+        raise ValueError("ChallengeCodeNotFound")
 
     stats = NKDATA.get("Stats", None)
     towers = NKDATA.get("Towers", None)

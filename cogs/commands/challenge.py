@@ -10,24 +10,22 @@ class Challenge(commands.Cog):
 
         self.bot = bot
 
-    challenge = discord.SlashCommandGroup("challenge", "")
+    challenge = discord.SlashCommandGroup("challenge", "", integration_types={discord.IntegrationType.user_install,
+                                                                              discord.IntegrationType.guild_install})
 
-    @challenge.command(name="lookup", description="look up a challenge", guild=discord.Object(id=int(GUILDID)))
-    @discord.option(
-        "code",
-        description = "Enter a challenge code",
-        required = True
-    )
+    @challenge.command(name="lookup", description="look up a challenge",
+                       integration_types = {discord.IntegrationType.user_install,
+                                             discord.IntegrationType.guild_install}) 
+    @discord.option("code", description = "Enter a challenge code", required = True)
     async def lookup(self, ctx:discord.ApplicationContext, code: str):
 
         embed = challengeProfile(index=code.upper())
         await ctx.respond(embed=embed)
 
 
-
-
-
-    @challenge.command(name="daily", description="Get the current daily challenge.", guild=discord.Object(id=int(GUILDID))) #type: ignore
+    @challenge.command(name="daily", description="Get the current daily challenge.",
+                       integration_types = {discord.IntegrationType.user_install,
+                                            discord.IntegrationType.guild_install})
     @discord.option(
             "difficulty",
             description = "Enter the type of daily challenge, default is Advanced.",

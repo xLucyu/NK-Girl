@@ -6,6 +6,7 @@ from utils.assets.urls import EVENTURLS
 from utils.filter.embedfilter import filterembed 
 
 def getBossData(urls):
+
     try:
         api = getID(urls, index=0) 
 

@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from config import GUILDID
 from cogs.profile.odysseyProfile import odysseyProfile
 from utils.discord.viewmenu import SelectView
 
@@ -10,7 +9,10 @@ class Odyssey(commands.Cog):
 
         self.bot = bot
     
-    @discord.slash_command(name="odyssey", description="Get Odyssey Data", guild=discord.Object(id=int(GUILDID))) #type: ignore
+    @discord.slash_command(name="odyssey", description="Get Odyssey Data", 
+                           integration_types={discord.IntegrationType.user_install,
+                                              discord.IntegrationType.guild_install})
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "difficulty",
         description = "Choose a Difficulty, default is hard.",

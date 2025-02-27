@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-from config import GUILDID
 from cogs.profile.raceProfile import raceProfile 
 from utils.discord.viewmenu import SelectView
 
@@ -12,7 +11,9 @@ class Race(commands.Cog):
         self.bot = bot
 
 
-    @discord.slash_command(name="race", description="Show Race Data", guild=discord.Object(id=int(GUILDID))) 
+    @discord.slash_command(name="race", description="Show Race Data", 
+                           integration_types={discord.IntegrationType.user_install,
+                                              discord.IntegrationType.guild_install}) 
     async def race(self, ctx: discord.ApplicationContext):
          
         embed, names = raceProfile(index=0, difficulty=None) #type: ignore

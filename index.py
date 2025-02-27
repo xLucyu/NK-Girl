@@ -1,4 +1,4 @@
-from config import BOTTOKEN 
+from config import BOTTOKEN
 import discord, os
 
 
@@ -9,7 +9,7 @@ async def on_ready():
 
     for guild in bot.guilds:
         
-        print(guild)
+        print(guild) 
 
 def load_cogs(bot) -> None:
 
@@ -17,9 +17,12 @@ def load_cogs(bot) -> None:
         if file.endswith(".py"):
             bot.load_extension(f"cogs.commands.{file[:-3]}")
 
+    bot.load_extension("utils.logging.errorhandler")
+
 
 def main() -> None:
 
     load_cogs(bot) 
     bot.run(BOTTOKEN)
+
 main()

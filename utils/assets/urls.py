@@ -111,7 +111,7 @@ EVENTURLS = {
         "Pat's Pond": "https://static.wikia.nocookie.net/b__/images/9/96/PatsPond_No_UI.png/revision/latest?cb=20200519013106&path-prefix=bloons",
         "Peninsula": "https://static.wikia.nocookie.net/b__/images/b/b7/Peninsula_No_UI.png/revision/latest?cb=20200518232444&path-prefix=bloons",
         "Polyphemus": "https://static.wikia.nocookie.net/b__/images/2/2c/Polyphemus_No_UI.png/revision/latest?cb=20230404070617&path-prefix=bloons",
-        "Protect the Yacht": "https://static.wikia.nocookie.net/b__/images/8/8a/ProtectTheYacht_No_UI.png/revision/latest?cb=20240511170134&path-prefix=bloons",
+        "Protect The Yacht": "https://static.wikia.nocookie.net/b__/images/8/8a/ProtectTheYacht_No_UI.png/revision/latest?cb=20240511170134&path-prefix=bloons",
         "Quad": "https://static.wikia.nocookie.net/b__/images/6/69/Quad_No_UI.png/revision/latest?cb=20200519013107&path-prefix=bloons",
         "Quarry": "https://static.wikia.nocookie.net/b__/images/5/53/Quarry_No_UI.png/revision/latest?cb=20221008184912&path-prefix=bloons",
         "Quiet Street": "https://static.wikia.nocookie.net/b__/images/4/4e/QuietStreet_No_UI.png/revision/latest?cb=20211209004434&path-prefix=bloons",

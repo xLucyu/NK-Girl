@@ -7,7 +7,6 @@ from config import BOTID
 
 def baseCommand(urls, index=None):
     
-
     try:
         if index is not None:
 

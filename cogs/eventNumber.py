@@ -17,7 +17,7 @@ def getCurrentCTEvent(): #this is really just for clean up
     ctIndex = getID(urls, index=0)
 
     if not ctIndex:
-        return None
+        return  
      
     startTimeStamp = 1660082400000
     currentTimeStamp = ctIndex.get("TimeStamp", None) 

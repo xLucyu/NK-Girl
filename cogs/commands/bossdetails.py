@@ -1,6 +1,5 @@
 import discord 
 from discord.ext import commands
-from config import GUILDID
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
 from utils.discord.viewmenu import SelectView
 
@@ -11,7 +10,9 @@ class BossDetails(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(name="bossdetails", description="Show details about the current Boss.",
-                           guild=discord.Object(id=int(GUILDID))) #type: ignore
+                           integration_types = {discord.IntegrationType.user_install,
+                                                discord.IntegrationType.guild_install})
+    @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "difficulty",
         description = "Choose a difficulty, default is Normal.",

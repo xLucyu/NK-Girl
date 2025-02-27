@@ -3,7 +3,7 @@ import requests
 def getData(url):
 
     try: 
-        data = requests.get(url)
+        data = requests.get(url) 
         if data.status_code == 200:
             return data.json() 
 
@@ -25,7 +25,7 @@ def getID(urls, index):
         "TimeStamp": selectedID.get("start", None),
         "LBType": selectedID.get("scoringType", None),
         "Name": selectedID.get("name", None),
-        "MetaData": selectedID.get(urls.get("extension"))
+        "MetaData": selectedID.get(urls.get("extension", None))
     }
 
     return apiData

@@ -1,6 +1,5 @@
 import discord 
 from discord.ext import commands
-from config import GUILDID
 from cogs.profile.tileProfile import tileProfile
 from cogs.eventNumber import getCurrentCTEvent
 from utils.discord.viewmenu import SelectView
@@ -11,7 +10,10 @@ class Tile(commands.Cog):
         
         self.bot = bot 
  
-    @discord.slash_command(name="tile", description="Get CT Tile Data", guild=discord.Object(id=int(GUILDID)))
+    @discord.slash_command(name="tile", description="Get CT Tile Data", 
+                           integration_types={discord.IntegrationType.user_install,
+                                              discord.IntegrationType.guild_install})
+    @commands.cooldown(1, 5, commands.BucketType.user) 
     @discord.option("tile_code", description = "The 3 letter Tile code.", required = True)
     @discord.option("event", description = "CT Week, default will be the latest week.", required = False)
     async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0):

@@ -25,7 +25,7 @@ class ButtonMenu(discord.ui.Button):
             return
          
         try:
-            difficulty = self.custom_id
+            difficulty = self.custom_id 
             if messageID not in self.parentView.index:
                 self.parentView.index[messageID] = dict() 
             

@@ -44,6 +44,8 @@ def handlecategories(towers: dict, emotes: dict) -> dict:
     allowedTowers = {category: [] for category, _ in categories.items()}
     categorizedTowers = ((cat, tow) for cat, towerlist in categories.items() for tow in towerlist)
 
+    seen = set()
+
     for cat, tow in categorizedTowers:
             
         emoteid = emotes.get(tow[0])
@@ -51,8 +53,9 @@ def handlecategories(towers: dict, emotes: dict) -> dict:
         for tower in towerKeys:
 
             tiers = getTiers(tower)
-            if tower["tower"] == tow[0]:
+            if tower["tower"] == tow[0] and tow[0] not in seen: #sometimes towers appear twice in the api lol
                 allowedTowers[cat].append((f"<:{tower['tower']}:{emoteid}>", tower["max"], tow[1], tiers))
+                seen.add(tow[0])
 
         
     return allowedTowers

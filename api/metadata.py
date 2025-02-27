@@ -38,7 +38,7 @@ def getMetaData(Body: dict) -> dict:
                 "MaxParagons": Body.get("maxParagons", 9999),
                 "LeastTiers": Body.get("leastTiersUsed", False),
                 "LeastCash": Body.get("leastCashUsed", False),
-                "PowersDisabled": Body.get("disabledPowers", False) 
+                "PowersDisabled": Body.get("disablePowers", False) 
             },
         "Odyssey": {
             "Extreme": Body.get("isExtreme", False),

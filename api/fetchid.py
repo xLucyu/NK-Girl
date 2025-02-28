@@ -4,11 +4,20 @@ def getData(url):
 
     try: 
         data = requests.get(url) 
-        if data.status_code == 200:
-            return data.json() 
+        match data.status_code:
+            case 200:
+                return data.json()
+            case 400 | 403 | 404 :
+                raise ValueError("RequestNoSuccess")
+            case 500 | 502 | 503 | 504:
+                raise ValueError("ServerDown")
+            case _:
+                raise ValueError()
 
-    except:
-        return None 
+
+    except requests.exceptions.RequestException as e:
+        raise ValueError(e)
+        
 
 def getID(urls, index):
     

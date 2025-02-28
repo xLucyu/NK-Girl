@@ -1,6 +1,5 @@
 import discord 
 from discord.ext import commands
-from config import GUILDID
 from cogs.profile.challengeProfile import challengeProfile
 from utils.discord.viewmenu import SelectView
 

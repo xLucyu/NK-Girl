@@ -38,21 +38,22 @@ def handlemodifiers(modifiers: dict) -> dict:
         match multiplier:
 
             case True:
-                activemodifiers[modifier] = True
+               activemodifiers[modifier] = True
 
             case dict():
                 activemodifiers.update(handlemodifiers(multiplier))
 
-            case 1 | 9999 | False | -1:
-                continue
-
             case int() | float():
 
-                if modifier == "MaxParagons" and multiplier == 10:
-                    continue
+                if modifier not in NOKEYS:
+                    if multiplier in [1, -1, False, 9999]:
+                        continue 
 
-                if modifier == "MaxTowers" and multiplier == 0:
-                    continue
+                if multiplier <= 0 or multiplier == 9999:
+                    continue 
+
+                if modifier == "MaxParagons" and multiplier > 9:
+                    continue 
 
                 value = (multiplier if modifier in NOKEYS else int(multiplier*100)) 
 

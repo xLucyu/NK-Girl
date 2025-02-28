@@ -34,11 +34,11 @@ class ErrorHandler(commands.Cog):
 
                 case e if "ServerDown" in e:
                     self.title = "Api Server Down"
-                    self.message = "The Bot is online, but cannot recieve Api information."
+                    self.message = "The Bot is online, but cannot recieve api information."
         
                 case _:  
                     self.title = "Unexpected Error"
-                    self.message = "Something unexpected went wrong. Please try again and contact the owner."
+                    self.message = f"Something unexpected went wrong. \nError: {error}"
         
         embed = discord.Embed(title=f"**{self.title}**", description=self.message, color=discord.Color.red())
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url) #type: ignore

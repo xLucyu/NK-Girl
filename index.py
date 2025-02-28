@@ -18,6 +18,7 @@ def load_cogs(bot) -> None:
             bot.load_extension(f"cogs.commands.{file[:-3]}")
 
     bot.load_extension("utils.logging.errorhandler")
+    bot.load_extension("utils.logging.logger")
 
 
 def main() -> None:

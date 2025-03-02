@@ -10,7 +10,7 @@ class Admin(commands.Cog):
 
         self.bot = bot
 
-    @discord.slash_command(name="sync", description="Sync commands", guild=discord.Object(id=int(GUILDID))) #type: ignore
+    @discord.slash_command(name="sync", description="owner only", guild=discord.Object(id=int(GUILDID))) #type: ignore
     @discord.option(
         "synctype",
         choices = ["guild", "global"],
@@ -36,20 +36,20 @@ class Admin(commands.Cog):
             print(f"Error: {e}")
 
 
-    @discord.slash_command(name="usage", description="check command usage", guild=discord.Object(id=int(GUILDID))) 
+    @discord.slash_command(name="usage", description="owner only", guild=discord.Object(id=int(GUILDID))) 
     async def usage(self, ctx: discord.ApplicationContext):
 
         if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")
 
-            commandTable = CommandTable.fetchCommands()
-            string = str()
+        commandTable = CommandTable.fetchCommands()
+        string = str()
 
-            for command in commandTable:
-                string += f"\nCommand: {command[0]}, Uses: {command[1]}"
+        for command in commandTable:
+            string += f"\nCommand: {command[0]}, Uses: {command[1]}"
 
-            embed = discord.Embed(title="Command Usage Overview", description=f"```{string}```", color=discord.Color.blue())
-            await ctx.respond(embed=embed) 
+        embed = discord.Embed(title="Command Usage Overview", description=f"```{string}```", color=discord.Color.blue())
+        await ctx.respond(embed=embed) 
     
 def setup(bot):
     bot.add_cog(Admin(bot))

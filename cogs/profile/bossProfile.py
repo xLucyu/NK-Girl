@@ -15,30 +15,38 @@ def bossProfile(index, difficulty):
     if not NKDATA:
         return 
     
-    api = NKDATA.get("Api") 
-    stats = NKDATA.get("Stats")
-    emotes = NKDATA.get("Emotes")
-    modifiers = NKDATA.get("Modifiers")
-    towers = NKDATA.get("Towers")
+    api = NKDATA.get("Api", None) 
+    stats = NKDATA.get("Stats", None)
+    emotes = NKDATA.get("Emotes", None)
+    modifiers = NKDATA.get("Modifiers", None)
+    towers = NKDATA.get("Towers", None)
 
-    if not api or not stats or not emotes or not modifiers or not towers:
-        return
+    bossLeaderboardType = {
+        "GameTime": f"<:EventRace:{emotes.get('EventRace')}> **Timed Leaderboard**",
+        "LeastCash": f"<:LeastCash:{emotes.get('LeastCash')}> **Least Cash Leaderboard**",
+        "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
+    }
 
     name = removeNumbers(api.get("Name"))
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][name]
     map = splitUppercase(stats.get("Map")) 
     modeDifficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode")) 
+    mode = splitUppercase(stats.get("Mode"))
+    lbtype = bossLeaderboardType[api.get("LBType", "GameTime")]
 
     if difficulty == "standard":
         difficulty = "normal"
+    
+    lives = f"<:Lives:{emotes.get('Lives')}> {stats.get('Lives')}"
+    cash = f"<:Cash:{emotes.get('Cash')}> ${stats.get('Cash'):,}"
+    rounds = f"<:Round:{emotes.get('Round')}> {stats.get('StartRound')}/{stats.get('EndRound')}"
 
     eventData = { 
         f"{difficulty.title()} Difficulty": [f"{map}, {modeDifficulty} - {mode}", False],
-        "Modifiers": ["\n".join(modifiers), False],
-        "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
-        "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
-        "Rounds": [f"<:Round:1342535466855038976> {stats.get('StartRound')}/{stats.get('EndRound')}", True],
+        "Modifiers": [f"{'\n'.join(modifiers)} \n\n{lbtype}", False],
+        "Lives": [lives, True],
+        "Cash": [cash, True],
+        "Rounds": [rounds, True],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],
         "Military": ["\n".join(towers[2]), True],
@@ -47,7 +55,6 @@ def bossProfile(index, difficulty):
         "Support": ["\n".join(towers[4]), True],
         }
  
-    
     eventNumber = splitNumbers(api.get("Name"))
     embed = filterembed(eventData, eventURL, title=f"{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][map])

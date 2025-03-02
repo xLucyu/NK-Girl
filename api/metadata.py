@@ -31,14 +31,14 @@ def getMetaData(Body: dict) -> dict:
                 "Bloon_Modifiers": Body.get("_bloonModifiers", None),
                 "MKDisabled": Body.get("disableMK", False),
                 "NoSelling": Body.get("disableSelling", False),
-                "AbilityCooldown": Body.get("abilityCooldownReductionMultiplier", 0),
-                "RemovableCost": Body.get("removeableCostMultiplier", 0),
                 "NoContinues": Body.get("noContinues", False),
-                "MaxTowers": Body.get("maxTowers", 9999),
-                "MaxParagons": Body.get("maxParagons", 9999),
                 "LeastTiers": Body.get("leastTiersUsed", False),
                 "LeastCash": Body.get("leastCashUsed", False),
-                "PowersDisabled": Body.get("disablePowers", False) 
+                "PowersDisabled": Body.get("disablePowers", False), 
+                "AbilityCooldown": Body.get("abilityCooldownReductionMultiplier", 0),
+                "RemovableCost": Body.get("removeableCostMultiplier", 0),
+                "MaxTowers": Body.get("maxTowers", 0),
+                "MaxParagons": Body.get("maxParagons", 0)
             },
         "Odyssey": {
             "Extreme": Body.get("isExtreme", False),

@@ -18,7 +18,7 @@ class Challenge(commands.Cog):
     @discord.option("code", description = "Enter a challenge code", required = True)
     async def lookup(self, ctx:discord.ApplicationContext, code: str):
 
-        embed = challengeProfile(index=code.upper())
+        embed, _ = challengeProfile(index=code.upper()) #type: ignore
         await ctx.respond(embed=embed)
 
 
@@ -36,12 +36,12 @@ class Challenge(commands.Cog):
         if difficulty == "Co-op":
             difficulty = "coop"
         
-        embed, _= challengeProfile(index=None, difficulty=difficulty.lower()) #type: ignore
+        embed, modes = challengeProfile(index=None, difficulty=difficulty.lower()) #type: ignore
 
         data = {
             "Author": ctx.author.id, 
-            "EventName": [None],
-            "PreviousEvents": ["placeholder"],
+            "EventName": ["Daily Challenge"],
+            "PreviousEvents": [modes],
             "Function": challengeProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,

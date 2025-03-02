@@ -43,25 +43,29 @@ def challengeProfile(index=None, difficulty=None):
  
      
     if difficulty is None:
-        urls = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}" #challenge code
-        NKDATA = baseCommand(urls, index=None)
+        urls = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}" 
+        NKDATA = baseCommand(urls, index=None) 
+        modes = None
 
     else:
         urls = {
             "base": "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
             "extension": "metadata"
         }
-        currentDaily = findIndex(urls, difficulty)
+        currentDaily = findIndex(urls, difficulty) if index is None else index
         NKDATA = baseCommand(urls, currentDaily)
+        modes = "placeholder"
  
     if not NKDATA:
         raise ValueError("ChallengeCodeNotFound")
-
+    
+    api = NKDATA.get("Api", None) 
     stats = NKDATA.get("Stats", None)
     towers = NKDATA.get("Towers", None)
     modifiers = NKDATA.get("Modifiers", None)
-    challengeKey = stats.get("Challenge")
-    creator = challengeKey.get("Creator")
+    modes = api.get("Names", None) if modes is not None else None
+    challengeKey = stats.get("Challenge", None)
+    creator = challengeKey.get("Creator", None)
     name = challengeKey.get("Name", None)
     challengeID = challengeKey.get("ID", None)
     wins = challengeKey.get("Wins", None)
@@ -77,7 +81,7 @@ def challengeProfile(index=None, difficulty=None):
         if not creator:
             return None
 
-        creatorName = creator["body"]["displayName"] #type: ignore
+        creatorName = creator["body"]["displayName"] 
         title = f"{creatorName}'s Challenge, Code: {index}"
         eventURL = EVENTURLS["Challenge"]["challenge"]
 
@@ -104,8 +108,8 @@ def challengeProfile(index=None, difficulty=None):
         "Magic": ["\n". join(towers[3]), True],
         "Support": ["\n".join(towers[4]), True],
         }
-
+     
     embed = filterembed(eventData, eventURL, title)
     embed.set_image(url=EVENTURLS["Maps"][map])
-    modes = ["Standard", "Advanced", "Co-op"]
+
     return embed, modes

@@ -10,7 +10,7 @@ modifiers = {
   "allRegen": "All Regen",
   "MKDisabled": "MK Disabled",
   "NoSelling": "No Selling",
-  "AbilityCooldown": "Abilitycooldownrate",
+  "AbilityCooldown": "Ability Cooldown Rate",
   "NoContinues": "No Continues",
   "MaxTowers": "Tower Limit",
   "MaxParagons": "Paragon Limit",

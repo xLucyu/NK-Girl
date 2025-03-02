@@ -45,25 +45,22 @@ def challengeProfile(index=None, difficulty=None):
     if difficulty is None:
         urls = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}" 
         NKDATA = baseCommand(urls, index=None) 
-        modes = None
 
     else:
         urls = {
             "base": "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
             "extension": "metadata"
         }
-        currentDaily = findIndex(urls, difficulty) if index is None else index
-        NKDATA = baseCommand(urls, currentDaily)
-        modes = "placeholder"
+        currentDaily = findIndex(urls, difficulty)
+        NKDATA = baseCommand(urls, currentDaily) 
  
     if not NKDATA:
         raise ValueError("ChallengeCodeNotFound")
-    
-    api = NKDATA.get("Api", None) 
+     
     stats = NKDATA.get("Stats", None)
     towers = NKDATA.get("Towers", None)
     modifiers = NKDATA.get("Modifiers", None)
-    modes = api.get("Names", None) if modes is not None else None
+    emotes = NKDATA.get("Emotes", None)
     challengeKey = stats.get("Challenge", None)
     creator = challengeKey.get("Creator", None)
     name = challengeKey.get("Name", None)
@@ -92,14 +89,18 @@ def challengeProfile(index=None, difficulty=None):
      
     map = splitUppercase(stats.get("Map"))
     difficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode")) 
+    mode = splitUppercase(stats.get("Mode"))
+
+    lives = f"<:Lives:{emotes.get('Lives')}> {stats.get('Lives')}"
+    cash = f"<:Cash:{emotes.get('Cash')}> ${stats.get('Cash'):,}"
+    rounds = f"<:Round:{emotes.get('Round')}> {stats.get('StartRound')}/{stats.get('EndRound')}"
 
     eventData = { 
         name: [f"{map}, {difficulty} - {mode}", False],
         "Modifiers": ["\n".join(modifiers), False],
-        "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
-        "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
-        "Rounds": [f"<:Round:1342535466855038976> {stats.get('StartRound')}/{stats.get('EndRound')}", True],
+        "Lives": [lives, True],
+        "Cash": [cash, True],
+        "Rounds": [rounds, True],
         "Statistics": [statistics, False],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],
@@ -111,5 +112,6 @@ def challengeProfile(index=None, difficulty=None):
      
     embed = filterembed(eventData, eventURL, title)
     embed.set_image(url=EVENTURLS["Maps"][map])
+    modes = ["placeholder"]
 
     return embed, modes

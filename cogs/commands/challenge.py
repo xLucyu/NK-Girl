@@ -36,12 +36,12 @@ class Challenge(commands.Cog):
         if difficulty == "Co-op":
             difficulty = "coop"
         
-        embed, modes = challengeProfile(index=None, difficulty=difficulty.lower()) #type: ignore
+        embed, _ = challengeProfile(index=None, difficulty=difficulty.lower()) #type: ignore
 
         data = {
             "Author": ctx.author.id, 
-            "EventName": ["Daily Challenge"],
-            "PreviousEvents": [modes],
+            "EventName": [None],
+            "PreviousEvents": ["Placeholder"],
             "Function": challengeProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,

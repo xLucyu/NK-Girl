@@ -16,7 +16,7 @@ def validateTitle(stats, difficulty):
     return title
 
 
-def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
+def filtermaps(maps: dict, eventData: dict, emotes: dict) -> None:
     
 
     for index in range(len(maps)):
@@ -30,8 +30,10 @@ def filtermaps(maps: dict, eventData: dict, emotes: list) -> None:
         difficulty = splitUppercase(map.get("difficulty"))
         mapName = splitUppercase(map.get("map"))
         title = f"{index+1}. {mapName} ({difficulty}, {mode})"
-        value = [f"<:cash:1338140224353603635> ${map.get('startingCash'):,}, <:Round:1342535466855038976> {map.get('startRound')}/{map.get('endRound')}\n{', '.join(modifiers)}", False]
-        
+        cash = f"<:Cash:{emotes.get('Cash')}> ${map.get('startingCash'):,}"
+        round = f"<:Round:{emotes.get('Round')}> {map.get('startRound')}/{map.get('endRound')}"
+
+        value = [f"{cash}, {round}\n{', '.join(modifiers)}", False] 
         eventData[title] = value
 
 
@@ -56,7 +58,7 @@ def odysseyProfile(index, difficulty):
 
     title = (
         f"{validateTitle(stats, difficulty)}\n"
-        f"Lives: <:Lives:1337794403019915284> {stats.get('StartHealth')}\n"
+        f"Lives: <:Lives:{emotes.get('Lives')}> {stats.get('StartHealth')}\n"
         f"Max Seats: {stats.get('MaxTowers')}\n"
         f"Max Monkeys: {stats.get('MaxSlots')}"
     )

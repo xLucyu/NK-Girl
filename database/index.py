@@ -2,11 +2,11 @@ import sqlite3
 
 class CommandTable:
 
-    def __init__(self, command):
+    def __init__(self):
 
         self.connector = sqlite3.connect("database/commands.db")
-        self.cursor = self.connector.cursor()
-        self.command = command 
+        self.cursor = self.connector.cursor() 
+        self._createtable()
         
     def _createtable(self):
 
@@ -15,27 +15,28 @@ class CommandTable:
             command TEXT PRIMARY KEY,
             uses INTEGER DEFAULT 0
             )
-        """) 
-        self.increaseCommandUsage()
+        """)  
 
-    def increaseCommandUsage(self):
+    def increaseCommandUsage(self, command):
         
         self.cursor.execute(
             """
             INSERT INTO COMMANDS (command, uses) VALUES (?, 1)
             ON CONFLICT(COMMAND) DO UPDATE SET uses = uses + 1
-            """, (self.command,)
+            """, (command,)
         )
         self.connector.commit()
     
-    def fetchCommands(self):
+    @staticmethod
+    def fetchCommands(path = "database/commands.db"):
         
-        self.cursor.execute("SELECT * FROM COMMANDS ORDER BY uses DESC")
-        return self.cursor.fetchall()
+        with sqlite3.connect(path) as connector:
+            cursor = connector.cursor()
+            cursor.execute("select * from COMMANDS order by uses desc")
+            return cursor.fetchall()
 
     def close(self):
         self.connector.close()
-
 
     def __del__(self):
         self.close()

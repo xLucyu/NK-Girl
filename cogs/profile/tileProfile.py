@@ -37,9 +37,9 @@ def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
         case "Relic":
             name, emoteid = next(((name, eid) for name, eid in emotes.items() if name == relicType), (None, None))
         case "Banner":
-            name, emoteid = "Banner", 1338202859854102539
+            name, emoteid = "Banner", emotes.get("Banner")
         case _:
-            name, emoteid = "Regular", 1338202872222978139
+            name, emoteid = "Regular", emotes.get("Regular")
 
     return f"<:{name}:{emoteid}>" 
 
@@ -142,12 +142,16 @@ def tileProfile(eventIndex: int, tileCode: str):
     
     towers = filtertowers(availableTowers, emotes)
     modifiers = filtermodifiers(activeModifiers, emotes)
+
+    lives = f"<:Lives:{emotes.get('Lives')}> {lives}"
+    cash = f"<:Cash:{emotes.get('Cash')}> ${gameData['dcModel']['startRules']['cash']:,}"
+    rounds = f"<:Round:{emotes.get('Round')}> {gameData['dcModel']['startRules']['round']}/{endRound}"
      
     eventData = {
         head: ["\n", False],
-        "Lives": [f"<:Lives:1337794403019915284> {lives}", True],
-        "Cash": [f"<:cash:1338140224353603635> ${gameData['dcModel']['startRules']['cash']}", True],
-        "Rounds": [f"<:Round:1342535466855038976> {gameData['dcModel']['startRules']['round']}/{endRound}", True],
+        "Lives": [lives, True],
+        "Cash": [cash, True],
+        "Rounds": [rounds, True],
         "Modifiers": ["\n".join(modifiers), False],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],

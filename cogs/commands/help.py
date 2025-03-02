@@ -25,13 +25,13 @@ class Help(commands.Cog):
 
         embed.add_field(
             name = "**Overview**",
-            value = "This bot was created to centralize all BTD6 Events into one Bot with a few extras. It's made in Python and focuses on simplicity and flexibility. Every command usage will be stored in our database.",
+            value = "This bot was created to centralize all BTD6 Events into one Bot with a few extras. It's made in Python and focuses on simplicity and flexibility.",
             inline = False
         ) 
 
         embed.add_field(
             name = "**Commands**",
-            value = "We have a variety of commands for you just try them out by typing `/race` or `/boss`. This will display the current boss event as well as previous ones!",
+            value = "We have a variety of commands for you just try them out by typing `/race` or `/boss`. This will display the current boss event as well as previous ones! This one also supports extra ones like the current daily challenge. Just type `/challenge daily`. Or if you're worried if you're first strike is enough to insta kill ? Just type /bossdetails and it will show you the exact hp of a boss.",
             inline = False
         )
 

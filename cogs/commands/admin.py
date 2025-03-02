@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
 from config import GUILDID
+from database.index import CommandTable
 
 
-class Sync(commands.Cog):
+class Admin(commands.Cog):
 
     def __init__(self, bot):
 
@@ -23,17 +24,32 @@ class Sync(commands.Cog):
         try:
 
             if synctype == "global": 
-                await ctx.respond("commands are syncing globally.") 
+                print("commands are syncing globally") 
                 await self.bot.sync_commands()  
                 print("commands are synced")
             else:
-                await ctx.respond("commands are syncing for your server only.")
+                print("commands are syncing for the guild only.")
                 await self.bot.sync_commands(guild_ids=[int(GUILDID)]) #type: ignore
                 print("commands are synced")
 
         except Exception as e:
             print(f"Error: {e}")
 
+
+    @discord.slash_command(name="usage", description="check command usage", guild=discord.Object(id=int(GUILDID))) 
+    async def usage(self, ctx: discord.ApplicationContext):
+
+        if ctx.author.id != 1220815634515099718:
+            await ctx.respond("You're not the owner")
+
+            commandTable = CommandTable.fetchCommands()
+            string = str()
+
+            for command in commandTable:
+                string += f"\nCommand: {command[0]}, Uses: {command[1]}"
+
+            embed = discord.Embed(title="Command Usage Overview", description=f"```{string}```", color=discord.Color.blue())
+            await ctx.respond(embed=embed) 
     
 def setup(bot):
-    bot.add_cog(Sync(bot))
+    bot.add_cog(Admin(bot))

@@ -57,7 +57,7 @@ EVENTURLS = {
             "challenge": "https://static.wikia.nocookie.net/b__/images/8/86/CreateChallengeIcon.png/revision/latest?cb=20200601042401&path-prefix=bloons"
     },
     "Maps": {
-        "Adora's Temple": "https://static.wikia.nocookie.net/b__/images/0/0a/AdorasTemple_No_UI.png/revision/latest?cb=20200519012904&path-prefix=bloons",
+        "Adoras Temple": "https://static.wikia.nocookie.net/b__/images/0/0a/AdorasTemple_No_UI.png/revision/latest?cb=20200519012904&path-prefix=bloons",
         "Alpine Run": "https://static.wikia.nocookie.net/b__/images/0/07/AlpineRun_No_UI.png/revision/latest?cb=20200519012905&path-prefix=bloons",
         "Ancient Portal": "https://static.wikia.nocookie.net/b__/images/b/bc/AncientPortal_No_UI.png/revision/latest?cb=20241009065716&path-prefix=bloons",
         "Another Brick": "https://static.wikia.nocookie.net/b__/images/f/f4/AnotherBrick_No_UI.png/revision/latest?cb=20200519012906&path-prefix=bloons",
@@ -74,6 +74,7 @@ EVENTURLS = {
         "Covered Garden": "https://static.wikia.nocookie.net/b__/images/d/d0/CoveredGarden_No_UI.png/revision/latest?cb=20221012204437&path-prefix=bloons", 
         "Cracked": "https://static.wikia.nocookie.net/b__/images/3/3e/Cracked_No_UI.png/revision/latest?cb=20200519012909&path-prefix=bloons",
         "Cornfield": "https://static.wikia.nocookie.net/b__/images/e/e6/Cubism_No_UI.png/revision/latest?cb=20200519012910&path-prefix=bloons",
+        "Cubism": "https://static.wikia.nocookie.net/b__/images/e/e6/Cubism_No_UI.png/revision/latest?cb=20200519012910&path-prefix=bloons",
         "Dark Castle": "https://static.wikia.nocookie.net/b__/images/1/1f/DarkCastle_No_UI.png/revision/latest?cb=20200519012911&path-prefix=bloons",
         "Dark Dungeons": "https://static.wikia.nocookie.net/b__/images/8/8b/DarkDungeons_No_UI.png/revision/latest?cb=20230216084928&path-prefix=bloons",
         "Dark Path": "https://static.wikia.nocookie.net/b__/images/6/6b/DarkPath_No_UI.png/revision/latest?cb=20231010074904&path-prefix=bloons",
@@ -108,7 +109,7 @@ EVENTURLS = {
         "One Two Tree": "https://static.wikia.nocookie.net/b__/images/0/0b/OneTwoTree_No_UI.png/revision/latest?cb=20221208131615&path-prefix=bloons",
         "Ouch": "https://static.wikia.nocookie.net/b__/images/0/09/Ouch_No_UI.png/revision/latest?cb=20200519013105&path-prefix=bloons",
         "Park Path": "https://static.wikia.nocookie.net/b__/images/d/d8/ParkPath_No_UI.png/revision/latest?cb=20200519013106&path-prefix=bloons",
-        "Pat's Pond": "https://static.wikia.nocookie.net/b__/images/9/96/PatsPond_No_UI.png/revision/latest?cb=20200519013106&path-prefix=bloons",
+        "Pats Pond": "https://static.wikia.nocookie.net/b__/images/9/96/PatsPond_No_UI.png/revision/latest?cb=20200519013106&path-prefix=bloons",
         "Peninsula": "https://static.wikia.nocookie.net/b__/images/b/b7/Peninsula_No_UI.png/revision/latest?cb=20200518232444&path-prefix=bloons",
         "Polyphemus": "https://static.wikia.nocookie.net/b__/images/2/2c/Polyphemus_No_UI.png/revision/latest?cb=20230404070617&path-prefix=bloons",
         "Protect The Yacht": "https://static.wikia.nocookie.net/b__/images/8/8a/ProtectTheYacht_No_UI.png/revision/latest?cb=20240511170134&path-prefix=bloons",

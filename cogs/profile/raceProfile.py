@@ -5,6 +5,7 @@ from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
 
 
+
 def raceProfile(index, difficulty):
      
     urls = {
@@ -18,7 +19,8 @@ def raceProfile(index, difficulty):
         return 
     
     api = NKDATA.get("Api", None) 
-    stats = NKDATA.get("Stats", None) 
+    stats = NKDATA.get("Stats", None)
+    emotes = NKDATA.get("Emotes", None)
     modifiers = NKDATA.get("Modifiers", None)
     towers = NKDATA.get("Towers", None)
     eventURL = EVENTURLS["Race"]["race"] 
@@ -26,14 +28,18 @@ def raceProfile(index, difficulty):
 
     map = splitUppercase(stats.get("Map"))
     difficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode")) 
+    mode = splitUppercase(stats.get("Mode"))
+
+    lives = f"<:Lives:{emotes.get('Lives')}> {stats.get('Lives')}"
+    cash = f"<:Cash:{emotes.get('Cash')}> ${stats.get('Cash'):,}"
+    rounds = f"<:Round:{emotes.get('Round')}> {stats.get('StartRound')}/{stats.get('EndRound')}"
 
     eventData = { 
         api.get("Name"): [f"{map}, {difficulty} - {mode}", False],
         "Modifiers": ["\n".join(modifiers), False], 
-        "Lives": [f"<:Lives:1337794403019915284> {stats.get('Lives')}", True],
-        "Cash": [f"<:cash:1338140224353603635> ${stats.get('Cash'):,}", True],
-        "Rounds": [f"<:Round:1342535466855038976> {stats.get('StartRound')}/{stats.get('EndRound')}", True],
+        "Lives": [lives, True],
+        "Cash": [cash, True],
+        "Rounds": [rounds, True],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],
         "Military": ["\n".join(towers[2]), True],

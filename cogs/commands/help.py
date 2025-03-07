@@ -31,13 +31,19 @@ class Help(commands.Cog):
 
         embed.add_field(
             name = "**Commands**",
-            value = "We have a variety of commands for you just try them out by typing `/race` or `/boss`. This will display the current boss event as well as previous ones! This one also supports extra ones like the current daily challenge. Just type `/challenge daily`. Or if you're worried if you're first strike is enough to insta kill ? Just type /bossdetails and it will show you the exact hp of a boss.",
+            value = "We have a variety of commands for you just try them out by typing `/race` or `/boss`. This will display the current boss event as well as previous ones! This one also supports extra ones like the current daily challenge. Just type `/challenge daily`. Or if you're worried if you're first strike is enough to insta kill ? Just type `/bossdetails` and it will show you the exact hp of a boss.",
             inline = False
         )
 
         embed.add_field(
             name = "Leaderboards",
             value = "We offer Leaderboards for every gamemode aswell as Multiplayer Leaderboards for Bosses. Just type `leaderboard mode` and enter some credentials to get the current Leaderboard.",
+            inline = False
+        )
+
+        embed.add_field(
+            name = "Github",
+            value= "This project is open source, so feel free to view the code [here](https://github.com/xLucyu/L-K).",
             inline = False
         )
 

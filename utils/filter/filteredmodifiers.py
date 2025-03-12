@@ -49,7 +49,7 @@ def handlemodifiers(modifiers: dict) -> dict:
                     if multiplier in [1, -1, False, 9999]:
                         continue 
 
-                if multiplier <= 0 or multiplier == 9999:
+                if multiplier <= 0 and modifier != "MaxParagons" or multiplier == 9999:
                     continue 
 
                 if modifier == "MaxParagons" and multiplier > 9:

@@ -3,7 +3,6 @@ from api.metadata import getBody, getMetaData
 from api.emojis import getEmojis
 from utils.filter.filteredtowers import filtertowers
 from utils.filter.filteredmodifiers import filtermodifiers
-from config import BOTID
 
 def baseCommand(urls, index=None):
     
@@ -31,7 +30,7 @@ def baseCommand(urls, index=None):
         if not stats:
             return 
 
-        emotes = getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis")
+        emotes = getEmojis()
         
         odysseymapsKey = stats.get("Maps", None)
         

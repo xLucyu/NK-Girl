@@ -1,8 +1,8 @@
 import requests
-from config import BOTTOKEN 
+from config import BOTTOKEN, BOTID
 
 
-def getEmojis(url):
+def getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis"):
 
     try:
 

@@ -6,15 +6,13 @@ from utils.filter.filteredtowers import filtertowers
 from utils.filter.filteredmodifiers import filtermodifiers
 from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
-from config import TILESURL, BOTID
 
 
 def getCTdata(urls: dict, tileCode: str, eventIndex: int):
      
     try: 
         body = getData(url=f"{urls.get('base')}/{urls.get('extensions')}") 
-        emotes = getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis")
-
+        emotes = getEmojis()
 
         if not body:
             raise ValueError("CTNotFound") 
@@ -105,7 +103,7 @@ def getSpecialTiles(body: dict, eventIndex: int):
 def tileProfile(eventIndex: int, tileCode: str):
      
     urls = {
-        "base": TILESURL,
+        "base": "https://storage.googleapis.com/btd6-ct-map/events",
         "extensions": f"{eventIndex}/tiles.json"
     }
 

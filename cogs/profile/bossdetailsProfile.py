@@ -5,7 +5,6 @@ from api.emojis import getEmojis
 from utils.assets.tierhp import bosshp
 from utils.assets.urls import EVENTURLS
 from utils.filter.embedfilter import filterembed 
-from config import BOTID
 from cogs.regex import splitNumbers
 
 def getBossData(urls):
@@ -18,7 +17,7 @@ def getBossData(urls):
 
         metaData = api.get("MetaData", None)
         body = getBody(url=metaData)
-        emojis = getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis")
+        emojis = getEmojis()
          
         if not body or not emojis:
             return
@@ -47,7 +46,10 @@ def tierfilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players:
         totalHp = round(baseHp * shieldHpMultiplier * skullMultiplier)
         skullHp = round(totalHp / bossIndex["Skulls"], 2)
         eventData[f"Tier {tier+1}"] = [
-        f"<:Lives:{emojis.get('Lives')}> TotalHP: {int(totalHp):,} HP\n<:Skull:{emojis.get('Skull')}> SkullHP: {int(skullHp):,} HP", 
+        f"""
+        <:Lives:{emojis.get('Lives')}> TotalHP: {int(totalHp):,}
+        HP\n<:Skull:{emojis.get('Skull')}> SkullHP: {int(skullHp):,} HP
+        """, 
         False]
 
 

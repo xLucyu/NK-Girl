@@ -69,6 +69,7 @@ EVENTURLS = {
         "Candy Falls": "https://static.wikia.nocookie.net/b__/images/8/8e/CandyFalls_No_UI.png/revision/latest?cb=20200519012907&path-prefix=bloons",
         "Cargo": "https://static.wikia.nocookie.net/b__/images/d/df/Cargo_No_UI.png/revision/latest?cb=20200519012907&path-prefix=bloons",
         "Castle Revenge": "https://static.wikia.nocookie.net/b__/images/d/d7/CastleRevenge_No_UI.png/revision/latest?cb=20240408135401&path-prefix=bloons",
+        "Carved": "https://static.wikia.nocookie.net/b__/images/e/e9/Carved_No_UI.png/revision/latest?cb=20200519012908&path-prefix=bloons",
         "Chutes": "https://static.wikia.nocookie.net/b__/images/d/d3/Chutes_No_UI.png/revision/latest?cb=20200519012908&path-prefix=bloons",
         "Cornfield": "https://static.wikia.nocookie.net/b__/images/5/54/Cornfield_No_UI.png/revision/latest?cb=20200519012909&path-prefix=bloons",
         "Covered Garden": "https://static.wikia.nocookie.net/b__/images/d/d0/CoveredGarden_No_UI.png/revision/latest?cb=20221012204437&path-prefix=bloons", 

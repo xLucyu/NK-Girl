@@ -5,7 +5,6 @@ from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
 
 
-
 def raceProfile(index, difficulty):
      
     urls = {

@@ -6,7 +6,7 @@ from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
 from api.metadata import getMetaData
 
-def validateTitle(stats, difficulty):
+def validateTitle(stats: dict, difficulty: str) -> str:
 
     if stats["Extreme"]:
         title = f"Difficulty: {difficulty.title()}, Extreme"
@@ -37,7 +37,7 @@ def filtermaps(maps: dict, eventData: dict, emotes: dict) -> None:
         eventData[title] = value
 
 
-def odysseyProfile(index, difficulty):
+def odysseyProfile(index: int, difficulty: str):
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/odyssey",

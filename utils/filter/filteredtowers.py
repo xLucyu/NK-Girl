@@ -27,10 +27,10 @@ def format_towers(allowed_towers: dict) -> list:
 
     return formatted_list
 
-def getTiers(tower):
+def getTiers(tower: dict) -> list:
 
     return [
-        max(0, 5 - (tier if tier !=-1 else 0))
+        max(0, 5 - (tier if tier !=-1 else 5)) # if tier is -1 it's unavailable
         for tier in [
             tower.get("path1numblockedtiers", 0),
             tower.get("path2numblockedtiers", 0),

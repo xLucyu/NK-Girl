@@ -43,7 +43,7 @@ def challengeProfile(index=None, difficulty=None):
  
      
     if difficulty is None:
-        urls = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}" 
+        urls = {"base": f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}"} 
         NKDATA = baseCommand(urls, index=None) 
 
     else:

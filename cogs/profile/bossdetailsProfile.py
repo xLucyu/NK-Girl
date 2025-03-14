@@ -7,7 +7,7 @@ from utils.assets.urls import EVENTURLS
 from utils.filter.embedfilter import filterembed 
 from cogs.regex import splitNumbers
 
-def getBossData(urls):
+def getBossData(urls: dict):
 
     try:
         api = getID(urls, index=0) 
@@ -38,22 +38,23 @@ def tierfilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players:
     }
     
     shieldHpMultiplier = bossIndex.get("Shield", 1)
-    skullMultiplier = (bossIndex.get("Skulls") if shieldHpMultiplier != 1 else 1) # 1 skull if boss has no shield
+    skullMultiplier = bossIndex.get("Skulls", 1) 
 
-    for tier, hp in enumerate(bossIndex["TierHP"]):
+    for tier, hp in enumerate(bossIndex["TierHP"], start=1):
         
-        baseHp = hp * healthMultiplierMode[players] * bossHpMultiplier 
-        totalHp = round(baseHp * shieldHpMultiplier * skullMultiplier)
-        skullHp = round(totalHp / bossIndex["Skulls"], 2)
-        eventData[f"Tier {tier+1}"] = [
+        baseHp = hp * healthMultiplierMode[players] * bossHpMultiplier
+        phaseHp = baseHp / (skullMultiplier * shieldHpMultiplier) if shieldHpMultiplier != 1 else 0
+        totalHp = round(baseHp + phaseHp * skullMultiplier)
+        skullHp = round(totalHp / skullMultiplier)
+        eventData[f"Tier {tier}"] = [
         f"""
-        <:Lives:{emojis.get('Lives')}> TotalHP: {int(totalHp):,}
-        HP\n<:Skull:{emojis.get('Skull')}> SkullHP: {int(skullHp):,} HP
+        <:Lives:{emojis.get('Lives')}> TotalHP: {int(totalHp):,}HP
+        <:Skull:{emojis.get('Skull')}> SkullHP: {int(skullHp):,}HP
         """, 
         False]
 
 
-def bossdetailsProfile(players, difficulty):
+def bossdetailsProfile(players: int, difficulty: str):
     
     modes = [1, 2, 3, 4]
     players = modes[players]
@@ -69,7 +70,7 @@ def bossdetailsProfile(players, difficulty):
         return
     
     bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
-    name = removeNumbers(api.get("Name")) 
+    name = removeNumbers(api.get("Name", None)) 
     bossIndex = bosshp[difficulty][name]
     bossemote = f"<:bossIncrease:{emojis.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emojis.get('bossDecrease')}>"   
 
@@ -87,7 +88,7 @@ def bossdetailsProfile(players, difficulty):
     if difficulty == "standard":
         difficulty = "normal"
 
-    eventNumber = splitNumbers(api.get("Name")) 
+    eventNumber = splitNumbers(api.get("Name", None)) 
 
     embed = filterembed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")

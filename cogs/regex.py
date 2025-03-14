@@ -1,6 +1,6 @@
 import re 
 
-def splitUppercase(string):
+def splitUppercase(string: str) -> str:
 
     if string == "Tutorial":
         string = "MonkeyMeadows"
@@ -10,12 +10,12 @@ def splitUppercase(string):
     split = re.findall(r"[A-Z][a-z]*", string)
     return " ".join(split)
 
-def removeNumbers(string):
+def removeNumbers(string: str) -> str:
 
     split = re.sub(r'\d+', '', string)
     return split
 
-def splitNumbers(string):
+def splitNumbers(string: str) -> str | None:
 
     split = re.match(r"(\D*)(\d*)", string)
     if split:

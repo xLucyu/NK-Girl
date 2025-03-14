@@ -29,14 +29,14 @@ class Admin(commands.Cog):
                 print("commands are synced")
             else:
                 print("commands are syncing for the guild only.")
-                await self.bot.sync_commands(guild_ids=[int(GUILDID)]) #type: ignore
+                await self.bot.sync_commands(guild_ids=[1349497540206399548]) 
                 print("commands are synced")
 
         except Exception as e:
             print(f"Error: {e}")
 
 
-    @discord.slash_command(name="usage", description="owner only", guild=discord.Object(id=int(GUILDID))) 
+    @discord.slash_command(name="usage", description="owner only", guild=discord.Object(id=int(GUILDID))) #type: ignore 
     async def usage(self, ctx: discord.ApplicationContext):
 
         if ctx.author.id != 1220815634515099718:

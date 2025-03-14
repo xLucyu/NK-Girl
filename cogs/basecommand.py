@@ -4,7 +4,7 @@ from api.emojis import getEmojis
 from utils.filter.filteredtowers import filtertowers
 from utils.filter.filteredmodifiers import filtermodifiers
 
-def baseCommand(urls, index=None):
+def baseCommand(urls: dict, index=None) -> dict | None:
     
     try:
         if index is not None:
@@ -17,7 +17,7 @@ def baseCommand(urls, index=None):
             metaData = api.get("MetaData", None) 
 
         else:
-            metaData = urls #really only needed for challenge look up
+            metaData = urls.get("base", None) #really only needed for challenge look up
             api = None
 
         body = getBody(url=metaData)

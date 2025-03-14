@@ -9,7 +9,7 @@ async def on_ready():
 
     for guild in bot.guilds:
         
-        print(guild) 
+        print(guild)
 
 def load_cogs(bot) -> None:
 

@@ -42,7 +42,6 @@ class ErrorHandler(commands.Cog):
         
         embed = discord.Embed(title=f"**{self.title}**", description=self.message, color=discord.Color.red())
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url) #type: ignore
-        embed.set_footer(text="*All command usages will be logged in our system.")
         await ctx.respond(embed=embed)
         return
 

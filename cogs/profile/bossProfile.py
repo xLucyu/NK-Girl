@@ -3,7 +3,7 @@ from cogs.regex import *
 from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
 
-def bossProfile(index, difficulty):
+def bossProfile(index: int, difficulty: str):
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",

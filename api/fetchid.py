@@ -19,7 +19,7 @@ def getData(url):
         raise ValueError(e)
         
 
-def getID(urls, index):
+def getID(urls, index, totalScores=None):
     
     data = getData(urls.get("base"))
 
@@ -28,14 +28,15 @@ def getID(urls, index):
     
     ids = data.get("body", None)
     selectedID = ids[index]
-    
+
     apiData = {
         "Names": [name.get("name") for name in ids], 
         "TimeStamp": selectedID.get("start", None),
         "LBType": selectedID.get("scoringType", None),
         "Name": selectedID.get("name", None),
-        "MetaData": selectedID.get(urls.get("extension", None))
-    }
+        "MetaData": selectedID.get(urls.get("extension", None)),
+        "TotalScores": selectedID.get(totalScores, None)
+    } 
 
     return apiData
     

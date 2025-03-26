@@ -46,7 +46,7 @@ def handlemodifiers(modifiers: dict) -> dict:
             case int() | float():
 
                 if modifier not in NOKEYS:
-                    if multiplier in [1, -1, False, 9999]:
+                    if multiplier in [1, -1, False, 9999]: # filtering out all percentage based categories
                         continue 
 
                 if multiplier <= 0 and modifier != "MaxParagons" or multiplier == 9999:

@@ -57,8 +57,7 @@ def getMetaData(Body: dict) -> dict:
             "ID": Body.get("id", None),
             "Creator": Body.get("creator", None),
             "Wins": Body.get("wins", None),
-            "Losses": Body.get("losses", None), 
-            
+            "Losses": Body.get("losses", None),    
         }
     }
  

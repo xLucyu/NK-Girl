@@ -38,18 +38,18 @@ def tierfilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players:
     }
     
     shieldHpMultiplier = bossIndex.get("Shield", 1)
-    skullMultiplier = bossIndex.get("Skulls", 1) 
+    skulls = bossIndex.get("Skulls", 1) 
 
     for tier, hp in enumerate(bossIndex["TierHP"], start=1):
         
         baseHp = hp * healthMultiplierMode[players] * bossHpMultiplier
-        phaseHp = baseHp / (skullMultiplier * shieldHpMultiplier) if shieldHpMultiplier != 1 else 0
-        totalHp = round(baseHp + phaseHp * skullMultiplier)
-        skullHp = round(totalHp / skullMultiplier)
+        totalHp = baseHp * shieldHpMultiplier
+        skullHp = round(totalHp / skulls)
+
         eventData[f"Tier {tier}"] = [
         f"""
-        <:Lives:{emojis.get('Lives')}> TotalHP: {int(totalHp):,}HP
-        <:Skull:{emojis.get('Skull')}> SkullHP: {int(skullHp):,}HP
+        <:Lives:{emojis.get('Lives')}> TotalHP: {int(totalHp):,} HP
+        <:Skull:{emojis.get('Skull')}> SkullHP: {int(skullHp):,} HP
         """, 
         False]
 
@@ -70,7 +70,7 @@ def bossdetailsProfile(players: int, difficulty: str):
         return
     
     bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
-    name = removeNumbers(api.get("Name", None)) 
+    name = removeNumbers(api.get("", None)) 
     bossIndex = bosshp[difficulty][name]
     bossemote = f"<:bossIncrease:{emojis.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emojis.get('bossDecrease')}>"   
 

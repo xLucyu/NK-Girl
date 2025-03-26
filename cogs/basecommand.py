@@ -9,7 +9,7 @@ def baseCommand(urls: dict, index=None) -> dict | None:
     try:
         if index is not None:
 
-            api = getID(urls, index=index) 
+            api = getID(urls, index) 
 
             if not api:
                 return 
@@ -21,11 +21,11 @@ def baseCommand(urls: dict, index=None) -> dict | None:
             api = None
 
         body = getBody(url=metaData)
-         
+        
         if not body:
             return 
 
-        stats = getMetaData(body)
+        stats = getMetaData(body) 
 
         if not stats:
             return 

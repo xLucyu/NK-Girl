@@ -54,7 +54,10 @@ EVENTURLS = {
     },
     "Challenge": {
             "daily": "https://static.wikia.nocookie.net/b__/images/b/bf/DailyChallengeBtn.png/revision/latest?cb=20200601042405&path-prefix=bloons",
-            "challenge": "https://static.wikia.nocookie.net/b__/images/8/86/CreateChallengeIcon.png/revision/latest?cb=20200601042401&path-prefix=bloons"
+            "challenge": "https://static.wikia.nocookie.net/b__/images/8/86/CreateChallengeIcon.png/revision/latest?cb=20200601042401&path-prefix=bloons" 
+    },
+    "CT": {
+        "ct": "https://www.bloonswiki.com/images/e/e7/BTD6_ContestedTerritoryEvent.png?20240609232601" 
     },
     "Maps": {
         "Adoras Temple": "https://static.wikia.nocookie.net/b__/images/0/0a/AdorasTemple_No_UI.png/revision/latest?cb=20200519012904&path-prefix=bloons",

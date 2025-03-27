@@ -17,14 +17,14 @@ def raceProfile(index, difficulty):
     if not NKDATA:
         return 
     
-    api = NKDATA.get("Api", None) 
+    api = NKDATA.get("Api", None)
+    apiData = api.get("Data", None)
     stats = NKDATA.get("Stats", None)
     emotes = NKDATA.get("Emotes", None)
     modifiers = NKDATA.get("Modifiers", None)
     towers = NKDATA.get("Towers", None)
     eventURL = EVENTURLS["Race"]["race"] 
      
-
     map = splitUppercase(stats.get("Map"))
     difficulty = splitUppercase(stats.get("Difficulty"))
     mode = splitUppercase(stats.get("Mode"))
@@ -34,7 +34,7 @@ def raceProfile(index, difficulty):
     rounds = f"<:Round:{emotes.get('Round')}> {stats.get('StartRound')}/{stats.get('EndRound')}"
 
     eventData = { 
-        api.get("Name"): [f"{map}, {difficulty} - {mode}", False],
+        apiData.get("name"): [f"{map}, {difficulty} - {mode}", False],
         "Modifiers": ["\n".join(modifiers), False], 
         "Lives": [lives, True],
         "Cash": [cash, True],
@@ -47,7 +47,7 @@ def raceProfile(index, difficulty):
         "Support": ["\n".join(towers[4]), True],
         } 
     
-    currentTimeStamp = api.get("TimeStamp") 
+    currentTimeStamp = apiData.get("start") 
     firstTimeStamp = 1544601600000
     eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
     embed = filterembed(eventData, eventURL, title=f"Race #{eventNumber}")

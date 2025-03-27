@@ -49,7 +49,8 @@ def odysseyProfile(index: int, difficulty: str):
     if not NKDATA:
         return 
     
-    api = NKDATA.get("Api", None) 
+    api = NKDATA.get("Api", None)
+    apiData = api.get("Data", None)
     stats = NKDATA["Stats"]["Odyssey"]  
     towers = NKDATA.get("Towers", None)
     emotes = NKDATA.get("Emotes", None)
@@ -64,7 +65,7 @@ def odysseyProfile(index: int, difficulty: str):
     )
 
     eventData = {
-        api.get("Name"): [title, False],
+        apiData.get("name"): [title, False],
         "Heroes": ["\n".join(towers[0]), False],
         "Primary": ["\n".join(towers[1]), True],
         "Military": ["\n".join(towers[2]), True],
@@ -74,7 +75,7 @@ def odysseyProfile(index: int, difficulty: str):
         }
 
     filtermaps(maps, eventData, emotes) #add the maps data -> each difficulty has a set amount of maps
-    currentTimeStamp = api.get("TimeStamp", None)
+    currentTimeStamp = apiData.get("start", None)
     firstTimeStamp = 1593532800000
     eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
     embed = filterembed(eventData, eventURL, title=f"Odyssey #{eventNumber}")

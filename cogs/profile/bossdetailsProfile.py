@@ -18,7 +18,7 @@ def getBossData(urls: dict):
         metaData = api.get("MetaData", None)
         body = getBody(url=metaData)
         emojis = getEmojis()
-         
+
         if not body or not emojis:
             return
 
@@ -64,14 +64,12 @@ def bossdetailsProfile(players: int, difficulty: str):
         "extension": f"metadata{difficulty.title()}"
     }
     
-    api, body, emojis = getBossData(urls) #type: ignore 
-    
-    if not body:
-        return
+    api, body, emojis = getBossData(urls) #type: ignore
+    apiData = api.get("Data", None)
     
     bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
-    name = removeNumbers(api.get("", None)) 
-    bossIndex = bosshp[difficulty][name]
+    name = apiData.get("bossType", None) 
+    bossIndex = bosshp[difficulty][name.title()]
     bossemote = f"<:bossIncrease:{emojis.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emojis.get('bossDecrease')}>"   
 
     eventData = {
@@ -82,13 +80,13 @@ def bossdetailsProfile(players: int, difficulty: str):
     
     tierfilter(bossHpMultiplier, bossIndex, eventData, players, emojis)
 
-    eventURL = EVENTURLS["Boss"][difficulty]["Image"][name]
-    bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][name]
+    eventURL = EVENTURLS["Boss"][difficulty]["Image"][name.title()]
+    bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][name.title()]
     
     if difficulty == "standard":
         difficulty = "normal"
 
-    eventNumber = splitNumbers(api.get("Name", None)) 
+    eventNumber = splitNumbers(apiData.get("name", None)) 
 
     embed = filterembed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")

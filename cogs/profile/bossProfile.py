@@ -16,23 +16,24 @@ def bossProfile(index: int, difficulty: str):
         return 
     
     api = NKDATA.get("Api", None) 
+    apiData = api.get("Data", None) 
     stats = NKDATA.get("Stats", None)
     emotes = NKDATA.get("Emotes", None)
     modifiers = NKDATA.get("Modifiers", None)
     towers = NKDATA.get("Towers", None)
-
+     
     bossLeaderboardType = {
         "GameTime": f"<:EventRace:{emotes.get('EventRace')}> **Timed Leaderboard**",
         "LeastCash": f"<:LeastCash:{emotes.get('LeastCash')}> **Least Cash Leaderboard**",
         "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
 
-    name = removeNumbers(api.get("Name"))
-    eventURL = EVENTURLS["Boss"][difficulty]["Image"][name]
+    name = apiData.get("bossType", None) 
+    eventURL = EVENTURLS["Boss"][difficulty]["Image"][name.title()]
     map = splitUppercase(stats.get("Map")) 
     modeDifficulty = splitUppercase(stats.get("Difficulty"))
     mode = splitUppercase(stats.get("Mode"))
-    lbtype = bossLeaderboardType[api.get("LBType", "GameTime")]
+    lbtype = bossLeaderboardType[apiData.get("scoringType", "GameTime")]
 
     if difficulty == "standard":
         difficulty = "normal"
@@ -54,13 +55,13 @@ def bossProfile(index: int, difficulty: str):
         "Magic": ["\n". join(towers[3]), True],
         "Support": ["\n".join(towers[4]), True],
         }
- 
-    eventNumber = splitNumbers(api.get("Name"))
+     
+    eventNumber = splitNumbers(apiData.get("name", None))
     embed = filterembed(eventData, eventURL, title=f"{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][map])
     names = list()
 
-    for name in api.get("Names"):
+    for name in api.get("Names", []):
         names.append(splitNumbers(name))
 
     return embed, names

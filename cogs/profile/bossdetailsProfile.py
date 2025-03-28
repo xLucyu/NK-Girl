@@ -1,4 +1,3 @@
-from cogs.regex import removeNumbers
 from api.fetchid import getID
 from api.metadata import getBody
 from api.emojis import getEmojis

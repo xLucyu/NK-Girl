@@ -1,5 +1,5 @@
 from cogs.basecommand import baseCommand
-from cogs.regex import *
+from cogs.regex import splitNumbers, splitUppercase
 from utils.filter.embedfilter import filterembed
 from utils.assets.urls import EVENTURLS
 

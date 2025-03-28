@@ -6,7 +6,7 @@ bot = discord.Bot(intents=discord.Intents.all())
 
 @bot.event
 async def on_ready():
-    
+     
     for guild in bot.guilds:
         
         print(guild)

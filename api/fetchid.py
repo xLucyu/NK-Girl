@@ -21,16 +21,13 @@ def getData(url):
 
 def getID(urls, index):
     
-    data = getData(urls.get("base"))
-
-    if data is None:
-        return None
+    data = getData(urls.get("base", None))
     
-    ids = data.get("body", None)
+    ids = data.get("body", None) 
     selectedID = ids[index]
 
     apiData = {
-        "Names": [name.get("name") for name in ids], 
+        "Names": [name.get("name") for name in ids if ids], 
         "MetaData": selectedID.get(urls.get("extension", None)),
         "Data": selectedID 
     } 

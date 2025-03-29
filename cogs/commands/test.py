@@ -10,8 +10,9 @@ class Leaderboard(commands.Cog):
     leaderboard = discord.SlashCommandGroup("leaderboard", "", guild=discord.Object(id=1349497540206399548))
     
     @leaderboard.command(name="race", description="look up race leaderboard")
-    async def race(self, ctx: discord.ApplicationContext):      
+    async def race(self, ctx: discord.ApplicationContext):    
 
+        await ctx.response.defer()
         embed = testProfile(lbType="race", page=1)
         await ctx.respond(embed=embed)
 
@@ -21,7 +22,8 @@ class Leaderboard(commands.Cog):
     @discord.option("difficulty", description="choose a difficulty, default is normal", choices=["Normal", "Elite"], required=False)
     @discord.option("players", description="choose a mode, default is solo", choices=[1,2,3,4], required=False)
     async def boss(self, ctx:discord.ApplicationContext, difficulty: str = "Normal", players: int = 1):
-    
+        
+        await ctx.response.defer() #coop boss lbs take some time lol
         if difficulty == "Normal":
             difficulty = "Standard"
 
@@ -34,6 +36,7 @@ class Leaderboard(commands.Cog):
     @discord.option("option", description="", choices = ["Player", "Team"], required=True)
     async def ct(self, ctx:discord.ApplicationContext, option: str):
 
+        await ctx.response.defer()
         embed = testProfile(lbType="ct", page=1, difficulty=option.lower())
         await ctx.respond(embed=embed)
 

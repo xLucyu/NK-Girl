@@ -7,7 +7,8 @@ class Leaderboard(commands.Cog):
 
         self.bot = bot
     
-    leaderboard = discord.SlashCommandGroup("leaderboard", "", guild=discord.Object(id=1349497540206399548))
+    leaderboard = discord.SlashCommandGroup("leaderboard", "", integration_types={discord.IntegrationType.user_install,
+                                                                                discord.IntegrationType.guild_install})
     
     @leaderboard.command(name="race", description="look up race leaderboard")
     async def race(self, ctx: discord.ApplicationContext):    

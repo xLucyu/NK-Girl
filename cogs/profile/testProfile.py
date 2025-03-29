@@ -1,6 +1,34 @@
-import discord
+import discord 
 from api.fetchid import getID, getData
 from api.emojis import getEmojis
+from cogs.eventNumber import currentEventNumber, getCurrentCTEvent
+from cogs.regex import splitNumbers
+
+def formatEventInfo(apiData, lbType, difficulty):
+    
+    match lbType:
+
+        case "race":
+            startTimeStamp = apiData.get("start")
+            firstTimeStamp = 1544601600000
+            eventNumber = currentEventNumber(startTimeStamp, firstTimeStamp)
+            eventName = apiData.get("name")
+            title = f"Race {eventNumber} - #{eventName}"
+
+        case "boss":
+            eventNumber = splitNumbers(apiData.get('name', None))
+            eventName = apiData.get("bossType", None) 
+            title = f"{difficulty.title()} {eventNumber}"
+
+        case "ct":
+           
+            eventNumber = getCurrentCTEvent()
+            title = f"Contested Territory #{eventNumber} - {difficulty.title()}"
+
+        case _:
+            return None
+
+    return title
 
 
 def convertMsToTime(score):
@@ -15,14 +43,16 @@ def convertMsToTime(score):
 
 def determineLeaderboardScore(player, leaderboardCompetitionType):
     
-    if leaderboardCompetitionType == "GameTime":
+    if leaderboardCompetitionType not in ["LeastCash", "LeastTiers"]:
         score = player.get("score", None)
-        formattedScore = convertMsToTime(score)
+        formattedScore = convertMsToTime(score) if leaderboardCompetitionType == "GameTime" else score
     else:
         firstScore = player["scoreParts"][0]["score"]
         secondScore = player["scoreParts"][1]["score"]
 
         firstScore = f"${firstScore:,}" if leaderboardCompetitionType == "LeastCash" else firstScore
+        firstScore = f"{firstScore}T" if leaderboardCompetitionType == "Leasttiers" else firstScore
+
         formattedScore = f"{firstScore} ({convertMsToTime(secondScore)})"
 
     return formattedScore
@@ -99,7 +129,7 @@ def getMedalForPosition(emojis, currentPosition, totalScores, lbType, difficulty
 
 def getLeaderboardData(urls: dict, page: int):
     
-    api = getID(urls, index=1) 
+    api = getID(urls, index=0) 
     if not api:
         return None 
     
@@ -116,12 +146,12 @@ def testProfile(lbType, page, difficulty=None, players=None):
         "race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
             "extension": f"leaderboard",
-            "totalscores": "totalScores"
+            "totalscores": "totalScores",
         },
         "boss": {
             "base": "https://data.ninjakiwi.com/btd6/bosses",
             "extension": f"leaderboard_{difficulty}_players_1", 
-            "totalscores": f"totalScores_{difficulty}"
+            "totalscores": f"totalScores_{difficulty}",
         },
         "ct": {
             "base": "https://data.ninjakiwi.com/btd6/ct",
@@ -144,9 +174,8 @@ def testProfile(lbType, page, difficulty=None, players=None):
         leaderboardEntriesPerPage = len(lbBody)
         playerData = str()
         maxNameLength = max(len(player.get("displayName", "").replace("(disbanded)", "").strip()) for player in lbBody)
-        leaderboardCompetitionType = apiData.get("scoringType", None)
-
-
+        leaderboardCompetitionType = apiData.get("scoringType", "GameTime") 
+         
         for position, player in enumerate(lbBody, start=1):
  
             currentPosition = leaderboardEntriesPerPage * (page - 1) + position
@@ -164,9 +193,10 @@ def testProfile(lbType, page, difficulty=None, players=None):
             return None
         
         apiData = api.get("Data", None)
+        metaData = api.get("MetaData", None)
         leaderboardCompetitionType = apiData.get("scoringType", None)
         emojis = getEmojis()
-        metaData = api.get("MetaData", None)
+
         base, _ = metaData.rsplit("/", 1)
         metaData = f"{base}/{players}"         
         players = dict()
@@ -214,6 +244,7 @@ def testProfile(lbType, page, difficulty=None, players=None):
             playerData += f"{medal} `{currentPosition:02}` `{players.ljust(maxTeamLength)} {str(teamScore).rjust(10)}`\n"
             
          
-
-    embed = discord.Embed(title="Leaderboard", description=playerData, color=discord.Color.blue())
+    eventData = formatEventInfo(apiData, lbType, difficulty) #type: ignore 
+    embed = discord.Embed(title=eventData, description=playerData, color=discord.Color.blue())
+    embed.set_footer(text=f"Total Entires: {totalscores}")
     return embed

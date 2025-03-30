@@ -10,11 +10,6 @@ def splitUppercase(string: str) -> str:
     split = re.findall(r"[A-Z][a-z]*", string)
     return " ".join(split)
 
-def removeNumbers(string: str) -> str:
-
-    split = re.sub(r'\d+', '', string)
-    return split
-
 def splitNumbers(string: str) -> str | None:
 
     split = re.match(r"(\D*)(\d*)", string)

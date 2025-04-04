@@ -36,6 +36,11 @@ class Help(commands.Cog):
         )
 
         embed.add_field(
+            name = "Feedback",
+            value = "By typing `/feedback` you can submit errors or improvements for this bot without knowing how to use github. These feedback submissions will be stored in a private discord, where only the owners have access to. Please refrain from contacting us directly through dms at first <3"
+        )
+
+        embed.add_field(
             name = "Leaderboards",
             value = "We offer Leaderboards for every gamemode aswell as Multiplayer Leaderboards for Bosses. Just type `leaderboard mode` and enter some credentials to get the current Leaderboard. Please consider that Multiplayer Boss Leaderboards may take some time to load. If you're curious as to why, feel free to check on the github. down below!" ,
             inline = False

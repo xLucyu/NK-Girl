@@ -1,5 +1,5 @@
 import discord 
-from leaderboards.multiplayer import formatMultiplayerLeaderboard, generateLeaderboard
+from leaderboards.multiplayer import formatMultiplayerLeaderboard, getMultiplayerLeaderboard 
 from leaderboards.formatTitle import formatEventInfo
 from leaderboards.solos import formatSoloLeaderboard
 from api.fetchid import getID
@@ -38,12 +38,12 @@ def leaderboardProfile(lbType, page, difficulty=None, players=None):
     metaData = api.get("MetaData", None) 
     
     if players == 1 or players is None:
-        playerData, totalscores = formatSoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType) #type: ignore
+        playerData, totalscores = formatSoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType) 
         teamScores = None
 
     else:
-        teamScores = formatMultiplayerLeaderboard(apiData, metaData, players, lbType)
-        playerData, totalscores = generateLeaderboard(teamScores, page, lbType, difficulty) 
+        teamScores = getMultiplayerLeaderboard(apiData, metaData, players, lbType)
+        playerData, totalscores = formatMultiplayerLeaderboard(teamScores, page, lbType, difficulty) 
             
      
     eventData = formatEventInfo(apiData, lbType, difficulty) 

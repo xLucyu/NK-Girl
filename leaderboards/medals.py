@@ -1,5 +1,5 @@
 def getMedalForPosition(emojis, currentPosition, totalScores, lbType, difficulty):
-
+    
     top1Percent = totalScores * 0.01
     top10Percent = totalScores * 0.10
     top25Percent = totalScores * 0.25
@@ -14,8 +14,8 @@ def getMedalForPosition(emojis, currentPosition, totalScores, lbType, difficulty
             (2,2): f"<:RaceSecond:{emojis.get('RaceSecond')}>", 
             (3,3): f"<:RaceThird:{emojis.get('RaceThird')}>",
             (4,50): f"<:RaceT50:{emojis.get('RaceT50')}>",
-            (51, top1Percent): f"<:RaceT1Perc:{emojis.get('RaceT1Perc')}>",
-            (top1Percent, top10Percent): f"<:RaceT10Perc:{emojis.get('RaceT10Perc')}>",
+            (51, 100): f"<:RaceT100:{emojis.get('RaceT100')}>",
+            (101, top10Percent): f"<:RaceT10Perc:{emojis.get('RaceT10Perc')}>",
             (top10Percent, top25Percent): f"<:RaceT25Perc:{emojis.get('RaceT25Perc')}>",
             (top25Percent, top50Percent): f"<:RaceT50Perc:{emojis.get('RaceT50Perc')}>",
             (top50Percent, top75Percent): f"<:RaceT75Perc:{emojis.get('RaceT75Perc')}>",
@@ -26,8 +26,8 @@ def getMedalForPosition(emojis, currentPosition, totalScores, lbType, difficulty
             (2,2): f"<:Boss{isElite}Second:{emojis.get(f'Boss{isElite}Second')}>", 
             (3,3): f"<:Boss{isElite}Third:{emojis.get(f'Boss{isElite}Third')}>",
             (4,50): f"<:Boss{isElite}T50:{emojis.get(f'Boss{isElite}T50')}>",
-            (51, top1Percent): f"<:Boss{isElite}T1Perc:{emojis.get(f'Boss{isElite}T1Perc')}>",
-            (top1Percent, top10Percent): f"<:Boss{isElite}T10Perc:{emojis.get(f'Boss{isElite}T10Perc')}>",
+            (51, 100): f"<:Boss{isElite}T100:{emojis.get(f'Boss{isElite}T100')}>",
+            (101, top10Percent): f"<:Boss{isElite}T10Perc:{emojis.get(f'Boss{isElite}T10Perc')}>",
             (top10Percent, top25Percent): f"<:Boss{isElite}T25Perc:{emojis.get(f'Boss{isElite}T25Perc')}>",
             (top25Percent, top50Percent): f"<:Boss{isElite}T50Perc:{emojis.get(f'Boss{isElite}T50Perc')}>",
             (top50Percent, top75Percent): f"<:Boss{isElite}T75Perc:{emojis.get(f'Boss{isElite}T75Perc')}>",
@@ -37,7 +37,7 @@ def getMedalForPosition(emojis, currentPosition, totalScores, lbType, difficulty
             "player": {
                 (1,25): f"<:CTPT25:{emojis.get('CTPT25')}>",
                 (26,100): f"<:CTPT100:{emojis.get('CTPT100')}>",
-                (101, top1Percent): f"<:CTPT1Perc:{emojis.get('CTPT1Perc')}>",
+                (101, top10Percent): f"<:CTPT1Perc:{emojis.get('CTPT1Perc')}>",
                 (top1Percent, top10Percent): f"<:CTPT10Perc:{emojis.get('CTPT10Perc')}>",
                 (top10Percent, top25Percent): f"<CTPT25Perc:{emojis.get('CTPT25Perc')}>",
                 (top25Percent, top50Percent): f"<CTPT50Perc:{emojis.get('CTPT50Perc')}>",

@@ -1,5 +1,5 @@
 import discord
-from leaderboards.multiplayer import generateLeaderboard
+from leaderboards.multiplayer import formatMultiplayerLeaderboard
 
 class ButtonView(discord.ui.View):
 
@@ -36,12 +36,9 @@ class ButtonView(discord.ui.View):
             return  
 
         self.handlePage(interaction)
-        
-        if self.submode:
-            self.submode = self.submode.lower()
 
         if self.teamScores:
-            playerData, totalscores = generateLeaderboard(self.teamScores, self.page, self.lbType, self.submode) #type: ignore
+            playerData, totalscores = formatMultiplayerLeaderboard(self.teamScores, self.page, self.lbType, self.submode) 
             embed = discord.Embed(title=self.eventData, description=playerData, color=discord.Color.blue())
             embed.set_footer(text=f"Total Entires: {totalscores}")
         else:

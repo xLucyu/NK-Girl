@@ -3,7 +3,7 @@ from api.emojis import getEmojis
 from leaderboards.scores import determineLeaderboardScore
 from leaderboards.medals import getMedalForPosition
 
-def formatMultiplayerLeaderboard(apiData, metaData, players, lbType): 
+def getMultiplayerLeaderboard(apiData, metaData, players, lbType): 
 
     leaderboardCompetitionType = apiData.get("scoringType", None) 
 
@@ -13,6 +13,7 @@ def formatMultiplayerLeaderboard(apiData, metaData, players, lbType):
     initialPage = 1
 
     while True:
+
         leaderboardData = getData(f"{metaData}?page={initialPage}")
         validPage = leaderboardData.get("success")
 
@@ -36,14 +37,12 @@ def formatMultiplayerLeaderboard(apiData, metaData, players, lbType):
     return teamScores
 
 
-def generateLeaderboard(teamScores, page, lbType, difficulty):
+def formatMultiplayerLeaderboard(teamScores, page, lbType, difficulty):
 
     emojis = getEmojis()
     
     totalscores = len(teamScores)
-    playerData = str()
-    teamsLength = {key: sum(len(player) for player in value[1:]) for key, value in teamScores.items()} 
-    maxTeamLength = max(teamsLength.values()) 
+    playerData = str() 
 
     items = list(teamScores.items())
     startIndex = (page - 1) * 25
@@ -55,7 +54,8 @@ def generateLeaderboard(teamScores, page, lbType, difficulty):
         currentPosition = position 
         
         medal = getMedalForPosition(emojis, currentPosition, totalscores, lbType, difficulty)
-        playerData += f"{medal} `{currentPosition:02}` `{teamMembers.ljust(maxTeamLength)} {str(teamScore).rjust(10)}`\n"
+        playerData += f"{medal} `{currentPosition:02}` `{teamMembers:<42} {teamScore:>5}`\n"
+
     
     return playerData, totalscores
 

@@ -1,5 +1,5 @@
 import discord
-from leaderboards.multiplayer import formatMultiplayerLeaderboard
+from leaderboards.formatMultiplayer import formatMultiplayerLeaderboard
 
 class ButtonView(discord.ui.View):
 
@@ -22,7 +22,7 @@ class ButtonView(discord.ui.View):
                 label = button[0],
                 custom_id = button[1],
                 style = getattr(discord.ButtonStyle, button[2]),
-                disabled = True if self.page == 1 and button[1] == "remove1" else False
+                disabled = True if button[1] == "-1" else False
             )
             button.callback = self.callback 
             self.add_item(button)
@@ -48,13 +48,9 @@ class ButtonView(discord.ui.View):
 
     def handlePage(self, interaction):
         
-        movePage = interaction.custom_id
-
-        if movePage == "add1":
-            self.page += 1 
-        else:
-            self.page -= 1 
+        movePage = interaction.custom_id 
+        self.page += int(movePage)
 
         for button in self.children:
-            if button.custom_id == "remove1": #type: ignore 
+            if button.custom_id == "-1": #type: ignore 
                 button.disabled = self.page <= 1 #type: ignore

@@ -1,8 +1,8 @@
-from cogs.basecommand import baseCommand
+from cogs.baseCommand import baseCommand
 from cogs.eventNumber import currentEventNumber
 from cogs.regex import splitUppercase
-from utils.filter.embedfilter import filterembed 
-from utils.assets.urls import EVENTURLS
+from utils.filter.createEmbed import filterembed 
+from utils.assets.eventUrls import EVENTURLS
 
 
 def raceProfile(index, difficulty):

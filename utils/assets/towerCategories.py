@@ -1,4 +1,4 @@
-categories = {
+CATEGORIES = {
   "Heroes": [
     ["ChosenPrimaryHero" , "Selectable Hero"],
     ["Quincy", "Quincy"],

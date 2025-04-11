@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
-from utils.discord.viewmenu import SelectView
+from utils.discord.viewMenu import SelectView
 
 
 class BossDetails(commands.Cog):
@@ -28,7 +28,7 @@ class BossDetails(commands.Cog):
     
     async def bossdetails(self, ctx: discord.ApplicationContext,
                           difficulty: str = "Normal",
-                          players: int = 1):
+                          players: int = 1) -> None:
 
         if difficulty == "Normal":
             difficulty = "Standard"

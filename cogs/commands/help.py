@@ -9,7 +9,7 @@ class Help(commands.Cog):
     @discord.slash_command(name="help", description="get an overview of this bot", 
                            integration_types={discord.IntegrationType.user_install,
                                               discord.IntegrationType.guild_install})
-    async def help(self, ctx: discord.ApplicationContext):
+    async def help(self, ctx: discord.ApplicationContext) -> None:
 
         embed = discord.Embed(
             title = f"**{self.bot.user.name}'s Help Menu.**",
@@ -48,7 +48,7 @@ class Help(commands.Cog):
 
         embed.add_field(
             name = "Leaderboards",
-            value = "We offer Leaderboards for every gamemode aswell as Multiplayer Leaderboards for Bosses. Just type `leaderboard mode` and enter some credentials to get the current Leaderboard. Please consider that Multiplayer Boss Leaderboards may take some time to load. If you're curious as to why, feel free to check on the github. down below!" ,
+            value = "We offer Leaderboards for every gamemode aswell as Multiplayer Leaderboards for Bosses. Just type `leaderboard mode` and enter some credentials to get the current Leaderboard. Please consider that Multiplayer Boss Leaderboards may take some time to load.",
             inline = False
         )
 

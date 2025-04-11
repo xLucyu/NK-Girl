@@ -1,6 +1,6 @@
 import discord 
-from utils.discord.selectmenu import SelectMenu
-from utils.discord.buttonmenu import ButtonMenu
+from utils.discord.selectMenu import SelectMenu
+from utils.discord.buttonMenu import ButtonMenu
 
 class SelectView(discord.ui.View):
 

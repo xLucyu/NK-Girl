@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from cogs.profile.leaderboardProfile import leaderboardProfile
-from leaderboards.buttons import ButtonView
+from leaderboards.pageButtons import ButtonView
 
 class Leaderboard(commands.Cog):
     def __init__(self, bot):
@@ -12,7 +12,7 @@ class Leaderboard(commands.Cog):
                                                                                 discord.IntegrationType.guild_install})
     
     @leaderboard.command(name="race", description="look up race leaderboard")
-    async def race(self, ctx: discord.ApplicationContext):    
+    async def race(self, ctx: discord.ApplicationContext) -> None:    
 
         await ctx.response.defer()
         embed, _, _= leaderboardProfile(lbType="race", page=1) #type: ignore
@@ -23,8 +23,8 @@ class Leaderboard(commands.Cog):
             "Function": leaderboardProfile,
             "Page": 1, 
             "Layout": [
-                ["⬅", "remove1", "primary"],
-                ["➡", "add1", "primary"], 
+                ["⬅", "-1", "primary"],
+                ["➡", "1", "primary"], 
             ]
         }
 
@@ -35,7 +35,7 @@ class Leaderboard(commands.Cog):
     @leaderboard.command(name="boss", description="look up boss leaderboard")
     @discord.option("difficulty", description="choose a difficulty, default is normal", choices=["Normal", "Elite"], required=False)
     @discord.option("players", description="choose a mode, default is solo", choices=[1,2,3,4], required=False)
-    async def boss(self, ctx:discord.ApplicationContext, difficulty: str = "Normal", players: int = 1):
+    async def boss(self, ctx:discord.ApplicationContext, difficulty: str = "Normal", players: int = 1) -> None:
         
         await ctx.response.defer()
         if difficulty == "Normal":
@@ -53,8 +53,8 @@ class Leaderboard(commands.Cog):
             "Function": leaderboardProfile,
             "Page": 1, 
             "Layout": [
-                ["⬅", "remove1", "primary"],
-                ["➡", "add1", "primary"], 
+                ["⬅", "-1", "primary"],
+                ["➡", "1", "primary"], 
             ]
         }
 
@@ -65,7 +65,7 @@ class Leaderboard(commands.Cog):
     
     @leaderboard.command(name="ct", description="")
     @discord.option("option", description="", choices = ["Player", "Team"], required=True)
-    async def ct(self, ctx:discord.ApplicationContext, option: str):
+    async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
 
         await ctx.response.defer()
         embed, _, _ = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) #type: ignore
@@ -77,8 +77,8 @@ class Leaderboard(commands.Cog):
             "Function": leaderboardProfile,
             "Page": 1, 
             "Layout": [
-                ["⬅", "remove1", "primary"],
-                ["➡", "add1", "primary"], 
+                ["⬅", "-1", "primary"],
+                ["➡", "1", "primary"], 
             ]
         }
 

@@ -1,4 +1,4 @@
-modifiers = {
+MODIFIERS = {
   "speedMultiplier": "Bloon Speed",
   "moabSpeedMultiplier": "Moab Speed",
   "bossSpeedMultiplier": "Boss Speed",

@@ -1,4 +1,4 @@
-bosshp = {
+BOSSHP = {
     "standard": {
         "Bloonarius": {
             "TierHP": [20_000, 75_000, 350_000, 750_000, 3_000_000],

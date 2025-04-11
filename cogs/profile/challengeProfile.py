@@ -1,7 +1,7 @@
-from api.fetchid import getData
-from utils.assets.urls import EVENTURLS
-from utils.filter.embedfilter import filterembed
-from cogs.basecommand import baseCommand
+from api.fetchId import getData
+from utils.assets.eventUrls import EVENTURLS
+from utils.filter.createEmbed import filterembed
+from cogs.baseCommand import baseCommand
 from cogs.regex import splitUppercase 
 from cogs.eventNumber import getcurrentDailyNumber
 from datetime import datetime, timezone 

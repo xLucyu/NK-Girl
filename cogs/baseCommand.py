@@ -1,8 +1,8 @@
-from api.fetchid import getID
-from api.metadata import getBody, getMetaData 
+from api.fetchId import getID
+from api.metaData import getBody, getMetaData 
 from api.emojis import getEmojis
-from utils.filter.filteredtowers import filtertowers
-from utils.filter.filteredmodifiers import filtermodifiers
+from utils.filter.filterTowers import filterTowers
+from utils.filter.filterBloonsModifiers import filterModifiers
 
 def baseCommand(urls: dict, index=None) -> dict | None:
     
@@ -35,11 +35,11 @@ def baseCommand(urls: dict, index=None) -> dict | None:
         
         if odysseymapsKey:
             maps = getBody(url=odysseymapsKey)
-            towers = filtertowers(stats["Odyssey"]["AvailableTowers"], emotes) #type: ignore 
+            towers = filterTowers(stats["Odyssey"]["AvailableTowers"], emotes) #type: ignore 
             modifiers = None
         else:
-            towers = filtertowers(stats.get("Towers"), emotes) #type: ignore
-            modifiers = filtermodifiers(stats.get("Modifiers"), emotes) #type: ignore
+            towers = filterTowers(stats.get("Towers", None), emotes) #type: ignore
+            modifiers = filterModifiers(stats.get("Modifiers", None), emotes) #type: ignore
             maps = None 
 
     except:

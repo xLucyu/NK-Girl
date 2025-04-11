@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from cogs.profile.bossProfile import bossProfile
-from utils.discord.viewmenu import SelectView
+from utils.discord.viewMenu import SelectView
 
 class Boss(commands.Cog):
     def __init__(self, bot):
@@ -18,7 +18,7 @@ class Boss(commands.Cog):
         choices = ["Normal", "Elite"],
         required = True
     )
-    async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal"): 
+    async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal") -> None: 
         
         if difficulty == "Normal":
             difficulty = "Standard"

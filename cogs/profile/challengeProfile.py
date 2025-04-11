@@ -26,7 +26,6 @@ def findIndex(urls: dict, difficulty: str):
         if difficulty != "coop" and str(number) in eventName:
             return index
 
-
         eventTimeStamp = challenge.get("createdAt")
         currentDay = datetime.now().weekday()
         currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)

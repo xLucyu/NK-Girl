@@ -58,4 +58,3 @@ def formatMultiplayerLeaderboard(teamScores, page, lbType, difficulty):
 
     
     return playerData, totalscores
-

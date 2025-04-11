@@ -24,7 +24,7 @@ def getBossData(urls: dict):
         return api, body, emojis
 
     except:
-        return 
+        return None 
  
 
 def tierfilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:

@@ -30,8 +30,7 @@ def baseCommand(urls: dict, index=None) -> dict | None:
         if not stats:
             return 
 
-        emotes = getEmojis()
-        
+        emotes = getEmojis() 
         odysseymapsKey = stats.get("Maps", None)
         
         if odysseymapsKey:

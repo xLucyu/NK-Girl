@@ -4,8 +4,8 @@ from api.fetchid import getID
 def currentEventNumber(startTimeStamp, firstTimeStamp):
      
     timeDifference = startTimeStamp - firstTimeStamp
-    current_Number = math.floor(timeDifference / (7 * 24 * 60 * 60 * 1000))
-    return round(current_Number)
+    currentNumber = math.floor(timeDifference / (7 * 24 * 60 * 60 * 1000))
+    return round(currentNumber)
 
 
 def getCurrentCTEvent(): #this is really just for clean up 

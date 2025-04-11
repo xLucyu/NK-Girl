@@ -14,7 +14,6 @@ def getData(url):
             case _:
                 raise ValueError()
 
-
     except requests.exceptions.RequestException as e:
         raise ValueError(e)
         
@@ -32,5 +31,4 @@ def getID(urls, index):
         "Data": selectedID 
     } 
 
-    return apiData
-    
+    return apiData 

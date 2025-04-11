@@ -13,7 +13,6 @@ def formatSoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType):
 
     lbBody = leaderboardData.get("body", None) 
     leaderboardEntriesPerPage = len(lbBody)
-
     maxNameLength = max(len(player.get("displayName", "").replace("(disbanded)", "").strip()) for player in lbBody) 
 
     playerData = str()

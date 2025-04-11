@@ -19,7 +19,13 @@ class Help(commands.Cog):
 
         embed.add_field(
             name = "**Owners**",
-            value = "xlucyu and spani333",
+            value = "xlucyu",
+            inline = False
+        )
+
+        embed.add_field(
+            name = "Contributers", 
+            value = "minecool and spani333",
             inline = False
         )
 

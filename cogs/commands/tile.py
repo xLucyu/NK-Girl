@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.tileProfile import tileProfile
 from cogs.eventNumber import getCurrentCTEvent
-from utils.discord.viewmenu import SelectView
+from utils.discord.viewMenu import SelectView
 
 class Tile(commands.Cog):
 
@@ -16,7 +16,7 @@ class Tile(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user) 
     @discord.option("tile_code", description = "The 3 letter Tile code.", required = True)
     @discord.option("event", description = "CT Week, default will be the latest week.", required = False)
-    async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0):
+    async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:
         
         if event == 0:
             eventIndex = getCurrentCTEvent()

@@ -1,4 +1,4 @@
-from utils.assets.modifiers import modifiers
+from utils.assets.bloonsModifiers import MODIFIERS
 
 NOKEYS = ["MaxParagons", "MaxTowers", "LeastTiers"]
 
@@ -12,7 +12,7 @@ def modifieremotefilter(activemodifiers: dict, emotes: dict) -> list:
         
         modifierName = f"{modifier}{key}"
         emoteid = emotes.get(modifierName, None)
-        name = modifiers.get(modifier)
+        name = MODIFIERS.get(modifier)
 
         if multiplier is True:
             value = ""
@@ -62,7 +62,7 @@ def handlemodifiers(modifiers: dict) -> dict:
     return activemodifiers
                 
 
-def filtermodifiers(modifiers: dict, emotes: dict) -> list:
+def filterModifiers(modifiers: dict, emotes: dict) -> list:
      
     activemodifiers = handlemodifiers(modifiers) 
     return modifieremotefilter(activemodifiers, emotes)

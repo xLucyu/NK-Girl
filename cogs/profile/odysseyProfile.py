@@ -1,10 +1,10 @@
-from cogs.basecommand import baseCommand
+from cogs.baseCommand import baseCommand
 from cogs.eventNumber import currentEventNumber
 from cogs.regex import *
-from utils.filter.filteredmodifiers import filtermodifiers
-from utils.filter.embedfilter import filterembed
-from utils.assets.urls import EVENTURLS
-from api.metadata import getMetaData
+from utils.filter.filterBloonsModifiers import filterModifiers
+from utils.filter.createEmbed import filterembed
+from utils.assets.eventUrls import EVENTURLS
+from api.metaData import getMetaData
 
 def validateTitle(stats: dict, difficulty: str) -> str:
 
@@ -24,7 +24,7 @@ def filtermaps(maps: dict, eventData: dict, emotes: dict) -> None:
         map = maps[index]
 
         mapList = getMetaData(map)
-        modifiers = filtermodifiers(mapList.get("Modifiers"), emotes) #type: ignore
+        modifiers = filterModifiers(mapList.get("Modifiers", None), emotes)
         mode = splitUppercase(map.get("mode"))
 
         difficulty = splitUppercase(map.get("difficulty"))

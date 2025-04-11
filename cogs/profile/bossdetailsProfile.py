@@ -1,12 +1,14 @@
-from api.fetchid import getID
-from api.metadata import getBody
+from typing import Tuple, Dict
+
+from api.fetchId import getID
+from api.metaData import getBody
 from api.emojis import getEmojis
-from utils.assets.tierhp import bosshp
-from utils.assets.urls import EVENTURLS
-from utils.filter.embedfilter import filterembed 
+from utils.assets.bossTierHp import BOSSHP
+from utils.assets.eventUrls import EVENTURLS
+from utils.filter.createEmbed import filterembed 
 from cogs.regex import splitNumbers
 
-def getBossData(urls: dict):
+def getBossData(urls: dict) -> Tuple[Dict, Dict, Dict] | None:
 
     try:
         api = getID(urls, index=0) 
@@ -68,7 +70,7 @@ def bossdetailsProfile(players: int, difficulty: str):
     
     bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
     name = apiData.get("bossType", None) 
-    bossIndex = bosshp[difficulty][name.title()]
+    bossIndex = BOSSHP[difficulty][name.title()]
     bossemote = f"<:bossIncrease:{emojis.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emojis.get('bossDecrease')}>"   
 
     eventData = {

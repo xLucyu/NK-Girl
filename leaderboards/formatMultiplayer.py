@@ -1,7 +1,7 @@
-from api.fetchid import getData
+from api.fetchId import getData
 from api.emojis import getEmojis
-from leaderboards.scores import determineLeaderboardScore
-from leaderboards.medals import getMedalForPosition
+from leaderboards.defineScoreType import determineLeaderboardScore
+from leaderboards.getMedals import getMedalForPosition
 
 def getMultiplayerLeaderboard(apiData, metaData, players, lbType): 
 

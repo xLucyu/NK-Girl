@@ -1,11 +1,11 @@
 from cogs.regex import splitUppercase
-from api.fetchid import getData
-from api.metadata import getMetaData
+from api.fetchId import getData
+from api.metaData import getMetaData
 from api.emojis import getEmojis
-from utils.filter.filteredtowers import filtertowers
-from utils.filter.filteredmodifiers import filtermodifiers
-from utils.filter.embedfilter import filterembed
-from utils.assets.urls import EVENTURLS
+from utils.filter.filterTowers import filterTowers
+from utils.filter.filterBloonsModifiers import filterModifiers
+from utils.filter.createEmbed import filterembed
+from utils.assets.eventUrls import EVENTURLS
 
 
 def getCTdata(urls: dict, tileCode: str, eventIndex: int):
@@ -138,8 +138,8 @@ def tileProfile(eventIndex: int, tileCode: str):
         "MaxTowers": gameData["dcModel"]["maxTowers"]
     }
     
-    towers = filtertowers(availableTowers, emotes)
-    modifiers = filtermodifiers(activeModifiers, emotes)
+    towers = filterTowers(availableTowers, emotes)
+    modifiers = filterModifiers(activeModifiers, emotes)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${gameData['dcModel']['startRules']['cash']:,}"

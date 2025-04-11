@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from cogs.profile.odysseyProfile import odysseyProfile
-from utils.discord.viewmenu import SelectView
+from utils.discord.viewMenu import SelectView
 
 class Odyssey(commands.Cog):
 
@@ -18,7 +18,7 @@ class Odyssey(commands.Cog):
         description = "Choose a Difficulty, default is hard.",
         choices = ["Easy", "Medium", "Hard"]
     )
-    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "hard"):
+    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None:
          
         embed, names = odysseyProfile(index=0, difficulty=difficulty.lower()) #type: ignore
 

@@ -16,7 +16,7 @@ class Admin(commands.Cog):
         choices = ["guild", "global"],
         required = True 
     )
-    async def sync(self, ctx: discord.ApplicationContext, synctype: str):
+    async def sync(self, ctx: discord.ApplicationContext, synctype: str) -> None:
         
        
         if ctx.author.id != 1220815634515099718:
@@ -37,7 +37,7 @@ class Admin(commands.Cog):
 
 
     @discord.slash_command(name="usage", description="owner only", guild=discord.Object(id=int(GUILDID))) #type: ignore 
-    async def usage(self, ctx: discord.ApplicationContext):
+    async def usage(self, ctx: discord.ApplicationContext) -> None:
 
         if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")

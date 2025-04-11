@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from cogs.profile.challengeProfile import challengeProfile
-from utils.discord.viewmenu import SelectView
+from utils.discord.viewMenu import SelectView
 
 class Challenge(commands.Cog):
 
@@ -16,7 +16,7 @@ class Challenge(commands.Cog):
                        integration_types = {discord.IntegrationType.user_install,
                                              discord.IntegrationType.guild_install}) 
     @discord.option("code", description = "Enter a challenge code", required = True)
-    async def lookup(self, ctx:discord.ApplicationContext, code: str):
+    async def lookup(self, ctx:discord.ApplicationContext, code: str) -> None:
 
         embed, _ = challengeProfile(index=code.upper()) #type: ignore
         await ctx.respond(embed=embed)
@@ -31,7 +31,7 @@ class Challenge(commands.Cog):
             choices = ["Standard", "Advanced", "Co-op"],
             required = False
         )
-    async def daily(self, ctx:discord.ApplicationContext, difficulty: str = "Advanced"):
+    async def daily(self, ctx:discord.ApplicationContext, difficulty: str = "Advanced") -> None:
 
         if difficulty == "Co-op":
             difficulty = "coop"

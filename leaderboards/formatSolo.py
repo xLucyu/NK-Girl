@@ -1,6 +1,6 @@
-from leaderboards.medals import getMedalForPosition 
-from leaderboards.scores import determineLeaderboardScore 
-from api.fetchid import getData
+from leaderboards.getMedals import getMedalForPosition 
+from leaderboards.defineScoreType import determineLeaderboardScore 
+from api.fetchId import getData
 from api.emojis import getEmojis 
 
 def formatSoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType):

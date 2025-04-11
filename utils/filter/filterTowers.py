@@ -1,4 +1,4 @@
-from utils.assets.categories import categories
+from utils.assets.towerCategories import CATEGORIES
 
 def handle_information(emote: str, max: int, name: str, tiers: list, category: str) -> str:
 
@@ -41,8 +41,8 @@ def getTiers(tower: dict) -> list:
 def handlecategories(towers: dict, emotes: dict) -> dict:
     
     towerKeys = [tower for tower in towers if tower["max"] != 0]
-    allowedTowers = {category: [] for category, _ in categories.items()}
-    categorizedTowers = ((cat, tow) for cat, towerlist in categories.items() for tow in towerlist)
+    allowedTowers = {category: [] for category, _ in CATEGORIES.items()}
+    categorizedTowers = ((cat, tow) for cat, towerlist in CATEGORIES.items() for tow in towerlist)
 
     seen = set()
 
@@ -61,7 +61,7 @@ def handlecategories(towers: dict, emotes: dict) -> dict:
     return allowedTowers
 
 
-def filtertowers(towers: dict, emotes: dict) -> list:
+def filterTowers(towers: dict, emotes: dict) -> list:
 
     allowedtowers = handlecategories(towers, emotes)
     return format_towers(allowedtowers)

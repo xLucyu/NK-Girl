@@ -21,10 +21,9 @@ def getCurrentActiveLeaderboard(ids: dict, leaderboardApiKey: str) -> dict | Non
     
     # this is used to check for the latest leaderboard which has players in them since they get released early
 
-    for currentApiIndex in range(len(ids)):
-        currentIndex = ids[currentApiIndex] 
-        if currentIndex.get(leaderboardApiKey) != 0:
-            return currentIndex
+    for currentApiIndex in ids: 
+        if currentApiIndex.get(leaderboardApiKey) != 0:
+            return currentApiIndex
 
     return None
         
@@ -37,7 +36,7 @@ def getID(urls: dict, index: int) -> dict | None:
     selectedID = ids[index] 
     leaderboardApiKey = urls.get("totalscores", None)  
 
-    if leaderboardApiKey: # will check if if leaderboard has a key for total players 
+    if leaderboardApiKey: # will check if leaderboard has a key for total players 
         selectedID = getCurrentActiveLeaderboard(ids, leaderboardApiKey)
 
     if not selectedID:

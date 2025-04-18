@@ -1,5 +1,4 @@
 import discord
-from leaderboards.formatMultiplayer import formatMultiplayerLeaderboard
 
 class ButtonView(discord.ui.View):
 
@@ -9,14 +8,12 @@ class ButtonView(discord.ui.View):
         self.lbType = components.get("Mode", None)
         self.teamScores = components.get("TeamScores", None)
         self.submode = components.get("SubMode", None)
-        self.playerCount = components.get("players", None)
-        self.eventData = components.get("EventData", None)
+        self.playerCount = components.get("Players", None)
         self.userID = components.get("Author", None)
         self.function = components.get("Function", None)
         self.page = components.get("Page", None)
         self.layout = components.get("Layout", None)
- 
-        
+  
         for button in self.layout:
             button = discord.ui.Button(
                 label = button[0],
@@ -36,13 +33,7 @@ class ButtonView(discord.ui.View):
             return  
 
         self.handlePage(interaction)
-
-        if self.teamScores:
-            playerData, totalscores = formatMultiplayerLeaderboard(self.teamScores, self.page, self.lbType, self.submode) 
-            embed = discord.Embed(title=self.eventData, description=playerData, color=discord.Color.blue())
-            embed.set_footer(text=f"Total Entires: {totalscores}")
-        else:
-            embed, _, _ = self.function(self.lbType, self.page, self.submode, self.playerCount)
+        embed, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores)
 
         await interaction.response.edit_message(embed=embed, view=self)
 
@@ -54,3 +45,4 @@ class ButtonView(discord.ui.View):
         for button in self.children:
             if button.custom_id == "-1": #type: ignore 
                 button.disabled = self.page <= 1 #type: ignore
+

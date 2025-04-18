@@ -1,5 +1,5 @@
-from cogs.regex import splitNumbers 
 from cogs.eventNumber import currentEventNumber, getCurrentCTEvent
+from cogs.regex import splitNumbers  
 
 def formatEventInfo(apiData, lbType, difficulty):
     
@@ -25,4 +25,4 @@ def formatEventInfo(apiData, lbType, difficulty):
         case _:
             return None
 
-    return title
+    return title 

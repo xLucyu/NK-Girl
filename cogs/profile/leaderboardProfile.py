@@ -1,15 +1,17 @@
 import discord 
-from leaderboards.formatMultiplayer import formatMultiplayerLeaderboard, getMultiplayerLeaderboard 
-from leaderboards.formatTitle import formatEventInfo
-from leaderboards.formatSolo import formatSoloLeaderboard
+from leaderboards.formatSolos import SoloLeaderboard
+from leaderboards.formatBossLeaderboard import BossLeaderboard
+from leaderboards.eventInfo import formatEventInfo
 from api.fetchId import getID
-  
-def leaderboardProfile(lbType, page, difficulty=None, players=None):
-    
+from api.emojis import getEmojis
+
+
+def leaderboardProfile(lbType, page, difficulty=None, players=None, teamScores=None):
+
     leaderboardUrls = {
         "race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
-            "extension": f"leaderboard",
+            "extension": "leaderboard",
             "totalscores": "totalScores",
         },
         "boss": {
@@ -22,32 +24,34 @@ def leaderboardProfile(lbType, page, difficulty=None, players=None):
             "extension": f"leaderboard_{difficulty}",
             "totalscores": f"totalScores_{difficulty}"
         }
-    }     
+    }
 
     urls = leaderboardUrls.get(lbType, None)
-   
     if not urls:
         return None
- 
-    api = getID(urls, index=0) 
 
+    api = getID(urls, index=0)
     if not api:
-        return 
-        
+        return None
+
     apiData = api.get("Data", None)
-    metaData = api.get("MetaData", None) 
+    metaData = api.get("MetaData", None)
+    emojis = getEmojis()
     
-    if players == 1 or players is None:
-        playerData, totalscores = formatSoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType) 
-        teamScores = None
-
+    if lbType != "boss":
+        leaderboard = SoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType, emojis)
+        playerData, totalScores = leaderboard.formatLeaderboard()
     else:
-        teamScores = getMultiplayerLeaderboard(apiData, metaData, players, lbType)
-        playerData, totalscores = formatMultiplayerLeaderboard(teamScores, page, lbType, difficulty) 
-            
-     
-    eventData = formatEventInfo(apiData, lbType, difficulty) 
-    embed = discord.Embed(title=eventData, description=playerData, color=discord.Color.blue())
-    embed.set_footer(text=f"Total Entires: {totalscores}") 
+        leaderboard = BossLeaderboard(urls, apiData, metaData, emojis, page, difficulty, lbType, players)
+        if players > 1:
+            if not teamScores:
+                teamScores = leaderboard.getMultiplayerLeaderboard()
+            playerData, totalScores = leaderboard.formatMultiplayerLeaderboard(teamScores)
+        else:
+            playerData, totalScores = leaderboard.formatLeaderboard()
 
-    return embed, teamScores, eventData
+    eventData = formatEventInfo(apiData, lbType, difficulty)
+    embed = discord.Embed(title=eventData, description=playerData, color=discord.Color.blue())
+    embed.set_footer(text=f"Total Entries: {totalScores}")
+
+    return embed, teamScores

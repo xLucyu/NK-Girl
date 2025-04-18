@@ -15,7 +15,7 @@ class Leaderboard(commands.Cog):
     async def race(self, ctx: discord.ApplicationContext) -> None:    
 
         await ctx.response.defer()
-        embed, _, _= leaderboardProfile(lbType="race", page=1) #type: ignore
+        embed, _ = leaderboardProfile(lbType="race", page=1) #type: ignore
 
         components = {
             "Mode": "race",
@@ -41,14 +41,13 @@ class Leaderboard(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, teamScores, eventData = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players) #type: ignore
+        embed, teamScores = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players) #type: ignore
 
         components = {
             "Mode": "boss",
             "Players": players,
             "SubMode": difficulty.lower(),
-            "TeamScores": teamScores,
-            "EventData": eventData,
+            "TeamScores": teamScores,   
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 
@@ -68,7 +67,7 @@ class Leaderboard(commands.Cog):
     async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
 
         await ctx.response.defer()
-        embed, _, _ = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) #type: ignore
+        embed, _ = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) #type: ignore
 
         components = {
             "Mode": "ct",

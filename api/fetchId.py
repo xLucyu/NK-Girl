@@ -31,7 +31,7 @@ def getCurrentActiveLeaderboard(ids: dict, leaderboardApiKey: str) -> dict | Non
 def getID(urls: dict, index: int) -> dict | None:
      
     data = getData(urls.get("base", None))
-    
+ 
     ids = data.get("body", None) 
     selectedID = ids[index] 
     leaderboardApiKey = urls.get("totalscores", None)  
@@ -45,5 +45,5 @@ def getID(urls: dict, index: int) -> dict | None:
     return {
         "Names": [name.get("name") for name in ids if ids], 
         "MetaData": selectedID.get(urls.get("extension", None)),
-        "Data": selectedID 
+        "Data": selectedID
     }  

@@ -1,9 +1,9 @@
 import discord 
 from discord.ext import commands
+from api.fetchId import getData
 from cogs.profile.tileProfile import tileProfile
 from cogs.eventNumber import getCurrentCTEvent
-from utils.discord.viewMenu import SelectView 
-from api.fetchId import getData 
+from utils.discord.viewMenu import SelectView  
 
 class Tile(commands.Cog):
 
@@ -11,18 +11,23 @@ class Tile(commands.Cog):
         
         self.bot = bot 
 
-    @discord.message_command(name="tile lookup", description="If this message has a tile code for CT, you can look it up.") 
+    @discord.message_command(name="Tile Lookup", description="If this message has a tile code for CT, you can look it up.",
+                             integration_types={discord.IntegrationType.user_install,
+                                             discord.IntegrationType.guild_install}) 
     async def getTileCode(self, ctx: discord.ApplicationContext, message: discord.Message):
          
         eventIndex = getCurrentCTEvent()
         url = f"https://storage.googleapis.com/btd6-ct-map/events/{eventIndex}/tiles.json"
         ctInfo = getData(url)
         
-        tileCode = "" 
-        for tile in ctInfo:
-            if tile.lower() in message.content.lower():
-                tileCode = tile
-                break
+        tileCode = ""
+        validTiles = [word for word in message.content.split() if len(word) == 3]
+        allCtTiles = [tile for tile in ctInfo]
+
+        for word in validTiles:
+            if word.upper() in allCtTiles:
+                tileCode = word
+                break 
 
         if not eventIndex:
             eventIndex = 0
@@ -36,7 +41,9 @@ class Tile(commands.Cog):
     @discord.option("tile_code", description = "The 3 letter Tile code.", required = True)
     @discord.option("event", description = "CT Week, default will be the latest week.", required = False)
     async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:
-       
+        
+        await ctx.response.defer()
+
         if event == 0:
             eventIndex = getCurrentCTEvent()
         else:

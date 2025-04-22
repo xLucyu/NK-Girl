@@ -29,7 +29,7 @@ class Admin(commands.Cog):
                 print("commands are synced")
             else:
                 print("commands are syncing for the guild only.")
-                await self.bot.sync_commands(guild_ids=[1349497540206399548]) 
+                await self.bot.sync_commands(guild_ids=[1292232444363276310]) 
                 print("commands are synced")
 
         except Exception as e:

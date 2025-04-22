@@ -5,8 +5,9 @@ import discord, os
 bot = discord.Bot(intents=discord.Intents.all())
 
 @bot.event
-async def on_ready():
-     
+async def on_ready(): 
+    
+   # await bot.sync_commands(guild_ids=[1292232444363276310]) 
     for guild in bot.guilds:
         
         print(guild)
@@ -26,4 +27,5 @@ def main() -> None:
     load_cogs(bot) 
     bot.run(BOTTOKEN)
 
-main()
+if __name__ =="__main__":
+    main()

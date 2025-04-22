@@ -16,10 +16,11 @@ class Challenge(commands.Cog):
                        integration_types = {discord.IntegrationType.user_install,
                                              discord.IntegrationType.guild_install}) 
     @discord.option("code", description = "Enter a challenge code", required = True)
-    async def lookup(self, ctx:discord.ApplicationContext, code: str) -> None:
+    @discord.option("ephemeral")
+    async def lookup(self, ctx:discord.ApplicationContext, code: str, ephemeral: bool = False) -> None:
 
         embed, _ = challengeProfile(index=code.upper()) #type: ignore
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=ephemeral)
 
 
     @challenge.command(name="daily", description="Get the current daily challenge.",
@@ -31,7 +32,7 @@ class Challenge(commands.Cog):
             choices = ["Standard", "Advanced", "Co-op"],
             required = False
         )
-    async def daily(self, ctx:discord.ApplicationContext, difficulty: str = "Advanced") -> None:
+    async def daily(self, ctx:discord.ApplicationContext, difficulty: str = "Advanced", ephemeral: bool = False) -> None:
 
         if difficulty == "Co-op":
             difficulty = "coop"
@@ -54,7 +55,7 @@ class Challenge(commands.Cog):
             }
 
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view, ephemeral=ephemeral)
         view.message = message
 
 def setup(bot):

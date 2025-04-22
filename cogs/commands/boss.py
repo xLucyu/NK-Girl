@@ -18,7 +18,7 @@ class Boss(commands.Cog):
         choices = ["Normal", "Elite"],
         required = True
     )
-    async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal") -> None: 
+    async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", ephemeral: bool = False) -> None: 
         
         if difficulty == "Normal":
             difficulty = "Standard"
@@ -40,7 +40,7 @@ class Boss(commands.Cog):
             }
 
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view, ephemeral=ephemeral)
         view.message = message   
 
 

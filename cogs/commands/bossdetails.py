@@ -25,10 +25,14 @@ class BossDetails(commands.Cog):
         choices = [1, 2, 3, 4],
         required = False
     )
+    @discord.option(
+        "ephemeral"
+    )
     
     async def bossdetails(self, ctx: discord.ApplicationContext,
                           difficulty: str = "Normal",
-                          players: int = 1) -> None:
+                          players: int = 1,
+                          ephemeral: bool = False) -> None:
 
         if difficulty == "Normal":
             difficulty = "Standard"
@@ -50,7 +54,7 @@ class BossDetails(commands.Cog):
             }
          
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view, ephemeral=ephemeral)
         view.message = message   
 
         

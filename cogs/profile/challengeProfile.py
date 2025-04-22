@@ -8,8 +8,7 @@ from datetime import datetime, timezone
 
 
 def findIndex(urls: dict, difficulty: str):
- 
-    
+  
     challenges = getData(urls.get("base", None))
     if challenges is None:
         return None

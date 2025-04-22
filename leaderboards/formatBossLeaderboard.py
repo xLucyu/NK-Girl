@@ -31,7 +31,6 @@ class BossLeaderboard(BaseLeaderboard):
         initialPage = 1
 
         while True:
-
             leaderboardData = self.getLeaderboardData(metaData, initialPage)
 
             if not leaderboardData.get("success"):

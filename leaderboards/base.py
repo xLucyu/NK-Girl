@@ -13,7 +13,7 @@ class BaseLeaderboard:
         return (f"{hours}:" if hours >= 1 else "") + f"{minutes:02}:{seconds:02}.{milliseconds:03}"   
     
     @staticmethod
-    def getMedalforPosition(emojis, currentPosition, totalScores, lbType, difficulty):
+    def getMedalforPosition(emojis: dict, currentPosition, totalScores, lbType, difficulty):
           
         top1Percent = totalScores * 0.01
         top10Percent = totalScores * 0.10

@@ -126,6 +126,7 @@ EVENTURLS = {
         "Sanctuary": "https://static.wikia.nocookie.net/b__/images/6/60/Sanctuary_No_UI.png/revision/latest?cb=20210818052711&path-prefix=bloons",
         "Scrapyard": "https://static.wikia.nocookie.net/b__/images/c/c4/Scrapyard_No_UI.png/revision/latest?cb=20220413173158&path-prefix=bloons",
         "Skates": "https://static.wikia.nocookie.net/b__/images/5/58/MapSelectSkatesButton.png/revision/latest?cb=20201203035953&path-prefix=bloons",
+        "Spa Pits": "https://static.wikia.nocookie.net/b__/images/0/00/SpaPits_No_UI.png/revision/latest?cb=20250402071846&path-prefix=bloons",
         "Spice Islands": "https://static.wikia.nocookie.net/b__/images/4/45/SpiceIslands_No_UI.png/revision/latest?cb=20200519013108&path-prefix=bloons",
         "Spillway": "https://static.wikia.nocookie.net/b__/images/d/dd/Spillway_No_UI.png/revision/latest?cb=20200519013108&path-prefix=bloons",
         "Spring Spring": "https://static.wikia.nocookie.net/b__/images/1/1c/SpringSpring_No_UI.png/revision/latest?cb=20200519013109&path-prefix=bloons",

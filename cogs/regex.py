@@ -17,4 +17,3 @@ def splitNumbers(string: str) -> str | None:
         name, number = split.groups()
         return f"{name} #{number}"
 
-

@@ -115,7 +115,7 @@ def tileProfile(eventIndex: int, tileCode: str):
     }
 
     NKDATA, emotes, categorizedTiles = getCTdata(urls, tileCode, eventIndex) #type: ignore   
-
+     
     if not NKDATA or not emotes: 
         return  
 
@@ -137,7 +137,7 @@ def tileProfile(eventIndex: int, tileCode: str):
         "NoSelling": gameData["dcModel"]["disableSelling"],
         "MaxTowers": gameData["dcModel"]["maxTowers"]
     }
-    
+     
     towers = filterTowers(availableTowers, emotes)
     modifiers = filterModifiers(activeModifiers, emotes)
 

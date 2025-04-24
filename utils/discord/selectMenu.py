@@ -41,11 +41,7 @@ class SelectMenu(discord.ui.Select):
 
             data["EventIndex"] = selectedIndex #insert Eventindex into the parentView
             difficulty = data.get("Difficulty", self.difficulty)
-
-            if difficulty is not None:
-                difficulty = difficulty.lower()
-
-            data["Difficulty"] = difficulty 
+            data["Difficulty"] = difficulty.lower() if difficulty else None 
             
             if type(self.eventNames[-1]) == int and self.eventName != "Coop Mode": #coop passes a list of integers 
                 embed, _ = self.function(self.eventNames[-1], self.eventNames[selectedIndex])
@@ -53,6 +49,7 @@ class SelectMenu(discord.ui.Select):
                 embed, _ = self.function(selectedIndex, difficulty)
 
             await interaction.response.edit_message(embed=embed)
+            self.parentView.message = await interaction.original_response()   
 
-        except Exception as e:
-            await interaction.response.send_message(content=e, ephemeral=True)
+        except Exception:
+            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)

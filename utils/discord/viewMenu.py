@@ -6,7 +6,7 @@ class SelectView(discord.ui.View):
 
     def __init__(self, data):
 
-        super().__init__(timeout=90)
+        super().__init__(timeout=10)
         self.message = data.get("message")
         self.userID = data.get("Author")
         self.event = data.get("EventName")
@@ -50,18 +50,18 @@ class SelectView(discord.ui.View):
             selectButtonView = ButtonMenu(
                 View = self,
                 UserID = self.userID,
-                Function = self.function,
+                Function = self.function, 
                 Layout = layout 
             )
             self.add_item(selectButtonView)
 
 
     async def on_timeout(self):
- 
-        self.index.clear()
-
+        
+        print(self.message)
         if self.message:
             try:
                 await self.message.edit(view=None)
+                self.index.clear()
             except discord.NotFound:
                 pass

@@ -1,4 +1,3 @@
-import traceback
 import discord
 
 class ButtonMenu(discord.ui.Button):
@@ -38,5 +37,4 @@ class ButtonMenu(discord.ui.Button):
             message = await interaction.original_response()
             self.parentView.message = message #type: ignore
         except:
-            # print(traceback.format_exc())
             await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)   

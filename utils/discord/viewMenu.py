@@ -1,4 +1,3 @@
-import traceback
 import discord 
 from utils.discord.selectMenu import SelectMenu
 from utils.discord.buttonMenu import ButtonMenu
@@ -61,8 +60,6 @@ class SelectView(discord.ui.View):
         if self.message:
             try:
                 await self.message.edit(view=None)
-                print(f"Cleared view for {self.message.id}")
                 self.index.clear()
             except:
-                # print(traceback.format_exc())
                 pass

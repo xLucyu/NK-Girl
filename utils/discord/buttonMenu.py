@@ -7,7 +7,7 @@ class ButtonMenu(discord.ui.Button):
         self.parentView = components.get("View", None)
         self.userID = components.get("UserID", None)
         self.function = components.get("Function", None)
-        self.layout = components.get("Layout", None)
+        self.layout = components.get("Layout", None) 
          
         super().__init__(
             label=(self.layout[0]),
@@ -34,6 +34,7 @@ class ButtonMenu(discord.ui.Button):
             selectedIndex = data.get("EventIndex", 0) 
             embed, _ = self.function(selectedIndex, difficulty.lower()) #type: ignore
             await interaction.response.edit_message(embed=embed)
+            self.parentView.message = await interaction.original_response()
 
         except:
             await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)   

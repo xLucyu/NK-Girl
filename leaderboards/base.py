@@ -3,17 +3,22 @@ from api.fetchId import getData
 class BaseLeaderboard:
     
     @staticmethod
-    def convertMsToTime(score):
-
-        hours = (score // (1000 * 60 * 60)) 
+    def convertMsToTime(score: int) -> str:
+         
+        days = score // (1000 * 60 * 60 * 24)
+        hours = (score // (1000 * 60 * 60)) % 24 
         minutes = (score // (1000 * 60)) % 60
         seconds = (score // 1000) % 60
         milliseconds = score % 1000
 
-        return (f"{hours}:" if hours >= 1 else "") + f"{minutes:02}:{seconds:02}.{milliseconds:03}"   
+        return (f"{days}d:" if days > 0 else "") + (f"{hours}:" if hours > 0 else "") + f"{minutes:02}:{seconds:02}.{milliseconds:03}"   
     
     @staticmethod
-    def getMedalforPosition(emojis: dict, currentPosition, totalScores, lbType, difficulty):
+    def getLeaderboardData(metaData: str, page: int) -> dict:
+        return getData(f"{metaData}?page={page}")
+
+    @staticmethod
+    def getMedalforPosition(emojis: dict, currentPosition: int, totalScores: int, lbType: str, difficulty: str):
           
         top1Percent = totalScores * 0.01
         top10Percent = totalScores * 0.10
@@ -86,6 +91,4 @@ class BaseLeaderboard:
             if position[0] <= currentPosition <= position[1]:
                 return medal
     
-    @staticmethod
-    def getLeaderboardData(metaData, page):
-        return getData(f"{metaData}?page={page}")
+

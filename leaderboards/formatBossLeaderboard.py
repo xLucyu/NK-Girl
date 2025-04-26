@@ -114,6 +114,5 @@ class BossLeaderboard(BaseLeaderboard):
         
             medal = self.getMedalforPosition(self.emojis, currentPosition, totalScores, self.lbType, self.difficulty)
             playerData += f"{medal} `{currentPosition:02}` `{teamMembers:<42} {teamScore:>5}`\n"
-
     
         return playerData, totalScores

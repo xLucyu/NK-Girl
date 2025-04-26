@@ -13,10 +13,6 @@ class Race(commands.Cog):
     @discord.slash_command(name="race", description="Show Race Data", 
                            integration_types={discord.IntegrationType.user_install,
                                               discord.IntegrationType.guild_install})
-    @discord.option(
-        "hidden",
-        choices = [True]
-    )
     async def race(self, ctx: discord.ApplicationContext, hidden: bool = False) -> None:
          
         embed, names = raceProfile(index=0, difficulty=None) #type: ignore

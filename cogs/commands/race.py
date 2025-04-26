@@ -13,7 +13,7 @@ class Race(commands.Cog):
     @discord.slash_command(name="race", description="Show Race Data", 
                            integration_types={discord.IntegrationType.user_install,
                                               discord.IntegrationType.guild_install})
-    async def race(self, ctx: discord.ApplicationContext, hidden: bool = False) -> None:
+    async def race(self, ctx: discord.ApplicationContext) -> None:
          
         embed, names = raceProfile(index=0, difficulty=None) #type: ignore
 
@@ -28,7 +28,7 @@ class Race(commands.Cog):
         }
 
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view, ephemeral=hidden)
+        message = await ctx.respond(embed=embed, view=view)
         view.message = message
 
 def setup(bot):

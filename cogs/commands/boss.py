@@ -40,7 +40,7 @@ class Boss(commands.Cog):
             }
 
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view, ephemeral=ephemeral)
+        message = await ctx.respond(embed=embed, view=view)
         view.message = message   
 
 

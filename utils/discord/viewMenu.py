@@ -6,7 +6,7 @@ class SelectView(discord.ui.View):
 
     def __init__(self, data):
 
-        super().__init__(timeout=10)
+        super().__init__(timeout=180)
         self.message = data.get("message")
         self.userID = data.get("Author")
         self.event = data.get("EventName")
@@ -58,7 +58,6 @@ class SelectView(discord.ui.View):
 
     async def on_timeout(self):
         
-        print(self.message)
         if self.message:
             try:
                 await self.message.edit(view=None)

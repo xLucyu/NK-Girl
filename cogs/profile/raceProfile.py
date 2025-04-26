@@ -55,4 +55,3 @@ def raceProfile(index, difficulty):
     names = api.get("Names", None) 
 
     return embed, names
-

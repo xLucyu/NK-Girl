@@ -21,6 +21,7 @@ class Leaderboard(commands.Cog):
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 
+            "Message": None,
             "Layout": [
                 ["⬅", "-1", "primary"],
                 ["➡", "1", "primary"], 
@@ -28,8 +29,8 @@ class Leaderboard(commands.Cog):
         }
 
         view = ButtonView(**components)
-        await ctx.respond(embed=embed, view=view)
-
+        message = await ctx.respond(embed=embed, view=view)
+        view.message = message 
 
     @leaderboard.command(name="boss", description="look up boss leaderboard")
     @discord.option("difficulty", description="choose a difficulty, default is normal", choices=["Normal", "Elite"], required=False)
@@ -50,6 +51,7 @@ class Leaderboard(commands.Cog):
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 
+            "Message": None,
             "Layout": [
                 ["⬅", "-1", "primary"],
                 ["➡", "1", "primary"], 
@@ -57,10 +59,9 @@ class Leaderboard(commands.Cog):
         }
 
         view = ButtonView(**components)
-        await ctx.respond(embed=embed, view=view) 
-
-
-    
+        message = await ctx.respond(embed=embed, view=view) 
+        view.message = message
+  
     @leaderboard.command(name="ct", description="")
     @discord.option("option", description="", choices = ["Player", "Team"], required=True)
     async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
@@ -73,15 +74,17 @@ class Leaderboard(commands.Cog):
             "SubMode": option.lower(),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
-            "Page": 1, 
+            "Page": 1,
+            "Message": None,
             "Layout": [
                 ["⬅", "-1", "primary"],
                 ["➡", "1", "primary"], 
             ]
         }
-
+        
         view = ButtonView(**components)
-        await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=embed, view=view)
+        view.message = message
 
 def setup(bot):
     bot.add_cog(Leaderboard(bot))

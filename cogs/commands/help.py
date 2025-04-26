@@ -53,6 +53,11 @@ class Help(commands.Cog):
         )
 
         embed.add_field(
+            name = "Fast Tile Lookup",
+            value = "You can right click on a message, that has a valid CT Tile code in it for a fast look up. Just right click the message, go to Apps and click on Tile Lookup."
+        )
+
+        embed.add_field(
             name = "Github",
             value= "This project is open source, so feel free to view the code [here](https://github.com/xLucyu/L-K).",
             inline = False

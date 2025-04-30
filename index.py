@@ -1,5 +1,5 @@
 from config import BOTTOKEN
-import discord, os, time
+import discord, os
 
 
 bot = discord.Bot(intents=discord.Intents.all())
@@ -13,7 +13,6 @@ async def on_ready():
         print(guild)
 
 def load_cogs(bot) -> None:
-    time.sleep(30_000_000)
     for file in os.listdir('./cogs/commands/'):
         if file.endswith(".py"):
             bot.load_extension(f"cogs.commands.{file[:-3]}")

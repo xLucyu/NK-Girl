@@ -35,9 +35,5 @@ class CommandTable:
             cursor.execute("select * from COMMANDS order by uses desc")
             return cursor.fetchall()
 
-    def close(self):
-        self.connector.close()
-
     def __del__(self):
-        self.close()
-
+        self.connector.close()

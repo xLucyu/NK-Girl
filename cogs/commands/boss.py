@@ -17,9 +17,10 @@ class Boss(commands.Cog):
         description = "Choose a difficulty, default is Normal.",
         choices = ["Normal", "Elite"],
         required = True
-    )
-    async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", ephemeral: bool = False) -> None: 
-        
+        )
+    async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal") -> None:
+        await ctx.response.defer()
+
         if difficulty == "Normal":
             difficulty = "Standard"
          

@@ -5,9 +5,7 @@ from database.index import CommandTable
 
 
 class Admin(commands.Cog):
-
     def __init__(self, bot):
-
         self.bot = bot
 
     @discord.slash_command(name="sync", description="owner only", guild=discord.Object(id=int(GUILDID))) #type: ignore
@@ -15,10 +13,8 @@ class Admin(commands.Cog):
         "synctype",
         choices = ["guild", "global"],
         required = True 
-    )
-    async def sync(self, ctx: discord.ApplicationContext, synctype: str) -> None:
-        
-       
+        )
+    async def sync(self, ctx: discord.ApplicationContext, synctype: str) -> None: 
         if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")
         try:
@@ -38,7 +34,6 @@ class Admin(commands.Cog):
 
     @discord.slash_command(name="usage", description="owner only", guild=discord.Object(id=int(GUILDID))) #type: ignore 
     async def usage(self, ctx: discord.ApplicationContext) -> None:
-
         if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")
 

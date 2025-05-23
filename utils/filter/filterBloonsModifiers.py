@@ -2,17 +2,16 @@ from utils.assets.bloonsModifiers import MODIFIERS
 
 NOKEYS = ["MaxParagons", "MaxTowers", "LeastTiers"]
 
-def modifieremotefilter(activemodifiers: dict, emotes: dict) -> list:
-    
-    modifieremotes = list()
- 
-    for modifier, multiplier in activemodifiers.items():
 
+def modifierEmoteFilter(activeModifiers: dict, emotes: dict) -> list: 
+    modifierEmotes = list()
+ 
+    for modifier, multiplier in activeModifiers.items():
         key = "" if modifier in NOKEYS or multiplier is True else "Increase" if multiplier > 100 else "Decrease"
         
         modifierName = f"{modifier}{key}"
-        emoteid = emotes.get(modifierName, None)
-        name = MODIFIERS.get(modifier)
+        emoteId = emotes.get(modifierName, None)
+        embedDisplayName = MODIFIERS.get(modifier)
 
         if multiplier is True:
             value = ""
@@ -23,28 +22,24 @@ def modifieremotefilter(activemodifiers: dict, emotes: dict) -> list:
         else:
             value = f"{multiplier}% "
 
-        modifieremotes.append(f"<:{modifierName}:{emoteid}> {value}{name}")
+        modifierEmotes.append(f"<:{modifierName}:{emoteId}> {value}{embedDisplayName}")
 
-
-    return modifieremotes
+    return modifierEmotes
         
 
-def handlemodifiers(modifiers: dict) -> dict:
+def handleModifiers(modifiers: dict) -> dict:
 
-    activemodifiers = dict()
+    activeModifiers = dict()
 
-    for modifier, multiplier in modifiers.items():
-        
+    for modifier, multiplier in modifiers.items(): 
         match multiplier:
-
             case True:
-               activemodifiers[modifier] = True
+               activeModifiers[modifier] = True
 
             case dict():
-                activemodifiers.update(handlemodifiers(multiplier))
+                activeModifiers.update(handleModifiers(multiplier))
 
             case int() | float():
-
                 if modifier not in NOKEYS:
                     if multiplier in [1, -1, False, 9999]: # filtering out all percentage based categories
                         continue 
@@ -56,13 +51,12 @@ def handlemodifiers(modifiers: dict) -> dict:
                     continue 
 
                 value = (multiplier if modifier in NOKEYS else int(multiplier*100)) 
+                activeModifiers[modifier] = value
 
-                activemodifiers[modifier] = value
-
-    return activemodifiers
+    return activeModifiers
                 
 
 def filterModifiers(modifiers: dict, emotes: dict) -> list:
      
-    activemodifiers = handlemodifiers(modifiers) 
-    return modifieremotefilter(activemodifiers, emotes)
+    activeModifiers = handleModifiers(modifiers) 
+    return modifierEmoteFilter(activeModifiers, emotes)

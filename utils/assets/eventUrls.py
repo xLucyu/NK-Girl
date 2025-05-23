@@ -98,7 +98,7 @@ EVENTURLS = {
         "High Finance": "https://static.wikia.nocookie.net/b__/images/4/4e/HighFinance_No_UI.png/revision/latest?cb=20200519013101&path-prefix=bloons",
         "In The Loop": "https://static.wikia.nocookie.net/b__/images/d/d3/InTheLoop_No_UI.png/revision/latest?cb=20200519013102&path-prefix=bloons",
         "Infernal": "https://static.wikia.nocookie.net/b__/images/d/d9/Infernal_No_UI.png/revision/latest?cb=20200519013101&path-prefix=bloons",
-        "KartsNDarts": "https://static.wikia.nocookie.net/b__/images/e/e6/KartsNDarts_No_UI.png/revision/latest?cb=20200519013102&path-prefix=bloons",
+        "Karts N Darts": "https://static.wikia.nocookie.net/b__/images/e/e6/KartsNDarts_No_UI.png/revision/latest?cb=20200519013102&path-prefix=bloons",
         "Last Resort": "https://static.wikia.nocookie.net/b__/images/0/0f/Last_Resort_No_UI.png/revision/latest?cb=20241210132925&path-prefix=bloons",
         "Logs": "https://static.wikia.nocookie.net/b__/images/5/5d/Logs_No_UI.png/revision/latest?cb=20200519013103&path-prefix=bloons",
         "Lotus Island": "https://static.wikia.nocookie.net/b__/images/9/9e/LotusIsland_No_UI.png/revision/latest?cb=20211008000755&path-prefix=bloons",

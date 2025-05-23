@@ -6,6 +6,8 @@ def splitUppercase(string: str) -> str:
         string = "MonkeyMeadows"
     if string == "Clicks":
         string = "Chimps"
+    if string == "#ouch":
+        return "#ouch"
 
     split = re.findall(r"[A-Z][a-z]*", string)
     return " ".join(split)

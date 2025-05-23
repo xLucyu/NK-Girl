@@ -27,7 +27,6 @@ class FeedbackModal(discord.ui.Modal):
         )
 
     async def callback(self, interaction:discord.Interaction) -> None:
-        
         commandTable = CommandTable.fetchCommands()
         submissionNumber = next((command[1] for command in commandTable if command[0] == "feedback"), 0)
         
@@ -48,8 +47,7 @@ class Feedback(commands.Cog):
     @discord.slash_command(name="feedback", description="give feedback or submit an error",
                            integration_types = {discord.IntegrationType.user_install,
                                                 discord.IntegrationType.guild_install})
-    async def feedback(self, ctx: discord.ApplicationContext) -> None:
-        
+    async def feedback(self, ctx: discord.ApplicationContext) -> None: 
         user = ctx.author.name
         avatar = ctx.author.avatar
         submissionChannel = self.bot.get_channel(int(SUBCID)) #type: ignore 

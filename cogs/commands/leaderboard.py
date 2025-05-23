@@ -33,11 +33,21 @@ class Leaderboard(commands.Cog):
         view.message = message 
 
     @leaderboard.command(name="boss", description="look up boss leaderboard")
-    @discord.option("difficulty", description="choose a difficulty, default is normal", choices=["Normal", "Elite"], required=False)
-    @discord.option("players", description="choose a mode, default is solo", choices=[1,2,3,4], required=False)
+    @discord.option(
+        "difficulty", 
+        description="choose a difficulty, default is normal", 
+        choices=["Normal", "Elite"], 
+        required=False
+        )
+    @discord.option(
+        "players", 
+        description="choose a mode, default is solo", 
+        choices=[1,2,3,4], 
+        required=False
+        )
     async def boss(self, ctx:discord.ApplicationContext, difficulty: str = "Normal", players: int = 1) -> None:
-        
         await ctx.response.defer()
+
         if difficulty == "Normal":
             difficulty = "Standard"
 

@@ -1,6 +1,6 @@
 from utils.assets.towerCategories import CATEGORIES
 
-def handle_information(emote: str, max: int, name: str, tiers: list, category: str) -> str:
+def handleInformation(emote: str, max: int, name: str, tiers: list, category: str) -> str:
 
     string = str()
     
@@ -17,15 +17,15 @@ def handle_information(emote: str, max: int, name: str, tiers: list, category: s
     return string
 
 
-def format_towers(allowed_towers: dict) -> list:
+def formatTowers(allowedTowers: dict) -> list:
 
-    formatted_list = list()
+    formattedList = list()
 
-    for category, tower in allowed_towers.items():
-        sublist = [handle_information(*info, category) for info in tower] #type: ignore shush pyright
-        formatted_list.append(sublist)
+    for category, tower in allowedTowers.items():
+        sublist = [handleInformation(*info, category) for info in tower] #type: ignore shush pyright
+        formattedList.append(sublist)
 
-    return formatted_list
+    return formattedList
 
 def getTiers(tower: dict) -> list:
 
@@ -38,7 +38,7 @@ def getTiers(tower: dict) -> list:
         ]
     ]
 
-def handlecategories(towers: dict, emotes: dict) -> dict:
+def handleCategories(towers: dict, emotes: dict) -> dict:
     
     towerKeys = [tower for tower in towers if tower["max"] != 0]
     allowedTowers = {category: [] for category, _ in CATEGORIES.items()}
@@ -47,21 +47,18 @@ def handlecategories(towers: dict, emotes: dict) -> dict:
     seen = set()
 
     for cat, tow in categorizedTowers:
-            
         emoteid = emotes.get(tow[0])
 
         for tower in towerKeys:
-
             tiers = getTiers(tower)
             if tower["tower"] == tow[0] and tow[0] not in seen: #sometimes towers appear twice in the api lol
                 allowedTowers[cat].append((f"<:{tower['tower']}:{emoteid}>", tower["max"], tow[1], tiers))
                 seen.add(tow[0])
-
         
     return allowedTowers
 
 
 def filterTowers(towers: dict, emotes: dict) -> list:
 
-    allowedtowers = handlecategories(towers, emotes)
-    return format_towers(allowedtowers)
+    allowedtowers = handleCategories(towers, emotes)
+    return formatTowers(allowedtowers)

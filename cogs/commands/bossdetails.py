@@ -18,21 +18,15 @@ class BossDetails(commands.Cog):
         description = "Choose a difficulty, default is Normal.",
         choices = ["Normal", "Elite"],
         required = False
-    )
+        )
     @discord.option(
         "players",
         description = "Choose the mode, default is solo",
         choices = [1, 2, 3, 4],
         required = False
-    )
-    @discord.option(
-        "ephemeral"
-    )
-    
-    async def bossdetails(self, ctx: discord.ApplicationContext,
-                          difficulty: str = "Normal",
-                          players: int = 1,
-                          ephemeral: bool = False) -> None:
+        ) 
+    async def bossdetails(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", players: int = 1) -> None:
+        await ctx.response.defer()
 
         if difficulty == "Normal":
             difficulty = "Standard"

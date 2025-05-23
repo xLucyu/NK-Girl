@@ -1,9 +1,7 @@
 import discord
 
 class ButtonMenu(discord.ui.Button):
-
     def __init__(self, **components):
-        
         self.parentView = components.get("View", None)
         self.userID = components.get("UserID", None)
         self.function = components.get("Function", None)
@@ -15,8 +13,7 @@ class ButtonMenu(discord.ui.Button):
             style=getattr(discord.ButtonStyle, self.layout[2])
         )
 
-    async def callback(self, interaction:discord.Interaction):
-        
+    async def callback(self, interaction:discord.Interaction) -> None:
         messageID = self.parentView.message.id
         userID = interaction.user.id #type: ignore
 
@@ -25,15 +22,19 @@ class ButtonMenu(discord.ui.Button):
             return
          
         try:
+            await interaction.response.defer()
+
             difficulty = self.custom_id 
             if messageID not in self.parentView.index:
                 self.parentView.index[messageID] = dict() 
             
             data = self.parentView.index[messageID] 
             data["Difficulty"] = difficulty 
+
             selectedIndex = data.get("EventIndex", 0) 
             embed, _ = self.function(selectedIndex, difficulty.lower()) #type: ignore
-            await interaction.response.edit_message(embed=embed)
+
+            await interaction.edit_original_response(embed=embed)
             self.parentView.message = await interaction.original_response()
 
         except:

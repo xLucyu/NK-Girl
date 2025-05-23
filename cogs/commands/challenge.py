@@ -15,7 +15,10 @@ class Challenge(commands.Cog):
     @challenge.command(name="lookup", description="look up a challenge",
                        integration_types = {discord.IntegrationType.user_install,
                                              discord.IntegrationType.guild_install}) 
-    @discord.option("code", description = "Enter a challenge code", required = True) 
+    @discord.option(
+        "code",
+        description = "Enter a challenge code", 
+        required = True) 
     async def lookup(self, ctx:discord.ApplicationContext, code: str) -> None:
 
         embed, _ = challengeProfile(index=code.upper()) #type: ignore
@@ -26,10 +29,10 @@ class Challenge(commands.Cog):
                        integration_types = {discord.IntegrationType.user_install,
                                             discord.IntegrationType.guild_install})
     @discord.option(
-            "difficulty",
-            description = "Enter the type of daily challenge, default is Advanced.",
-            choices = ["Standard", "Advanced", "Co-op"],
-            required = False
+        "difficulty",
+        description = "Enter the type of daily challenge, default is Advanced.",
+        choices = ["Standard", "Advanced", "Co-op"],
+        required = False
         )
     async def daily(self, ctx:discord.ApplicationContext, difficulty: str = "Advanced") -> None:
 

@@ -1,9 +1,7 @@
 import discord
 
 class SelectMenu(discord.ui.Select):
-
     def __init__(self, **components):
-
         self.parentView = components.get("View", None)  
         self.eventName = components.get("Event", None) 
         self.difficulty = components.get("Difficulty", None)
@@ -23,7 +21,7 @@ class SelectMenu(discord.ui.Select):
             disabled=False
         )
         
-    async def callback(self, interaction:discord.Interaction):
+    async def callback(self, interaction:discord.Interaction) -> None:
         
         messageID = self.parentView.message.id
         userID = interaction.user.id #type: ignore
@@ -33,6 +31,8 @@ class SelectMenu(discord.ui.Select):
             return 
 
         try:
+            await interaction.response.defer()
+
             if messageID not in self.parentView.index:
                 self.parentView.index[messageID] = dict()
             
@@ -41,6 +41,7 @@ class SelectMenu(discord.ui.Select):
 
             data["EventIndex"] = selectedIndex #insert Eventindex into the parentView
             difficulty = data.get("Difficulty", self.difficulty)
+
             if difficulty is not None:
                 difficulty = difficulty.lower()
             data["Difficulty"] = difficulty 
@@ -50,7 +51,7 @@ class SelectMenu(discord.ui.Select):
             else: 
                 embed, _ = self.function(selectedIndex, difficulty)
 
-            await interaction.response.edit_message(embed=embed)
+            await interaction.edit_original_response(embed=embed)
             self.parentView.message = await interaction.original_response()   
 
         except Exception:

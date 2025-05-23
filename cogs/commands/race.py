@@ -14,7 +14,8 @@ class Race(commands.Cog):
                            integration_types={discord.IntegrationType.user_install,
                                               discord.IntegrationType.guild_install})
     async def race(self, ctx: discord.ApplicationContext) -> None:
-         
+        await ctx.response.defer() 
+
         embed, names = raceProfile(index=0, difficulty=None) #type: ignore
 
         data = {

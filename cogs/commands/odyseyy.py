@@ -17,9 +17,8 @@ class Odyssey(commands.Cog):
         "difficulty",
         description = "Choose a Difficulty, default is hard.",
         choices = ["Easy", "Medium", "Hard"]
-    )
-    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None:
-         
+        )
+    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None: 
         embed, names = odysseyProfile(index=0, difficulty=difficulty.lower()) #type: ignore
 
         data = {

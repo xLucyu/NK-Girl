@@ -8,12 +8,11 @@ class Logger(commands.Cog):
 
     @commands.Cog.listener()
     async def on_application_command(self, ctx: discord.ApplicationContext):
-        
         commandName = str(ctx.command.name) 
         
         if commandName not in ["usage", "sync"]:
-            self.commands = CommandTable()
-            self.commands.increaseCommandUsage(commandName)  
+            commands = CommandTable()
+            commands.increaseCommandUsage(commandName)  
 
 def setup(bot):
     bot.add_cog(Logger(bot))

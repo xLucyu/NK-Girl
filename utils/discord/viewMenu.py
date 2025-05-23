@@ -5,7 +5,6 @@ from utils.discord.buttonMenu import ButtonMenu
 class SelectView(discord.ui.View):
 
     def __init__(self, data):
-
         super().__init__(timeout=180)
         self.message = data.get("message")
         self.userID = data.get("Author")
@@ -15,11 +14,10 @@ class SelectView(discord.ui.View):
         self.difficulty = data.get("Difficulty") 
         self.buttonLayout = data.get("Button")
         self.function = data.get("Function") 
-        self.index = dict() 
+        self.index = dict() #safe current index for button and select menu 
         self.handleViewMenus()
     
     def handleViewMenus(self):
- 
         if type(self.eventNames[0][-1]) == int and self.event[0] != "Coop Mode":
             for num in range(len(self.eventNames)):
                 self.addSelectMenu(num)
@@ -28,10 +26,8 @@ class SelectView(discord.ui.View):
                 self.addButtonMenu()
             if self.event[0] is not None: 
                 self.addSelectMenu(0)
-
  
     def addSelectMenu(self, num):
-
         selectMenuView = SelectMenu(
                 View = self,
                 Event = self.event[num],
@@ -40,12 +36,11 @@ class SelectView(discord.ui.View):
                 Function = self.function,
                 Emoji = self.emoji[num],
                 EventNames = self.eventNames[num]
-        )
+            )
 
         self.add_item(selectMenuView)
 
     def addButtonMenu(self):
-
         for layout in self.buttonLayout:
             selectButtonView = ButtonMenu(
                 View = self,
@@ -54,7 +49,6 @@ class SelectView(discord.ui.View):
                 Layout = layout 
             )
             self.add_item(selectButtonView)
-
 
     async def on_timeout(self):
         

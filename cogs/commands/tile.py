@@ -38,10 +38,17 @@ class Tile(commands.Cog):
                            integration_types={discord.IntegrationType.user_install,
                                               discord.IntegrationType.guild_install}) 
     @commands.cooldown(1, 5, commands.BucketType.user) 
-    @discord.option("tile_code", description = "The 3 letter Tile code.", required = True)
-    @discord.option("event", description = "CT Week, default will be the latest week.", required = False)
+    @discord.option(
+        "tile_code", 
+        description = "The 3 letter Tile code.", 
+        required = True
+        )
+    @discord.option(
+        "event",
+        description = "CT Week, default will be the latest week.", 
+        required = False
+        )
     async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:
-        
         await ctx.response.defer()
 
         if event == 0:

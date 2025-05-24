@@ -62,6 +62,6 @@ def leaderboardProfile(lbType, page, difficulty=None, players=None, teamScores=N
     timeLeft = timeLeftForLeaderboard(eventEnd)
     eventData = formatEventInfo(apiData, lbType, difficulty)
     embed = discord.Embed(title=eventData, description=playerData, color=discord.Color.blue())
-    embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {timeLeft}")
+    embed.set_footer(text=f"Total Entries: {totalScores}\n Time Left: {timeLeft}")
 
     return embed, teamScores

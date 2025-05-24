@@ -44,13 +44,3 @@ def getID(urls: dict, index: int) -> dict | None:
         "MetaData": selectedID.get(urls.get("extension", None)),
         "Data": selectedID
     } 
-
-def getBody(url: str) -> dict | None:
-    
-    data = getData(url)
-    if data is None:
-        return
-
-    body = data.get("body", None)
-    if body is None:
-        return

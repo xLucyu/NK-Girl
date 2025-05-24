@@ -9,7 +9,7 @@ from api.metaData import getMetaData
 def validateTitle(stats: dict, difficulty: str) -> str:
 
     if stats["Extreme"]:
-        title = f"Difficulty: {difficulty.title()}, Extreme"
+        title = f"Difficulty: {difficulty.title()}, Extreme" 
     else:
         title = f"Difficulty: {difficulty.title()}"
  

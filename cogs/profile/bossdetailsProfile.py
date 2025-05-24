@@ -29,7 +29,7 @@ def getBossData(urls: dict) -> Tuple[Dict, Dict, Dict] | None:
         return None 
  
 
-def tierfilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:
+def tierFilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:
 
     healthMultiplierMode = {
         1: 1,
@@ -79,7 +79,7 @@ def bossdetailsProfile(players: int, difficulty: str):
         "Health Multiplier": [f"{bossemote} {int(bossHpMultiplier*100)}%", False]
     }
     
-    tierfilter(bossHpMultiplier, bossIndex, eventData, players, emojis)
+    tierFilter(bossHpMultiplier, bossIndex, eventData, players, emojis)
 
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][name.title()]
     bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][name.title()]
@@ -94,3 +94,4 @@ def bossdetailsProfile(players: int, difficulty: str):
     embed.set_image(url=bannerURL) 
 
     return embed, modes
+

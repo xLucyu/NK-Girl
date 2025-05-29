@@ -1,6 +1,9 @@
 import re 
 
-def splitUppercase(string: str) -> str:
+def splitUppercase(string: str) -> str | None:
+
+    if not string:
+        return None
 
     if string == "Tutorial":
         string = "MonkeyMeadows"
@@ -18,4 +21,6 @@ def splitNumbers(string: str) -> str | None:
     if split:
         name, number = split.groups()
         return f"{name} #{number}"
+    else:
+        return None
 

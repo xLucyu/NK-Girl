@@ -1,6 +1,7 @@
-import requests
+import requests, dacite
+from utils.dataclasses.main import NkData
 
-def getData(url):
+def getData(url: str) -> dict:
 
     try: 
         data = requests.get(url) 
@@ -17,7 +18,7 @@ def getData(url):
     except requests.exceptions.RequestException as e:
         raise ValueError(e)
 
-def getCurrentActiveLeaderboard(ids: dict, leaderboardApiKey: str) -> dict | None:
+def getCurrentActiveLeaderboard(ids: list, leaderboardApiKey: str) -> dict | None:
     # this is used to check for the latest leaderboard which has players in them since they get released early
     for currentApiIndex in ids: 
         if currentApiIndex.get(leaderboardApiKey) != 0:
@@ -25,22 +26,21 @@ def getCurrentActiveLeaderboard(ids: dict, leaderboardApiKey: str) -> dict | Non
 
     return None 
 
-def getID(urls: dict, index: int) -> dict | None:
-     
+def getID(urls: dict, index: int) -> dict | None: 
     data = getData(urls.get("base", None))
- 
-    ids = data.get("body", None) 
+     
+    ids = data.get("body", None)
     selectedID = ids[index] 
     leaderboardApiKey = urls.get("totalscores", None)  
 
     if leaderboardApiKey: # will check if leaderboard has a key for total players 
         selectedID = getCurrentActiveLeaderboard(ids, leaderboardApiKey)
-
+    
     if not selectedID:
-        return None 
-            
+        return None
+
     return {
-        "Names": [name.get("name") for name in ids if ids], 
+        "Names": [entry["name"] for entry in ids], 
         "MetaData": selectedID.get(urls.get("extension", None)),
         "Data": selectedID
     } 

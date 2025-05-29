@@ -1,51 +1,48 @@
-from api.fetchId import getID
-from api.metaData import getBody, getMetaData 
+from api.fetchId import getID, getData 
 from api.emojis import getEmojis
 from utils.filter.filterTowers import filterTowers
-from utils.filter.filterBloonsModifiers import filterModifiers
+from utils.filter.filterBloonsModifiers import filterModifiers 
+from utils.filter.createEmbed import filterEmbed
+from utils.dataclasses.metaData import Body, Tower
 
-def baseCommand(urls: dict, index=None) -> dict | None:
+class BaseCommand:
     
-    try:
-        if index is not None:
-            api = getID(urls, index) 
-            if not api:
-                return 
+    @staticmethod 
+    def useApiCall(url: str) -> dict:
+        return getData(url)
 
-            metaData = api.get("MetaData", None) 
+    @staticmethod 
+    def getCurrentEventData(urls: dict, index: int) -> dict | None:
+        return getID(urls, index)
 
-        else:
-            metaData = urls.get("base", None) #really only needed for challenge look up
-            api = None
+    @staticmethod 
+    def getAllEmojis() -> dict:
+        return getEmojis() or {} 
 
-        body = getBody(url=metaData)
-        if not body:
-            return 
+    @staticmethod 
+    def getActiveTowers(towers: list[Tower], emotes: dict) -> list:
+        return filterTowers(towers, emotes)
+    
+    @staticmethod 
+    def getActiveModifiers(body: Body, emotes: dict) -> list:
 
-        stats = getMetaData(body) 
-        if not stats:
-            return 
+        modifiers = {
+            "BloonModifiers": body._bloonModifiers,
+            "MkDisabled": body.disableMK,
+            "NoSelling": body.disableSelling,
+            "NoContinues": body.noContinues,
+            "LeastTiers": body.leastTiersUsed,
+            "LeastCash": body.leastCashUsed,
+            "PowersDisabled": body.disablePowers,
+            "AbilityCoolDown": body.abilityCooldownReductionMultiplier,
+            "RemovableCost": body.removableCostMultiplier,
+            "MaxTowers": body.maxTowers,
+            "MaxParagons": body.maxParagons
+        }
 
-        emotes = getEmojis() 
-        odysseymapsKey = stats.get("Maps", None)
-        
-        if odysseymapsKey:
-            maps = getBody(url=odysseymapsKey)
-            towers = filterTowers(stats["Odyssey"]["AvailableTowers"], emotes) #type: ignore 
-            modifiers = None
-        else:
-            towers = filterTowers(stats.get("Towers", None), emotes) #type: ignore
-            modifiers = filterModifiers(stats.get("Modifiers", None), emotes) #type: ignore
-            maps = None 
+        return filterModifiers(modifiers, emotes)
 
-    except:
-        return None 
+    @staticmethod 
+    def createEmbed(eventData: dict, url: str, title: str):
+        return filterEmbed(eventData, url, title)
 
-    return {
-        "Api": api,
-        "Stats": stats,
-        "Emotes": emotes,
-        "Maps": maps,
-        "Towers": towers,
-        "Modifiers": modifiers
-    }

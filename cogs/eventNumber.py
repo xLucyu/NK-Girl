@@ -1,7 +1,7 @@
 import math
 from api.fetchId import getID
 
-def currentEventNumber(startTimeStamp: int, firstTimeStamp: int) -> int: 
+def getCurrentEventNumber(startTimeStamp: int, firstTimeStamp: int) -> int: 
     timeDifference = startTimeStamp - firstTimeStamp
     currentNumber = math.floor(timeDifference / (7 * 24 * 60 * 60 * 1000))
     return round(currentNumber)

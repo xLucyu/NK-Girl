@@ -1,10 +1,8 @@
-from cogs.baseCommand import baseCommand
-from cogs.regex import splitNumbers, splitUppercase
-from utils.filter.createEmbed import filterembed
+from cogs.regex import splitNumbers, splitUppercase 
 from utils.assets.eventUrls import EVENTURLS
 
 def bossProfile(index: int, difficulty: str):
-     
+    ''' 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
@@ -65,3 +63,4 @@ def bossProfile(index: int, difficulty: str):
         names.append(splitNumbers(name))
 
     return embed, names
+    '''

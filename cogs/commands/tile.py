@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from api.fetchId import getData
-from cogs.profile.tileProfile import tileProfile
+#from cogs.profile.tileProfile import tileProfile
 from cogs.eventNumber import getCurrentCTEvent
 from utils.discord.viewMenu import SelectView  
 
@@ -62,7 +62,7 @@ class Tile(commands.Cog):
             "Author": ctx.author.id,
             "EventName": ["Banner", "Relic"],
             "PreviousEvents": categorizedTiles,
-            "Function": tileProfile,
+#            "Function": tileProfile,
             "Difficulty": tile_code,
             "Message": None,
             "Emoji": ["<:Banner:1338202859854102539>", "<:Relic:1338923236263723079>"]

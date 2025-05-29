@@ -6,7 +6,7 @@ from leaderboards.formatBossLeaderboard import BossLeaderboard
 from leaderboards.eventInfo import formatEventInfo
 from api.fetchId import getID
 from api.emojis import getEmojis
-
+'''
 def timeLeftForLeaderboard(eventEnd: int) -> int | str:
     
     currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
@@ -65,3 +65,4 @@ def leaderboardProfile(lbType, page, difficulty=None, players=None, teamScores=N
     embed.set_footer(text=f"Total Entries: {totalScores}\n Time Left: {timeLeft}")
 
     return embed, teamScores
+'''

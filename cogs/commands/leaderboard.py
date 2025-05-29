@@ -1,6 +1,6 @@
 import discord 
 from discord.ext import commands
-from cogs.profile.leaderboardProfile import leaderboardProfile
+#from cogs.profile.leaderboardProfile import leaderboardProfile
 from leaderboards.pageButtons import ButtonView
 
 class Leaderboard(commands.Cog):
@@ -19,7 +19,7 @@ class Leaderboard(commands.Cog):
         components = {
             "Mode": "race",
             "Author": ctx.author.id,
-            "Function": leaderboardProfile,
+           # "Function": leaderboardProfile,
             "Page": 1, 
             "Message": None,
             "Layout": [

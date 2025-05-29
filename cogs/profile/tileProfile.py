@@ -4,10 +4,9 @@ from api.metaData import getMetaData
 from api.emojis import getEmojis
 from utils.filter.filterTowers import filterTowers
 from utils.filter.filterBloonsModifiers import filterModifiers
-from utils.filter.createEmbed import filterembed
 from utils.assets.eventUrls import EVENTURLS
 
-
+'''
 def getCTdata(urls: dict, tileCode: str, eventIndex: int):
      
     try: 
@@ -161,4 +160,6 @@ def tileProfile(eventIndex: int, tileCode: str):
      
     embed = filterembed(eventData, eventURL, title=f"{emoteid} Contested Territory #{eventIndex} - Tile {tileCode.upper()}")
     embed.set_image(url=EVENTURLS["Maps"][map])
-    return embed, categorizedTiles 
+    return embed, categorizedTiles
+
+'''

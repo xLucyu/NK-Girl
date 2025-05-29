@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.profile.odysseyProfile import odysseyProfile
+#from cogs.profile.odysseyProfile import odysseyProfile
 from utils.discord.viewMenu import SelectView
 
 class Odyssey(commands.Cog):
@@ -25,7 +25,7 @@ class Odyssey(commands.Cog):
             "Author": ctx.author.id,
             "EventName": ["Odyssey"],
             "PreviousEvents": [names],
-            "Function": odysseyProfile,
+ #           "Function": odysseyProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
             "Emoji": ["<:OdysseyCrewBtn:1338551267043180635>>"],

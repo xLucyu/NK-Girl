@@ -1,15 +1,13 @@
 from typing import Tuple, Dict
 
 from api.fetchId import getID
-from api.metaData import getBody
 from api.emojis import getEmojis
 from utils.assets.bossTierHp import BOSSHP
-from utils.assets.eventUrls import EVENTURLS
-from utils.filter.createEmbed import filterembed 
+from utils.assets.eventUrls import EVENTURLS 
 from cogs.regex import splitNumbers
 
 def getBossData(urls: dict) -> Tuple[Dict, Dict, Dict] | None:
-
+    '''
     try:
         api = getID(urls, index=0) 
 
@@ -94,4 +92,4 @@ def bossdetailsProfile(players: int, difficulty: str):
     embed.set_image(url=bannerURL) 
 
     return embed, modes
-
+    '''

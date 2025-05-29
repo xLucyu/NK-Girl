@@ -1,3 +1,4 @@
+from dataclasses import is_dataclass, asdict
 from utils.assets.bloonsModifiers import MODIFIERS
 
 NOKEYS = ["MaxParagons", "MaxTowers", "LeastTiers"]
@@ -29,9 +30,14 @@ def modifierEmoteFilter(activeModifiers: dict, emotes: dict) -> list:
 
 def handleModifiers(modifiers: dict) -> dict:
 
-    activeModifiers = dict()
+    activeModifiers = dict() 
 
-    for modifier, multiplier in modifiers.items(): 
+    for modifier, multiplier in modifiers.items(): # needed to unpack dataclasses
+        if is_dataclass(multiplier):
+            multiplier = asdict(multiplier)
+            activeModifiers.update(handleModifiers(multiplier))
+            continue
+       
         match multiplier:
             case True:
                activeModifiers[modifier] = True

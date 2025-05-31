@@ -1,4 +1,3 @@
-import dacite, discord
 from cogs.baseCommand import BaseCommand
 from cogs.eventNumber import getCurrentEventNumber
 from cogs.regex import splitUppercase
@@ -7,7 +6,7 @@ from utils.dataclasses.main import Body
 from utils.dataclasses.metaData import MetaData
 
 
-def raceProfile(index, difficulty=None) -> discord.Embed | None:
+def raceProfile(index, difficulty=None):
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/races",
@@ -17,17 +16,12 @@ def raceProfile(index, difficulty=None) -> discord.Embed | None:
     baseCommand = BaseCommand()   
     eventURL = EVENTURLS["Race"]["race"]
 
-    # fetch data from urls.base 
     data = baseCommand.getCurrentEventData(urls, index)
-    if not data:
-        return 
-    mainData = dacite.from_dict(data_class=Body, data=data["Data"])
-    
-    #fetch data from metadata 
-    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
-    metaData = dacite.from_dict(data_class=MetaData, data=eventMetaData)
-
-    emotes = baseCommand.getAllEmojis() 
+    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
+    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
+    emotes = baseCommand.getAllEmojis()
+ 
     body = metaData.body 
 
     selectedMap = splitUppercase(body.map)

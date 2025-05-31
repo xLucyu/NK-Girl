@@ -12,10 +12,10 @@ MODIFIERS = {
   "NoSelling": "No Selling",
   "AbilityCooldown": "% Ability Cooldown Rate",
   "NoContinues": "No Continues",
-  "MaxTowers": "Tower Limit",
-  "MaxParagons": "Paragon Limit",
-  "LeastCash": "Cash Limit",
-  "LeastTiers": "Tiers Max",
+  "MaxTowers": " Tower Limit",
+  "MaxParagons": " Paragon Limit",
+  "LeastCash": " Cash Limit",
+  "LeastTiers": " Tiers Max",
   "PowersDisabled": "No Powers",
   "RemovableCost": "Removable Cost"
 }

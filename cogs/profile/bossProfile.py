@@ -1,4 +1,3 @@
-import dacite
 from cogs.baseCommand import BaseCommand
 from cogs.regex import splitNumbers, splitUppercase 
 from utils.assets.eventUrls import EVENTURLS
@@ -16,17 +15,12 @@ def bossProfile(index: int, difficulty: str):
     baseCommand = BaseCommand()   
     eventURL = EVENTURLS["Race"]["race"]
 
-    # fetch data from urls.base 
     data = baseCommand.getCurrentEventData(urls, index)
-    if not data:
-        return 
-    mainData = dacite.from_dict(data_class=Body, data=data["Data"])
-    
-    #fetch data from metadata 
-    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
-    metaData = dacite.from_dict(data_class=MetaData, data=eventMetaData)
+    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
+    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
+    emotes = baseCommand.getAllEmojis()
 
-    emotes = baseCommand.getAllEmojis() 
     body = metaData.body
 
     selectedMap = splitUppercase(body.map)

@@ -1,24 +1,41 @@
+import dacite
+from cogs.baseCommand import BaseCommand
 from cogs.regex import splitNumbers, splitUppercase 
 from utils.assets.eventUrls import EVENTURLS
+from utils.dataclasses.metaData import MetaData
+from utils.dataclasses.main import Body
+
 
 def bossProfile(index: int, difficulty: str):
-    ''' 
+     
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
     }
 
-    NKDATA = baseCommand(urls, index)
-    
-    if not NKDATA:
+    baseCommand = BaseCommand()   
+    eventURL = EVENTURLS["Race"]["race"]
+
+    # fetch data from urls.base 
+    data = baseCommand.getCurrentEventData(urls, index)
+    if not data:
         return 
+    mainData = dacite.from_dict(data_class=Body, data=data["Data"])
     
-    api = NKDATA.get("Api", None) 
-    apiData = api.get("Data", None) 
-    stats = NKDATA.get("Stats", None)
-    emotes = NKDATA.get("Emotes", None)
-    modifiers = NKDATA.get("Modifiers", None)
-    towers = NKDATA.get("Towers", None)
+    #fetch data from metadata 
+    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
+    metaData = dacite.from_dict(data_class=MetaData, data=eventMetaData)
+
+    emotes = baseCommand.getAllEmojis() 
+    body = metaData.body
+
+    selectedMap = splitUppercase(body.map)
+    selectedDifficulty = splitUppercase(body.difficulty)
+    selectedMode = splitUppercase(body.mode)
+
+    lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
+    cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
+    rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{metaData.body.endRound}"
      
     bossLeaderboardType = {
         "GameTime": f"<:EventRace:{emotes.get('EventRace')}> **Timed Leaderboard**",
@@ -26,41 +43,30 @@ def bossProfile(index: int, difficulty: str):
         "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
 
-    name = apiData.get("bossType", None) 
-    eventURL = EVENTURLS["Boss"][difficulty]["Image"][name.title()]
-    map = splitUppercase(stats.get("Map")) 
-    modeDifficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode"))
-    lbtype = bossLeaderboardType[apiData.get("scoringType", "GameTime")]
-
-    if difficulty == "standard":
-        difficulty = "normal"
-    
-    lives = f"<:Lives:{emotes.get('Lives')}> {stats.get('Lives')}"
-    cash = f"<:Cash:{emotes.get('Cash')}> ${stats.get('Cash'):,}"
-    rounds = f"<:Round:{emotes.get('Round')}> {stats.get('StartRound')}/{stats.get('EndRound')}"
+    lbScoringType = bossLeaderboardType.get(mainData.scoringType)
+    modifiers = baseCommand.getActiveModifiers(body, emotes) 
+    towers = baseCommand.getActiveTowers(body._towers, emotes) 
 
     eventData = { 
-        f"{difficulty.title()} Difficulty": [f"{map}, {modeDifficulty} - {mode}", False],
-        "Modifiers": [f"{'\n'.join(modifiers)} \n\n{lbtype}", False],
+        f"{difficulty.title()} Difficulty": [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
+        "Modifiers": [f"{"\n".join(modifiers)} \n\n{lbScoringType}", False], 
         "Lives": [lives, True],
         "Cash": [cash, True],
         "Rounds": [rounds, True],
-        "Heroes": ["\n".join(towers[0]), False],
-        "Primary": ["\n".join(towers[1]), True],
-        "Military": ["\n".join(towers[2]), True],
+        "Heroes": ["\n".join(towers.get("Heroes", None)), False],
+        "Primary": ["\n".join(towers.get("Primary", None)), True],
+        "Military": ["\n".join(towers.get("Military", None)), True],
         "": ["\n", False],
-        "Magic": ["\n". join(towers[3]), True],
-        "Support": ["\n".join(towers[4]), True],
+        "Magic": ["\n".join(towers.get("Magic", None)), True],
+        "Support": ["\n".join(towers.get("Support", None)), True],
         }
-     
-    eventNumber = splitNumbers(apiData.get("name", None))
-    embed = filterembed(eventData, eventURL, title=f"{eventNumber}")
-    embed.set_image(url=EVENTURLS["Maps"][map])
+ 
+    eventNumber = splitNumbers(mainData.name)
+    embed = baseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
+    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = list()
 
-    for name in api.get("Names", []):
+    for name in data.get("Names", []):
         names.append(splitNumbers(name))
 
     return embed, names
-    '''

@@ -1,4 +1,4 @@
-import dacite 
+import dacite, discord
 from cogs.baseCommand import BaseCommand
 from cogs.eventNumber import getCurrentEventNumber
 from cogs.regex import splitUppercase
@@ -7,7 +7,7 @@ from utils.dataclasses.main import Body
 from utils.dataclasses.metaData import MetaData
 
 
-def raceProfile(index, difficulty=None):
+def raceProfile(index, difficulty=None) -> discord.Embed | None:
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/races",
@@ -21,7 +21,6 @@ def raceProfile(index, difficulty=None):
     data = baseCommand.getCurrentEventData(urls, index)
     if not data:
         return 
-
     mainData = dacite.from_dict(data_class=Body, data=data["Data"])
     
     #fetch data from metadata 
@@ -48,12 +47,12 @@ def raceProfile(index, difficulty=None):
         "Lives": [lives, True],
         "Cash": [cash, True],
         "Rounds": [rounds, True],
-        "Heroes": ["\n".join(towers[0]), False],
-        "Primary": ["\n".join(towers[1]), True],
-        "Military": ["\n".join(towers[2]), True],
+        "Heroes": ["\n".join(towers.get("Heroes", None)), False],
+        "Primary": ["\n".join(towers.get("Primary", None)), True],
+        "Military": ["\n".join(towers.get("Military", None)), True],
         "": ["\n", False],
-        "Magic": ["\n". join(towers[3]), True],
-        "Support": ["\n".join(towers[4]), True],
+        "Magic": ["\n".join(towers.get("Magic", None)), True],
+        "Support": ["\n".join(towers.get("Support", None)), True],
         }  
     
     currentTimeStamp = mainData.start   

@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import List, Union
 
 @dataclass
 class Body:
@@ -19,6 +18,7 @@ class Body:
     totalScores_elite: int = 0
     leaderboard_standard_players_1: str = ""
     leaderboard_elite_players_1: str = ""
+    scoringType: str = ""
     # CT
     totalScores_player: int = 0
     totalScores_team: int = 0

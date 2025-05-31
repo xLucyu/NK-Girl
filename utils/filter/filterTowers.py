@@ -1,60 +1,44 @@
 from utils.assets.towerCategories import CATEGORIES
 from utils.dataclasses.metaData import Tower
-from typing import List, Dict
+from typing import List 
 
-def handleInformation(category, emote: str, towerName: str, towerMax: int, towerTiers: List) -> str:
-    string = str()  
-    string += f"{emote} "
+def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict) -> str: 
+    towerString = f"<:{tower.tower}:>{emotes.get(tower.tower)} "
 
-    if towerMax > 0 and category != "Heroes":
-        string += f"{towerMax}x "
+    if tower.max != -1:
+        towerString += f"{tower.max}x "
 
-    string += towerName 
+    towerString += tower.tower
 
-    if towerTiers != [5,5,5] and category != "Heroes":
-        string += f" {tuple(towerTiers)}"
-
-    return string
-
-
-def formatTowers(allowedTowers: dict) -> list:
-    formattedList = list()
-
-    for category, tower in allowedTowers.items(): 
-        sublist = [handleInformation(category, *info) for info in tower]
-        formattedList.append(sublist)
-
-    return formattedList
+    if tiers != [5,5,5] and not tower.isHero: #exclude heroes -> will always be [5,5,5]
+        towerString += f" {tuple(tiers)}"
+ 
+    return towerString 
 
 
-def getTiers(tower: Tower) -> list:
+def getTiers(tower: Tower) -> list[int]:
     return [
-        max(0, 5 - (tier if tier !=-1 else 5)) # if tier is -1 it's unavailable
+        max(0, 5 - (tier if tier != -1 else 5)) # if tier is -1 its equal to banned
         for tier in [
             tower.path1NumBlockedTiers,
             tower.path2NumBlockedTiers,
             tower.path3NumBlockedTiers
         ]
-    ]
+    ] 
 
 
-def handleCategories(towers: List[Tower], emotes: dict) -> Dict[str, List]: 
-    allowedTowers = {category: [] for category, _ in CATEGORIES.items()}
-    formattedTowerNames = ((category, tower) for category, tower in CATEGORIES.items() for tower in tower)
-    availableTowers = [tower for tower in towers if tower.max != 0]
-    seenTowers = set()
-     
-    for category, apiTower in formattedTowerNames:
-        towerEmoteId = emotes.get(apiTower[0])
-        for tower in availableTowers:
-            if apiTower[0] == tower.tower and tower.tower not in seenTowers:
-                tiers = getTiers(tower)
-                allowedTowers[category].append((f"<:{tower.tower}:{towerEmoteId}>", apiTower[1] ,tower.max, tiers))
-                seenTowers.add(tower.tower)
+def filterTowers(towers: List[Tower], emotes: dict) -> dict:
+    towerKeys = ((category, tower) for category, tower in CATEGORIES.items() for tower in tower) 
+    availableTowers = {tower.tower: tower for tower in towers if tower.max != 0} # filter out towers early 
+    towerCategories = {category: [] for category in CATEGORIES} # creates an array for each category 
 
-    return allowedTowers 
+    seenTowers = set() # avoid duplicates 
+    for category, tower in towerKeys:
+        currentTower = availableTowers.get(tower)
+        if currentTower and currentTower.tower not in seenTowers:
+            tiers = getTiers(currentTower)
+            formattedTowerString = formatTowerToString(currentTower, tiers, emotes)
+            towerCategories[category].append(formattedTowerString)
+            seenTowers.add(currentTower.tower)
 
-
-def filterTowers(towers: List[Tower], emotes: dict) -> list: 
-    allowedTowers = handleCategories(towers, emotes)
-    return formatTowers(allowedTowers)
+    return towerCategories

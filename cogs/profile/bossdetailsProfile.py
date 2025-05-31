@@ -1,33 +1,12 @@
-from typing import Tuple, Dict
-
-from api.fetchId import getID
-from api.emojis import getEmojis
 from utils.assets.bossTierHp import BOSSHP
-from utils.assets.eventUrls import EVENTURLS 
+from utils.assets.eventUrls import EVENTURLS
+from utils.dataclasses.main import Body 
+from utils.dataclasses.metaData import MetaData
 from cogs.regex import splitNumbers
+from cogs.baseCommand import BaseCommand
 
-def getBossData(urls: dict) -> Tuple[Dict, Dict, Dict] | None:
-    '''
-    try:
-        api = getID(urls, index=0) 
 
-        if not api:
-            return 
-
-        metaData = api.get("MetaData", None)
-        body = getBody(url=metaData)
-        emojis = getEmojis()
-
-        if not body or not emojis:
-            return
-
-        return api, body, emojis
-
-    except:
-        return None 
- 
-
-def tierFilter(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:
+def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:
 
     healthMultiplierMode = {
         1: 1,
@@ -63,13 +42,19 @@ def bossdetailsProfile(players: int, difficulty: str):
         "extension": f"metadata{difficulty.title()}"
     }
     
-    api, body, emojis = getBossData(urls) #type: ignore
-    apiData = api.get("Data", None)
+    baseCommand = BaseCommand()
     
-    bossHpMultiplier = body["_bloonModifiers"]["healthMultipliers"]["boss"]
-    name = apiData.get("bossType", None) 
-    bossIndex = BOSSHP[difficulty][name.title()]
-    bossemote = f"<:bossIncrease:{emojis.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emojis.get('bossDecrease')}>"   
+    data = baseCommand.getCurrentEventData(urls, index=0)
+    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
+    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
+    emotes = baseCommand.getAllEmojis()
+
+    bossHpMultiplier = metaData.body._bloonModifiers.healthMultipliers.boss
+    bossName = mainData.bossType
+ 
+    bossIndex = BOSSHP[difficulty][bossName.title()]
+    bossemote = f"<:bossIncrease:{emotes.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emotes.get('bossDecrease')}>"   
 
     eventData = {
         "Players": [players, False],
@@ -77,19 +62,18 @@ def bossdetailsProfile(players: int, difficulty: str):
         "Health Multiplier": [f"{bossemote} {int(bossHpMultiplier*100)}%", False]
     }
     
-    tierFilter(bossHpMultiplier, bossIndex, eventData, players, emojis)
+    addBossTiers(bossHpMultiplier, bossIndex, eventData, players, emotes)
 
-    eventURL = EVENTURLS["Boss"][difficulty]["Image"][name.title()]
-    bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][name.title()]
+    eventURL = EVENTURLS["Boss"][difficulty]["Image"][bossName.title()]
+    bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][bossName.title()]
     
     if difficulty == "standard":
         difficulty = "normal"
 
-    eventNumber = splitNumbers(apiData.get("name", None)) 
+    eventNumber = splitNumbers(mainData.name) 
 
-    embed = filterembed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
+    embed = baseCommand.createEmbed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
     embed.set_image(url=bannerURL) 
 
     return embed, modes
-    '''

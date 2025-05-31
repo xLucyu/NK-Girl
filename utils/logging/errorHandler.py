@@ -7,7 +7,7 @@ class ErrorHandler(commands.Cog):
   
     @commands.Cog.listener()
     async def on_application_command_error(self, ctx: discord.ApplicationContext, error: discord.DiscordException) -> None:
-        
+        print(error) 
         if isinstance(error, commands.CommandOnCooldown):
             title = "Command on Cooldown"
             message = f"You can reuse this command in {error.retry_after:.2f} seconds."

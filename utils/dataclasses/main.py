@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import List
 
 @dataclass
 class Body:
@@ -28,8 +29,10 @@ class Body:
     metadata_easy: str = ""
     metadata_medium: str = ""
     metadata_hard: str = ""
+    #challenge
+    createdAt: int = 0
 
 @dataclass
 class NkData:
     success: bool = False
-    body: Body = field(default_factory=Body)
+    body: List[Body] = field(default_factory=List[Body])

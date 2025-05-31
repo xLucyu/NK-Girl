@@ -1,3 +1,5 @@
+import dacite
+from typing import Type, TypeVar, Any 
 from api.fetchId import getID, getData 
 from api.emojis import getEmojis
 from utils.filter.filterTowers import filterTowers
@@ -5,15 +7,21 @@ from utils.filter.filterBloonsModifiers import filterModifiers
 from utils.filter.createEmbed import filterEmbed
 from utils.dataclasses.metaData import Body, Tower
 
+T = TypeVar("T")
+
 class BaseCommand:
+
+    @staticmethod 
+    def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 
+        return dacite.from_dict(data_class=dataclass, data=data) 
     
     @staticmethod 
     def useApiCall(url: str) -> dict:
-        return getData(url)
+        return getData(url) 
 
     @staticmethod 
-    def getCurrentEventData(urls: dict, index: int) -> dict | None:
-        return getID(urls, index)
+    def getCurrentEventData(urls: dict, index: int) -> dict:
+        return getID(urls, index) or {} 
 
     @staticmethod 
     def getAllEmojis() -> dict:

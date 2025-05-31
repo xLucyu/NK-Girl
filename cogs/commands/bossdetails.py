@@ -1,12 +1,11 @@
 import discord 
 from discord.ext import commands
-#from cogs.profile.bossdetailsProfile import bossdetailsProfile
+from cogs.profile.bossdetailsProfile import bossdetailsProfile
 from utils.discord.viewMenu import SelectView
 
 
 class BossDetails(commands.Cog):
     def __init__(self, bot):
-
         self.bot = bot
 
     @discord.slash_command(name="bossdetails", description="Show details about the current Boss.",
@@ -37,7 +36,7 @@ class BossDetails(commands.Cog):
             "Author": ctx.author.id, 
             "EventName": ["Coop Mode"],
             "PreviousEvents": [modes],
-          #  "Function": bossdetailsProfile,
+            "Function": bossdetailsProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
             "Emoji": ["<:Coop:1341515962410598521>"], 

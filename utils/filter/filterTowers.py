@@ -3,9 +3,9 @@ from utils.dataclasses.metaData import Tower
 from typing import List 
 
 def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict) -> str: 
-    towerString = f"<:{tower.tower}:>{emotes.get(tower.tower)} "
+    towerString = f"<:{tower.tower}:{emotes.get(tower.tower)}> "
 
-    if tower.max != -1:
+    if tower.max != -1 and not tower.isHero:
         towerString += f"{tower.max}x "
 
     towerString += tower.tower

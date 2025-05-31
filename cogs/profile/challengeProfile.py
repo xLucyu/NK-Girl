@@ -1,35 +1,32 @@
-from api.fetchId import getData
+from datetime import datetime, timezone 
 from utils.assets.eventUrls import EVENTURLS
 from cogs.regex import splitUppercase 
 from cogs.eventNumber import getcurrentDailyNumber
-from datetime import datetime, timezone 
+from cogs.baseCommand import BaseCommand
+from utils.dataclasses.main import NkData, Body 
+from utils.dataclasses.metaData import MetaData 
 
 
-def findIndex(urls: dict, difficulty: str):
-  
-    challenges = getData(urls.get("base", None))
-    if challenges is None:
-        return None
-
-    challengeList = challenges.get("body", None)
+def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int | None:
+    
+    challengeListBody = challenges.body 
     currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
-    firstTimeStamp = 1535097600000 if difficulty == "advanced" else 1533974400000
-    number = getcurrentDailyNumber(firstTimeStamp, currentTimeStamp)
+    firstTimeStamp = 1535097600000 if difficulty == "advanced" else 1533974400000 #time stamps for even #1
+    dailyChallengeNumber = getcurrentDailyNumber(firstTimeStamp, currentTimeStamp)
  
-    for index, challenge in enumerate(challengeList):
-          
-        eventName = challenge.get("name")
+    for index, challenge in enumerate(challengeListBody): 
+        eventName = challenge.name 
 
-        if difficulty != "coop" and str(number) in eventName:
+        if difficulty != "coop" and str(dailyChallengeNumber) in eventName:
             return index
 
-        eventTimeStamp = challenge.get("createdAt")
+        eventTimeStamp = challenge.createdAt
         currentDay = datetime.now().weekday()
         currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
         if currentDay in [6, 0, 1]:
-            eventDuration = 86400000 * 3
+            eventDuration = 86400000 * 3 # 3 days 
         else:
-            eventDuration = 86400000 * 4
+            eventDuration = 86400000 * 4 # 4 days 
          
         if eventTimeStamp <= currentTimeStamp <= eventTimeStamp + eventDuration and difficulty in eventName: 
             return index 
@@ -37,44 +34,39 @@ def findIndex(urls: dict, difficulty: str):
          
 def challengeProfile(index=None, difficulty=None):
  
-     
+    baseCommand = BaseCommand() 
+   
     if difficulty is None:
         urls = {"base": f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}"} 
-        NKDATA = baseCommand(urls, index=None) 
+        challengeData = baseCommand.useApiCall(urls.get("base"))
+        metaData = baseCommand.transformDataToDataClass(MetaData, challengeData)
 
     else:
         urls = {
             "base": "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
             "extension": "metadata"
         }
-        currentDaily = findIndex(urls, difficulty)
-        NKDATA = baseCommand(urls, currentDaily) 
- 
-    if not NKDATA:
-        raise ValueError("ChallengeCodeNotFound")
-     
-    stats = NKDATA.get("Stats", None)
-    towers = NKDATA.get("Towers", None)
-    modifiers = NKDATA.get("Modifiers", None)
-    emotes = NKDATA.get("Emotes", None)
-    challengeKey = stats.get("Challenge", None)
-    creator = challengeKey.get("Creator", None)
-    name = challengeKey.get("Name", None)
-    challengeID = challengeKey.get("ID", None)
-    wins = challengeKey.get("Wins", None)
-    losses = challengeKey.get("Losses", None)
-    attempts = wins + losses  
 
-    winLoss = round(wins/max(losses, 1), 2)
-    statistics = f"Wins: {wins}\nAttempts: {attempts}\nWinRate: {winLoss}%"
+        challenges = baseCommand.useApiCall(urls.get("base", None)) 
+        challengesData = baseCommand.transformDataToDataClass(NkData, challenges) 
+        index = findIndexForCurrentDailyChallenge(challengesData, difficulty)
+        data = baseCommand.getCurrentEventData(urls, index)
+        eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
+        metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
+
+    emotes = baseCommand.getAllEmojis()
+
+    body = metaData.body
+    challengeCreator = body.creator  
+    challengeID = body.id  
 
     if difficulty is None:  
-        creator = getData(url=creator)
+        creator = baseCommand.useApiCall(url=challengeCreator)
 
         if not creator:
             return None
 
-        creatorName = creator["body"]["displayName"] 
+        creatorName = creator["body"]["displayName"] #dont feel like making one just for this 
         title = f"{creatorName}'s Challenge, Code: {index}"
         eventURL = EVENTURLS["Challenge"]["challenge"]
 
@@ -83,31 +75,33 @@ def challengeProfile(index=None, difficulty=None):
         title = f"{difficulty.title()} Challenge {challengeDate}"
         eventURL = EVENTURLS["Challenge"]["daily"]
      
-    map = splitUppercase(stats.get("Map"))
-    difficulty = splitUppercase(stats.get("Difficulty"))
-    mode = splitUppercase(stats.get("Mode"))
+    selectedMap = splitUppercase(body.map)
+    selectedDifficulty = splitUppercase(body.difficulty)
+    selectedMode = splitUppercase(body.mode)
 
-    lives = f"<:Lives:{emotes.get('Lives')}> {stats.get('Lives')}"
-    cash = f"<:Cash:{emotes.get('Cash')}> ${stats.get('Cash'):,}"
-    rounds = f"<:Round:{emotes.get('Round')}> {stats.get('StartRound')}/{stats.get('EndRound')}"
+    lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
+    cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
+    rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{metaData.body.endRound}"
+
+    modifiers = baseCommand.getActiveModifiers(body, emotes) 
+    towers = baseCommand.getActiveTowers(body._towers, emotes) 
 
     eventData = { 
-        name: [f"{map}, {difficulty} - {mode}", False],
-        "Modifiers": ["\n".join(modifiers), False],
+        body.name: [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
+        "Modifiers": ["\n".join(modifiers), False], 
         "Lives": [lives, True],
         "Cash": [cash, True],
         "Rounds": [rounds, True],
-        "Statistics": [statistics, False],
-        "Heroes": ["\n".join(towers[0]), False],
-        "Primary": ["\n".join(towers[1]), True],
-        "Military": ["\n".join(towers[2]), True],
+        "Heroes": ["\n".join(towers.get("Heroes", None)), False],
+        "Primary": ["\n".join(towers.get("Primary", None)), True],
+        "Military": ["\n".join(towers.get("Military", None)), True],
         "": ["\n", False],
-        "Magic": ["\n". join(towers[3]), True],
-        "Support": ["\n".join(towers[4]), True],
-        }
+        "Magic": ["\n".join(towers.get("Magic", None)), True],
+        "Support": ["\n".join(towers.get("Support", None)), True],
+        }  
      
-    embed = filterembed(eventData, eventURL, title)
-    embed.set_image(url=EVENTURLS["Maps"][map])
+    embed = baseCommand.createEmbed(eventData, eventURL, title)
+    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     modes = ["placeholder"]
 
-    return embed, modes
+    return embed, modes 

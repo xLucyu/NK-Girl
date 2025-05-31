@@ -20,8 +20,8 @@ class BaseCommand:
         return getEmojis() or {} 
 
     @staticmethod 
-    def getActiveTowers(towers: list[Tower], emotes: dict) -> list:
-        return filterTowers(towers, emotes)
+    def getActiveTowers(towers: list[Tower], emotes: dict) -> dict:
+        return filterTowers(towers, emotes) or {}
     
     @staticmethod 
     def getActiveModifiers(body: Body, emotes: dict) -> list:

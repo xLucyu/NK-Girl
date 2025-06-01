@@ -20,7 +20,6 @@ class DiscordBotClient(discord.Bot):
         self.load_extension("utils.logging.errorHandler")
         self.load_extension("utils.logging.logger")
 
-
 if __name__ =="__main__":
     bot = DiscordBotClient()
     bot.load_cogs()

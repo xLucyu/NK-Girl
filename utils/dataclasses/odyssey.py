@@ -1,22 +1,21 @@
-from dataclasses import dataclass 
-from typing import List, Any, Optional  
-from utils.dataclasses.metaData import Tower 
-from utils.dataclasses.metaData import Body  
+from dataclasses import dataclass, field  
+from typing import List, Any 
+from utils.dataclasses.metaData import Tower
 
 @dataclass 
 class OdysseyBody:
-    id: Optional[str] = None
-    isExtreme: Optional[bool] = None  
-    maxMonkeySeats: Optional[int] = None
-    maxMonkeysOnBoat: Optional[int] = None
-    maxPowerSlots: Optional[int] = None
-    startingHealth: Optional[int] = None
-    _rewards: Optional[List[Any]] = None 
-    _availablePowers: Optional[List[Any]] = None
-    _availableTowers: Optional[Tower] = None
-    maps: Optional[Body] = None
+    id: str = ""
+    isExtreme: bool = False  
+    maxMonkeySeats: int = 0
+    maxMonkeysOnBoat: int = 0
+    maxPowerSlots: int = 0
+    startingHealth: int = 0
+    _rewards: List[Any] = field(default_factory=List[Any])  
+    _availablePowers: List[Any] = field(default_factory=List[Any])
+    _availableTowers: List[Tower] = field(default_factory=list)
+    maps: str = ""
 
 @dataclass 
 class Odyssey:
-    success: Optional[bool] = None
-    body: Optional[OdysseyBody] = None
+    success: bool = False 
+    body: OdysseyBody = field(default_factory=OdysseyBody)

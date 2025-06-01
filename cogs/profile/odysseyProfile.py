@@ -1,12 +1,14 @@
-from cogs.eventNumber import currentEventNumber
+from typing import List
+from cogs.eventNumber import getCurrentEventNumber
 from cogs.regex import *
-from utils.filter.filterBloonsModifiers import filterModifiers
-from utils.assets.eventUrls import EVENTURLS
-from api.metaData import getMetaData
-'''
-def validateTitle(stats: dict, difficulty: str) -> str:
+from cogs.baseCommand import BaseCommand
+from utils.assets.eventUrls import EVENTURLS 
+from utils.dataclasses.odyssey import Odyssey
+from utils.dataclasses.main import Body
+from utils.dataclasses.metaData import MetaBody 
 
-    if stats["Extreme"]:
+def validateTitle(isExtreme: bool, difficulty: str) -> str:
+    if isExtreme:
         title = f"Difficulty: {difficulty.title()}, Extreme" 
     else:
         title = f"Difficulty: {difficulty.title()}"
@@ -14,26 +16,21 @@ def validateTitle(stats: dict, difficulty: str) -> str:
     return title
 
 
-def filtermaps(maps: dict, eventData: dict, emotes: dict) -> None:
-    
+def getAllMaps(maps: dict, eventData: dict, emotes: dict, baseCommand: BaseCommand) -> None:
+    for index, map in enumerate(maps["body"],start=1):
+        mapData = baseCommand.transformDataToDataClass(MetaBody, map) 
+        modifiers = baseCommand.getActiveModifiers(mapData, emotes)
 
-    for index in range(len(maps)):
-        
-        map = maps[index]
-
-        mapList = getMetaData(map)
-        modifiers = filterModifiers(mapList.get("Modifiers", None), emotes)
-        mode = splitUppercase(map.get("mode"))
-
-        difficulty = splitUppercase(map.get("difficulty"))
-        mapName = splitUppercase(map.get("map"))
-        title = f"{index+1}. {mapName} ({difficulty}, {mode})"
+        selectedMode = splitUppercase(mapData.mode)
+        selectedDifficulty = splitUppercase(mapData.difficulty)
+        selectedMap = splitUppercase(mapData.map)
+        title = f"{index}. {selectedMap} ({selectedDifficulty}, {selectedMode})"
         cash = f"<:Cash:{emotes.get('Cash')}> ${map.get('startingCash'):,}"
         round = f"<:Round:{emotes.get('Round')}> {map.get('startRound')}/{map.get('endRound')}"
 
         value = [f"{cash}, {round}\n{', '.join(modifiers)}", False] 
         eventData[title] = value
-
+             
 
 def odysseyProfile(index: int, difficulty: str):
 
@@ -42,43 +39,44 @@ def odysseyProfile(index: int, difficulty: str):
         "extension": f"metadata_{difficulty}"
     }
 
-    NKDATA = baseCommand(urls, index)
+    baseCommand = BaseCommand()
     
-    if not NKDATA:
-        return 
-    
-    api = NKDATA.get("Api", None)
-    apiData = api.get("Data", None)
-    stats = NKDATA["Stats"]["Odyssey"]  
-    towers = NKDATA.get("Towers", None)
-    emotes = NKDATA.get("Emotes", None)
-    maps = NKDATA.get("Maps", None)
+    data = baseCommand.getCurrentEventData(urls, index)
+    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
+    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = baseCommand.transformDataToDataClass(Odyssey, eventMetaData)
+    emotes = baseCommand.getAllEmojis()
     eventURL = EVENTURLS["Odyssey"][difficulty]
 
+    body = metaData.body   
+
     title = (
-        f"{validateTitle(stats, difficulty)}\n"
-        f"Lives: <:Lives:{emotes.get('Lives')}> {stats.get('StartHealth')}\n"
-        f"Max Seats: {stats.get('MaxTowers')}\n"
-        f"Max Monkeys: {stats.get('MaxSlots')}"
+        f"{validateTitle(body.isExtreme, difficulty)}\n"
+        f"Lives: <:Lives:{emotes.get('Lives')}> {body.startingHealth}\n"
+        f"Max Seats: {body.maxMonkeySeats}\n"
+        f"Max Monkeys: {body.maxMonkeysOnBoat}"
     )
 
+    towers = baseCommand.getActiveTowers(body._availableTowers, emotes)
+
     eventData = {
-        apiData.get("name"): [title, False],
-        "Heroes": ["\n".join(towers[0]), False],
-        "Primary": ["\n".join(towers[1]), True],
-        "Military": ["\n".join(towers[2]), True],
+        mainData.name: [title, False],
+        "Heroes": ["\n".join(towers.get("Heroes", None)), False],
+        "Primary": ["\n".join(towers.get("Primary", None)), True],
+        "Military": ["\n".join(towers.get("Military", None)), True],
         "": ["\n", False],
-        "Magic": ["\n". join(towers[3]), True],
-        "Support": ["\n".join(towers[4]), True],
+        "Magic": ["\n".join(towers.get("Magic", None)), True],
+        "Support": ["\n".join(towers.get("Support", None)), True]
         }
 
-    filtermaps(maps, eventData, emotes) #add the maps data -> each difficulty has a set amount of maps
-    currentTimeStamp = apiData.get("start", None)
+    mapsURL = body.maps
+    mapsData = baseCommand.useApiCall(mapsURL)
+    getAllMaps(mapsData, eventData, emotes, baseCommand) #add the maps data -> each difficulty has a set amount of maps
+
+    currentTimeStamp = mainData.start
     firstTimeStamp = 1593532800000
-    eventNumber = currentEventNumber(currentTimeStamp, firstTimeStamp)
-    embed = filterembed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
-    names = api.get("Names", None)
+    eventNumber = getCurrentEventNumber(currentTimeStamp, firstTimeStamp)
+    embed = baseCommand.createEmbed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
+    names = data.get("Names", None)
 
     return embed, names
-
-'''

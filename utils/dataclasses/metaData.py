@@ -4,8 +4,7 @@ from typing import Any, List, Optional
 @dataclass
 class Tower:
     tower: str = ""
-    max: int = 0
-    # needed as a default for my filter 
+    max: int = 0 
     path1NumBlockedTiers: int = 0
     path2NumBlockedTiers: int = 0 
     path3NumBlockedTiers: int = 0
@@ -28,7 +27,7 @@ class BloonModifiers:
     allRegen: bool = False
 
 @dataclass
-class Body:
+class MetaBody:
     name: str = ""
     createdAt: int = 0
     id: str = ""
@@ -67,9 +66,9 @@ class Body:
     lossesUnique: int = 0
     powers: List[Any] = field(default_factory=list)
     _bloonModifiers: BloonModifiers = field(default_factory=BloonModifiers)
-    _towers: List[Tower] = field(default_factory=list)
+    _towers: Optional[List[Tower]] = field(default_factory=list)
 
 @dataclass
 class MetaData:
     success: bool = False
-    body: Body = field(default_factory=Body)
+    body: MetaBody = field(default_factory=MetaBody)

@@ -3,12 +3,11 @@ from utils.assets.eventUrls import EVENTURLS
 from cogs.regex import splitUppercase 
 from cogs.eventNumber import getcurrentDailyNumber
 from cogs.baseCommand import BaseCommand
-from utils.dataclasses.main import NkData, Body 
+from utils.dataclasses.main import NkData 
 from utils.dataclasses.metaData import MetaData 
 
 
-def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int | None:
-    
+def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int: 
     challengeListBody = challenges.body 
     currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
     firstTimeStamp = 1535097600000 if difficulty == "advanced" else 1533974400000 #time stamps for even #1
@@ -30,15 +29,16 @@ def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> in
          
         if eventTimeStamp <= currentTimeStamp <= eventTimeStamp + eventDuration and difficulty in eventName: 
             return index 
+
+    return 0
  
          
-def challengeProfile(index=None, difficulty=None):
- 
+def challengeProfile(index=None, difficulty=None): 
     baseCommand = BaseCommand() 
    
     if difficulty is None:
-        urls = {"base": f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}"} 
-        challengeData = baseCommand.useApiCall(urls.get("base"))
+        url = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}"
+        challengeData = baseCommand.useApiCall(url)
         metaData = baseCommand.transformDataToDataClass(MetaData, challengeData)
 
     else:
@@ -47,12 +47,15 @@ def challengeProfile(index=None, difficulty=None):
             "extension": "metadata"
         }
 
-        challenges = baseCommand.useApiCall(urls.get("base", None)) 
+        challenges = baseCommand.useApiCall(urls["base"]) 
         challengesData = baseCommand.transformDataToDataClass(NkData, challenges) 
         index = findIndexForCurrentDailyChallenge(challengesData, difficulty)
         data = baseCommand.getCurrentEventData(urls, index)
         eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
         metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
+
+    if metaData.success == False:
+        raise ValueError("ChallengeCodeNotFound")
 
     emotes = baseCommand.getAllEmojis()
 
@@ -60,13 +63,13 @@ def challengeProfile(index=None, difficulty=None):
     challengeCreator = body.creator  
     challengeID = body.id  
 
-    if difficulty is None:  
+    if difficulty is None and challengeCreator:  
         creator = baseCommand.useApiCall(url=challengeCreator)
 
         if not creator:
             return None
 
-        creatorName = creator["body"]["displayName"] #dont feel like making one just for this 
+        creatorName = creator["body"]["displayName"] #dont feel like making a dataclass just for this 
         title = f"{creatorName}'s Challenge, Code: {index}"
         eventURL = EVENTURLS["Challenge"]["challenge"]
 

@@ -1,14 +1,12 @@
 import discord 
 from discord.ext import commands
 from api.fetchId import getData
-#from cogs.profile.tileProfile import tileProfile
+from cogs.profile.tileProfile import tileProfile
 from cogs.eventNumber import getCurrentCTEvent
 from utils.discord.viewMenu import SelectView  
 
 class Tile(commands.Cog):
-
     def __init__(self, bot):
-        
         self.bot = bot 
 
     @discord.message_command(name="Tile Lookup", description="If this message has a tile code for CT, you can look it up.",
@@ -48,7 +46,7 @@ class Tile(commands.Cog):
         description = "CT Week, default will be the latest week.", 
         required = False
         )
-    async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:
+    async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None: 
         await ctx.response.defer()
 
         if event == 0:
@@ -62,7 +60,7 @@ class Tile(commands.Cog):
             "Author": ctx.author.id,
             "EventName": ["Banner", "Relic"],
             "PreviousEvents": categorizedTiles,
-#            "Function": tileProfile,
+            "Function": tileProfile,
             "Difficulty": tile_code,
             "Message": None,
             "Emoji": ["<:Banner:1338202859854102539>", "<:Relic:1338923236263723079>"]

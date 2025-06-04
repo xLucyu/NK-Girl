@@ -1,26 +1,24 @@
 import re 
 
-def splitUppercase(string: str) -> str | None:
+def splitUppercase(string: str) -> str:
 
-    if not string:
-        return None
-
-    if string == "Tutorial":
-        string = "MonkeyMeadows"
-    if string == "Clicks":
-        string = "Chimps"
-    if string == "#ouch":
-        return "#ouch"
+    specialCases = {
+        "Tutorial": "MonkeyMeadows",
+        "Clicks": "Chimps",
+        "#ouch": "#ouch"
+    }
+    
+    if string in specialCases:
+        return specialCases[string]
 
     split = re.findall(r"[A-Z][a-z]*", string)
     return " ".join(split)
 
-def splitNumbers(string: str) -> str | None:
+def splitNumbers(string: str) -> str:
 
     split = re.match(r"(\D*)(\d*)", string)
     if split:
         name, number = split.groups()
         return f"{name} #{number}"
-    else:
-        return None
+    return "" 
 

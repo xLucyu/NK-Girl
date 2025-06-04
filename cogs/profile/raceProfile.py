@@ -1,6 +1,4 @@
 from cogs.baseCommand import BaseCommand
-from cogs.eventNumber import getCurrentEventNumber
-from cogs.regex import splitUppercase
 from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.main import Body 
 from utils.dataclasses.metaData import MetaData
@@ -49,8 +47,7 @@ def raceProfile(index, difficulty=None):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }  
     
-    currentTimeStamp = mainData.start   
-    firstTimeStamp = 1544601600000
+    currentTimeStamp = mainData.start    
     eventNumber = getCurrentEventNumber(currentTimeStamp, firstTimeStamp)
     embed = baseCommand.createEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])

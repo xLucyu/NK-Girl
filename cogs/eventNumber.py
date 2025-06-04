@@ -1,30 +1,16 @@
 import math
-from api.fetchId import getID
 
-def getCurrentEventNumber(startTimeStamp: int, firstTimeStamp: int) -> int: 
-    timeDifference = startTimeStamp - firstTimeStamp
-    currentNumber = math.floor(timeDifference / (7 * 24 * 60 * 60 * 1000))
-    return round(currentNumber)
-
-def getCurrentCTEvent() -> int | None: 
-    urls = {
-        "base": "https://data.ninjakiwi.com/btd6/ct"
+def getNumberForEvent(eventTimeStamp: int, mode: str) -> int:
+    eventsByFirstTimeStampAndDuration = {
+        "race": [1544601600000, 7],
+        "normal": [1533974400000, 1],
+        "advanced": [1535097600000, 1],
+        "ct": [1660082400000, 14]
     }
 
-    ctIndex = getID(urls, index=0)
+    firstTimeStamp = eventsByFirstTimeStampAndDuration[mode][0]
+    duration = eventsByFirstTimeStampAndDuration[mode][1]
 
-    if not ctIndex:
-        return  
-
-    ctIndex = ctIndex.get("Data", None)
-     
-    startTimeStamp = 1660082400000
-    currentTimeStamp = ctIndex.get("start", None) 
-    timeDifference = currentTimeStamp - startTimeStamp
-    currentNumber = math.floor(timeDifference / (14 * 24 * 60 * 60 * 1000)) #ct is only every 2 weeks
-    return round(currentNumber)
-
-def getcurrentDailyNumber(firstTimeStamp: int, currentTimeStamp: int) -> int:
-    timeDifference = currentTimeStamp - firstTimeStamp 
-    currentNumber = math.floor(timeDifference / (24 * 60 * 60 * 1000)) #daily challenges
-    return round(currentNumber) 
+    timeDifference = eventTimeStamp - firstTimeStamp
+    calculateNumber = math.floor(timeDifference / (duration * 24 * 60 * 60 * 1000))
+    return round(calculateNumber)

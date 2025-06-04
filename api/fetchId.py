@@ -40,7 +40,7 @@ def getID(urls: dict, index: int) -> dict | None:
         return None
 
     return {
-        "Names": [entry["name"] for entry in ids], 
+        "Names": [entry.get("name", None) for entry in ids if entry], 
         "MetaData": selectedID.get(urls.get("extension", None)),
         "Data": selectedID
     } 

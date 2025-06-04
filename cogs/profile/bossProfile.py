@@ -12,8 +12,7 @@ def bossProfile(index: int, difficulty: str):
         "extension": f"metadata{difficulty.title()}"
     }
 
-    baseCommand = BaseCommand()   
-    eventURL = EVENTURLS["Race"]["race"]
+    baseCommand = BaseCommand()    
 
     data = baseCommand.getCurrentEventData(urls, index)
     eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
@@ -56,8 +55,8 @@ def bossProfile(index: int, difficulty: str):
         }
  
     eventNumber = splitNumbers(mainData.name)
+    eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
     embed = baseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
-    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = list()
 
     for name in data.get("Names", []):

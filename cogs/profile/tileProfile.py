@@ -1,14 +1,13 @@
-from cogs.regex import splitUppercase
 from utils.assets.eventUrls import EVENTURLS
 from cogs.baseCommand import BaseCommand
 from utils.dataclasses.ct import TileCode
-
+from utils.dataclasses.main import NkData
 
 subGameType = {
-    2: ["Race", "race"],
-    4: ["Boss", "standard"],
-    8: ["Least Cash", "least_cash"],
-    9: ["Least Tiers", "least_tiers"]
+    2: ["Race", "race", "EventRace"],
+    4: ["Boss", "standard", "BossChallenge"],
+    8: ["Least Cash", "least_cash", "LeastTiers"],
+    9: ["Least Tiers", "least_tiers", "LeastCash"]
 }
 
 bossType = {
@@ -26,9 +25,16 @@ livesForDifficulty = {
     "Hard": 100
 }
 
+def getCurrentCtNumber() -> int:
+
+    url = "https://data.ninjakiwi.com/btd6/ct"
+
+    ctList = BaseCommand.useApiCall(url)
+    ctListBody = BaseCommand.transformDataToDataClass(NkData, ctList)
+    ctTimeStamp = ctListBody.body[0].start
+    return BaseCommand.getCurrentEventNumber(ctTimeStamp, "ct")
 
 
-'''
 def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
 
     match tileType:
@@ -40,41 +46,35 @@ def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
             name, emoteid = "Regular", emotes.get("Regular")
 
     return f"<:{name}:{emoteid}>" 
-'''
 
-
-
-
-'''
-def getSpecialTiles(body: dict, eventIndex: int):
-
+def getSpecialTiles(data: dict, eventIndex: int, emotes: dict):
+    
     relicTiles = list()
     bannerTiles = list() 
-    for _, tile in body.items():
+    for _, tile in data.items():
 
-        tileType = tile.get("TileType", None)
-        tileCode = tile.get("Code", None)
+        tileData = BaseCommand.transformDataToDataClass(TileCode, tile) 
+        tileType = tileData.TileType 
+        tileCode = tileData.Code
+        currentSubGameType = tileData.GameData.subGameType
 
         match tileType:
 
             case "Banner":
-                bannerTiles.append(tileCode)
+                bannerType = subGameType[currentSubGameType][-1]
+                bannerTiles.append([tileCode, f"<:{emotes.get(bannerType)}:{bannerType}>"])
             case "Relic":
-                relicTiles.append(tileCode)
-
-    
-    bannerTiles.append(eventIndex)
-    relicTiles.append(eventIndex)
-    categorizedTiles = [bannerTiles, relicTiles]
+                relicType = tileData.RelicType
+                relicTiles.append([tileCode, f"<:{emotes.get(relicType)}:{relicType}>"])
+ 
+    categorizedTiles = [bannerTiles, relicTiles] 
     return categorizedTiles
-
-'''
 
 def getHeadData(ctData: TileCode) -> dict:
     
-    selectedMap = splitUppercase(ctData.GameData.selectedMap)
-    selectedMode = splitUppercase(ctData.GameData.selectedMode)
-    selectedDifficulty = splitUppercase(ctData.GameData.selectedDifficulty)
+    selectedMap = BaseCommand.splitUppercaseLetters(ctData.GameData.selectedMap)
+    selectedMode = BaseCommand.splitUppercaseLetters(ctData.GameData.selectedMode)
+    selectedDifficulty = BaseCommand.splitUppercaseLetters(ctData.GameData.selectedDifficulty)
     gameType = ctData.GameData.subGameType 
     startingLives = livesForDifficulty.get(selectedDifficulty if selectedDifficulty else "Medium") #pyright fix lol 
 
@@ -104,22 +104,18 @@ def tileProfile(eventIndex: int, tileCode: str):
     urls = {
         "base": "https://storage.googleapis.com/btd6-ct-map/events",
         "extensions": f"{eventIndex}/tiles.json"
-    }
+    } 
 
-    baseCommand = BaseCommand() 
-
-    data = baseCommand.useApiCall(f"{urls["base"]}/{urls["extensions"]}") 
-    ctData = baseCommand.transformDataToDataClass(TileCode, data.get(tileCode.upper(), None))    
-    emotes = baseCommand.getAllEmojis()
+    data = BaseCommand.useApiCall(f"{urls["base"]}/{urls["extensions"]}")
+    ctData = BaseCommand.transformDataToDataClass(TileCode, data.get(tileCode.upper(), None))    
+    emotes = BaseCommand.getAllEmojis()
     dcModel = ctData.GameData.dcModel
-
-    tileType = ctData.TileType
-    relicType = ctData.RelicType 
+        
+    modifiers = BaseCommand.getActiveModifiersForCt(dcModel, emotes)
+    towers = BaseCommand.getActiveTowers(dcModel.towers._items, emotes)
  
-    ctInfo = getHeadData(ctData)  
-    
-    modifiers = baseCommand.getActiveModifiersForCt(dcModel, emotes)
-    towers = baseCommand.getActiveTowers(dcModel.towers._items, emotes)
+    ctInfo = getHeadData(ctData) 
+    categorizedTiles = getSpecialTiles(data, eventIndex, emotes)
 
     lives = f"<:Lives:{emotes.get("Lives")}> {ctInfo["Lives"]}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${dcModel.startRules.cash:,}"
@@ -139,6 +135,9 @@ def tileProfile(eventIndex: int, tileCode: str):
         "Support": ["\n".join(towers.get("Support", None)), True],
         } 
      
-    embed = baseCommand.createEmbed(eventData, eventURL, title=f"{emoteid} Contested Territory #{eventIndex} - Tile {tileCode.upper()}")
-    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
+    embed = BaseCommand.createEmbed(eventData,
+                                    ctInfo["EventURL"], 
+                                    title=f"{getEmoteID(ctData.TileType, emotes, ctData.RelicType)} Contested Territory #{eventIndex} - Tile {tileCode.upper()}"
+                                    )
+    embed.set_image(url=EVENTURLS["Maps"][ctInfo["Map"]])
     return embed, categorizedTiles

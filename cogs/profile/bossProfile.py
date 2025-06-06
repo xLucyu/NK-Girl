@@ -1,5 +1,4 @@
 from cogs.baseCommand import BaseCommand
-from cogs.regex import splitNumbers, splitUppercase 
 from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
@@ -22,9 +21,9 @@ def bossProfile(index: int, difficulty: str):
 
     body = metaData.body
 
-    selectedMap = splitUppercase(body.map)
-    selectedDifficulty = splitUppercase(body.difficulty)
-    selectedMode = splitUppercase(body.mode)
+    selectedMap = baseCommand.splitUppercaseLetters(body.map)
+    selectedDifficulty = baseCommand.splitUppercaseLetters(body.difficulty)
+    selectedMode = baseCommand.splitUppercaseLetters(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
@@ -54,12 +53,12 @@ def bossProfile(index: int, difficulty: str):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }
  
-    eventNumber = splitNumbers(mainData.name)
+    eventNumber = baseCommand.splitBossNames(mainData.name)
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
     embed = baseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
     names = list()
 
     for name in data.get("Names", []):
-        names.append(splitNumbers(name))
+        names.append(baseCommand.splitBossNames(name))
 
     return embed, names

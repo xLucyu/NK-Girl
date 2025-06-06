@@ -40,7 +40,7 @@ class BaseCommand:
         
         modifiers = {
             "BloonModifiers": body._bloonModifiers,
-            "MkDisabled": body.disableMK,
+            "MKDisabled": body.disableMK,
             "NoSelling": body.disableSelling,
             "NoContinues": body.noContinues,
             "LeastTiers": body.leastTiersUsed,
@@ -53,15 +53,16 @@ class BaseCommand:
         }
 
         return filterModifiers(modifiers, emotes)
-
+    
+    @staticmethod
     def getActiveModifiersForCt(dcModel: DcModel, emotes: dict) -> list:
 
         activeModifiers = { 
-            "Bloon_Modifiers": dcModel.bloonModifiers,
+            "BloonModifiers": dcModel.bloonModifiers,
             "MKDisabled": dcModel.disableMK,
             "NoSelling": dcModel.disableSelling,
             "MaxTowers": dcModel.maxTowers
-            }
+            } 
 
         return filterModifiers(activeModifiers, emotes)
 

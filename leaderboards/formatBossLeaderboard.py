@@ -1,8 +1,15 @@
 from leaderboards.base import BaseLeaderboard
 
 class BossLeaderboard(BaseLeaderboard):
-
-    def __init__(self, urls: dict, apiData: dict, metaData: dict, emojis: dict, page: int, difficulty: str, lbType: str, players: int) -> None:
+    def __init__(self, 
+                 urls: dict, 
+                 apiData: dict, 
+                 metaData: dict, 
+                 emojis: dict, 
+                 page: int, 
+                 difficulty: str, 
+                 lbType: str, 
+                 players: int) -> None:
         super().__init__() 
         self.urls = urls
         self.apiData = apiData

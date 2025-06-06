@@ -1,20 +1,19 @@
 import discord 
 from discord.ext import commands
+from cogs.profile.tileProfile import tileProfile, getCurrentCtNumber
+from utils.discord.viewMenu import SelectView
 from api.fetchId import getData
-from cogs.profile.tileProfile import tileProfile
-from cogs.eventNumber import getCurrentCTEvent
-from utils.discord.viewMenu import SelectView  
 
 class Tile(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot 
+        self.bot = bot        
 
     @discord.message_command(name="Tile Lookup", description="If this message has a tile code for CT, you can look it up.",
                              integration_types={discord.IntegrationType.user_install,
                                              discord.IntegrationType.guild_install}) 
     async def getTileCode(self, ctx: discord.ApplicationContext, message: discord.Message):
          
-        eventIndex = getCurrentCTEvent()
+        eventIndex = getCurrentCtNumber()
         url = f"https://storage.googleapis.com/btd6-ct-map/events/{eventIndex}/tiles.json"
         ctInfo = getData(url)
         
@@ -50,21 +49,31 @@ class Tile(commands.Cog):
         await ctx.response.defer()
 
         if event == 0:
-            eventIndex = getCurrentCTEvent()
+            eventIndex = getCurrentCtNumber()
         else:
             eventIndex = event
 
-        embed, categorizedTiles = tileProfile(eventIndex, tile_code) #type: ignore
+        embed, categorizedTiles = tileProfile(eventIndex, tile_code)
+
+        banners = categorizedTiles[0]
+        relics = categorizedTiles[1]
+
+        categorizedBanners = [banner[0] for banner in banners]
+        categorizedRelics = [relic[0] for relic in relics]
+
+        bannerEmotes = [banner[1] for banner in banners]
+        relicEmotes = [relic[1] for relic in relics]
         
         data = {
             "Author": ctx.author.id,
             "EventName": ["Banner", "Relic"],
-            "PreviousEvents": categorizedTiles,
+            "PreviousEvents": categorizedBanners + categorizedRelics,
             "Function": tileProfile,
             "Difficulty": tile_code,
             "Message": None,
-            "Emoji": ["<:Banner:1338202859854102539>", "<:Relic:1338923236263723079>"]
+            "Emoji": bannerEmotes + relicEmotes
         }
+        print(data)
 
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)

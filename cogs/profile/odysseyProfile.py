@@ -1,6 +1,3 @@
-from typing import List
-from cogs.eventNumber import getCurrentEventNumber
-from cogs.regex import *
 from cogs.baseCommand import BaseCommand
 from utils.assets.eventUrls import EVENTURLS 
 from utils.dataclasses.odyssey import Odyssey
@@ -21,9 +18,9 @@ def getAllMaps(maps: dict, eventData: dict, emotes: dict, baseCommand: BaseComma
         mapData = baseCommand.transformDataToDataClass(MetaBody, map) 
         modifiers = baseCommand.getActiveModifiers(mapData, emotes)
 
-        selectedMode = splitUppercase(mapData.mode)
-        selectedDifficulty = splitUppercase(mapData.difficulty)
-        selectedMap = splitUppercase(mapData.map)
+        selectedMode = baseCommand.splitUppercaseLetters(mapData.mode)
+        selectedDifficulty = baseCommand.splitUppercaseLetters(mapData.difficulty)
+        selectedMap = baseCommand.splitUppercaseLetters(mapData.map)
         title = f"{index}. {selectedMap} ({selectedDifficulty}, {selectedMode})"
         cash = f"<:Cash:{emotes.get('Cash')}> ${map.get('startingCash'):,}"
         round = f"<:Round:{emotes.get('Round')}> {map.get('startRound')}/{map.get('endRound')}"
@@ -73,9 +70,7 @@ def odysseyProfile(index: int, difficulty: str):
     mapsData = baseCommand.useApiCall(mapsURL)
     getAllMaps(mapsData, eventData, emotes, baseCommand) #add the maps data -> each difficulty has a set amount of maps
 
-    currentTimeStamp = mainData.start
-    firstTimeStamp = 1593532800000
-    eventNumber = getCurrentEventNumber(currentTimeStamp, firstTimeStamp)
+    eventNumber = baseCommand.getCurrentEventNumber(mainData.start, "odyssey")
     embed = baseCommand.createEmbed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
     names = data.get("Names", None)
 

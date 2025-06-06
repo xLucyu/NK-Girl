@@ -2,7 +2,14 @@ from leaderboards.base import BaseLeaderboard
 
 class SoloLeaderboard(BaseLeaderboard):
 
-    def __init__(self, urls: dict, apiData: dict, metaData: dict, page: int, difficulty: str, lbType: str, emojis: dict) -> None:
+    def __init__(self,
+                 urls: dict,
+                 apiData: dict,
+                 metaData: dict,
+                 page: int,
+                 difficulty: str,
+                 lbType: str,
+                 emojis: dict) -> None:
         super().__init__()
         self.urls = urls
         self.apiData = apiData

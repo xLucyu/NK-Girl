@@ -22,9 +22,9 @@ def raceProfile(index, difficulty=None):
  
     body = metaData.body 
 
-    selectedMap = splitUppercase(body.map)
-    selectedDifficulty = splitUppercase(body.difficulty)
-    selectedMode = splitUppercase(body.mode)
+    selectedMap = baseCommand.splitUppercaseLetters(body.map)
+    selectedDifficulty = baseCommand.splitUppercaseLetters(body.difficulty)
+    selectedMode = baseCommand.splitUppercaseLetters(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
@@ -46,9 +46,8 @@ def raceProfile(index, difficulty=None):
         "Magic": ["\n".join(towers.get("Magic", None)), True],
         "Support": ["\n".join(towers.get("Support", None)), True],
         }  
-    
-    currentTimeStamp = mainData.start    
-    eventNumber = getCurrentEventNumber(currentTimeStamp, firstTimeStamp)
+        
+    eventNumber = baseCommand.getCurrentEventNumber(mainData.start, "race") 
     embed = baseCommand.createEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = data.get("Names") 

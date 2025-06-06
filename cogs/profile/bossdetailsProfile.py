@@ -2,7 +2,6 @@ from utils.assets.bossTierHp import BOSSHP
 from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.main import Body 
 from utils.dataclasses.metaData import MetaData
-from cogs.regex import splitNumbers
 from cogs.baseCommand import BaseCommand
 
 
@@ -70,7 +69,7 @@ def bossdetailsProfile(players: int, difficulty: str):
     if difficulty == "standard":
         difficulty = "normal"
 
-    eventNumber = splitNumbers(mainData.name) 
+    eventNumber = baseCommand.splitBossNames(mainData.name) 
 
     embed = baseCommand.createEmbed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")

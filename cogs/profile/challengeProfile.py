@@ -1,17 +1,14 @@
 from datetime import datetime, timezone 
 from utils.assets.eventUrls import EVENTURLS
-from cogs.regex import splitUppercase 
-from cogs.eventNumber import getcurrentDailyNumber
 from cogs.baseCommand import BaseCommand
 from utils.dataclasses.main import NkData 
 from utils.dataclasses.metaData import MetaData 
 
 
-def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int: 
+def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str, baseCommand: BaseCommand) -> int: 
     challengeListBody = challenges.body 
     currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
-    firstTimeStamp = 1535097600000 if difficulty == "advanced" else 1533974400000 #time stamps for even #1
-    dailyChallengeNumber = getcurrentDailyNumber(firstTimeStamp, currentTimeStamp)
+    dailyChallengeNumber = baseCommand.getCurrentEventNumber(currentTimeStamp, difficulty.lower())
  
     for index, challenge in enumerate(challengeListBody): 
         eventName = challenge.name 
@@ -49,7 +46,7 @@ def challengeProfile(index=None, difficulty=None):
 
         challenges = baseCommand.useApiCall(urls["base"]) 
         challengesData = baseCommand.transformDataToDataClass(NkData, challenges) 
-        index = findIndexForCurrentDailyChallenge(challengesData, difficulty)
+        index = findIndexForCurrentDailyChallenge(challengesData, difficulty, baseCommand)
         data = baseCommand.getCurrentEventData(urls, index)
         eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
         metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
@@ -78,9 +75,9 @@ def challengeProfile(index=None, difficulty=None):
         title = f"{difficulty.title()} Challenge {challengeDate}"
         eventURL = EVENTURLS["Challenge"]["daily"]
      
-    selectedMap = splitUppercase(body.map)
-    selectedDifficulty = splitUppercase(body.difficulty)
-    selectedMode = splitUppercase(body.mode)
+    selectedMap = baseCommand.splitUppercaseLetters(body.map)
+    selectedDifficulty = baseCommand.splitUppercaseLetters(body.difficulty)
+    selectedMode = baseCommand.splitUppercaseLetters(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"

@@ -35,4 +35,4 @@ class Body:
 @dataclass
 class NkData:
     success: bool = False
-    body: List[Body] = field(default_factory=List[Body])
+    body: List[Body] = field(default_factory=list)

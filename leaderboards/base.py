@@ -1,5 +1,7 @@
-from api.fetchId import getData
+from datetime import timezone, datetime 
 from utils.assets.medals import MEDALS
+from utils.dataclasses.main import Body
+from cogs.baseCommand import BaseCommand 
 
 class BaseLeaderboard:
     
@@ -16,15 +18,46 @@ class BaseLeaderboard:
     
     @staticmethod
     def getLeaderboardData(metaData: str, page: int) -> dict:
-        return getData(f"{metaData}?page={page}")
+        return BaseCommand.useApiCall(f"{metaData}?page={page}")
 
     @staticmethod
-    def getMedalforPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str:
-          
+    def getMedalForPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str: 
         percentilePosition = currentPosition / totalScores
 
         for (start, end), medal in mode.items():  
-            if type(start) == int and start >= currentPosition and end <= currentPosition:
+            if isinstance(start, int) and start <= currentPosition <= end:
                 return f"<:{medal}:{emojis.get(medal)}>"  
-            elif type(start) == float and start >= percentilePosition and end <= percentilePosition:
+            elif isinstance(start, float) and start <= percentilePosition <= end:
                 return f"<:{medal}:{emojis.get(medal)}>"
+        return ""
+
+    @staticmethod
+    def timeLeftForLeaderboard(eventEnd: int) -> int | str: 
+        currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
+        timeLeftInMs = eventEnd - currentTimeStamp 
+        return BaseLeaderboard.convertMsToTime(timeLeftInMs) if timeLeftInMs > 0 else "Event ended"
+
+    @staticmethod  
+    def formatEventInfo(apiData: Body, lbType: str, difficulty: str) -> str:
+    
+        match lbType:
+            case "race":
+                eventTimeStamp = apiData.start 
+                eventNumber = BaseCommand.getCurrentEventNumber(eventTimeStamp, "race")
+                eventName = apiData.name
+                title = f"Race #{eventNumber} - {eventName}"
+
+            case "boss":
+                eventNumber = BaseCommand.splitBossNames(apiData.name)
+                eventName = apiData.bossType 
+                title = f"{difficulty.title()} {eventNumber}"
+
+            case "ct":
+                currentIndex = apiData.start 
+                eventNumber = BaseCommand.getCurrentEventNumber(currentIndex, "ct")
+                title = f"Contested Territory #{eventNumber} - {difficulty.title()}"
+
+            case _:
+                return ""
+
+        return title

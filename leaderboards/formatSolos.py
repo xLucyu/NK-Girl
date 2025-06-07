@@ -1,4 +1,7 @@
 from leaderboards.base import BaseLeaderboard
+from utils.dataclasses.leaderboard import Leaderboard, Body
+from cogs.baseCommand import BaseCommand
+from utils.assets.medals import MEDALS
 
 class SoloLeaderboard(BaseLeaderboard):
 
@@ -8,7 +11,7 @@ class SoloLeaderboard(BaseLeaderboard):
                  metaData: dict,
                  page: int,
                  difficulty: str,
-                 lbType: str,
+                 lbType: str, 
                  emojis: dict) -> None:
         super().__init__()
         self.urls = urls
@@ -21,31 +24,37 @@ class SoloLeaderboard(BaseLeaderboard):
 
     def formatLeaderboard(self):
      
-        leaderboardData = self.getLeaderboardData(self.metaData, self.page) 
+        data = self.getLeaderboardData(self.metaData, self.page)
+        leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data)
  
         totalScores = self.apiData.get(self.urls.get("totalscores"), None)
         leaderboardCompetitionType = self.apiData.get("scoringType", "GameTime")
 
-        lbBody = leaderboardData.get("body", None) 
+        lbBody = leaderboardData.body 
         leaderboardEntriesPerPage = len(lbBody)
-        maxNameLength = max(len(player.get("displayName", "").replace("(disbanded)", "").strip()) for player in lbBody) 
+        maxNameLength = max(len(player.displayName.replace("(disbanded)", "").strip()) for player in lbBody) 
 
         playerData = str()
+        mode = MEDALS.get(f"{self.lbType}{self.difficulty}", {})
+        print(mode, f"{self.lbType}{self.difficulty}")
          
         for position, player in enumerate(lbBody, start=1):
- 
             currentPosition = leaderboardEntriesPerPage * (self.page - 1) + position
-            playerName = player.get("displayName", None)
+            playerName = player.displayName
             playerName = playerName.replace("(disbanded)", "").strip()
 
-            medal = self.getMedalforPosition(self.emojis, currentPosition, totalScores, self.lbType, self.difficulty)
+            medal = self.getMedalForPosition(self.emojis, currentPosition, totalScores, mode)
             formattedScore = self.determineLeaderboardScore(leaderboardCompetitionType, player) 
 
             playerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
         return playerData, totalScores
     
-    def determineLeaderboardScore(self, leaderboardCompetitionType, player):
+    def determineLeaderboardScore(self, leaderboardCompetitionType: str, player: Body) -> int | str:
     
-        currentPlayerScore = player.get("score", None)
-        return self.convertMsToTime(currentPlayerScore) if leaderboardCompetitionType == "GameTime" and self.lbType != "ct" else currentPlayerScore   
+        currentPlayerScore = player.score
+
+        if leaderboardCompetitionType == "GameTime" and self.lbType != "ct":
+            return self.convertMsToTime(currentPlayerScore)
+        else:
+            return currentPlayerScore 

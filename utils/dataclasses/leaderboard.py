@@ -1,21 +1,23 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import List, Optional
 
 @dataclass
 class ScoreParts:
-    type: Optional[str] = None
-    score: Optional[int] = None
-    name: Optional[str] = None
+    type: str = "" 
+    score: int = 0
+    name: str = ""
 
 @dataclass
 class Body:
-    displayName: Optional[str] = None
-    score: Optional[int] = None
-    scoreParts: Optional[ScoreParts] = None
+    displayName: str = ""
+    score: int = 0
+    scoreParts: List[ScoreParts] = field(default_factory=list)
+    submissionTime: int = -1
+    profile: str = "" 
 
 @dataclass
 class Leaderboard:
-    success: Optional[bool] = None
-    body: Optional[Body] = None
-    submissionTime: Optional[int] = None
-    profile: Optional[str] = None
+    success: bool = True
+    body: List[Body] = field(default_factory=list)
+    next: Optional[str] = ""
+    prev: Optional[str] = ""

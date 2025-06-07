@@ -10,28 +10,27 @@ def raceProfile(index, difficulty=None):
         "base": "https://data.ninjakiwi.com/btd6/races",
         "extension": "metadata"
     }
-
-    baseCommand = BaseCommand()   
+   
     eventURL = EVENTURLS["Race"]["race"]
 
-    data = baseCommand.getCurrentEventData(urls, index)
-    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
-    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
-    metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
-    emotes = baseCommand.getAllEmojis()
+    data = BaseCommand.getCurrentEventData(urls, index)
+    eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
+    mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
+    emotes = BaseCommand.getAllEmojis()
  
     body = metaData.body 
 
-    selectedMap = baseCommand.splitUppercaseLetters(body.map)
-    selectedDifficulty = baseCommand.splitUppercaseLetters(body.difficulty)
-    selectedMode = baseCommand.splitUppercaseLetters(body.mode)
+    selectedMap = BaseCommand.splitUppercaseLetters(body.map)
+    selectedDifficulty = BaseCommand.splitUppercaseLetters(body.difficulty)
+    selectedMode = BaseCommand.splitUppercaseLetters(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
     rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{metaData.body.endRound}"
 
-    modifiers = baseCommand.getActiveModifiers(body, emotes) 
-    towers = baseCommand.getActiveTowers(body._towers, emotes) 
+    modifiers = BaseCommand.getActiveModifiers(body, emotes) 
+    towers = BaseCommand.getActiveTowers(body._towers, emotes) 
 
     eventData = { 
         metaData.body.name: [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
@@ -47,8 +46,8 @@ def raceProfile(index, difficulty=None):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }  
         
-    eventNumber = baseCommand.getCurrentEventNumber(mainData.start, "race") 
-    embed = baseCommand.createEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
+    eventNumber = BaseCommand.getCurrentEventNumber(mainData.start, "race") 
+    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = data.get("Names") 
 

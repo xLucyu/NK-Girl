@@ -63,6 +63,9 @@ class Tile(commands.Cog):
 
         bannerEmotes = [banner[1] for banner in banners]
         relicEmotes = [relic[1] for relic in relics]
+
+        categorizedBanners.append(eventIndex)
+        categorizedRelics.append(eventIndex)
         
         data = {
             "Author": ctx.author.id,
@@ -73,7 +76,6 @@ class Tile(commands.Cog):
             "Message": None,
             "Emoji": bannerEmotes + relicEmotes
         }
-        print(data)
 
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)

@@ -9,21 +9,19 @@ def bossProfile(index: int, difficulty: str):
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
-    }
+    }   
 
-    baseCommand = BaseCommand()    
-
-    data = baseCommand.getCurrentEventData(urls, index)
-    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
-    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
-    metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
-    emotes = baseCommand.getAllEmojis()
+    data = BaseCommand.getCurrentEventData(urls, index)
+    eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
+    mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
+    emotes = BaseCommand.getAllEmojis()
 
     body = metaData.body
 
-    selectedMap = baseCommand.splitUppercaseLetters(body.map)
-    selectedDifficulty = baseCommand.splitUppercaseLetters(body.difficulty)
-    selectedMode = baseCommand.splitUppercaseLetters(body.mode)
+    selectedMap = BaseCommand.splitUppercaseLetters(body.map)
+    selectedDifficulty = BaseCommand.splitUppercaseLetters(body.difficulty)
+    selectedMode = BaseCommand.splitUppercaseLetters(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
@@ -36,8 +34,8 @@ def bossProfile(index: int, difficulty: str):
     }
 
     lbScoringType = bossLeaderboardType.get(mainData.scoringType)
-    modifiers = baseCommand.getActiveModifiers(body, emotes) 
-    towers = baseCommand.getActiveTowers(body._towers, emotes) 
+    modifiers = BaseCommand.getActiveModifiers(body, emotes) 
+    towers = BaseCommand.getActiveTowers(body._towers, emotes) 
 
     eventData = { 
         f"{difficulty.title()} Difficulty": [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
@@ -53,12 +51,12 @@ def bossProfile(index: int, difficulty: str):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }
  
-    eventNumber = baseCommand.splitBossNames(mainData.name)
+    eventNumber = BaseCommand.splitBossNames(mainData.name)
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
-    embed = baseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
+    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
     names = list()
 
     for name in data.get("Names", []):
-        names.append(baseCommand.splitBossNames(name))
+        names.append(BaseCommand.splitBossNames(name))
 
     return embed, names

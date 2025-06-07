@@ -11,7 +11,7 @@ MEDALS = {
         (0.50, 0.75): "RaceT75Perc",
         (0.75, 1.0): "Participant"
     },
-    "normal": {
+    "standard": {
         (1, 1): "BossFirst",
         (2, 2): "BossSecond",
         (3, 3): "BossThird",

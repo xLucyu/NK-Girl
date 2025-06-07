@@ -5,10 +5,10 @@ from utils.dataclasses.main import NkData
 from utils.dataclasses.metaData import MetaData 
 
 
-def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str, baseCommand: BaseCommand) -> int: 
+def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int: 
     challengeListBody = challenges.body 
     currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
-    dailyChallengeNumber = baseCommand.getCurrentEventNumber(currentTimeStamp, difficulty.lower())
+    dailyChallengeNumber = BaseCommand.getCurrentEventNumber(currentTimeStamp, difficulty.lower())
  
     for index, challenge in enumerate(challengeListBody): 
         eventName = challenge.name 
@@ -30,13 +30,12 @@ def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str, baseC
     return 0
  
          
-def challengeProfile(index=None, difficulty=None): 
-    baseCommand = BaseCommand() 
+def challengeProfile(index=None, difficulty=None):  
    
     if difficulty is None:
         url = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}"
-        challengeData = baseCommand.useApiCall(url)
-        metaData = baseCommand.transformDataToDataClass(MetaData, challengeData)
+        challengeData = BaseCommand.useApiCall(url)
+        metaData = BaseCommand.transformDataToDataClass(MetaData, challengeData)
 
     else:
         urls = {
@@ -44,24 +43,24 @@ def challengeProfile(index=None, difficulty=None):
             "extension": "metadata"
         }
 
-        challenges = baseCommand.useApiCall(urls["base"]) 
-        challengesData = baseCommand.transformDataToDataClass(NkData, challenges) 
-        index = findIndexForCurrentDailyChallenge(challengesData, difficulty, baseCommand)
-        data = baseCommand.getCurrentEventData(urls, index)
-        eventMetaData = baseCommand.useApiCall(data.get("MetaData", None)) 
-        metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
+        challenges = BaseCommand.useApiCall(urls["base"]) 
+        challengesData = BaseCommand.transformDataToDataClass(NkData, challenges) 
+        index = findIndexForCurrentDailyChallenge(challengesData, difficulty)
+        data = BaseCommand.getCurrentEventData(urls, index)
+        eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None)) 
+        metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
 
     if metaData.success == False:
         raise ValueError("ChallengeCodeNotFound")
 
-    emotes = baseCommand.getAllEmojis()
+    emotes = BaseCommand.getAllEmojis()
 
     body = metaData.body
     challengeCreator = body.creator  
     challengeID = body.id  
 
     if difficulty is None and challengeCreator:  
-        creator = baseCommand.useApiCall(url=challengeCreator)
+        creator = BaseCommand.useApiCall(url=challengeCreator)
 
         if not creator:
             return None
@@ -75,16 +74,16 @@ def challengeProfile(index=None, difficulty=None):
         title = f"{difficulty.title()} Challenge {challengeDate}"
         eventURL = EVENTURLS["Challenge"]["daily"]
      
-    selectedMap = baseCommand.splitUppercaseLetters(body.map)
-    selectedDifficulty = baseCommand.splitUppercaseLetters(body.difficulty)
-    selectedMode = baseCommand.splitUppercaseLetters(body.mode)
+    selectedMap = BaseCommand.splitUppercaseLetters(body.map)
+    selectedDifficulty = BaseCommand.splitUppercaseLetters(body.difficulty)
+    selectedMode = BaseCommand.splitUppercaseLetters(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
     rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{metaData.body.endRound}"
 
-    modifiers = baseCommand.getActiveModifiers(body, emotes) 
-    towers = baseCommand.getActiveTowers(body._towers, emotes) 
+    modifiers = BaseCommand.getActiveModifiers(body, emotes) 
+    towers = BaseCommand.getActiveTowers(body._towers, emotes) 
 
     eventData = { 
         body.name: [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
@@ -100,7 +99,7 @@ def challengeProfile(index=None, difficulty=None):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }  
      
-    embed = baseCommand.createEmbed(eventData, eventURL, title)
+    embed = BaseCommand.createEmbed(eventData, eventURL, title)
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     modes = ["placeholder"]
 

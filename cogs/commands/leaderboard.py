@@ -1,6 +1,6 @@
 import discord 
 from discord.ext import commands
-#from cogs.profile.leaderboardProfile import leaderboardProfile
+from cogs.profile.leaderboardProfile import leaderboardProfile
 from leaderboards.pageButtons import ButtonView
 
 class Leaderboard(commands.Cog):
@@ -19,12 +19,12 @@ class Leaderboard(commands.Cog):
         components = {
             "Mode": "race",
             "Author": ctx.author.id,
-           # "Function": leaderboardProfile,
+            "Function": leaderboardProfile,
             "Page": 1, 
             "Message": None,
             "Layout": [
-                ["⬅", "-1", "primary"],
-                ["➡", "1", "primary"], 
+                ["⬅️", "-1", "primary"],
+                ["➡️", "1", "primary"], 
             ]
         }
 
@@ -51,7 +51,7 @@ class Leaderboard(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, teamScores = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players) #type: ignore
+        embed, teamScores = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players) #type: ignore 
 
         components = {
             "Mode": "boss",
@@ -63,8 +63,8 @@ class Leaderboard(commands.Cog):
             "Page": 1, 
             "Message": None,
             "Layout": [
-                ["⬅", "-1", "primary"],
-                ["➡", "1", "primary"], 
+                ["⬅️", "-1", "primary"],
+                ["➡️", "1", "primary"], 
             ]
         }
 
@@ -87,8 +87,8 @@ class Leaderboard(commands.Cog):
             "Page": 1,
             "Message": None,
             "Layout": [
-                ["⬅", "-1", "primary"],
-                ["➡", "1", "primary"], 
+                ["⬅️", "-1", "primary"],
+                ["➡️", "1", "primary"], 
             ]
         }
         

@@ -41,13 +41,11 @@ def bossdetailsProfile(players: int, difficulty: str):
         "extension": f"metadata{difficulty.title()}"
     }
     
-    baseCommand = BaseCommand()
-    
-    data = baseCommand.getCurrentEventData(urls, index=0)
-    eventMetaData = baseCommand.useApiCall(data.get("MetaData", None))
-    mainData = baseCommand.transformDataToDataClass(Body, data.get("Data", None))
-    metaData = baseCommand.transformDataToDataClass(MetaData, eventMetaData)
-    emotes = baseCommand.getAllEmojis()
+    data = BaseCommand.getCurrentEventData(urls, index=0)
+    eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
+    mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
+    metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
+    emotes = BaseCommand.getAllEmojis()
 
     bossHpMultiplier = metaData.body._bloonModifiers.healthMultipliers.boss
     bossName = mainData.bossType
@@ -69,9 +67,9 @@ def bossdetailsProfile(players: int, difficulty: str):
     if difficulty == "standard":
         difficulty = "normal"
 
-    eventNumber = baseCommand.splitBossNames(mainData.name) 
+    eventNumber = BaseCommand.splitBossNames(mainData.name)
 
-    embed = baseCommand.createEmbed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
+    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
     embed.set_image(url=bannerURL) 
 

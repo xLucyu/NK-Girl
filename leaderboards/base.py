@@ -1,5 +1,4 @@
 from datetime import timezone, datetime 
-from utils.assets.medals import MEDALS
 from utils.dataclasses.main import Body
 from cogs.baseCommand import BaseCommand 
 
@@ -45,7 +44,7 @@ class BaseLeaderboard:
                 eventTimeStamp = apiData.start 
                 eventNumber = BaseCommand.getCurrentEventNumber(eventTimeStamp, "race")
                 eventName = apiData.name
-                title = f"Race #{eventNumber} - {eventName}"
+                title = f"Race #{eventNumber} - {eventName}"  
 
             case "boss":
                 eventNumber = BaseCommand.splitBossNames(apiData.name)

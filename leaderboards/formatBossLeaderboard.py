@@ -29,8 +29,7 @@ class BossLeaderboard(BaseLeaderboard):
     
         return [
             score.score 
-            for score in scoreParts
-            if score.name != "Submission Time"
+            for score in scoreParts[:-1] #filter out submission time
         ]
 
     def getMultiplayerLeaderboard(self):
@@ -96,18 +95,19 @@ class BossLeaderboard(BaseLeaderboard):
         leaderboardEntriesPerPage = len(lbBody)
         maxNameLength = max(len(player.displayName.strip()) for player in lbBody)
         mode = MEDALS.get(self.difficulty, {})
+        bossTiersMedal = f"<:{self.emojis.get("BossTiers")}:BossTiers>"
 
         playerData = str() 
 
-        for position, player in enumerate(lbBody, start=1):
- 
+        for position, player in enumerate(lbBody, start=1): 
             currentPosition = leaderboardEntriesPerPage * (self.page - 1) + position
             playerName = player.displayName
-
+            
+            bossTiers = player.scoreParts[0].score
             medal = self.getMedalForPosition(self.emojis, currentPosition, totalScores, mode)
             formattedScore = self.determineLeaderboardScore(leaderboardCompetitionType, player) 
 
-            playerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
+            playerData += f"{medal}`{currentPosition:02}` {bossTiersMedal} `{bossTiers}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
         return playerData, totalScores
     
@@ -119,13 +119,15 @@ class BossLeaderboard(BaseLeaderboard):
         startIndex = (self.page - 1) * 25
         endIndex = startIndex + 25
         mode = MEDALS.get(self.difficulty, {})
+        bossTiersMedal = f"<:{self.emojis.get("BossTiers")}:BossTiers>"
 
-        for position, (_, player) in enumerate(items[startIndex:endIndex], start=startIndex + 1):      
+        for position, (scores, player) in enumerate(items[startIndex:endIndex], start=startIndex + 1):      
             teamScore = player[0]
             teamMembers = ", ".join(player[1:])
             currentPosition = position 
+            bossTiers = scores[0] 
         
             medal = self.getMedalForPosition(self.emojis, currentPosition, totalScores, mode)
-            playerData += f"{medal} `{currentPosition:02}` `{teamMembers:<42} {teamScore:>5}`\n"
+            playerData += f"{medal} `{currentPosition:02}` {bossTiersMedal} `{bossTiers}` `{teamMembers:<42} {teamScore:>5}`\n"
     
         return playerData, totalScores

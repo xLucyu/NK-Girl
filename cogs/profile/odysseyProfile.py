@@ -22,15 +22,14 @@ def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
         selectedDifficulty = BaseCommand.splitUppercaseLetters(mapData.difficulty)
         selectedMap = BaseCommand.splitUppercaseLetters(mapData.map)
         title = f"{index}. {selectedMap} ({selectedDifficulty}, {selectedMode})"
-        cash = f"<:Cash:{emotes.get('Cash')}> ${map.get('startingCash'):,}"
-        round = f"<:Round:{emotes.get('Round')}> {map.get('startRound')}/{map.get('endRound')}"
+        cash = f"<:Cash:{emotes.get('Cash')}> ${mapData.startingCash:,}"
+        round = f"<:Round:{emotes.get('Round')}> {mapData.startRound}/{mapData.endRound}"
 
         value = [f"{cash}, {round}\n{', '.join(modifiers)}", False] 
         eventData[title] = value
              
 
 def odysseyProfile(index: int, difficulty: str):
-
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/odyssey",
         "extension": f"metadata_{difficulty}"

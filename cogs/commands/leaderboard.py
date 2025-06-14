@@ -14,17 +14,20 @@ class Leaderboard(commands.Cog):
     async def race(self, ctx: discord.ApplicationContext) -> None:    
 
         await ctx.response.defer()
-        embed, _ = leaderboardProfile(lbType="race", page=1) #type: ignore
+        embed, _, totalScores, _ = leaderboardProfile(lbType="race", page=1)
 
         components = {
             "Mode": "race",
+            "TotalScores": totalScores,
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 
             "Message": None,
             "Layout": [
                 ["⬅️", "-1", "primary"],
-                ["➡️", "1", "primary"], 
+                ["➡️", "1", "primary"],
+                ["Search", "searchPlayer", "primary"],
+                ["Page", "searchPage", "primary"]
             ]
         }
 
@@ -51,10 +54,12 @@ class Leaderboard(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, teamScores = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players) #type: ignore 
+        embed, teamScores, totalScores, scoreType = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players)
 
         components = {
             "Mode": "boss",
+            "TotalScores": totalScores,
+            "ScoreType": scoreType,
             "Players": players,
             "SubMode": difficulty.lower(),
             "TeamScores": teamScores,   
@@ -64,7 +69,9 @@ class Leaderboard(commands.Cog):
             "Message": None,
             "Layout": [
                 ["⬅️", "-1", "primary"],
-                ["➡️", "1", "primary"], 
+                ["➡️", "1", "primary"],
+                ["Search", "searchPlayer", "primary"],
+                ["Page", "searchPage", "primary"]
             ]
         }
 
@@ -77,10 +84,11 @@ class Leaderboard(commands.Cog):
     async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
 
         await ctx.response.defer()
-        embed, _ = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) #type: ignore
+        embed, _, totalScores, _ = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) 
 
         components = {
             "Mode": "ct",
+            "TotalScores": totalScores,
             "SubMode": option.lower(),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
@@ -88,7 +96,9 @@ class Leaderboard(commands.Cog):
             "Message": None,
             "Layout": [
                 ["⬅️", "-1", "primary"],
-                ["➡️", "1", "primary"], 
+                ["➡️", "1", "primary"],
+                ["Search", "searchPlayer", "primary"],
+                ["Page", "searchPage", "primary"]
             ]
         }
         

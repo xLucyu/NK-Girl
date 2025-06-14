@@ -47,7 +47,7 @@ class BossLeaderboard(BaseLeaderboard):
                 break
             
             lbBody = leaderboardData.body  
-            leaderboardCompetitionType = lbBody[0].scoreParts[1].name
+            leaderboardCompetitionType = lbBody[0].scoreParts[1].name 
 
             for player in lbBody:    
                 playerName = player.displayName
@@ -61,7 +61,7 @@ class BossLeaderboard(BaseLeaderboard):
         
             initialPage += 1 
 
-        return teamScores
+        return teamScores, leaderboardCompetitionType
 
     def determineLeaderboardScore(self, leaderboardCompetitionType: str, player: Body):
         
@@ -84,7 +84,7 @@ class BossLeaderboard(BaseLeaderboard):
 
         return formattedScore
 
-    def formatLeaderboard(self): 
+    def formatBossLeaderboard(self): 
 
         data = self.getLeaderboardData(self.metaData, self.page)
         leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data) 
@@ -92,10 +92,10 @@ class BossLeaderboard(BaseLeaderboard):
 
         lbBody = leaderboardData.body   
         leaderboardCompetitionType = lbBody[0].scoreParts[1].name  
-        leaderboardEntriesPerPage = len(lbBody)
+        leaderboardEntriesPerPage = 25
         maxNameLength = max(len(player.displayName.strip()) for player in lbBody)
         mode = MEDALS.get(self.difficulty, {})
-        bossTiersMedal = f"<:{self.emojis.get("BossTiers")}:BossTiers>"
+        bossTiersMedal = f"<:BossTiers:{self.emojis.get('BossTiers')}>" 
 
         playerData = str() 
 
@@ -109,7 +109,7 @@ class BossLeaderboard(BaseLeaderboard):
 
             playerData += f"{medal}`{currentPosition:02}` {bossTiersMedal} `{bossTiers}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
-        return playerData, totalScores
+        return playerData, leaderboardCompetitionType, totalScores
     
     def formatMultiplayerLeaderboard(self, teamScores: dict): 
         totalScores = len(teamScores)
@@ -119,7 +119,7 @@ class BossLeaderboard(BaseLeaderboard):
         startIndex = (self.page - 1) * 25
         endIndex = startIndex + 25
         mode = MEDALS.get(self.difficulty, {})
-        bossTiersMedal = f"<:{self.emojis.get("BossTiers")}:BossTiers>"
+        bossTiersMedal = f"<:BossTiers:{self.emojis.get('BossTiers')}>"
 
         for position, (scores, player) in enumerate(items[startIndex:endIndex], start=startIndex + 1):      
             teamScore = player[0]

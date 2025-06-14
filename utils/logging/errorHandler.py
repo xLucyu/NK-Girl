@@ -6,8 +6,7 @@ class ErrorHandler(commands.Cog):
         self.bot = bot
   
     @commands.Cog.listener()
-    async def on_application_command_error(self, ctx: discord.ApplicationContext, error: discord.DiscordException) -> None:
-        print(error) 
+    async def on_application_command_error(self, ctx: discord.ApplicationContext, error: discord.DiscordException) -> None: 
         if isinstance(error, commands.CommandOnCooldown):
             title = "Command on Cooldown"
             message = f"You can reuse this command in {error.retry_after:.2f} seconds."
@@ -40,7 +39,7 @@ class ErrorHandler(commands.Cog):
                     message = f"Something unexpected went wrong. \nError: {error}"
           
         embed = discord.Embed(title=f"**{title}**", description=message, color=discord.Color.red())
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url) #type: ignore
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url) 
         await ctx.respond(embed=embed)
         return
 

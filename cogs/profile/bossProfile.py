@@ -4,8 +4,7 @@ from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
 
 
-def bossProfile(index: int, difficulty: str):
-     
+def bossProfile(index: int, difficulty: str):  
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"

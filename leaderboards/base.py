@@ -2,6 +2,12 @@ from datetime import timezone, datetime
 from utils.dataclasses.main import Body
 from cogs.baseCommand import BaseCommand 
 
+formatBossScoringType = {
+    "Game Time": "Time",
+    "Tier Count": "Least Tiers",
+    "Least Cash": "Least Cash"
+}
+
 class BaseLeaderboard:
     
     @staticmethod
@@ -20,10 +26,11 @@ class BaseLeaderboard:
         return BaseCommand.useApiCall(f"{metaData}?page={page}")
 
     @staticmethod
-    def getMedalForPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str: 
+    def getMedalForPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str:
+        
         percentilePosition = currentPosition / totalScores
 
-        for (start, end), medal in mode.items():  
+        for (start, end), medal in mode.items(): 
             if isinstance(start, int) and start <= currentPosition <= end:
                 return f"<:{medal}:{emojis.get(medal)}>"  
             elif isinstance(start, float) and start <= percentilePosition <= end:
@@ -37,7 +44,7 @@ class BaseLeaderboard:
         return BaseLeaderboard.convertMsToTime(timeLeftInMs) if timeLeftInMs > 0 else "Event ended"
 
     @staticmethod  
-    def formatEventInfo(apiData: Body, lbType: str, difficulty: str) -> str:
+    def formatEventInfo(apiData: Body, lbType: str, difficulty: str, bossScoreType: str = "") -> str:
     
         match lbType:
             case "race":
@@ -48,8 +55,9 @@ class BaseLeaderboard:
 
             case "boss":
                 eventNumber = BaseCommand.splitBossNames(apiData.name)
-                eventName = apiData.bossType 
-                title = f"{difficulty.title()} {eventNumber}"
+                eventName = apiData.bossType
+                scoreType = formatBossScoringType.get(bossScoreType) 
+                title = f"{difficulty.title()} {eventNumber} - {scoreType}"
 
             case "ct":
                 currentIndex = apiData.start 

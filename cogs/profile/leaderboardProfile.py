@@ -5,7 +5,8 @@ from utils.dataclasses.main import Body
 from cogs.baseCommand import BaseCommand
 
 
-def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=None):
+def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=None, scoreType=None):
+
     leaderboardUrls = {
         "race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
@@ -33,20 +34,20 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     
     if lbType != "boss":
         leaderboard = SoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType, emojis)
-        playerData, totalScores = leaderboard.formatLeaderboard()
+        playerData, totalScores = leaderboard.formatLeaderboard() 
     else:
         leaderboard = BossLeaderboard(urls, apiData, metaData, emojis, page, difficulty, lbType, players)
         if players > 1:
             if not teamScores:
-                teamScores = leaderboard.getMultiplayerLeaderboard()
+                teamScores, scoreType = leaderboard.getMultiplayerLeaderboard()
             playerData, totalScores = leaderboard.formatMultiplayerLeaderboard(teamScores)
         else:
-            playerData, totalScores = leaderboard.formatLeaderboard()
+            playerData, scoreType, totalScores = leaderboard.formatBossLeaderboard() 
 
     eventEnd = mainData.end
     timeLeft = leaderboard.timeLeftForLeaderboard(eventEnd)
-    eventData = leaderboard.formatEventInfo(mainData, lbType, difficulty)
-    embed = discord.Embed(title=eventData, description=playerData, color=discord.Color.green())
-    embed.set_footer(text=f"Total Entries: {totalScores}\n Time Left: {timeLeft}")
+    eventData = leaderboard.formatEventInfo(mainData, lbType, difficulty, scoreType)
+    embed = discord.Embed(title=f"{eventData}, page {page}", description=playerData, color=discord.Color.green())
+    embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {timeLeft}")
 
-    return embed, teamScores
+    return embed, teamScores, totalScores, scoreType 

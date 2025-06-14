@@ -31,12 +31,11 @@ class SoloLeaderboard(BaseLeaderboard):
         leaderboardCompetitionType = self.apiData.get("scoringType", "GameTime")
 
         lbBody = leaderboardData.body 
-        leaderboardEntriesPerPage = len(lbBody)
+        leaderboardEntriesPerPage = 50 if self.lbType == "race" else 25
         maxNameLength = max(len(player.displayName.replace("(disbanded)", "").strip()) for player in lbBody) 
 
         playerData = str()
-        mode = MEDALS.get(f"{self.lbType}{self.difficulty}", {})
-        print(mode, f"{self.lbType}{self.difficulty}")
+        mode = MEDALS[f"{self.lbType}{self.difficulty}"] if self.lbType != "race" else MEDALS[self.lbType] # deal with it  
          
         for position, player in enumerate(lbBody, start=1):
             currentPosition = leaderboardEntriesPerPage * (self.page - 1) + position

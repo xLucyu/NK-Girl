@@ -1,11 +1,13 @@
-import discord
+import discord 
 
 class ButtonView(discord.ui.View):
 
     def __init__(self, **components):
-        super().__init__(timeout=10) 
+        super().__init__(timeout=300) 
         
         self.message = components.get("Message", None)
+        self.totalScores = components.get("TotalScores", None)
+        self.scoreType = components.get("ScoreType", None)
         self.lbType = components.get("Mode", None)
         self.teamScores = components.get("TeamScores", None)
         self.submode = components.get("SubMode", None)
@@ -25,8 +27,9 @@ class ButtonView(discord.ui.View):
             button.callback = self.callback 
             self.add_item(button)
         
-    async def callback(self, interaction:discord.Interaction):
-        
+    async def callback(self, interaction:discord.Interaction): 
+        await interaction.response.defer()
+
         userID = interaction.user.id #type: ignore
 
         if userID != self.userID:
@@ -34,10 +37,10 @@ class ButtonView(discord.ui.View):
             return  
 
         self.handlePage(interaction)
+        
+        embed, _, _, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType)
 
-        embed, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores)
-
-        await interaction.response.edit_message(embed=embed, view=self)
+        await interaction.edit_original_response(embed=embed, view=self)
         self.message = await interaction.original_response()
 
     def handlePage(self, interaction):
@@ -46,9 +49,20 @@ class ButtonView(discord.ui.View):
         self.page += int(movePage)
 
         for button in self.children:
-            if button.custom_id == "-1": #type: ignore 
-                button.disabled = self.page <= 1 #type: ignore
+            if button.custom_id == "-1": 
+                button.disabled = self.page <= 1
 
+            elif button.custom_id == "searchPage":
+                pass 
+
+            elif button.custom_id == "searchPlayer":
+                pass
+
+            if self.lbType == "race" and button.custom_id == "1":
+                button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
+            else:
+                if button.custom_id == "1":
+                    button.disabled = self.page >= 40 or (self.page * 25) >= self.totalScores
 
     async def on_timeout(self):
         
@@ -57,4 +71,3 @@ class ButtonView(discord.ui.View):
                 await self.message.edit(view=None)
         except discord.NotFound:
             pass
-

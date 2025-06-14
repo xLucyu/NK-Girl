@@ -28,7 +28,7 @@ livesForDifficulty = {
 def getCurrentCtNumber() -> int:
 
     url = "https://data.ninjakiwi.com/btd6/ct"
-
+    
     ctList = BaseCommand.useApiCall(url)
     ctListBody = BaseCommand.transformDataToDataClass(NkData, ctList)
     ctTimeStamp = ctListBody.body[0].start
@@ -47,7 +47,7 @@ def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
 
     return f"<:{name}:{emoteid}>" 
 
-def getSpecialTiles(data: dict, eventIndex: int, emotes: dict):
+def getSpecialTiles(data: dict, emotes: dict) -> list:
     
     relicTiles = list()
     bannerTiles = list() 
@@ -62,12 +62,16 @@ def getSpecialTiles(data: dict, eventIndex: int, emotes: dict):
 
             case "Banner":
                 bannerType = subGameType[currentSubGameType][-1]
-                bannerTiles.append([tileCode, f"<:{emotes.get(bannerType)}:{bannerType}>"])
+
+                if bannerType == "BossChallenge":
+                    bannerType = bossType[tileData.GameData.bossData.bossBloon] #add the boss emote itself 
+
+                bannerTiles.append([tileCode, f"<:{bannerType}:{emotes.get(bannerType)}>"]) #<:Dreadbloon:1383423718147096697>
             case "Relic":
                 relicType = tileData.RelicType
-                relicTiles.append([tileCode, f"<:{emotes.get(relicType)}:{relicType}>"])
+                relicTiles.append([tileCode, f"<:{relicType}:{emotes.get(relicType)}>"])
  
-    categorizedTiles = [bannerTiles, relicTiles] 
+    categorizedTiles = [bannerTiles, relicTiles]
     return categorizedTiles
 
 def getHeadData(ctData: TileCode) -> dict:
@@ -105,21 +109,29 @@ def tileProfile(eventIndex: int, tileCode: str):
         "base": "https://storage.googleapis.com/btd6-ct-map/events",
         "extensions": f"{eventIndex}/tiles.json"
     } 
+    
+    try:
+        data = BaseCommand.useApiCall(f"{urls["base"]}/{urls["extensions"]}") # incase user enters invalid event number 
+    except:
+        raise ValueError("CTNotFound")
+    
+    if tileCode.upper() not in data:
+        raise ValueError("TileNotFound")
 
-    data = BaseCommand.useApiCall(f"{urls["base"]}/{urls["extensions"]}")
+    
     ctData = BaseCommand.transformDataToDataClass(TileCode, data.get(tileCode.upper(), None))    
     emotes = BaseCommand.getAllEmojis()
-    dcModel = ctData.GameData.dcModel
-        
-    modifiers = BaseCommand.getActiveModifiersForCt(dcModel, emotes)
-    towers = BaseCommand.getActiveTowers(dcModel.towers._items, emotes)
+    dcModel = ctData.GameData.dcModel 
  
     ctInfo = getHeadData(ctData) 
-    categorizedTiles = getSpecialTiles(data, eventIndex, emotes)
+    categorizedTiles = getSpecialTiles(data, emotes)
 
     lives = f"<:Lives:{emotes.get("Lives")}> {ctInfo["Lives"]}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${dcModel.startRules.cash:,}"
     rounds = f"<:Round:{emotes.get('Round')}> {dcModel.startRules.round}/{ctInfo["EndRound"]}"
+
+    modifiers = BaseCommand.getActiveModifiersForCt(dcModel, emotes)
+    towers = BaseCommand.getActiveTowers(dcModel.towers._items, emotes)
      
     eventData = {
         ctInfo.get("Head"): ["\n", False],

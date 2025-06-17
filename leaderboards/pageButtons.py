@@ -1,7 +1,7 @@
-import discord 
+import discord
+from leaderboards.pageFilter import PageModal
 
 class ButtonView(discord.ui.View):
-
     def __init__(self, **components):
         super().__init__(timeout=300) 
         
@@ -24,48 +24,77 @@ class ButtonView(discord.ui.View):
                 style = getattr(discord.ButtonStyle, button[2]),
                 disabled = True if button[1] == "-1" else False
             )
-            button.callback = self.callback 
+            button.callback = self.callback
             self.add_item(button)
         
     async def callback(self, interaction:discord.Interaction): 
-        await interaction.response.defer()
-
         userID = interaction.user.id #type: ignore
 
         if userID != self.userID:
             await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
-            return  
+            return 
 
-        self.handlePage(interaction)
-        
-        embed, _, _, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType)
+        selectedButton = str(interaction.custom_id)
+        match selectedButton:
+            case "searchPage":
+                modal = self.generatePageModal()
+                await interaction.response.send_modal(modal)
+                return 
+            
+            case "searchPlayer":
+                modal = self.handleSearchPlayer()
+                await interaction.response.send_modal(modal)
+                return
+
+            case _:
+                self.handleArrowButtons(selectedButton) 
+
+        await interaction.response.defer()
+ 
+        embed, _, _, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType) 
 
         await interaction.edit_original_response(embed=embed, view=self)
-        self.message = await interaction.original_response()
+        self.message = await interaction.original_response() 
 
-    def handlePage(self, interaction):
-         
-        movePage = interaction.custom_id 
-        self.page += int(movePage)
 
+    def handleArrowButtons(self, selectedButton: str) -> None:
         for button in self.children:
-            if button.custom_id == "-1": 
+            if not isinstance(button, discord.ui.Button):
+                return 
+
+            if selectedButton == "-1":
+                self.page -= 1
                 button.disabled = self.page <= 1
+                return 
 
-            elif button.custom_id == "searchPage":
-                pass 
-
-            elif button.custom_id == "searchPlayer":
-                pass
-
-            if self.lbType == "race" and button.custom_id == "1":
-                button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
-            else:
-                if button.custom_id == "1":
+            if selectedButton == "1":
+                self.page += 1
+                if self.lbType == "race":
+                    button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
+                else:
                     button.disabled = self.page >= 40 or (self.page * 25) >= self.totalScores
+                return 
+        
+
+    def generatePageModal(self): 
+        return PageModal(  
+            Title = "Search for a page on the leaderboard!",
+            Label = "Enter the page number",
+            Placeholder = "Please only enter a full number.",
+            View = self,  
+            Filter = "pageNumber"
+            ) 
+
+    def handleSearchPlayer(self):
+        return PageModal(
+            Title = "Search for a player on the leaderboard!",
+            Label = "Enter a player name",
+            Placeholder = "Please enter a valid player name",
+            View = self,
+            Filter = "pagePlayer"
+        )
 
     async def on_timeout(self):
-        
         try:
             if self.message:
                 await self.message.edit(view=None)

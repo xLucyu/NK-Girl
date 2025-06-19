@@ -46,29 +46,30 @@ class ButtonView(discord.ui.View):
                 await interaction.response.send_modal(modal)
                 return
 
-            case _:
-                self.handleArrowButtons(selectedButton) 
+            case "1" | "-1":
+                self.page += int(selectedButton) 
 
         await interaction.response.defer()
- 
+        self.checkButtons()
+        await self.updateLeaderboard(interaction) 
+
+    async def updateLeaderboard(self, interaction: discord.Interaction):
+
         embed, _, _, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType) 
-
         await interaction.edit_original_response(embed=embed, view=self)
-        self.message = await interaction.original_response() 
+        self.message = await interaction.original_response()
 
 
-    def handleArrowButtons(self, selectedButton: str) -> None:
+    def checkButtons(self) -> None:
         for button in self.children:
             if not isinstance(button, discord.ui.Button):
                 return 
 
-            if selectedButton == "-1":
-                self.page -= 1
-                button.disabled = self.page <= 1
-                return 
+            if button.custom_id == "-1":
+                button.disabled = self.page <= 1 
 
-            if selectedButton == "1":
-                self.page += 1
+            if button.custom_id == "1":
+                print(self.totalScores, self.page)
                 if self.lbType == "race":
                     button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
                 else:

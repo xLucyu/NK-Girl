@@ -67,7 +67,7 @@ class BaseCommand:
         return filterModifiers(activeModifiers, emotes)
 
     @staticmethod 
-    def getCurrentEventNumber(eventTimeStamp: int, mode: str) -> int:
+    def getCurrentEventNumber(eventTimeStamp: int, mode: str) -> int | None:
         return getNumberForEvent(eventTimeStamp, mode)
 
     @staticmethod 

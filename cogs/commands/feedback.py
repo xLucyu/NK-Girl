@@ -4,9 +4,7 @@ from config import SUBCID
 from database.index import CommandTable
 
 class FeedbackModal(discord.ui.Modal):
-
     def __init__(self, submissionChannel, user, avatar):
-
         self.submissionChannel = submissionChannel
         self.user = user
         self.avatar = avatar

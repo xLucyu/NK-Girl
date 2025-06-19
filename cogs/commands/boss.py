@@ -28,12 +28,12 @@ class Boss(commands.Cog):
 
         data = {
             "Author": ctx.author.id, 
-            "EventName": ["Boss"],
-            "PreviousEvents": [names],
+            "EventName": "Boss",
+            "PreviousEvents": names,
             "Function": bossProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Emoji": ["<:BossChallenge:1338550202889404487>"], 
+            "Emoji": "<:BossChallenge:1338550202889404487>", 
             "Button": [
                     ["Normal", "standard", "success"],
                     ["Elite", "elite", "danger"]

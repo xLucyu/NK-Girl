@@ -2,40 +2,52 @@ import discord
 from utils.discord.selectMenu import SelectMenu
 from utils.discord.buttonMenu import ButtonMenu
 
-class SelectView(discord.ui.View):
+useButton = ["Boss", "Odyssey", "Coop Mode", None]
 
-    def __init__(self, data):
+class SelectView(discord.ui.View):
+    def __init__(self, data: dict):
         super().__init__(timeout=180)
-        self.message = data.get("message")
-        self.userID = data.get("Author")
-        self.event = data.get("EventName")
-        self.eventNames = data.get("PreviousEvents")
-        self.emoji = data.get("Emoji")
-        self.difficulty = data.get("Difficulty") 
-        self.buttonLayout = data.get("Button")
-        self.function = data.get("Function") 
+        self.message = data.get("message", None)
+        self.userID = data.get("Author", None)
+        self.event = data.get("EventName", None)
+        self.eventNames = data.get("PreviousEvents", None)
+        self.emoji = data.get("Emoji", None)
+        self.difficulty = data.get("Difficulty", None) 
+        self.buttonLayout = data.get("Button", None)
+        self.function = data.get("Function", None)
+        self.tiles = data.get("Tiles", None)
+        self.ctEventIndex = data.get("CTEventIndex", None)
         self.index = dict() #safe current index for button and select menu 
         self.handleViewMenus()
     
-    def handleViewMenus(self):
-        if type(self.eventNames[0][-1]) == int and self.event[0] != "Coop Mode":
-            for num in range(len(self.eventNames)):
-                self.addSelectMenu(num)
+    def handleViewMenus(self): 
+        if self.tiles: 
+            for category in range(len(self.tiles)): 
+                selectMenuView = SelectMenu(
+                    View = self,
+                    Event = self.event[category],
+                    Difficulty = self.difficulty,
+                    UserID = self.userID,
+                    Function = self.function, 
+                    Tiles = self.tiles[category],
+                    CTEventIndex = self.ctEventIndex
+                )
+                self.add_item(selectMenuView)
         else: 
-            if self.event[0] in ["Boss", "Odyssey", "Coop Mode", None]: 
+            if self.event in useButton: 
                 self.addButtonMenu()
-            if self.event[0] is not None: 
-                self.addSelectMenu(0)
+            if self.event is not None: 
+                self.addSelectMenu()
  
-    def addSelectMenu(self, num):
+    def addSelectMenu(self):  
         selectMenuView = SelectMenu(
                 View = self,
-                Event = self.event[num],
+                Event = self.event,
                 Difficulty = self.difficulty,
                 UserID = self.userID,
                 Function = self.function,
-                Emoji = self.emoji[num],
-                EventNames = self.eventNames[num]
+                Emoji = self.emoji,
+                EventNames = self.eventNames
             )
 
         self.add_item(selectMenuView)

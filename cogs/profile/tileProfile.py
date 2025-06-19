@@ -6,8 +6,8 @@ from utils.dataclasses.main import NkData
 subGameType = {
     2: ["Race", "race", "EventRace"],
     4: ["Boss", "standard", "BossChallenge"],
-    8: ["Least Cash", "least_cash", "LeastTiers"],
-    9: ["Least Tiers", "least_tiers", "LeastCash"]
+    8: ["Least Cash", "least_cash", "LeastCash"],
+    9: ["Least Tiers", "least_tiers", "LeastTiers"]
 }
 
 bossType = {

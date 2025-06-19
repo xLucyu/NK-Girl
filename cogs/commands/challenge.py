@@ -43,12 +43,11 @@ class Challenge(commands.Cog):
 
         data = {
             "Author": ctx.author.id, 
-            "EventName": [None],
-            "PreviousEvents": ["Placeholder"],
+            "EventName": None,
             "Function": challengeProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Emoji": ["<:Coop:1341515962410598521>"], 
+            "Emoji": "<:Coop:1341515962410598521>", 
             "Button": [
                     ["Standard", "standard", "success"],
                     ["Advanced", "advanced", "primary"],

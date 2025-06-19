@@ -53,33 +53,21 @@ class Tile(commands.Cog):
         else:
             eventIndex = event
 
-        embed, categorizedTiles = tileProfile(eventIndex, tile_code)
+        embed, categorizedTiles = tileProfile(eventIndex, tile_code) 
 
-        banners = categorizedTiles[0]
-        relics = categorizedTiles[1]
-
-        categorizedBanners = [banner[0] for banner in banners]
-        categorizedRelics = [relic[0] for relic in relics]
-
-        bannerEmotes = [banner[1] for banner in banners]
-        relicEmotes = [relic[1] for relic in relics]
-
-        categorizedBanners.append(eventIndex)
-        categorizedRelics.append(eventIndex)
-        
         data = {
             "Author": ctx.author.id,
             "EventName": ["Banner", "Relic"],
-            "PreviousEvents": categorizedBanners + categorizedRelics,
             "Function": tileProfile,
             "Difficulty": tile_code,
             "Message": None,
-            "Emoji": bannerEmotes + relicEmotes
+            "CTEventIndex": eventIndex,
+            "Tiles": categorizedTiles
         }
 
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)
         view.message = message
     
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Tile(bot)) 

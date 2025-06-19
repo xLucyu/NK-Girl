@@ -1,5 +1,8 @@
-import requests
-from config import BOTTOKEN, BOTID
+import requests 
+
+BOTID = "1294045105594040431"
+BOTTOKEN = "MTI5NDA0NTEwNTU5NDA0MDQzMQ.GpNU3V.eCXs7ReqVTL7CupNxvjpfj5W86OiAFODyRXDlk" 
+
 
 def getEmojis(url=f"https://discord.com/api/v10/applications/{BOTID}/emojis") -> dict | None:
 

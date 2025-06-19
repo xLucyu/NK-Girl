@@ -1,5 +1,4 @@
-import requests, dacite
-from utils.dataclasses.main import NkData
+import requests
 
 def getData(url: str) -> dict:
 

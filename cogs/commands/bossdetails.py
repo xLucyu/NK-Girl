@@ -34,12 +34,12 @@ class BossDetails(commands.Cog):
 
         data = {
             "Author": ctx.author.id, 
-            "EventName": ["Coop Mode"],
-            "PreviousEvents": [modes],
+            "EventName": "Coop Mode",
+            "PreviousEvents": modes,
             "Function": bossdetailsProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Emoji": ["<:Coop:1341515962410598521>"], 
+            "Emoji": "<:Coop:1341515962410598521>", 
             "Button": [
                     ["Normal", "STANDARD", "success"], #having different custom_ids for the buttons make a difference
                     ["Elite", "ELITE", "danger"]

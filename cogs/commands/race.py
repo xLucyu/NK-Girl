@@ -16,16 +16,16 @@ class Race(commands.Cog):
     async def race(self, ctx: discord.ApplicationContext) -> None:
         await ctx.response.defer() 
 
-        embed, names = raceProfile(index=0, difficulty=None) #type: ignore
+        embed, names = raceProfile(index=0, difficulty=None) 
 
         data = {
             "Author": ctx.author.id,
-            "EventName": ["Race"],
-            "PreviousEvents": [names],
+            "EventName": "Race",
+            "PreviousEvents": names,
             "Function": raceProfile,
             "Difficulty": None,
             "Message": None,
-            "Emoji": ["<:EventRace:1338550190390382694>"]
+            "Emoji": "<:EventRace:1338550190390382694>"
         }
 
         view = SelectView(data)

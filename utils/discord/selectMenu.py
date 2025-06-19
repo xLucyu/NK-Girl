@@ -1,19 +1,28 @@
 import discord
 
 class SelectMenu(discord.ui.Select):
-    def __init__(self, **components):
+    def __init__(self, **components): 
+
         self.parentView = components.get("View", None)  
         self.eventName = components.get("Event", None) 
-        self.difficulty = components.get("Difficulty", None)
-        self.userID = components.get("UserID", None)
-        self.function = components.get("Function", None)
-        self.emoji = components.get("Emoji", None)
-        self.eventNames = components.get("EventNames", None)
-        
-        options = [
-            discord.SelectOption(label=str(name), value=str(eventindex), emoji=self.emoji)
-            for eventindex, name in enumerate(self.eventNames[:24]) #last index is ct event number 
-        ]
+        self.difficulty = components.get("Difficulty", None) 
+        self.userID = components.get("UserID", None) 
+        self.function = components.get("Function", None) 
+        self.emoji = components.get("Emoji", None) 
+        self.eventNames = components.get("EventNames", None) 
+        self.tiles = components.get("Tiles", None)
+        self.ctEventIndex = components.get("CTEventIndex", None)
+
+        if self.tiles: #only for ct
+            options = [
+                discord.SelectOption(label=str(tile[0]), value=str(eventIndex), emoji=tile[1])
+                for eventIndex, tile in enumerate(self.tiles)
+            ]
+        else:
+            options = [
+                discord.SelectOption(label=str(name), value=str(eventindex), emoji=self.emoji)
+                for eventindex, name in enumerate(self.eventNames) 
+            ]
 
         super().__init__(
             placeholder=f"Please select a {self.eventName}",
@@ -46,8 +55,8 @@ class SelectMenu(discord.ui.Select):
                 difficulty = difficulty.lower()
             data["Difficulty"] = difficulty 
             
-            if type(self.eventNames[-1]) == int and self.eventName != "Coop Mode": #coop passes a list of integers 
-                embed, _ = self.function(self.eventNames[-1], self.eventNames[selectedIndex])
+            if self.tiles: 
+                embed, _ = self.function(self.ctEventIndex, self.tiles[selectedIndex][0])
             else: 
                 embed, _ = self.function(selectedIndex, difficulty)
 

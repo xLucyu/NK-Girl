@@ -5,7 +5,6 @@ from leaderboards.pageButtons import ButtonView
 
 class Leaderboard(commands.Cog):
     def __init__(self, bot):
-
         self.bot = bot
     
     leaderboard = discord.SlashCommandGroup("leaderboard", "", integration_types={discord.IntegrationType.user_install,
@@ -14,15 +13,16 @@ class Leaderboard(commands.Cog):
     async def race(self, ctx: discord.ApplicationContext) -> None:    
 
         await ctx.response.defer()
-        embed, _, totalScores, _ = leaderboardProfile(lbType="race", page=1)
+        lbData = leaderboardProfile(lbType="race", page=1)
 
         components = {
             "Mode": "race",
-            "TotalScores": totalScores,
+            "TotalScores": lbData.get("TotalScores"),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 
             "Message": None,
+            "URL": lbData.get("LeaderboardURL"),
             "Layout": [
                 ["⬅️", "-1", "primary"],
                 ["➡️", "1", "primary"],
@@ -32,7 +32,7 @@ class Leaderboard(commands.Cog):
         }
 
         view = ButtonView(**components)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=lbData.get("Embed"), view=view)
         view.message = message 
 
     @leaderboard.command(name="boss", description="look up boss leaderboard")
@@ -54,19 +54,20 @@ class Leaderboard(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, teamScores, totalScores, scoreType = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players)
+        lbData = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players)
 
         components = {
             "Mode": "boss",
-            "TotalScores": totalScores,
-            "ScoreType": scoreType,
+            "TotalScores": lbData.get("totalScores"),
+            "ScoreType": lbData.get("scoreType"),
             "Players": players,
             "SubMode": difficulty.lower(),
-            "TeamScores": teamScores,   
+            "TeamScores": lbData.get("teamScores"),   
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 
             "Message": None,
+            "URL": lbData.get("LeaderboardURL"),
             "Layout": [
                 ["⬅️", "-1", "primary"],
                 ["➡️", "1", "primary"],
@@ -76,7 +77,7 @@ class Leaderboard(commands.Cog):
         }
 
         view = ButtonView(**components)
-        message = await ctx.respond(embed=embed, view=view) 
+        message = await ctx.respond(embed=lbData.get("Embed"), view=view) 
         view.message = message
   
     @leaderboard.command(name="ct", description="")
@@ -84,16 +85,17 @@ class Leaderboard(commands.Cog):
     async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
 
         await ctx.response.defer()
-        embed, _, totalScores, _ = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) 
+        lbData = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) 
 
         components = {
             "Mode": "ct",
-            "TotalScores": totalScores,
+            "TotalScores": lbData.get("TotalScores"),
             "SubMode": option.lower(),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1,
             "Message": None,
+            "URL": lbData.get("LeaderboardURL"),
             "Layout": [
                 ["⬅️", "-1", "primary"],
                 ["➡️", "1", "primary"],
@@ -103,8 +105,8 @@ class Leaderboard(commands.Cog):
         }
         
         view = ButtonView(**components)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=lbData.get("Embed"), view=view)
         view.message = message
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Leaderboard(bot))

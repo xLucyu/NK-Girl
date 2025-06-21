@@ -15,7 +15,8 @@ class ButtonView(discord.ui.View):
         self.userID = components.get("Author", None)
         self.function = components.get("Function", None)
         self.page = components.get("Page", None)
-        self.layout = components.get("Layout", None) 
+        self.layout = components.get("Layout", None)
+        self.url = components.get("URL", None)
   
         for button in self.layout:
             button = discord.ui.Button(
@@ -47,16 +48,16 @@ class ButtonView(discord.ui.View):
                 return
 
             case "1" | "-1":
+                await interaction.response.defer()
                 self.page += int(selectedButton) 
-
-        await interaction.response.defer()
+ 
         self.checkButtons()
         await self.updateLeaderboard(interaction) 
 
     async def updateLeaderboard(self, interaction: discord.Interaction):
 
-        embed, _, _, _ = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType) 
-        await interaction.edit_original_response(embed=embed, view=self)
+        lbData = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType) 
+        await interaction.edit_original_response(embed=lbData.get("Embed"), view=self)
         self.message = await interaction.original_response()
 
 
@@ -68,8 +69,7 @@ class ButtonView(discord.ui.View):
             if button.custom_id == "-1":
                 button.disabled = self.page <= 1 
 
-            if button.custom_id == "1":
-                print(self.totalScores, self.page)
+            if button.custom_id == "1": 
                 if self.lbType == "race":
                     button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
                 else:
@@ -92,7 +92,8 @@ class ButtonView(discord.ui.View):
             Label = "Enter a player name",
             Placeholder = "Please enter a valid player name",
             View = self,
-            Filter = "pagePlayer"
+            Url = self.url,
+            Filter = "pageSearch" 
         )
 
     async def on_timeout(self):

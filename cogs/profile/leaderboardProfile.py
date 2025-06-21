@@ -50,4 +50,10 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     embed = discord.Embed(title=f"{eventData}, page {page}", description=playerData, color=discord.Color.green())
     embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {timeLeft}")
 
-    return embed, teamScores, totalScores, scoreType 
+    return {
+        "Embed": embed, 
+        "TeamScores": teamScores,
+        "TotalScores": totalScores,
+        "ScoreType": scoreType,
+        "LeaderboardURL": metaData 
+    } 

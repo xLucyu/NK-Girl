@@ -11,8 +11,7 @@ formatBossScoringType = {
 class BaseLeaderboard:
     
     @staticmethod
-    def convertMsToTime(score: int) -> str:
-         
+    def convertMsToTime(score: int) -> str: 
         days = score // (1000 * 60 * 60 * 24)
         hours = (score // (1000 * 60 * 60)) % 24 
         minutes = (score // (1000 * 60)) % 60
@@ -26,13 +25,12 @@ class BaseLeaderboard:
         return BaseCommand.useApiCall(f"{metaData}?page={page}")
 
     @staticmethod
-    def getMedalForPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str:
-        
-        percentilePosition = currentPosition / totalScores
+    def getMedalForPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str: 
+        percentilePosition = currentPosition / totalScores 
 
-        for (start, end), medal in mode.items(): 
+        for (start, end), medal in mode.items():
             if isinstance(start, int) and start <= currentPosition <= end:
-                return f"<:{medal}:{emojis.get(medal)}>"  
+                return f"<:{medal}:{emojis.get(medal)}>" 
             elif isinstance(start, float) and start <= percentilePosition <= end:
                 return f"<:{medal}:{emojis.get(medal)}>"
         return ""

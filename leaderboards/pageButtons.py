@@ -42,8 +42,8 @@ class ButtonView(discord.ui.View):
                 await interaction.response.send_modal(modal)
                 return 
             
-            case "searchPlayer":
-                modal = self.handleSearchPlayer()
+            case "searchPlayer": 
+                modal = self.generatePlayerModal()
                 await interaction.response.send_modal(modal)
                 return
 
@@ -64,8 +64,6 @@ class ButtonView(discord.ui.View):
 
 
     def checkButtons(self) -> None:
-
-        print(self.totalScores, self.page)
         for button in self.children:
             if not isinstance(button, discord.ui.Button):
                 return 
@@ -90,13 +88,14 @@ class ButtonView(discord.ui.View):
             Filter = "pageNumber"
             ) 
 
-    def handleSearchPlayer(self):
+    def generatePlayerModal(self):
         return PageModal(
             Title = "Search for a player on the leaderboard!",
             Label = "Enter a player name",
             Placeholder = "Please enter a valid player name",
             View = self,
             Url = self.url,
+            TeamScores = self.teamScores,
             Filter = "pageSearch" 
         )
 

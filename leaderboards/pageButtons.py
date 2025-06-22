@@ -16,7 +16,7 @@ class ButtonView(discord.ui.View):
         self.function = components.get("Function", None)
         self.page = components.get("Page", None)
         self.layout = components.get("Layout", None)
-        self.url = components.get("URL", None)
+        self.url = components.get("URL", None) 
   
         for button in self.layout:
             button = discord.ui.Button(
@@ -28,7 +28,7 @@ class ButtonView(discord.ui.View):
             button.callback = self.callback
             self.add_item(button)
         
-    async def callback(self, interaction:discord.Interaction): 
+    async def callback(self, interaction:discord.Interaction, defered=True): 
         userID = interaction.user.id #type: ignore
 
         if userID != self.userID:
@@ -47,10 +47,12 @@ class ButtonView(discord.ui.View):
                 await interaction.response.send_modal(modal)
                 return
 
-            case "1" | "-1":
-                await interaction.response.defer()
-                self.page += int(selectedButton) 
- 
+            case "1" | "-1":  
+                self.page += int(selectedButton)
+
+        if defered:
+            await interaction.response.defer()
+        
         self.checkButtons()
         await self.updateLeaderboard(interaction) 
 
@@ -62,6 +64,8 @@ class ButtonView(discord.ui.View):
 
 
     def checkButtons(self) -> None:
+
+        print(self.totalScores, self.page)
         for button in self.children:
             if not isinstance(button, discord.ui.Button):
                 return 

@@ -63,9 +63,10 @@ class PageModal(discord.ui.Modal):
                         initialPage += 1
 
                     await interaction.response.send_message("Player was not found", ephemeral = True)
+                    return 
 
 
-                while True: #cap the pages for searching
+                while True or initialPage: 
                     url = f"{self.url}?page={initialPage}"
                     leaderboardData = BaseCommand.useApiCall(url)
                     lbData = BaseCommand.transformDataToDataClass(Leaderboard, leaderboardData)
@@ -86,6 +87,3 @@ class PageModal(discord.ui.Modal):
                             return 
 
                     initialPage += 1
-
-            case _:
-                selectedPage = 1

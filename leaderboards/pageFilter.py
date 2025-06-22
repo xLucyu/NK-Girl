@@ -26,26 +26,31 @@ class PageModal(discord.ui.Modal):
         ) 
 
     async def callback(self, interaction:discord.Interaction):
-        await interaction.response.defer() 
+        
         match self.filter:
             case "pageNumber":
                 selectedPage = str(self.children[0].value)
-        
+                 
                 if (
                     not selectedPage.isdigit()
-                    or self.buttonView.lbType == "race" and not 1 < int(selectedPage) <= 20
-                    or not 1 < int(selectedPage) <= 40
+                    or self.buttonView.lbType == "race" and not 1 <= int(selectedPage) <= 20
+                    or not 1 <= int(selectedPage) <= 40
                 ): 
                     await interaction.response.send_message("Please enter a valid page number.", ephemeral = True)
                     return
 
+                await interaction.response.defer()
+                self.buttonView.page = int(selectedPage)
+                self.buttonView.checkButtons()
+                await self.buttonView.callback(interaction, defered=False)
+                return  
+
             case "pageSearch":
+                await interaction.response.defer()
                 selectedPlayerName = str(self.children[0].value)
                 initialPage = 1
 
-
-                found = False
-                while found is False and initialPage < 50: #cap the pages for searching
+                while True: #cap the pages for searching
                     url = f"{self.url}?page={initialPage}"
                     leaderboardData = BaseCommand.useApiCall(url)
                     lbData = BaseCommand.transformDataToDataClass(Leaderboard, leaderboardData)
@@ -59,13 +64,13 @@ class PageModal(discord.ui.Modal):
                     for player in lbBody:
                         if selectedPlayerName.lower() == player.displayName.lower(): 
                             selectedPage = initialPage
-                            found = True 
 
-                    initialPage += 1 
+                            self.buttonView.page = int(selectedPage)
+                            self.buttonView.checkButtons()
+                            await self.buttonView.callback(interaction, defered=False) 
+                            return 
+
+                    initialPage += 1
 
             case _:
                 selectedPage = 1
-         
-        self.buttonView.page = int(selectedPage)
-        self.buttonView.checkButtons()
-        await self.buttonView.callback(interaction) 

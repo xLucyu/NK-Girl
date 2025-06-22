@@ -62,7 +62,7 @@ class Leaderboard(commands.Cog):
             "ScoreType": lbData.get("scoreType"),
             "Players": players,
             "SubMode": difficulty.lower(),
-            "TeamScores": lbData.get("teamScores"),   
+            "TeamScores": lbData.get("TeamScores"),   
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Page": 1, 

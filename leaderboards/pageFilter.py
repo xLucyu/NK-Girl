@@ -14,6 +14,7 @@ class PageModal(discord.ui.Modal):
         self.buttonView: ButtonView = components.get("View", None)
         self.filter = components.get("Filter", None)
         self.url = components.get("Url", None)
+        self.teamScores: dict = components.get("TeamScores", None)
 
         super().__init__(title = title)
         self.add_item(
@@ -25,8 +26,7 @@ class PageModal(discord.ui.Modal):
             )
         ) 
 
-    async def callback(self, interaction:discord.Interaction):
-        
+    async def callback(self, interaction:discord.Interaction):  
         match self.filter:
             case "pageNumber":
                 selectedPage = str(self.children[0].value)
@@ -50,6 +50,21 @@ class PageModal(discord.ui.Modal):
                 selectedPlayerName = str(self.children[0].value)
                 initialPage = 1
 
+                if self.teamScores:
+                    for (_, _), teamData in self.teamScores.items():
+                        if selectedPlayerName in teamData:
+                            selectedPage = initialPage // 25 + 1
+                            
+                            self.buttonView.page = int(selectedPage)
+                            self.buttonView.checkButtons()
+                            await self.buttonView.callback(interaction, defered=False) 
+                            return
+                    
+                        initialPage += 1
+
+                    await interaction.response.send_message("Player was not found", ephemeral = True)
+
+
                 while True: #cap the pages for searching
                     url = f"{self.url}?page={initialPage}"
                     leaderboardData = BaseCommand.useApiCall(url)
@@ -62,7 +77,7 @@ class PageModal(discord.ui.Modal):
                     lbBody = lbData.body 
 
                     for player in lbBody:
-                        if selectedPlayerName.lower() == player.displayName.lower(): 
+                        if selectedPlayerName == player.displayName: 
                             selectedPage = initialPage
 
                             self.buttonView.page = int(selectedPage)

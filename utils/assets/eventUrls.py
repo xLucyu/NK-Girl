@@ -111,7 +111,7 @@ EVENTURLS = {
         "Muddy Puddles": "https://static.wikia.nocookie.net/b__/images/4/4c/MuddyPuddles_No_UI.png/revision/latest?cb=20200519013104&path-prefix=bloons",
         "Off The Coast": "https://static.wikia.nocookie.net/b__/images/6/61/OffTheCoast_No_UI.png/revision/latest?cb=20200519013104&path-prefix=bloons",
         "One Two Tree": "https://static.wikia.nocookie.net/b__/images/0/0b/OneTwoTree_No_UI.png/revision/latest?cb=20221208131615&path-prefix=bloons",
-        "Ouch": "https://static.wikia.nocookie.net/b__/images/0/09/Ouch_No_UI.png/revision/latest?cb=20200519013105&path-prefix=bloons",
+        "#ouch": "https://static.wikia.nocookie.net/b__/images/0/09/Ouch_No_UI.png/revision/latest?cb=20200519013105&path-prefix=bloons",
         "Park Path": "https://static.wikia.nocookie.net/b__/images/d/d8/ParkPath_No_UI.png/revision/latest?cb=20200519013106&path-prefix=bloons",
         "Pats Pond": "https://static.wikia.nocookie.net/b__/images/9/96/PatsPond_No_UI.png/revision/latest?cb=20200519013106&path-prefix=bloons",
         "Peninsula": "https://static.wikia.nocookie.net/b__/images/b/b7/Peninsula_No_UI.png/revision/latest?cb=20200518232444&path-prefix=bloons",

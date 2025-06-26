@@ -53,6 +53,7 @@ def bossProfile(index: int, difficulty: str):
     eventNumber = BaseCommand.splitBossNames(mainData.name)
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
     embed = BaseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
+    embed.set_image(url=EVENTURLS["maps"][selectedMap])
     names = list()
 
     for name in data.get("Names", []):

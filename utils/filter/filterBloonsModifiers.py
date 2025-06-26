@@ -9,7 +9,9 @@ NOKEYS = [
     "MKDisabled", 
     "NoSelling", 
     "allCamo", 
-    "allRegrow"
+    "allRegen",
+    "NoContinues",
+    "PowersDisabled"
 ]
 
 
@@ -20,7 +22,7 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
     modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers}
     
     activeModifiers = {
-        modifier: multiplier*100 if type(multiplier) == float else multiplier
+        modifier: multiplier*100 if multiplier != 1 and modifier not in NOKEYS else multiplier
         for modifier, multiplier in modifiers.items()
         if modifier not in NOKEYS and multiplier not in [9999, 1, -1]
         or modifier in NOKEYS and multiplier not in [9999, -1, False] 

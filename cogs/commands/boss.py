@@ -5,7 +5,6 @@ from utils.discord.viewMenu import SelectView
 
 class Boss(commands.Cog):
     def __init__(self, bot):
-
         self.bot = bot
     
     @discord.slash_command(name="boss", description="Show Boss Data", 

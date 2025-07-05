@@ -2,12 +2,6 @@ from datetime import timezone, datetime
 from utils.dataclasses.main import Body
 from cogs.baseCommand import BaseCommand 
 
-formatBossScoringType = {
-    "Game Time": "Time",
-    "Tier Count": "Least Tiers",
-    "Least Cash": "Least Cash"
-}
-
 class BaseLeaderboard:
     
     @staticmethod
@@ -54,7 +48,7 @@ class BaseLeaderboard:
             case "boss":
                 eventNumber = BaseCommand.splitBossNames(apiData.name)
                 eventName = apiData.bossType
-                scoreTypeKey = f"{difficulty.lower}ScoringType" 
+                scoreTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType" 
                 title = f"{difficulty.title()} {eventNumber} - {getattr(apiData, scoreTypeKey)}"
 
             case "ct":

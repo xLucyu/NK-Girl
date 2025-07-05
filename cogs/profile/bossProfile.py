@@ -33,7 +33,7 @@ def bossProfile(index: int, difficulty: str):
         "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
     
-    lbTypeKey = f"{difficulty.lower()}ScoringType"
+    lbTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType"
     lbScoringType = bossLeaderboardType.get(getattr(mainData, lbTypeKey))
     modifiers = BaseCommand.getActiveModifiers(body, emotes) 
     towers = BaseCommand.getActiveTowers(body._towers, emotes) 
@@ -55,7 +55,7 @@ def bossProfile(index: int, difficulty: str):
     eventNumber = BaseCommand.splitBossNames(mainData.name)
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
     embed = BaseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
-    embed.set_image(url=EVENTURLS["maps"][selectedMap])
+    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = list()
 
     for name in data.get("Names", []):

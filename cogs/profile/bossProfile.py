@@ -4,7 +4,8 @@ from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
 
 
-def bossProfile(index: int, difficulty: str):  
+def bossProfile(index: int, difficulty: str): 
+
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
@@ -31,8 +32,9 @@ def bossProfile(index: int, difficulty: str):
         "LeastCash": f"<:LeastCash:{emotes.get('LeastCash')}> **Least Cash Leaderboard**",
         "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
-
-    lbScoringType = bossLeaderboardType.get(mainData.scoringType)
+    
+    lbTypeKey = f"{difficulty.lower()}ScoringType"
+    lbScoringType = bossLeaderboardType.get(getattr(mainData, lbTypeKey))
     modifiers = BaseCommand.getActiveModifiers(body, emotes) 
     towers = BaseCommand.getActiveTowers(body._towers, emotes) 
 

@@ -61,7 +61,7 @@ class BossLeaderboard(BaseLeaderboard):
         
             initialPage += 1 
 
-        return teamScores, leaderboardCompetitionType
+        return teamScores
 
     def determineLeaderboardScore(self, leaderboardCompetitionType: str, player: Body):
         
@@ -109,7 +109,7 @@ class BossLeaderboard(BaseLeaderboard):
 
             playerData += f"{medal}`{currentPosition:02}` {bossTiersMedal} `{bossTiers}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
-        return playerData, leaderboardCompetitionType, totalScores
+        return playerData, totalScores
     
     def formatMultiplayerLeaderboard(self, teamScores: dict): 
         totalScores = len(teamScores)

@@ -5,7 +5,8 @@ from utils.dataclasses.main import NkData
 from utils.dataclasses.metaData import MetaData 
 
 
-def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int: 
+def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int:
+
     challengeListBody = challenges.body 
     currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
     dailyChallengeNumber = BaseCommand.getCurrentEventNumber(currentTimeStamp, difficulty.lower())

@@ -42,7 +42,7 @@ class BaseLeaderboard:
         return BaseLeaderboard.convertMsToTime(timeLeftInMs) if timeLeftInMs > 0 else "Event ended"
 
     @staticmethod  
-    def formatEventInfo(apiData: Body, lbType: str, difficulty: str, bossScoreType: str = "") -> str:
+    def formatEventInfo(apiData: Body, lbType: str, difficulty: str) -> str:
     
         match lbType:
             case "race":
@@ -54,8 +54,8 @@ class BaseLeaderboard:
             case "boss":
                 eventNumber = BaseCommand.splitBossNames(apiData.name)
                 eventName = apiData.bossType
-                scoreType = formatBossScoringType.get(bossScoreType) 
-                title = f"{difficulty.title()} {eventNumber} - {scoreType}"
+                scoreTypeKey = f"{difficulty.lower}ScoringType" 
+                title = f"{difficulty.title()} {eventNumber} - {getattr(apiData, scoreTypeKey)}"
 
             case "ct":
                 currentIndex = apiData.start 

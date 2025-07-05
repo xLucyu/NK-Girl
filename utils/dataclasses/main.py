@@ -20,6 +20,8 @@ class Body:
     leaderboard_standard_players_1: str = ""
     leaderboard_elite_players_1: str = ""
     scoringType: str = ""
+    normalScoringType: str = ""
+    eliteScoringType: str = ""
     # CT
     totalScores_player: int = 0
     totalScores_team: int = 0

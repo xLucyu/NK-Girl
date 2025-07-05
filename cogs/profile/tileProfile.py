@@ -59,7 +59,6 @@ def getSpecialTiles(data: dict, emotes: dict) -> list:
         currentSubGameType = tileData.GameData.subGameType
 
         match tileType:
-
             case "Banner":
                 bannerType = subGameType[currentSubGameType][-1]
 
@@ -67,6 +66,7 @@ def getSpecialTiles(data: dict, emotes: dict) -> list:
                     bannerType = bossType[tileData.GameData.bossData.bossBloon] #add the boss emote itself 
 
                 bannerTiles.append([tileCode, f"<:{bannerType}:{emotes.get(bannerType)}>"]) #<:Dreadbloon:1383423718147096697>
+
             case "Relic":
                 relicType = tileData.RelicType
                 relicTiles.append([tileCode, f"<:{relicType}:{emotes.get(relicType)}>"])
@@ -80,14 +80,14 @@ def getHeadData(ctData: TileCode) -> dict:
     selectedMode = BaseCommand.splitUppercaseLetters(ctData.GameData.selectedMode)
     selectedDifficulty = BaseCommand.splitUppercaseLetters(ctData.GameData.selectedDifficulty)
     gameType = ctData.GameData.subGameType 
-    startingLives = livesForDifficulty.get(selectedDifficulty if selectedDifficulty else "Medium") #pyright fix lol 
+    startingLives = livesForDifficulty.get(selectedDifficulty if selectedDifficulty else "Medium") 
 
     if gameType == 4: #boss 
         bossName = bossType.get(ctData.GameData.bossData.bossBloon, 1)
         eventURL = EVENTURLS["Boss"]["standard"]["Image"][bossName]
         bossTiers = ctData.GameData.bossData.TierCount
         head = f"{selectedMap} - {selectedDifficulty} {bossName} {bossTiers} Tier"
-        endRound = 40 if bossTiers == 1 else 60 #only 2 boss tiers possible
+        endRound = f"{20 * bossTiers + 20}+"
     else: 
         eventGameType = subGameType.get(gameType, {})
         eventURL = EVENTURLS[eventGameType[0]][eventGameType[1]]

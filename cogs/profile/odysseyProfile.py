@@ -5,6 +5,7 @@ from utils.dataclasses.main import Body
 from utils.dataclasses.metaData import MetaBody 
 
 def validateTitle(isExtreme: bool, difficulty: str) -> str:
+
     if isExtreme:
         title = f"Difficulty: {difficulty.title()}, Extreme" 
     else:
@@ -14,6 +15,7 @@ def validateTitle(isExtreme: bool, difficulty: str) -> str:
 
 
 def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
+
     for index, map in enumerate(maps["body"],start=1):
         mapData = BaseCommand.transformDataToDataClass(MetaBody, map) 
         modifiers = BaseCommand.getActiveModifiers(mapData, emotes)
@@ -30,6 +32,7 @@ def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
              
 
 def odysseyProfile(index: int, difficulty: str):
+
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/odyssey",
         "extension": f"metadata_{difficulty}"

@@ -39,14 +39,14 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
         leaderboard = BossLeaderboard(urls, apiData, metaData, emojis, page, difficulty, lbType, players)
         if players > 1:
             if not teamScores:
-                teamScores, scoreType = leaderboard.getMultiplayerLeaderboard()
+                teamScores = leaderboard.getMultiplayerLeaderboard()
             playerData, totalScores = leaderboard.formatMultiplayerLeaderboard(teamScores)
         else:
-            playerData, scoreType, totalScores = leaderboard.formatBossLeaderboard() 
+            playerData, totalScores = leaderboard.formatBossLeaderboard() 
 
     eventEnd = mainData.end
     timeLeft = leaderboard.timeLeftForLeaderboard(eventEnd)
-    eventData = leaderboard.formatEventInfo(mainData, lbType, difficulty, scoreType)
+    eventData = leaderboard.formatEventInfo(mainData, lbType, difficulty)
     embed = discord.Embed(title=f"{eventData}, page {page}", description=playerData, color=discord.Color.green())
     embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {timeLeft}")
 

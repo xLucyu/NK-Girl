@@ -26,7 +26,8 @@ class PageModal(discord.ui.Modal):
             )
         ) 
 
-    async def callback(self, interaction:discord.Interaction):  
+    async def callback(self, interaction:discord.Interaction): 
+
         match self.filter:
             case "pageNumber":
                 selectedPage = str(self.children[0].value)
@@ -66,7 +67,7 @@ class PageModal(discord.ui.Modal):
                     return 
 
 
-                while True or initialPage: 
+                while True: 
                     url = f"{self.url}?page={initialPage}"
                     leaderboardData = BaseCommand.useApiCall(url)
                     lbData = BaseCommand.transformDataToDataClass(Leaderboard, leaderboardData)

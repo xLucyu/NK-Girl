@@ -24,18 +24,26 @@ class Time(commands.Cog):
         )
     @discord.option(
         "time",
-        description = "enter the time you're sending on in mm:ss:ms, for example: 00:45.00",
+        description = "enter the time you're sending in mm:ss.ms. Format examples: 45 | 1:25 | 45.25 | 01:25.45",
         required = True 
         )
+    @discord.option(
+        "abr"
+    )
 
-    async def send(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, time: str) -> None:
+    async def send(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, time: str, abr: bool = False) -> None:
         
+        await ctx.response.defer()
+
         embed = timeProfile(
             CommandName = "send",
             StartRound = start_round,
             EndRound = end_round,
-            Time = time
+            Time = time,
+            ABR = abr 
         )
+
+        await ctx.respond(embed=embed)
 
 
     @time.command(name="ct", description="calculate the time to full send for the time you want to achieve")
@@ -80,13 +88,17 @@ class Time(commands.Cog):
         description = "choose the time you want to achieve",
         required = True 
         )
-    async def goal(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, goal_time: str):
+    @discord.option(
+        "abr"
+    )
+    async def goal(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, goal_time: str, abr: bool = False):
         
         embed = timeProfile(
             CommandName = "goal",  
             StartRound = start_round,
             EndRound = end_round,
-            GoalTime = goal_time
+            GoalTime = goal_time,
+            ABR = abr
         )
 
 def setup(bot: discord.Bot):

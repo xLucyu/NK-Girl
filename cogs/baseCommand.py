@@ -1,8 +1,8 @@
 import dacite
 from discord import Embed
-from typing import Type, TypeVar, Any 
+from typing import Type, TypeVar, Any, Dict, List, Union 
 from cogs.eventNumber import getNumberForEvent
-from cogs.regex import splitUppercase, splitNumbers
+from cogs.regex import *
 from api.fetchId import getID, getData 
 from api.emojis import getEmojis
 from utils.filter.filterTowers import filterTowers
@@ -78,9 +78,10 @@ class BaseCommand:
     def splitBossNames(string: str) -> str: 
         return splitNumbers(string)
 
+    @staticmethod
+    def convertStrToMs(string: str) -> int:
+        return convertStringToMs(string)
+
     @staticmethod 
-    def createEmbed(eventData: dict, url: str, title: str) -> Embed:
+    def createEmbed(eventData: Dict[str, List[Union[str, bool]]], url: str, title: str) -> Embed:
         return filterEmbed(eventData, url, title)
-
-    
-

@@ -1,6 +1,8 @@
 from timeCalculator.send import TimeSend 
 from timeCalculator.ct import TimeCT 
 from timeCalculator.goal import TimeGoal 
+from cogs.baseCommand import BaseCommand
+from utils.assets.eventUrls import EVENTURLS
 
 def timeProfile(**components):
 
@@ -11,4 +13,7 @@ def timeProfile(**components):
     }
 
     commandName = components.get("CommandName", None) 
-    print(classesForCommand[commandName](**components))
+    currentCommand = classesForCommand[commandName](**components)
+    timeData, title = currentCommand.formatTime() 
+
+    return BaseCommand.createEmbed(timeData, EVENTURLS["Race"]["race"], title)

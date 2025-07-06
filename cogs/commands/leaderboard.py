@@ -4,7 +4,8 @@ from cogs.profile.leaderboardProfile import leaderboardProfile
 from leaderboards.pageButtons import ButtonView
 
 class Leaderboard(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
+
         self.bot = bot
     
     leaderboard = discord.SlashCommandGroup("leaderboard", "", integration_types={discord.IntegrationType.user_install,

@@ -5,6 +5,7 @@ from utils.discord.viewMenu import SelectView
 
 class Boss(commands.Cog):
     def __init__(self, bot):
+
         self.bot = bot
     
     @discord.slash_command(name="boss", description="Show Boss Data", 
@@ -18,12 +19,13 @@ class Boss(commands.Cog):
         required = True
         )
     async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal") -> None:
+
         await ctx.response.defer()
 
         if difficulty == "Normal":
             difficulty = "Standard"
          
-        embed, names = bossProfile(index=0, difficulty=difficulty.lower()) #type: ignore 
+        embed, names = bossProfile(index=0, difficulty=difficulty.lower())  
 
         data = {
             "Author": ctx.author.id, 

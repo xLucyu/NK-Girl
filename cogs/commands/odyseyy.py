@@ -4,7 +4,6 @@ from cogs.profile.odysseyProfile import odysseyProfile
 from utils.discord.viewMenu import SelectView
 
 class Odyssey(commands.Cog):
-
     def __init__(self, bot):
 
         self.bot = bot
@@ -18,7 +17,10 @@ class Odyssey(commands.Cog):
         description = "Choose a Difficulty, default is hard.",
         choices = ["Easy", "Medium", "Hard"]
         )
-    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None: 
+    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None:
+
+        await ctx.response.defer()
+
         embed, names = odysseyProfile(index=0, difficulty=difficulty.lower()) #type: ignore
 
         data = {

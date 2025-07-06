@@ -4,8 +4,7 @@ from cogs.profile.challengeProfile import challengeProfile
 from utils.discord.viewMenu import SelectView
 
 class Challenge(commands.Cog):
-
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
 
         self.bot = bot
 

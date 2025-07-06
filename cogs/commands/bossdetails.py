@@ -5,7 +5,7 @@ from utils.discord.viewMenu import SelectView
 
 
 class BossDetails(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
         self.bot = bot
 
     @discord.slash_command(name="bossdetails", description="Show details about the current Boss.",
@@ -25,6 +25,7 @@ class BossDetails(commands.Cog):
         required = False
         ) 
     async def bossdetails(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", players: int = 1) -> None:
+
         await ctx.response.defer()
 
         if difficulty == "Normal":

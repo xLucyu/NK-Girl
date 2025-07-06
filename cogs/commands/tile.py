@@ -5,7 +5,8 @@ from utils.discord.viewMenu import SelectView
 from api.fetchId import getData
 
 class Tile(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
+
         self.bot = bot        
 
     @discord.message_command(name="Tile Lookup", description="If this message has a tile code for CT, you can look it up.",
@@ -45,13 +46,10 @@ class Tile(commands.Cog):
         description = "CT Week, default will be the latest week.", 
         required = False
         )
-    async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None: 
-        await ctx.response.defer()
+    async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:
 
-        if event == 0:
-            eventIndex = getCurrentCtNumber()
-        else:
-            eventIndex = event
+        await ctx.response.defer()
+        eventIndex = getCurrentCtNumber() if event == 0 else event 
 
         embed, categorizedTiles = tileProfile(eventIndex, tile_code) 
 

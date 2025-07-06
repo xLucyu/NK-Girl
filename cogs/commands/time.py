@@ -1,16 +1,16 @@
 import discord 
-from discord.ext import commands 
+from discord.ext import commands
+from cogs.profile.timeProfile import timeProfile
 
 class Time(commands.Cog):
     def __init__(self, bot: discord.Bot):
+
         self.bot = bot
 
     time = discord.SlashCommandGroup("time", "", integration_types = {discord.IntegrationType.user_install,
-                                                discord.IntegrationType.guild_install})
+                                                                      discord.IntegrationType.guild_install})
     
-    @time.command(name="send", description="calculate the time you will get.", 
-                  integration_types = {discord.IntegrationType.guild_install, 
-                                       discord.IntegrationType.user_install})
+    @time.command(name="send", description="calculate the time you will get")
     @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "start_round",
@@ -27,8 +27,15 @@ class Time(commands.Cog):
         description = "enter the time you're sending on in mm:ss:ms, for example: 00:45.00",
         required = True 
         )
-    async def send(self, ctx: discord.InteractionContextType, start_round: int, end_round: int, time: str) -> None:
-        pass 
+
+    async def send(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, time: str) -> None:
+        
+        embed = timeProfile(
+            CommandName = "send",
+            StartRound = start_round,
+            EndRound = end_round,
+            Time = time
+        )
 
 
     @time.command(name="ct", description="calculate the time to full send for the time you want to achieve")
@@ -47,16 +54,17 @@ class Time(commands.Cog):
         description = "enter the end round of the ct tile",
         required = True 
         )
-    async def ct(self, ctx: discord.InteractionContextType, goal_time: str, current_time: str, end_round: int):
-        pass 
+    async def ct(self, ctx: discord.ApplicationContext, goal_time: str, current_time: str, end_round: int):
+        
+        embed = timeProfile(
+            CommandName = "ct",
+            GoalTime = goal_time,
+            CurrentTime = current_time,
+            EndRound = end_round
+        )
 
 
     @time.command(name="goal", description="calculate the time when you have to full send for your desired time")
-    @discord.option(
-        "goal_time",
-        description = "choose the time you want to achieve",
-        required = True 
-        )
     @discord.option(
         "start_round",
         description = "choose the round you want to full send from",
@@ -67,10 +75,19 @@ class Time(commands.Cog):
         description = "choose the round you're trying to send to",
         required = True 
         )
-    async def goal(self, ctx: discord.InteractionContextType, goal_time: str, start_round: int, end_round: int):
-        pass
-    
-    
+    @discord.option(
+        "goal_time",
+        description = "choose the time you want to achieve",
+        required = True 
+        )
+    async def goal(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, goal_time: str):
+        
+        embed = timeProfile(
+            CommandName = "goal",  
+            StartRound = start_round,
+            EndRound = end_round,
+            GoalTime = goal_time
+        )
 
 def setup(bot: discord.Bot):
     bot.add_cog(Time(bot))

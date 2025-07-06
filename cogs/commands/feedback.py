@@ -39,13 +39,14 @@ class FeedbackModal(discord.ui.Modal):
             await interaction.response.send_message(f"Your submission was send! ID: {submissionNumber}", ephemeral=True)
 
 class Feedback(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
         self.bot = bot 
 
     @discord.slash_command(name="feedback", description="give feedback or submit an error",
                            integration_types = {discord.IntegrationType.user_install,
                                                 discord.IntegrationType.guild_install})
-    async def feedback(self, ctx: discord.ApplicationContext) -> None: 
+    async def feedback(self, ctx: discord.ApplicationContext) -> None:
+
         user = ctx.author.name
         avatar = ctx.author.avatar
         submissionChannel = self.bot.get_channel(int(SUBCID)) #type: ignore 

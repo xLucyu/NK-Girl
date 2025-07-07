@@ -46,9 +46,13 @@ class ErrorHandler(commands.Cog):
                     title = "Invalid Start Round"
                     message = "The Start Round has to be inbetween 1 and 139."
 
-                case e if "EndRoundOutOfBounce"in e:
+                case e if "EndRoundOutOfBounce" in e:
                     title = "Invalid End Round"
                     message = "The End Round has to be inbetween 2 and 140."
+
+                case e if "GoalTimeTooLow" in e:
+                    title = "Invalid Goal Time"
+                    message = "You entered an impossible time to achieve."
           
                 case _:  
                     title = "Unexpected Error"

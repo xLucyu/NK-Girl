@@ -39,12 +39,10 @@ def convertStringToMs(string: str) -> float:
         minutes = 0
         seconds = int(match.group(1))
         fraction = match.group(2) or "0"
-
-    # Normalize centiseconds
+ 
     if len(fraction) == 1:
         centiseconds = int(fraction) * 10
     else:
         centiseconds = int(fraction[:2].ljust(2, "0"))
 
-    return minutes * 60 + seconds + centiseconds / 100 
-    
+    return minutes * 60 + seconds + centiseconds / 100  

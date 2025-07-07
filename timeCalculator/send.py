@@ -9,7 +9,7 @@ class TimeSend(TimeBase):
         self.endRound = components.get("EndRound", None)
         self.isAbr = components.get("ABR", None)
 
-    def validateInput(self, timeInSeconds: float):
+    def validateInput(self, timeInSeconds: float) -> None:
 
         if timeInSeconds < 0.0:
             raise ValueError("InvalidTimeFormat")
@@ -41,6 +41,8 @@ class TimeSend(TimeBase):
         sendingTime = (longestRoundIndex - self.startRound - offRound) * 0.2 + (math.ceil(longestRoundInSeconds * 60) + 1) / 60 + timeInSeconds
         formattedTime = TimeBase.msToTimeString(sendingTime) 
         formattedInputTime = TimeBase.msToTimeString(timeInSeconds)
+
+        # to do: add later rounds that are shorter than the last round + add last round 
 
         eventData = {
             "Rounds": [f"<:Round:{roundIcon}> {self.startRound} -> {self.endRound}", False],

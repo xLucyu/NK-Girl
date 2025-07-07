@@ -32,7 +32,7 @@ class Time(commands.Cog):
     )
 
     async def send(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, time: str, abr: bool = False) -> None:
-        
+
         await ctx.response.defer()
 
         embed = timeProfile(

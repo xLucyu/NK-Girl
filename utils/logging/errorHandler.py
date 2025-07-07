@@ -33,6 +33,22 @@ class ErrorHandler(commands.Cog):
                 case e if "ServerDown" in e:
                     title = "Api Server Down"
                     message = "The Bot is online, but cannot recieve api information."
+
+                case e if "InvalidTimeFormat" in e:
+                    title = "Invalid Time Format"
+                    message = "Please make sure you're following the time format. Negative times are also not allowed!"
+
+                case e if "InvalidStartRound" in e:
+                    title = "Invalid Start Round"
+                    message = "The Start Round can't be higher than the End Round."
+
+                case e if "StartRoundOutOfBounce" in e:
+                    title = "Invalid Start Round"
+                    message = "The Start Round has to be inbetween 1 and 139."
+
+                case e if "EndRoundOutOfBounce"in e:
+                    title = "Invalid End Round"
+                    message = "The End Round has to be inbetween 2 and 140."
           
                 case _:  
                     title = "Unexpected Error"

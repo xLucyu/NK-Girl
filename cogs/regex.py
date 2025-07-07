@@ -22,7 +22,7 @@ def splitNumbers(string: str) -> str:
         return f"{name} #{number}"
     return "" 
 
-def convertStringToMs(string: str) -> int:
+def convertStringToMs(string: str) -> float:
     
     string = string.strip()
 
@@ -46,5 +46,5 @@ def convertStringToMs(string: str) -> int:
     else:
         centiseconds = int(fraction[:2].ljust(2, "0"))
 
-    return (minutes * 60 + seconds) * 1000 + centiseconds * 10
+    return minutes * 60 + seconds + centiseconds / 100 
     

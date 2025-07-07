@@ -1,4 +1,3 @@
-import math 
 from cogs.baseCommand import BaseCommand
 from utils.assets.raceRounds import REGULAR, ABR 
 
@@ -13,15 +12,12 @@ class TimeBase:
         return ABR if isAbr else REGULAR
 
     @staticmethod 
-    def msToTimeString(ms: float) -> str: 
+    def msToTimeString(seconds: float) -> str: 
 
-        totalSeconds = ms / 1000
-        minutes = int(totalSeconds // 60)
-        seconds = int(totalSeconds % 60)
-        hundredths = int(round((totalSeconds - minutes * 60 - seconds) * 100))
-
-        if hundredths == 100:
-            seconds += 1 
+        totalHundredths = int(seconds * 100)
+        minutes = totalHundredths // 6000
+        seconds = (totalHundredths % 6000) // 100
+        hundredths = totalHundredths % 100 
 
         return f"{minutes}:{seconds:02}.{hundredths:02}"
 

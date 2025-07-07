@@ -92,6 +92,8 @@ class Time(commands.Cog):
         "abr"
     )
     async def goal(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, goal_time: str, abr: bool = False):
+
+        await ctx.response.defer()
         
         embed = timeProfile(
             CommandName = "goal",  
@@ -100,6 +102,8 @@ class Time(commands.Cog):
             GoalTime = goal_time,
             ABR = abr
         )
+
+        await ctx.respond(embed=embed)
 
 def setup(bot: discord.Bot):
     bot.add_cog(Time(bot))

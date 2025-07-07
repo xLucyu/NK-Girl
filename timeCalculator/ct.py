@@ -6,4 +6,6 @@ class TimeCT(TimeBase):
         self.goalTime = components.get("GoalTime")
         self.currentTime = components.get("CurrentTime")
         self.endRound = components.get("EndRound")
+    
+    def formatTime(self):
 

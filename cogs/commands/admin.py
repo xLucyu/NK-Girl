@@ -15,7 +15,7 @@ class Admin(commands.Cog):
         )
     async def sync(self, ctx: discord.ApplicationContext, synctype: str) -> None: 
         await ctx.response.defer()
-        if ctx.author.id != 1220815634515099718:
+        if ctx.author.id != 1220815634515099718 | 746205219238707210:
             await ctx.respond("You're not the owner")
             return
         try:

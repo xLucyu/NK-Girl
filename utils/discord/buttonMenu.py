@@ -3,6 +3,7 @@ import discord
 class ButtonMenu(discord.ui.Button):
     def __init__(self, **components):
         self.parentView = components.get("View", None)
+        self.boss = components.get("Boss", None)
         self.userID = components.get("UserID", None)
         self.function = components.get("Function", None)
         self.layout = components.get("Layout", None) 
@@ -21,7 +22,7 @@ class ButtonMenu(discord.ui.Button):
             await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
             return
          
-        try:
+        try: 
             await interaction.response.defer()
 
             difficulty = self.custom_id 
@@ -31,8 +32,13 @@ class ButtonMenu(discord.ui.Button):
             data = self.parentView.index[messageID] 
             data["Difficulty"] = difficulty 
 
-            selectedIndex = data.get("EventIndex", 0) 
-            embed, _ = self.function(selectedIndex, difficulty.lower()) #type: ignore
+            selectedIndex = data.get("EventIndex", 0)
+            args = [selectedIndex, difficulty.lower()]
+
+            if self.boss:
+                args.append(self.boss)
+
+            embed, _ = self.function(*args)
 
             await interaction.edit_original_response(embed=embed)
             self.parentView.message = await interaction.original_response()

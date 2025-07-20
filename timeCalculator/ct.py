@@ -8,4 +8,6 @@ class TimeCT(TimeBase):
         self.endRound = components.get("EndRound")
     
     def formatTime(self):
+        pass
+
 

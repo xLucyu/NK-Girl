@@ -40,6 +40,7 @@ class FeedbackModal(discord.ui.Modal):
 
 class Feedback(commands.Cog):
     def __init__(self, bot: discord.Bot):
+
         self.bot = bot 
 
     @discord.slash_command(name="feedback", description="give feedback or submit an error",
@@ -53,5 +54,5 @@ class Feedback(commands.Cog):
         modal = FeedbackModal(submissionChannel, user, avatar)
         await ctx.send_modal(modal)
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Feedback(bot))

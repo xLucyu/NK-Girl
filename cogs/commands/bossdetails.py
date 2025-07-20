@@ -66,7 +66,7 @@ class BossDetails(commands.Cog):
         view.message = message   
 
         
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(BossDetails(bot))
 
 

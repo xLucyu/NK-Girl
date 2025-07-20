@@ -4,7 +4,7 @@ from cogs.profile.odysseyProfile import odysseyProfile
 from utils.discord.viewMenu import SelectView
 
 class Odyssey(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
 
         self.bot = bot
     
@@ -43,5 +43,5 @@ class Odyssey(commands.Cog):
         view.message = message
           
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Odyssey(bot))

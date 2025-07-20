@@ -68,5 +68,5 @@ class Help(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Help(bot))

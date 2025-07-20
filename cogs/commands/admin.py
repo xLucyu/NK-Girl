@@ -17,6 +17,7 @@ class Admin(commands.Cog):
         await ctx.response.defer()
         if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")
+            return
         try:
 
             if synctype == "global": 
@@ -36,6 +37,7 @@ class Admin(commands.Cog):
     async def usage(self, ctx: discord.ApplicationContext) -> None:
         if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")
+            return
 
         commandTable = CommandTable.fetchCommands()
         string = str()

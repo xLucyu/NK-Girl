@@ -4,7 +4,7 @@ from cogs.profile.bossProfile import bossProfile
 from utils.discord.viewMenu import SelectView
 
 class Boss(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
 
         self.bot = bot
     
@@ -46,5 +46,5 @@ class Boss(commands.Cog):
         view.message = message   
 
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Boss(bot))

@@ -30,7 +30,6 @@ class Time(commands.Cog):
     @discord.option(
         "abr"
     )
-
     async def send(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, time: str, abr: bool = False) -> None:
 
         await ctx.response.defer()

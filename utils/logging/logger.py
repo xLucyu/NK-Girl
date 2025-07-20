@@ -3,7 +3,8 @@ from discord.ext import commands
 from database.index import CommandTable
 
 class Logger(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
+
         self.bot = bot 
 
     @commands.Cog.listener()
@@ -14,5 +15,5 @@ class Logger(commands.Cog):
             commands = CommandTable()
             commands.increaseCommandUsage(commandName)  
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(Logger(bot))

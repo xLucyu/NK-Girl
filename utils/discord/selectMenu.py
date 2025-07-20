@@ -10,6 +10,7 @@ class SelectMenu(discord.ui.Select):
         self.function = components.get("Function", None) 
         self.emoji = components.get("Emoji", None) 
         self.eventNames = components.get("EventNames", None) 
+        self.boss = components.get("Boss", None)
         self.tiles = components.get("Tiles", None)
         self.ctEventIndex = components.get("CTEventIndex", None)
 
@@ -53,12 +54,18 @@ class SelectMenu(discord.ui.Select):
 
             if difficulty is not None:
                 difficulty = difficulty.lower()
-            data["Difficulty"] = difficulty 
+            data["Difficulty"] = difficulty
+
+            args = [selectedIndex, difficulty]
+
+            if self.boss:
+                args.append(self.boss)
+
+            if self.tiles:
+                args[0] = self.ctEventIndex
+                args[1] = self.tiles[selectedIndex][0]
             
-            if self.tiles: 
-                embed, _ = self.function(self.ctEventIndex, self.tiles[selectedIndex][0])
-            else: 
-                embed, _ = self.function(selectedIndex, difficulty)
+            embed, _ = self.function(*args)
 
             await interaction.edit_original_response(embed=embed)
             self.parentView.message = await interaction.original_response()   

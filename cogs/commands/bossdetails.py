@@ -23,15 +23,28 @@ class BossDetails(commands.Cog):
         description = "Choose the mode, default is solo",
         choices = [1, 2, 3, 4],
         required = False
-        ) 
-    async def bossdetails(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", players: int = 1) -> None:
+        )
+    @discord.option(
+        "boss",
+        description = "Choose a boss, if you don't choose one, it will display the current events one.",
+        choices = [
+            "Bloonarius",
+            "Lych",
+            "Vortex",
+            "Dreadbloon",
+            "Phayze",
+            "Blastapopulous"
+        ],
+        required = False 
+    )
+    async def bossdetails(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", players: int = 1, boss: str = "") -> None:
 
         await ctx.response.defer()
 
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, modes = bossdetailsProfile(players-1, difficulty.lower()) # type: ignore
+        embed, modes = bossdetailsProfile(players-1, difficulty.lower(), boss) 
 
         data = {
             "Author": ctx.author.id, 
@@ -40,7 +53,8 @@ class BossDetails(commands.Cog):
             "Function": bossdetailsProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Emoji": "<:Coop:1341515962410598521>", 
+            "Emoji": "<:Coop:1341515962410598521>",
+            "Boss": boss, 
             "Button": [
                     ["Normal", "STANDARD", "success"], #having different custom_ids for the buttons make a difference
                     ["Elite", "ELITE", "danger"]

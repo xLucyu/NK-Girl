@@ -15,6 +15,7 @@ class SelectView(discord.ui.View):
         self.difficulty = data.get("Difficulty", None) 
         self.buttonLayout = data.get("Button", None)
         self.function = data.get("Function", None)
+        self.boss = data.get("Boss", None)
         self.tiles = data.get("Tiles", None)
         self.ctEventIndex = data.get("CTEventIndex", None)
         self.index = dict() #safe current index for button and select menu 
@@ -47,7 +48,8 @@ class SelectView(discord.ui.View):
                 UserID = self.userID,
                 Function = self.function,
                 Emoji = self.emoji,
-                EventNames = self.eventNames
+                Boss = self.boss, 
+                EventNames = self.eventNames 
             )
 
         self.add_item(selectMenuView)
@@ -56,6 +58,7 @@ class SelectView(discord.ui.View):
         for layout in self.buttonLayout:
             selectButtonView = ButtonMenu(
                 View = self,
+                Boss = self.boss,
                 UserID = self.userID,
                 Function = self.function, 
                 Layout = layout 

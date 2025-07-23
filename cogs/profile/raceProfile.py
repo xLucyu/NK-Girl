@@ -33,7 +33,7 @@ def raceProfile(index, difficulty=None):
     towers = BaseCommand.getActiveTowers(body._towers, emotes) 
 
     eventData = { 
-        metaData.body.name: [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
+        body.name: [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
         "Modifiers": ["\n".join(modifiers), False], 
         "Lives": [lives, True],
         "Cash": [cash, True],

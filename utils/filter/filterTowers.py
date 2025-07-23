@@ -2,7 +2,8 @@ from utils.assets.towerCategories import CATEGORIES
 from utils.dataclasses.metaData import Tower
 from typing import List 
 
-def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict) -> str: 
+def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict) -> str:
+
     towerString = f"<:{tower.tower}:{emotes.get(tower.tower)}> "
 
     if tower.max != -1 and not tower.isHero:
@@ -17,6 +18,7 @@ def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict) -> str:
 
 
 def getTiers(tower: Tower) -> list[int]:
+
     return [
         max(0, 5 - (tier if tier != -1 else 5)) # if tier is -1 its equal to banned
         for tier in [

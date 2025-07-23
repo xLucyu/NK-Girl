@@ -25,6 +25,7 @@ class TimeGoal(TimeBase):
 
         if longestRoundInSeconds > timeInSeconds:
             raise ValueError("GoalTimeTooLow")
+
     
     def formatTime(self):
 
@@ -37,10 +38,11 @@ class TimeGoal(TimeBase):
 
         longestRoundInSeconds = max(raceRounds[self.startRound:self.endRound + 1])
         longestRoundIndex = raceRounds.index(longestRoundInSeconds)
+        longestRoundDelay = (longestRoundIndex - self.startRound - offRound) * 0.2
+ 
+        self.validateInput(timeInSeconds, longestRoundInSeconds + longestRoundDelay)
 
-        self.validateInput(timeInSeconds, longestRoundInSeconds)
-
-        sendingTime = (longestRoundIndex - self.startRound - offRound) * 0.2 + (math.ceil(longestRoundInSeconds * 60) + 1) / 60        
+        sendingTime = longestRoundDelay + (math.ceil(longestRoundInSeconds * 60) + 1) / 60        
         goalTime = timeInSeconds - sendingTime
  
         formattedTime = TimeBase.msToTimeString(goalTime) 
@@ -52,10 +54,12 @@ class TimeGoal(TimeBase):
             "Round Set": ["ABR" if self.isAbr else "Regular", False],
             "Goal Time": [formattedInputTime, False],
             "Calculated Time": [(
-                f"To get **{formattedInputTime}** you have to send to round {longestRoundIndex} at **{formattedTime}**." 
-                f"assuming your perfectly clean."
+                f"To get **{formattedInputTime}** you have to send to round **{longestRoundIndex}** at **{formattedTime}**." 
+                f"assuming your perfectly clean.\n"
             ), False]
         }
+
+        TimeBase.getLaterRounds(raceRounds, eventData, longestRoundIndex, sendingTime, self.endRound)
         
         title = "Goal Time Calculator"
         return eventData, title

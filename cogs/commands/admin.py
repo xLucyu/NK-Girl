@@ -15,23 +15,21 @@ class Admin(commands.Cog):
         )
     async def sync(self, ctx: discord.ApplicationContext, synctype: str) -> None: 
         await ctx.response.defer()
-        if ctx.author.id != 1220815634515099718 | 746205219238707210:
+        if ctx.author.id != 1220815634515099718:
             await ctx.respond("You're not the owner")
             return
         try:
-
             if synctype == "global": 
-                print("commands are syncing globally") 
+                await ctx.edit(content="syncing commands globally..") 
                 await self.bot.sync_commands()  
-                await ctx.respond("commands are synced")
+                await ctx.edit(content="commands are synced!")
             else:
-                print("commands are syncing for the guild only.")
+                await ctx.edit(content="syncing commands per guild..")
                 await self.bot.sync_commands(guild_ids=[1292232444363276310]) 
-                await ctx.respond("commands are synced") 
+                await ctx.edit(content="commands are synced") 
 
         except Exception as e:
             print(f"Error: {e}")
-
 
     @discord.slash_command(name="usage", description="owner only") 
     async def usage(self, ctx: discord.ApplicationContext) -> None:

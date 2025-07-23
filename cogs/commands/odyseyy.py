@@ -3,6 +3,7 @@ from discord.ext import commands
 from cogs.profile.odysseyProfile import odysseyProfile
 from utils.discord.viewMenu import SelectView
 
+
 class Odyssey(commands.Cog):
     def __init__(self, bot: discord.Bot):
 

@@ -23,31 +23,6 @@ class TimeSend(TimeBase):
         if not 2 <= self.endRound <= 140:
             raise ValueError("EndRoundOutOfBounce")
 
-    def getLaterRounds(self, raceRounds: list, eventData: dict, longestRoundIndex: int, sendingTime: float) -> None:
-        
-        current = longestRoundIndex
-
-        while current < self.endRound:
-            startRound = current + 1 
-            remaining = raceRounds[startRound:]
-
-            if not remaining:
-                break 
-            
-            effectiveTimes = [
-                (r, round(raceRounds[r] + (r - startRound) * 0.2))
-                for r in range(startRound, self.endRound + 1)
-            ]
-                
-            longestRound, _ = max(effectiveTimes, key=lambda x: x[1]) 
-            rawLength = raceRounds[longestRound]
-            delay = (longestRound - startRound) * 0.2 
-            safeSeconds = roundsendingTime - rawLength - delay 
-
-            current = longestRound 
-
-            eventData["Calculated Time"][0] += (f"\nSend Round **{current}** before **{TimeBase.msToTimeString(safeSeconds)}**")
-
 
     def formatTime(self) -> tuple[dict, str]:
 
@@ -75,7 +50,7 @@ class TimeSend(TimeBase):
             "Calculated Time": [f"You will get **{formattedTime}** if you perfectly clean round **{longestRoundIndex}**.\n", False]
         } 
 
-        self.getLaterRounds(raceRounds, eventData, longestRoundIndex, sendingTime)
+        TimeBase.getLaterRounds(raceRounds, eventData, longestRoundIndex, sendingTime, self.endRound)
 
         title = "Race Time Calculator"
 

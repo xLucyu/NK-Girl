@@ -20,10 +20,11 @@ To get started, make sure you have the following installed:
 - py-cord
 - requests
 - python-dotenv
+- dacite
 
 ### System Requirements
 
-- Python 3.10 or higher (3.13+ wont work)
+- Python 3.12 or higher (3.13+ wont work)
 - `git`  
 - `pip` (comes with Python)
 - if you're on linux use a virtual enviorement

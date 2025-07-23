@@ -16,4 +16,6 @@ def timeProfile(**components):
     currentCommand = classesForCommand[commandName](**components)
     timeData, title = currentCommand.formatTime() 
 
-    return BaseCommand.createEmbed(timeData, EVENTURLS["Race"]["race"], title)
+    embed = BaseCommand.createEmbed(timeData, EVENTURLS["Race"]["race"], title)
+    embed.set_footer(text = "*Times ending on: 2, 4, 7 or 9 will be reduced by 1 frame.")
+    return embed

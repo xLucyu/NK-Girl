@@ -47,6 +47,16 @@ class Time(commands.Cog):
 
     @time.command(name="ct", description="calculate the time to full send for the time you want to achieve")
     @discord.option(
+        "start_round",
+        description = "choose the round you're starting on.", 
+        required = True 
+    )
+    @discord.option(
+        "end_round", 
+        description = "enter the end round of the ct tile",
+        required = True 
+        )
+    @discord.option(
         "goal_time",
         description = "choose the time you want to achieve", 
         required = True 
@@ -56,19 +66,19 @@ class Time(commands.Cog):
         description = "choose the time that's currently on the tile", 
         required = True 
         )
-    @discord.option(
-        "end_round", 
-        description = "enter the end round of the ct tile",
-        required = True 
-        )
-    async def ct(self, ctx: discord.ApplicationContext, goal_time: str, current_time: str, end_round: int):
+    async def ct(self, ctx: discord.ApplicationContext, start_round: int, end_round: int, goal_time: str, current_time: str):
+
+        await ctx.response.defer()
         
         embed = timeProfile(
             CommandName = "ct",
+            StartRound = start_round, 
+            EndRound = end_round,
             GoalTime = goal_time,
             CurrentTime = current_time,
-            EndRound = end_round
         )
+
+        await ctx.respond(embed=embed)
 
 
     @time.command(name="goal", description="calculate the time when you have to full send for your desired time")

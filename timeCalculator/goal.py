@@ -26,6 +26,32 @@ class TimeGoal(TimeBase):
         if longestRoundInSeconds > timeInSeconds:
             raise ValueError("GoalTimeTooLow")
 
+            
+    def getLaterRounds(self, raceRounds: list, eventData: dict, longestRoundIndex: int, goalTime: float, endRound: int) -> None:
+        
+        currentRound = longestRoundIndex 
+
+        while currentRound < endRound:
+            startRound = currentRound + 1
+            remainingRounds = raceRounds[startRound:]
+
+            if not remainingRounds:
+                break
+            
+            futureRaceRounds = [
+                (round, raceRounds[round] + (round - startRound) * 0.2)
+                for round in range(startRound, endRound + 1)
+            ] 
+
+            nextLongestRound, _ = max(futureRaceRounds, key=lambda round: round[1])
+            rawLength = raceRounds[nextLongestRound]
+            delay = 0.2 * (nextLongestRound - currentRound)
+            sendingTime = goalTime - rawLength - delay  
+
+            currentRound = nextLongestRound
+
+            eventData["Calculated Time"][0] += (f"\nSend Round **{currentRound}** before **{TimeBase.msToTimeString(sendingTime)}**")
+
     
     def formatTime(self):
 
@@ -42,7 +68,7 @@ class TimeGoal(TimeBase):
  
         self.validateInput(timeInSeconds, longestRoundInSeconds + longestRoundDelay)
 
-        sendingTime = longestRoundDelay + (math.ceil(longestRoundInSeconds * 60) + 1) / 60        
+        sendingTime = TimeBase.calculateSendingTime(longestRoundIndex, self.startRound, longestRoundInSeconds)        
         goalTime = timeInSeconds - sendingTime
  
         formattedTime = TimeBase.msToTimeString(goalTime) 
@@ -52,14 +78,14 @@ class TimeGoal(TimeBase):
             "Rounds": [f"<:Round:{roundIcon}> {self.startRound} -> {self.endRound}", False],
             "Longest Round": [f"<:Round:{roundIcon}> {longestRoundIndex}", False],
             "Round Set": ["ABR" if self.isAbr else "Regular", False],
-            "Goal Time": [formattedInputTime, False],
+            "Goal Time": [f"**{formattedInputTime}**", False],
             "Calculated Time": [(
                 f"To get **{formattedInputTime}** you have to send to round **{longestRoundIndex}** at **{formattedTime}**." 
-                f"assuming your perfectly clean.\n"
+                f"assuming you perfectly clean.\n"
             ), False]
         }
 
-        TimeBase.getLaterRounds(raceRounds, eventData, longestRoundIndex, sendingTime, self.endRound)
+        self.getLaterRounds(raceRounds, eventData, longestRoundIndex, timeInSeconds, self.endRound)
         
         title = "Goal Time Calculator"
         return eventData, title

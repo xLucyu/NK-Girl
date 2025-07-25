@@ -1,3 +1,4 @@
+import math 
 from cogs.baseCommand import BaseCommand
 from utils.assets.raceRounds import REGULAR, ABR 
 
@@ -10,6 +11,18 @@ class TimeBase:
     @staticmethod 
     def getRaceRounds(isAbr: bool) -> list:
         return ABR if isAbr else REGULAR
+
+    @staticmethod 
+    def calculateSendingTime(longestRound: int, startRound: int, longestRoundInSeconds: float, extraTime: float = 0) -> float:
+        
+        offRound = 0 if startRound == 1 else 1
+        
+        return (
+            (longestRound - startRound - offRound) * 0.2 
+            + (math.ceil(longestRoundInSeconds * 60) + 1)
+            / 60 
+            + extraTime 
+        )
 
     @staticmethod 
     def msToTimeString(seconds: float) -> str: 
@@ -27,28 +40,3 @@ class TimeBase:
     @staticmethod
     def getEmotes() -> dict:
         return BaseCommand.getAllEmojis()
-
-    @staticmethod
-    def getLaterRounds(raceRounds: list, eventData: dict, longestRoundIndex: int, sendingTime: float, endRound: int) -> None:
-        
-        currentRound = longestRoundIndex
-
-        while currentRound < endRound:
-            startRound = currentRound + 1
-            remainingRounds = raceRounds[startRound:]
-
-            if not remainingRounds:
-                break
-            
-            futureRaceRounds = [
-                (round, raceRounds[round] + (round - startRound) * 0.2)
-                for round in range(startRound, endRound + 1)
-            ] 
-
-            nextLongestRound, _ = max(futureRaceRounds, key=lambda round: round[1])
-            rawLength = raceRounds[nextLongestRound]
-            timeToSend = sendingTime - rawLength - ((nextLongestRound - currentRound) * 0.2) 
-
-            currentRound = nextLongestRound
-
-            eventData["Calculated Time"][0] += (f"\nSend Round **{currentRound}** before **{TimeBase.msToTimeString(timeToSend)}**")

@@ -1,5 +1,4 @@
 from timeCalculator.base import TimeBase 
-import math 
 
 class TimeSend(TimeBase):
     def __init__(self, **components):
@@ -16,7 +15,6 @@ class TimeSend(TimeBase):
 
         if self.startRound >= self.endRound:
             raise ValueError("InvalidStartRound")
-
         if not 1 <= self.startRound <= 139:
             raise ValueError("StartRoundOutOfBounce")
 

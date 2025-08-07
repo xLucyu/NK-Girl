@@ -1,5 +1,4 @@
 from timeCalculator.base import TimeBase
-import math
 
 class TimeGoal(TimeBase):
     def __init__(self, **components):
@@ -58,15 +57,11 @@ class TimeGoal(TimeBase):
         timeInSeconds = TimeBase.parseTime(self.goalTime)
         raceRounds = TimeBase.getRaceRounds(self.isAbr)
         emotes = TimeBase.getEmotes()
-
-        offRound = 0 if self.startRound == 1 else 1
+ 
         roundIcon = emotes.get("Round", None)
 
         longestRoundInSeconds = max(raceRounds[self.startRound:self.endRound + 1])
         longestRoundIndex = raceRounds.index(longestRoundInSeconds)
-        longestRoundDelay = (longestRoundIndex - self.startRound - offRound) * 0.2
- 
-        self.validateInput(timeInSeconds, longestRoundInSeconds + longestRoundDelay)
 
         sendingTime = TimeBase.calculateSendingTime(longestRoundIndex, self.startRound, longestRoundInSeconds)        
         goalTime = timeInSeconds - sendingTime

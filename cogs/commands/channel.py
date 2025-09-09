@@ -1,12 +1,13 @@
 import discord 
 from discord.ext import commands 
 from cogs.baseCommand import BaseCommand
-from database.events.index import EventTable
+from database.channels.index import EventTable
 from utils.dataclasses.main import NkData
 
 class Channel(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
+
         self.bot = bot 
         self.events = EventTable()
 
@@ -69,7 +70,6 @@ class Channel(commands.Cog):
 
         except: 
             await ctx.respond("Something went wrong, please try again", ephemeral=True)
-
 
 
     @commands.cooldown(1, 5, commands.BucketType.user)

@@ -5,7 +5,7 @@ from cogs.commands.race import Race
 from cogs.commands.boss import Boss 
 from cogs.commands.odyseyy import Odyssey
 from cogs.baseCommand import BaseCommand
-from database.events.index import EventTable
+from database.channels.index import EventTable
 from utils.dataclasses.main import NkData
 
 eventstoCheck = {
@@ -30,6 +30,7 @@ eventstoCheck = {
 class EventHandler(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
+
         self.bot = bot 
         self.events = EventTable()
         schedueler = AsyncIOScheduler()

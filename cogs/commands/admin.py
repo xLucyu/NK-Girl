@@ -1,10 +1,12 @@
 import discord
 from discord.ext import commands
-from database.index import CommandTable
+from database.commands.index import CommandTable
 
 
 class Admin(commands.Cog):
-    def __init__(self, bot):
+
+    def __init__(self, bot: discord.Bot):
+        
         self.bot = bot
 
     @discord.slash_command(name="sync", description="owner only")

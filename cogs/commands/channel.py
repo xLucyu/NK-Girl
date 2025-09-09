@@ -87,9 +87,7 @@ class Channel(commands.Cog):
         required=True
     )
     async def remove(self, ctx: discord.ApplicationContext, event: str, channel: discord.TextChannel):
-   
+       pass
 
 def setup(bot: discord.Bot):
     bot.add_cog(Channel(bot))
-add     
-        pass

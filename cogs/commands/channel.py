@@ -1,5 +1,7 @@
 import discord 
-from discord.ext import commands 
+from discord.ext import commands
+from discord.state import TextChannel
+from discord.types.channel import NewsChannel 
 from cogs.baseCommand import BaseCommand
 from database.channels.index import EventTable
 from utils.dataclasses.main import NkData
@@ -9,9 +11,8 @@ class Channel(commands.Cog):
     def __init__(self, bot: discord.Bot):
 
         self.bot = bot 
-        self.events = EventTable()
-
-    
+        self.eventTable = EventTable()
+ 
     challenge = discord.SlashCommandGroup(
         "channel", 
         "",
@@ -24,52 +25,32 @@ class Channel(commands.Cog):
     @challenge.command(name = "add", description = "add a channel for the specific event")
     @discord.option(
         "event",
-        description = "Pick the event, for which channel this should be.",
-        option = ["Race", "Boss", "Odyssey"],
+        description = "Events will be automatically posted in this channel",
+        choices = ["Race", "Boss", "Odyssey"],
         required = True 
     )
     @discord.option(
-        discord.TextChannel,
+        "channel",
         description = "Pick a channel",
-        required = True
+        channel_types = [discord.ChannelType.news, discord.ChannelType.text],
+        required = True 
     )
     async def add(self, ctx: discord.ApplicationContext, event: str, channel: discord.TextChannel):
         
-        try:
-            guildID = str(ctx.guild.id) 
-            channelID = channel.id
-
-            eventUrls = {
-                "Race": {
-                    "url": "https://data.ninjakiwi.com/btd6/races",
-                    "column": "RaceProps"
-                },
-                "Boss": {
-                    "url": "https://data.ninjakiwi.com/btd6/bosses",
-                    "column": "BossProps"
-                },
-                "Odyssey": {
-                    "url": "https://data.ninjakiwi.com/btd6/odyssey",
-                    "column": "OdysseyProps"
-                }
-            }
-
-            url = eventUrls[event]["url"]
-            eventData = BaseCommand.useApiCall(url)
-            mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
-            eventID = mainData.body[0].id 
-            databaseColumn = eventUrls[event]["column"]
-
-            eventProps = {
-                "latestID": eventID, 
-                "channel": channelID
-            }
-
-            self.events.appendData(guildID, eventProps, databaseColumn)
-            await ctx.respond(f"The Event {event} was linked to: <#{channelID}>")
+        try: 
+            guildID = ctx.guild.id 
+            channelID = str(channel.id) 
+            
+            self.eventTable.appendChannelPerGuild(guildID, channelID, event)
+            await ctx.respond(f"Set Event {event} to Channel: <#{channel.id}>")
 
         except: 
-            await ctx.respond("Something went wrong, please try again", ephemeral=True)
+            raise ValueError()
+
+
+
+
+
 
 
     @commands.cooldown(1, 5, commands.BucketType.user)
@@ -80,13 +61,7 @@ class Channel(commands.Cog):
         option = ["Race", "Boss", "Odyssey"],
         required = True 
     )
-    @discord.option(
-        "channel",
-        description="Pick a channel",
-        choices = discord.TextChannel,
-        required=True
-    )
-    async def remove(self, ctx: discord.ApplicationContext, event: str, channel: discord.TextChannel):
+    async def remove(self, ctx: discord.ApplicationContext, event: str):
        pass
 
 def setup(bot: discord.Bot):

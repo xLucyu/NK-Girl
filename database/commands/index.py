@@ -4,11 +4,10 @@ class CommandTable:
 
     def __init__(self):
 
-        self.connector = sqlite3.connect("database/commands.db")
+        self.connector = sqlite3.connect("database/commands/commands.db")
         self.cursor = self.connector.cursor() 
-        self._createtable()
         
-    def _createtable(self):
+    def createTable(self):
 
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS COMMANDS (
@@ -27,17 +26,11 @@ class CommandTable:
         )
         self.connector.commit()
     
-    @staticmethod
-    def fetchCommands(path = "database/commands.db"):
+    def fetchCommands(self):
         
-        with sqlite3.connect(path) as connector:
-            cursor = connector.cursor()
-            cursor.execute("select * from COMMANDS order by uses desc")
-            return cursor.fetchall()
-
-    def close(self):
-        self.connector.close()
+        self.cursor.execute("select * from COMMANDS order by uses desc")
+        return self.cursor.fetchall()
 
     def __del__(self):
-        self.close()
+        self.connector.close()
 

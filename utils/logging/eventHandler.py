@@ -33,12 +33,17 @@ class EventHandler(commands.Cog):
 
         self.bot = bot 
         self.events = EventTable()
-        schedueler = AsyncIOScheduler()
-        schedueler.add_job(self.checkForNewEvent, "cron", minute=0)
-        schedueler.start()
+        self.schedueler = AsyncIOScheduler()
+        self.schedueler.add_job(self.checkForNewEvent, "cron", minute=0)
+     
+    async def postLoad(self):
+    
+        if not self.schedueler.running:
+            self.schedueler.start()
+        
 
     async def checkForNewEvent(self):
-        pass 
+        print("hello, a new hour has begun") 
 
 
 def setup(bot: discord.Bot):

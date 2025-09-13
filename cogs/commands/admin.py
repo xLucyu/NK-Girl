@@ -8,6 +8,7 @@ class Admin(commands.Cog):
     def __init__(self, bot: discord.Bot):
         
         self.bot = bot
+        self.db = CommandTable()
 
     @discord.slash_command(name="sync", description="owner only")
     @discord.option(
@@ -39,7 +40,7 @@ class Admin(commands.Cog):
             await ctx.respond("You're not the owner")
             return
 
-        commandTable = CommandTable.fetchCommands()
+        commandTable = self.db.fetchCommands()
         string = str()
 
         for command in commandTable:

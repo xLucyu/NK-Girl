@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands 
-from database.index import CommandTable
+from database.commands.index import CommandTable
 
 class Logger(commands.Cog):
     def __init__(self, bot: discord.Bot):

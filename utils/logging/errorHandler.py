@@ -2,7 +2,9 @@ from discord.ext import commands
 import discord
 
 class ErrorHandler(commands.Cog):
-    def __init__(self, bot):
+
+    def __init__(self, bot: discord.Bot):
+
         self.bot = bot
   
     @commands.Cog.listener()
@@ -63,5 +65,5 @@ class ErrorHandler(commands.Cog):
         await ctx.respond(embed=embed)
         return
 
-def setup(bot):
+def setup(bot: discord.Bot):
     bot.add_cog(ErrorHandler(bot))

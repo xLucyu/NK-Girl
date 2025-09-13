@@ -11,31 +11,30 @@ class EventTable:
 
         self.cursor.execute(
             """
-                create table if not exists EVENTS(
-                    GuildID TEXT PRIMARY KEY,
-                    RaceProps TEXT CHECK (json_valid(RaceProps)),
-                    BossProps TEXT CHECK (json_valid(BossProps)),
-                    OdysseyProps TEXT CHECK (json_valid(OdysseyProps)),
-                )
+            create table if not exists EVENTS(
+                EventID text primary key,
+                EventType text check(EventType in ("Race", "Boss", "Odyssey"))
+            )
             """
         )
-    
-    def appendData(self, guildID: str, props: dict[str, str], column: str) -> None:
 
         self.cursor.execute(
-            f"""
-                insert into events (GuildID, {column}) values (?, ?)
-                on conflict(GuildID) do update set {column} = exclude.{column}
-            """, (guildID, json.dumps(props))
+            """
+            create table if not exists GUILDS(
+                GuildID text primary key, 
+                RaceChannelID text, 
+                BossChannelID text, 
+                OdysseyChannelID text
+            )
+            """
         )
-        self.connector.commit() 
 
-    def fetchData(self, guildID: str, column: str) -> dict:
+    def appendChannelPerGuild(self, guildID: str, channelID: str, event: str) -> None:
 
-        self.cursor.execute(f"select {column} from EVENTS where Guild = ?", (guildID,))
+        self.cursor.execute("insert or ignore into GUILDS (GuildID) values (?)", (guildID,))
+        self.cursor.execute(f"update GUILDS set {event}ChannelID = ? where GuildID = ?", (channelID, guildID))
+
         self.connector.commit()
-
-        return self.cursor.fetchone()
 
     def __del__(self):
         self.connector.close()

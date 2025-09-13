@@ -1,13 +1,16 @@
 import discord 
 from discord.ext import commands
 from config import SUBCID
-from database.index import CommandTable
+from database.commands.index import CommandTable
 
 class FeedbackModal(discord.ui.Modal):
-    def __init__(self, submissionChannel, user, avatar):
+
+    def __init__(self, submissionChannel: discord.TextChannel, user: str, avatar: str):
+
         self.submissionChannel = submissionChannel
         self.user = user
         self.avatar = avatar
+        self.db = CommandTable()
         
         super().__init__(title="Feedback for NK-Girl")
         self.add_item(
@@ -25,7 +28,8 @@ class FeedbackModal(discord.ui.Modal):
         )
 
     async def callback(self, interaction:discord.Interaction) -> None:
-        commandTable = CommandTable.fetchCommands()
+
+        commandTable = self.db.fetchCommands()
         submissionNumber = next((command[1] for command in commandTable if command[0] == "feedback"), 0)
         
         feedbackType = str(self.children[0].value)

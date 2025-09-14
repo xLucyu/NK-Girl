@@ -49,20 +49,28 @@ class Channel(commands.Cog):
 
 
 
-
-
-
-
     @commands.cooldown(1, 5, commands.BucketType.user)
     @challenge.command(name = "remove", description = "remove a channel for the specific event")
     @discord.option(
         "event",
         description = "Pick the Event you want to remove.",
-        option = ["Race", "Boss", "Odyssey"],
+        choices = ["Race", "Boss", "Odyssey"],
         required = True 
     )
     async def remove(self, ctx: discord.ApplicationContext, event: str):
-       pass
+       
+        try: 
+            guildID = ctx.guild.id 
+            oldChannelID = self.eventTable.removeChannelFromGuild(guildID, event)
+            
+            if oldChannelID:
+                await ctx.respond(f"Removed event {event} from <#{oldChannelID}>")
+
+            else:
+                raise ValueError("NoChannelSet")
+        
+        except:
+            raise ValueError("NoChannelSet")
 
 def setup(bot: discord.Bot):
     bot.add_cog(Channel(bot))

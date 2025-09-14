@@ -55,6 +55,10 @@ class ErrorHandler(commands.Cog):
                 case e if "GoalTimeTooLow" in e:
                     title = "Invalid Goal Time"
                     message = "You entered an impossible time to achieve."
+
+                case e if "NoChannelSet" in e:
+                    title = "No Channel Set"
+                    message = "Please add this event to a channel first before deleting it."
           
                 case _:  
                     title = "Unexpected Error"

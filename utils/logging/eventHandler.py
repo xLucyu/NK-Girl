@@ -37,7 +37,7 @@ class EventHandler(commands.Cog):
         self.schedueler.add_job(self.checkForNewEvent, "cron", minute=0)
      
     async def postLoad(self):
-    
+        #cogs need to be loaded first
         if not self.schedueler.running:
             self.schedueler.start()
         

@@ -32,11 +32,17 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     metaData = data.get("MetaData", None)
     emojis = BaseCommand.getAllEmojis()
     
+    scoreTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType"
+    leaderboardCompetitionType = getattr(mainData, scoreTypeKey)
+
+    print(leaderboardCompetitionType)
+
+    
     if lbType != "boss":
         leaderboard = SoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType, emojis)
         playerData, totalScores = leaderboard.formatLeaderboard() 
     else:
-        leaderboard = BossLeaderboard(urls, apiData, metaData, emojis, page, difficulty, lbType, players)
+        leaderboard = BossLeaderboard(urls, apiData, metaData, emojis, page, difficulty, lbType, players, leaderboardCompetitionType)
         if players > 1:
             if not teamScores:
                 teamScores = leaderboard.getMultiplayerLeaderboard()

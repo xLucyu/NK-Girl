@@ -4,6 +4,7 @@ from cogs.baseCommand import BaseCommand
 from utils.assets.medals import MEDALS
 
 class BossLeaderboard(BaseLeaderboard):
+
     def __init__(self, 
                  urls: dict, 
                  apiData: dict, 
@@ -12,7 +13,8 @@ class BossLeaderboard(BaseLeaderboard):
                  page: int, 
                  difficulty: str, 
                  lbType: str, 
-                 players: int) -> None:
+                 players: int,
+                 leaderboardCompetitionType: str) -> None:
         super().__init__() 
         self.urls = urls
         self.apiData = apiData
@@ -21,7 +23,8 @@ class BossLeaderboard(BaseLeaderboard):
         self.page = page
         self.difficulty = difficulty
         self.lbType = lbType
-        self.players = players  
+        self.players = players 
+        self.leaderboardCompetitionType = leaderboardCompetitionType
     
     @staticmethod
     def fetchTeamScore(player: Body): 
@@ -40,6 +43,7 @@ class BossLeaderboard(BaseLeaderboard):
         initialPage = 1
 
         while True:
+
             leaderboardData = self.getLeaderboardData(metaData, initialPage)
             leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, leaderboardData)
 
@@ -63,19 +67,20 @@ class BossLeaderboard(BaseLeaderboard):
 
         return teamScores
 
-    def determineLeaderboardScore(self, leaderboardCompetitionType: str, player: Body):
+    def determineLeaderboardScore(self, player: Body):
         
         currentPlayerScore = player.scoreParts[1].score  
 
-        match leaderboardCompetitionType:
-            case "Game Time":
+        match self.leaderboardCompetitionType:
+
+            case "GameTime":
                 formattedScore = self.convertMsToTime(currentPlayerScore)
                 
-            case "Tier Count":
+            case "LeastTiers":
                 secondScore = player.scoreParts[2].score
                 formattedScore = f"{currentPlayerScore}T ({self.convertMsToTime(secondScore)})" 
 
-            case "Least Cash":
+            case "LeastCash":
                 secondScore = player.scoreParts[2].score
                 formattedScore = f"${currentPlayerScore:,} ({self.convertMsToTime(secondScore)})"
 
@@ -90,8 +95,7 @@ class BossLeaderboard(BaseLeaderboard):
         leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data) 
         totalScores = self.apiData.get(self.urls.get("totalscores"), None) 
 
-        lbBody = leaderboardData.body   
-        leaderboardCompetitionType = lbBody[0].scoreParts[1].name  
+        lbBody = leaderboardData.body    
         leaderboardEntriesPerPage = 25
         maxNameLength = max(len(player.displayName.strip()) for player in lbBody)
         mode = MEDALS.get(self.difficulty, {})
@@ -99,13 +103,14 @@ class BossLeaderboard(BaseLeaderboard):
 
         playerData = str() 
 
-        for position, player in enumerate(lbBody, start=1): 
+        for position, player in enumerate(lbBody, start=1):
+
             currentPosition = leaderboardEntriesPerPage * (self.page - 1) + position
             playerName = player.displayName
             
             bossTiers = player.scoreParts[0].score
             medal = self.getMedalForPosition(self.emojis, currentPosition, totalScores, mode)
-            formattedScore = self.determineLeaderboardScore(leaderboardCompetitionType, player) 
+            formattedScore = self.determineLeaderboardScore(player) 
 
             playerData += f"{medal}`{currentPosition:02}` {bossTiersMedal} `{bossTiers}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 

@@ -1,4 +1,4 @@
-import sqlite3, json 
+import sqlite3 
 
 class EventTable:
 
@@ -49,9 +49,16 @@ class EventTable:
         return oldChannelID
 
 
-    def fetchAllEventColumns(self, event: str) -> list[str]:
+    def fetchAllRegisteredGuilds(self, event: str) -> list[str]:
         
         self.cursor.execute(f"select {event}ChannelID from GUILDS where {event}ChannelID is not null")
+        validRows = self.cursor.fetchall()
+        return [row[0] for row in validRows]
+
+
+    def fetchEventIds(self, event: str) -> list[str]:
+
+        self.cursor.execute("select EventID from EVENTS where EventType = ?", (event,))
         validRows = self.cursor.fetchall()
         return [row[0] for row in validRows]
 

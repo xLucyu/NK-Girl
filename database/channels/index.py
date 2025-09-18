@@ -1,4 +1,4 @@
-import sqlite3 
+import sqlite3, json 
 
 class EventTable:
 
@@ -11,20 +11,14 @@ class EventTable:
 
         self.cursor.execute(
             """
-            create table if not exists EVENTS(
-                EventID text primary key,
-                EventType text check(EventType in ("Race", "Boss", "Odyssey"))
-            )
-            """
-        )
-
-        self.cursor.execute(
-            """
             create table if not exists GUILDS(
                 GuildID text primary key, 
                 RaceChannelID text, 
                 BossChannelID text, 
-                OdysseyChannelID text
+                OdysseyChannelID text,
+                RaceIDs text, 
+                BossIDs text, 
+                OdysseyIDs text
             )
             """
         )
@@ -56,11 +50,26 @@ class EventTable:
         return [row[0] for row in validRows]
 
 
-    def fetchEventIds(self, event: str) -> list[str]:
+    def appendEvent(self, eventID: str, event: str, guildID: str) -> None:
 
-        self.cursor.execute("select EventID from EVENTS where EventType = ?", (event,))
-        validRows = self.cursor.fetchall()
-        return [row[0] for row in validRows]
+        self.cursor.execute("insert or ignore into guilds (GuildID) values (?)", (guildID,))
+        self.cursor.execute(f"select {event}IDs from GUILDS where GuildID = ?", (guildID,))
+
+        validRow = self.cursor.fetchone()
+        eventList = json.loads(validRow[0]) if validRow and validRow[0] else []
+
+        if eventID not in eventList:
+            eventList.append(eventID)
+            self.cursor.execute(f"update GUILDS set {event}IDs = ? where GuildID = ?", (json.dumps(eventList), guildID))
+
+        self.connector.commit()
+
+
+    def fetchEventIds(self, event: str, guildID: str) -> list[str]:
+
+        self.cursor.execute(f"SELECT {event}IDs FROM GUILDS WHERE GuildID = ?", (guildID,))
+        row = self.cursor.fetchone()
+        return json.loads(row[0]) if row and row[0] else []
 
 
     def __del__(self):

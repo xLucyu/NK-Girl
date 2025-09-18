@@ -1,10 +1,7 @@
 import discord 
 from discord.ext import commands
-from discord.state import TextChannel
-from discord.types.channel import NewsChannel 
-from cogs.baseCommand import BaseCommand
 from database.channels.index import EventTable
-from utils.dataclasses.main import NkData
+
 
 class Channel(commands.Cog):
 

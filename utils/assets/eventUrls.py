@@ -100,6 +100,7 @@ EVENTURLS = {
         "Infernal": "https://static.wikia.nocookie.net/b__/images/d/d9/Infernal_No_UI.png/revision/latest?cb=20200519013101&path-prefix=bloons",
         "Karts N Darts": "https://static.wikia.nocookie.net/b__/images/e/e6/KartsNDarts_No_UI.png/revision/latest?cb=20200519013102&path-prefix=bloons",
         "Last Resort": "https://static.wikia.nocookie.net/b__/images/0/0f/Last_Resort_No_UI.png/revision/latest?cb=20241210132925&path-prefix=bloons",
+        "Lost Crevasse": "https://static.wikia.nocookie.net/b__/images/f/f4/Lost_Crevasse_No_UI.png/revision/latest?cb=20250827072050&path-prefix=bloons",
         "Logs": "https://static.wikia.nocookie.net/b__/images/5/5d/Logs_No_UI.png/revision/latest?cb=20200519013103&path-prefix=bloons",
         "Lotus Island": "https://static.wikia.nocookie.net/b__/images/9/9e/LotusIsland_No_UI.png/revision/latest?cb=20211008000755&path-prefix=bloons",
         "Luminous Cove": "https://static.wikia.nocookie.net/b__/images/0/01/LuminousCove_No_UI.png/revision/latest?cb=20240801065346&path-prefix=bloons",

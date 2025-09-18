@@ -22,7 +22,7 @@ class Odyssey(commands.Cog):
 
         await ctx.response.defer()
 
-        embed, names = odysseyProfile(index=0, difficulty=difficulty.lower()) #type: ignore
+        embed, names = odysseyProfile(index=0, difficulty=difficulty.lower()) 
 
         data = {
             "Author": ctx.author.id,

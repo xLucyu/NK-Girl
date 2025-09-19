@@ -19,14 +19,19 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
 
     flattenBloonModifiers = asdict(modifiers.pop("BloonModifiers"))
     flattenHealthModifiers = flattenBloonModifiers.pop("healthMultipliers")
-    modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers}
+    modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers} 
+
+    modifiers}
     
     activeModifiers = {
-        modifier: multiplier*100 if type(multiplier) == float else multiplier
+        modifier: multiplier*100 if multiplier != 1 and modifier not in NOKEYS else multiplier
         for modifier, multiplier in modifiers.items()
-        if modifier not in NOKEYS and multiplier not in [9999, 1, -1]
-        or modifier in NOKEYS and multiplier not in [9999, -1, False] 
-    }
+        if (
+            (modifier not in NOKEYS and multiplier not in [9999, 1, -1]) or
+            (modifier in NOKEYS and multiplier not in [9999, -1] and multiplier is not False)
+        )
+        and not (modifier == "MaxParagons" and multiplier == 10)
+    
     
     formattedModifierList = []
     for modifier, multiplier in activeModifiers.items():

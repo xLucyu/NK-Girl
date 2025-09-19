@@ -48,7 +48,7 @@ class EventHandler(commands.Cog):
          
         for event, params in eventstoCheck.items():
 
-            if event != eventName:
+            if eventName and event != eventName:
                 continue 
 
             eventURL = params["url"]

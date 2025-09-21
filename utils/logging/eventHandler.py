@@ -114,12 +114,12 @@ class EventHandler(commands.Cog):
 
         await ctx.response.defer()
 
-        # Check if any channel exists for this event in the guild
         registeredChannels = self.events.fetchAllRegisteredGuilds(event)
         guildChannels = [
-            ch for ch in registeredChannels
-            if str(self.bot.get_channel(int(ch)).guild.id) == str(ctx.guild.id)
+            channel for channel in registeredChannels
+            if str(self.bot.get_channel(int(channel)).guild.id) == str(ctx.guild.id)
         ]
+        
         if not guildChannels:
             await ctx.respond(
                 f"No channel has been set for **{event}** in this server.",
@@ -127,7 +127,6 @@ class EventHandler(commands.Cog):
             )
             return
 
-        # Try posting the event
         try:
             await self.checkForNewEvent(ctx.guild.id, event, isManual=True)
             await ctx.respond(f"Successfully posted **{event}** for this server.")

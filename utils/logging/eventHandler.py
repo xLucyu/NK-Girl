@@ -64,9 +64,13 @@ class EventHandler(commands.Cog):
                     if str(self.bot.get_channel(int(channel)).guild.id) == str(guildID)
                 ]
 
-            for channel in registeredChannels:
+            for channel in registeredChannels: 
  
-                channelID = self.bot.get_channel(int(channel)) 
+                channelID = self.bot.get_channel(int(channel))
+
+                if not channelID:
+                    continue
+
                 guildID = str(channelID.guild.id)
                 seenEvents = [] if isManual else self.events.fetchEventIds(event, guildID) 
                 
@@ -91,10 +95,14 @@ class EventHandler(commands.Cog):
                     embed, _ = eventFunction(targetEventIndex[0], difficulty)
                     eventEmbeds.append(embed)
 
-                await channelID.send(embeds=eventEmbeds)
+                message = await channelID.send(embeds=eventEmbeds)
+
+                if channelID.type == discord.ChannelType.news:
+                    await message.publish()
 
                 if targetEventIndex[1].id not in seenEvents:
                     self.events.appendEvent(targetEventIndex[1].id, event, guildID) 
+
 
     @discord.slash_command(name="post", description="post an event manually", default_member_permission=discord.Permissions(manage_guild=True))
     @discord.option(

@@ -15,7 +15,8 @@ class Channel(commands.Cog):
         "",
         integration_types={
             discord.IntegrationType.guild_install
-        }
+        },
+        default_member_permission=discord.Permissions(manage_guild=True)
     )
     
     @commands.cooldown(1, 5, commands.BucketType.user)

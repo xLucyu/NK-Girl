@@ -2,14 +2,14 @@ from utils.assets.towerCategories import CATEGORIES
 from utils.dataclasses.metaData import Tower
 from typing import List 
 
-def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict) -> str:
+def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict, friendlyTowerName: str) -> str:
 
     towerString = f"<:{tower.tower}:{emotes.get(tower.tower)}> "
 
     if tower.max != -1 and not tower.isHero:
         towerString += f"{tower.max}x "
 
-    towerString += tower.tower
+    towerString += friendlyTowerName
 
     if tiers != [5,5,5] and not tower.isHero: #exclude heroes -> will always be [5,5,5]
         towerString += f" {tuple(tiers)}"
@@ -30,16 +30,21 @@ def getTiers(tower: Tower) -> list[int]:
 
 
 def filterTowers(towers: List[Tower], emotes: dict) -> dict:
-    towerKeys = ((category, tower) for category, tower in CATEGORIES.items() for tower in tower) 
+
+    towerKeys = {(category, tower) for category, tower in CATEGORIES.items() for tower in tower.items()} 
     availableTowers = {tower.tower: tower for tower in towers if tower.max != 0} # filter out towers early 
     towerCategories = {category: [] for category in CATEGORIES} # creates an array for each category 
 
     seenTowers = set() # avoid duplicates 
     for category, tower in towerKeys:
-        currentTower = availableTowers.get(tower)
+        
+        currentTower = availableTowers.get(tower[0])
+
         if currentTower and currentTower.tower not in seenTowers:
+                
+            friendlyTowerName = tower[1]
             tiers = getTiers(currentTower)
-            formattedTowerString = formatTowerToString(currentTower, tiers, emotes)
+            formattedTowerString = formatTowerToString(currentTower, tiers, emotes, friendlyTowerName)
             towerCategories[category].append(formattedTowerString)
             seenTowers.add(currentTower.tower)
 

@@ -35,10 +35,11 @@ class EventHandler(commands.Cog):
         self.bot = bot 
         self.events = EventTable()
         self.schedueler = AsyncIOScheduler()
-        self.schedueler.add_job(self.checkForNewEvent, "cron", minute=0)
+    #  self.schedueler.add_job(self.checkForNewEvent, "interval", seconds=60)
      
     async def postLoad(self):
         #cogs need to be loaded first
+        await self.checkForNewEvent()
         if not self.schedueler.running:
             self.schedueler.start()
 
@@ -46,9 +47,9 @@ class EventHandler(commands.Cog):
 
         currentTime = datetime.now(timezone.utc).timestamp() * 1000
          
-        for event, params in eventstoCheck.items():
+        for event, params in eventstoCheck.items(): 
 
-            if event != eventName:
+            if eventName and event != eventName:
                 continue 
 
             eventURL = params["url"]
@@ -57,6 +58,7 @@ class EventHandler(commands.Cog):
             mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
 
             registeredChannels = self.events.fetchAllRegisteredGuilds(event)
+            print(event, registeredChannels)
 
             if guildID:
                 registeredChannels = [
@@ -66,17 +68,21 @@ class EventHandler(commands.Cog):
 
             for channel in registeredChannels:
  
-                channelID = self.bot.get_channel(int(channel)) 
-                guildID = str(channelID.guild.id)
-                seenEvents = [] if isManual else self.events.fetchEventIds(event, guildID) 
-                
+                channelID = await self.bot.fetch_channel(int(channel)) 
+
+                if not channelID:
+                    continue 
+
+                currentGuildID = str(channelID.guild.id)
+                seenEvents = [] if isManual else self.events.fetchEventIds(event, currentGuildID) 
+
                 validEvents = [
                     (index, eventBody)
                     for index, eventBody in enumerate(mainData.body)
-                    if eventBody.id not in seenEvents and currentTime < eventBody.end 
+                    if eventBody not in seenEvents and currentTime < eventBody.end 
                 ]
                 
-                targetEventIndex = min(validEvents, key=lambda event: event[1].end, default=None) 
+                targetEventIndex = min(validEvents, key=lambda event: event[1].end, default=None)
 
                 if not targetEventIndex:
                     continue 
@@ -90,13 +96,16 @@ class EventHandler(commands.Cog):
                  
                     embed, _ = eventFunction(targetEventIndex[0], difficulty)
                     eventEmbeds.append(embed)
+                
+                message = await channelID.send(embeds=eventEmbeds)
 
-                await channelID.send(embeds=eventEmbeds)
+                if channelID.type == discord.ChannelType.news:
+                    await message.publish()
 
                 if targetEventIndex[1].id not in seenEvents:
                     self.events.appendEvent(targetEventIndex[1].id, event, guildID) 
 
-    @discord.slash_command(name="post", description="post an event manually", default_member_permission=discord.Permissions(manage_guild=True))
+    @discord.slash_command(name="post", description="post an event manually")
     @discord.option(
         "event",
         description = "choose the event you want to post",

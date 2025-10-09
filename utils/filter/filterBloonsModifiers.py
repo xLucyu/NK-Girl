@@ -19,7 +19,7 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
 
     flattenBloonModifiers = asdict(modifiers.pop("BloonModifiers"))
     flattenHealthModifiers = flattenBloonModifiers.pop("healthMultipliers")
-    modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers}
+    modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers} 
     
     activeModifiers = {
         modifier: multiplier*100 if type(multiplier) == float else multiplier

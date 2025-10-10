@@ -35,11 +35,11 @@ class EventHandler(commands.Cog):
         self.bot = bot 
         self.events = EventTable()
         self.schedueler = AsyncIOScheduler()
-    #  self.schedueler.add_job(self.checkForNewEvent, "interval", seconds=60)
+        self.schedueler.add_job(self.checkForNewEvent, "interval", seconds=60)
      
     async def postLoad(self):
+
         #cogs need to be loaded first
-        await self.checkForNewEvent()
         if not self.schedueler.running:
             self.schedueler.start()
 
@@ -58,7 +58,6 @@ class EventHandler(commands.Cog):
             mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
 
             registeredChannels = self.events.fetchAllRegisteredGuilds(event)
-            print(event, registeredChannels)
 
             if guildID:
                 registeredChannels = [
@@ -79,7 +78,7 @@ class EventHandler(commands.Cog):
                 validEvents = [
                     (index, eventBody)
                     for index, eventBody in enumerate(mainData.body)
-                    if eventBody not in seenEvents and currentTime < eventBody.end 
+                    if eventBody.id not in seenEvents and currentTime < eventBody.end 
                 ]
                 
                 targetEventIndex = min(validEvents, key=lambda event: event[1].end, default=None)
@@ -103,7 +102,7 @@ class EventHandler(commands.Cog):
                     await message.publish()
 
                 if targetEventIndex[1].id not in seenEvents:
-                    self.events.appendEvent(targetEventIndex[1].id, event, guildID) 
+                    self.events.appendEvent(targetEventIndex[1].id, event, currentGuildID) 
 
     @discord.slash_command(name="post", description="post an event manually")
     @discord.option(

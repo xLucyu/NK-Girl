@@ -48,7 +48,7 @@ class MetaBody:
     leastTiersUsed: int = 0
     noContinues: bool = False
     seed: int = 0
-    removableCostMultiplier: float = 1.0
+    removeableCostMultiplier: float = 1.0
     roundSets: List[Any] = field(default_factory=list)
     lives: int = 1
     maxLives: int = 1

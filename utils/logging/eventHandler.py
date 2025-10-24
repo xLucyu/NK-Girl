@@ -35,12 +35,11 @@ class EventHandler(commands.Cog):
         self.bot = bot 
         self.events = EventTable()
         self.schedueler = AsyncIOScheduler()
-    #  self.schedueler.add_job(self.checkForNewEvent, "interval", seconds=60)
+        self.schedueler.add_job(self.checkForNewEvent, "interval", seconds=60)
      
     async def postLoad(self):
 
         #cogs need to be loaded first
-        await self.checkForNewEvent()
         if not self.schedueler.running:
             self.schedueler.start()
 
@@ -81,8 +80,6 @@ class EventHandler(commands.Cog):
                     for index, eventBody in enumerate(mainData.body)
                     if eventBody.id not in seenEvents and currentTime < eventBody.end 
                 ]
-
-                print(event, seenEvents, validEvents, currentGuildID)
  
                 targetEventIndex = min(validEvents, key=lambda event: event[1].end, default=None)
 

@@ -1,6 +1,7 @@
 from timeCalculator.base import TimeBase 
 
 class TimeSend(TimeBase):
+
     def __init__(self, **components):
         
         self.time = components.get("Time", None)
@@ -20,32 +21,6 @@ class TimeSend(TimeBase):
 
         if not 2 <= self.endRound <= 140:
             raise ValueError("EndRoundOutOfBounce")
-
-
-    def getLaterRounds(self, raceRounds: list, eventData: dict, longestRoundIndex: int, sendingTime: float, endRound: int) -> None:
-        
-        currentRound = longestRoundIndex
-
-        while currentRound < endRound:
-            startRound = currentRound + 1
-            remainingRounds = raceRounds[startRound:]
-
-            if not remainingRounds:
-                break
-            
-            futureRaceRounds = [
-                (round, raceRounds[round] + (round - startRound) * 0.2)
-                for round in range(startRound, endRound + 1)
-            ] 
-
-            nextLongestRound, _ = max(futureRaceRounds, key=lambda round: round[1])
-            rawLength = raceRounds[nextLongestRound]
-            delay = 0.2 * (nextLongestRound - currentRound)
-            timeToSend = sendingTime - rawLength - delay  
-
-            currentRound = nextLongestRound
-
-            eventData["Calculated Time"][0] += (f"\nSend Round **{currentRound}** before **{TimeBase.msToTimeString(timeToSend)}**")
 
 
     def formatTime(self) -> tuple[dict, str]:
@@ -74,7 +49,7 @@ class TimeSend(TimeBase):
             "Calculated Time": [f"You will get **{formattedTime}** if you perfectly clean round **{longestRoundIndex}**.\n", False]
         } 
 
-        self.getLaterRounds(raceRounds, eventData, longestRoundIndex, sendTime, self.endRound)
+        self.getLaterRounds(raceRounds, longestRoundIndex, sendTime, self.endRound)
 
         title = "Race Time Calculator"
 

@@ -1,6 +1,7 @@
 from timeCalculator.base import TimeBase
 
 class TimeGoal(TimeBase):
+
     def __init__(self, **components):
 
         self.goalTime = components.get("GoalTime", None)
@@ -24,33 +25,6 @@ class TimeGoal(TimeBase):
 
         if longestRoundInSeconds > timeInSeconds:
             raise ValueError("GoalTimeTooLow")
-
-            
-    def getLaterRounds(self, raceRounds: list, eventData: dict, longestRoundIndex: int, goalTime: float, endRound: int) -> None:
-        
-        currentRound = longestRoundIndex 
-
-        while currentRound < endRound:
-            startRound = currentRound + 1
-            remainingRounds = raceRounds[startRound:]
-
-            if not remainingRounds:
-                break
-            
-            futureRaceRounds = [
-                (round, raceRounds[round] + (round - startRound) * 0.2)
-                for round in range(startRound, endRound + 1)
-            ] 
-
-            nextLongestRound, _ = max(futureRaceRounds, key=lambda round: round[1])
-            rawLength = raceRounds[nextLongestRound]
-            delay = 0.2 * (nextLongestRound - currentRound)
-            sendingTime = goalTime - rawLength - delay  
-
-            currentRound = nextLongestRound
-
-            eventData["Calculated Time"][0] += (f"\nSend Round **{currentRound}** before **{TimeBase.msToTimeString(sendingTime)}**")
-
     
     def formatTime(self):
 
@@ -80,7 +54,7 @@ class TimeGoal(TimeBase):
             ), False]
         }
 
-        self.getLaterRounds(raceRounds, eventData, longestRoundIndex, timeInSeconds, self.endRound)
+        self.getLaterRounds(raceRounds, longestRoundIndex, timeInSeconds, self.endRound)
         
         title = "Goal Time Calculator"
         return eventData, title

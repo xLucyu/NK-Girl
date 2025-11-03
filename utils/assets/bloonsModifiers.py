@@ -17,5 +17,5 @@ MODIFIERS = {
   "LeastCash": " Cash Limit",
   "LeastTiers": " Tiers Max",
   "PowersDisabled": "No Powers",
-  "RemovableCost": "Removable Cost"
+  "RemoveableCost": "% Removeable Cost"
 }

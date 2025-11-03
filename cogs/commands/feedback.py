@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
-from config import SUBCID
-from database.commands.index import CommandTable
+from config import SUBCID 
+
 
 class FeedbackModal(discord.ui.Modal):
 
@@ -10,7 +10,7 @@ class FeedbackModal(discord.ui.Modal):
         self.submissionChannel = submissionChannel
         self.user = user
         self.avatar = avatar
-        self.db = CommandTable()
+       # self.db = CommandTable()
         
         super().__init__(title="Feedback for NK-Girl")
         self.add_item(

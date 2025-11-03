@@ -1,0 +1,14 @@
+create table if not exists GUILDS (
+  GuildID text PRIMARY KEY,
+  RaceChannelID TEXT,
+  BossChannelID TEXT,
+  OdysseyChannelID TEXT,
+  RaceIDs TEXT,
+  BossIDs TEXT,
+  OdysseyIDS TEXT 
+);
+
+create table if not exists USAGE (
+  Command TEXT PRIMARY KEY,
+  Uses INTEGER DEFAULT 0
+);

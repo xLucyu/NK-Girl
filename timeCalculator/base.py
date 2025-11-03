@@ -37,6 +37,32 @@ class TimeBase:
 
         return f"{minutes}:{seconds:02}.{hundredths:02}"
 
+    def getLaterRounds(self, raceRounds: list, longestRoundIndex: int, specialTime: float, endRound: int) -> str | None:
+        
+        currentRound = longestRoundIndex 
+
+        while currentRound < endRound:
+
+            startRound = currentRound + 1
+            remainingRounds = raceRounds[startRound:]
+
+            if not remainingRounds:
+                break
+            
+            futureRaceRounds = [
+                (round, raceRounds[round] + (round - startRound) * 0.2)
+                for round in range(startRound, endRound + 1)
+            ] 
+
+            nextLongestRound, _ = max(futureRaceRounds, key=lambda round: round[1])
+            rawLength = raceRounds[nextLongestRound]
+            delay = 0.2 * (nextLongestRound - currentRound)
+            sendingTime = specialTime - rawLength - delay  
+
+            currentRound = nextLongestRound
+
+            return self.msToTimeString(sendingTime)
+
     @staticmethod
     def getEmotes() -> dict:
         return BaseCommand.getAllEmojis()

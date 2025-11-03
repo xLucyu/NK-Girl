@@ -3,7 +3,7 @@ import re
 def splitUppercase(string: str) -> str:
 
     specialCases = {
-        "Tutorial": "MonkeyMeadows",
+        "Tutorial": "Monkey Meadows",
         "Clicks": "Chimps",
         "#ouch": "#ouch"
     }

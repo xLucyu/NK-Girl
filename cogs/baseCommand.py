@@ -47,7 +47,7 @@ class BaseCommand:
             "LeastCash": body.leastCashUsed,
             "PowersDisabled": body.disablePowers,
             "AbilityCoolDown": body.abilityCooldownReductionMultiplier,
-            "RemovableCost": body.removableCostMultiplier,
+            "RemoveableCost": body.removeableCostMultiplier,
             "MaxTowers": body.maxTowers,
             "MaxParagons": body.maxParagons
         }

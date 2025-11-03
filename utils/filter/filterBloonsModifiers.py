@@ -9,7 +9,7 @@ NOKEYS = [
     "MKDisabled", 
     "NoSelling", 
     "allCamo", 
-    "allRegrow",
+    "allRegen",
     "NoContinues",
     "PowersDisabled"
 ]

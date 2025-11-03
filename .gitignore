@@ -1,4 +1,2 @@
 __pycache__/ 
 .env
-database/commands/commands.db 
-database/channels/channels.db

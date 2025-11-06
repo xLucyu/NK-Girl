@@ -3,6 +3,7 @@ from discord.ext import commands
 from cogs.profile.timeProfile import timeProfile
 
 class Time(commands.Cog):
+
     def __init__(self, bot: discord.Bot):
 
         self.bot = bot

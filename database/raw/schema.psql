@@ -1,5 +1,5 @@
 create table if not exists GUILDS (
-  GuildID text PRIMARY KEY,
+  GuildID TEXT PRIMARY KEY,
   RaceChannelID TEXT,
   BossChannelID TEXT,
   OdysseyChannelID TEXT,

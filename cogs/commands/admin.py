@@ -1,13 +1,13 @@
 import discord
 from discord.ext import commands
-
+from database.logic.usage import UsageTable 
 
 class Admin(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
         
         self.bot = bot
-       # self.db = CommandTable()
+        self.database = UsageTable()
 
     @discord.slash_command(name="sync", description="owner only")
     @discord.option(
@@ -45,14 +45,14 @@ class Admin(commands.Cog):
             await ctx.respond("You're not the owner")
             return
 
-       # commandTable = self.db.fetchCommands()
+        usageTable = self.database.fetchCommands()
         string = str()
 
-       # for command in commandTable:
-      #      string += f"\nCommand: {command[0]}, Uses: {command[1]}"
+        for command in usageTable:
+            string += f"\nCommand: {command[0]}, uses: {command[1]}"
 
-       # embed = discord.Embed(title="Command Usage Overview", description=f"```{string}```", color=discord.Color.blue())
-      #  await ctx.respond(embed=embed) 
+        embed = discord.Embed(title="Command Usage Overview", description=f"```{string}```", color=discord.Color.blue())
+        await ctx.respond(embed=embed) 
     
 def setup(bot: discord.Bot):
     bot.add_cog(Admin(bot))

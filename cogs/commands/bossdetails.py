@@ -5,6 +5,7 @@ from utils.discord.viewMenu import SelectView
 
 
 class BossDetails(commands.Cog):
+
     def __init__(self, bot: discord.Bot):
         self.bot = bot
 

@@ -23,8 +23,7 @@ class DataBaseConnection:
                     password = PASSWORD 
                 )
 
-                self.cursor = self.connector.cursor()
-                print("Database connected")
+                self.cursor = self.connector.cursor() 
                 self.connected = True 
 
             except Exception as e:

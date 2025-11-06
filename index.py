@@ -1,6 +1,8 @@
 from config import BOTTOKEN
 import discord, os 
 from database.index import DataBaseConnection
+from utils.logging.eventManager import EventManager
+import asyncio
 
 
 class DiscordBotClient(discord.Bot):
@@ -24,14 +26,24 @@ class DiscordBotClient(discord.Bot):
 
         self.load_extension("utils.logging.errorHandler")
         self.load_extension("utils.logging.logger")
-     #   self.load_extension("utils.logging.eventHandler") 
+        self.load_extension("utils.logging.eventManager") 
 
     def initializeDatabase(self):
         
-        self.database.connectToPostgre() 
+        self.database.connectToPostgre()
+        print("database connected")
+
+    async def loadEventManager(self):
+
+        scheduler: EventManager = self.get_cog("EventManager")
+        if scheduler:
+            await scheduler.postLoad()
+            print("EventManager running")
+
 
 if __name__ =="__main__":
     bot = DiscordBotClient() 
     bot.load_cogs() 
     bot.initializeDatabase()
+    bot.loop.create_task(bot.loadEventManager()) 
     bot.run(BOTTOKEN)

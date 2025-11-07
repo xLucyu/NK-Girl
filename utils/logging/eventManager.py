@@ -1,4 +1,4 @@
-import discord  
+import discord, typing
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timezone
@@ -7,7 +7,7 @@ from cogs.profile.bossProfile import bossProfile
 from cogs.profile.odysseyProfile import odysseyProfile
 from cogs.baseCommand import BaseCommand
 from database.logic.guilds import GuildTable
-from utils.dataclasses.main import NkData
+from utils.dataclasses.main import NkData, Body
 
 
 eventstoCheck = {
@@ -36,7 +36,16 @@ class EventManager(commands.Cog):
         self.bot = bot 
         self.events = GuildTable()
         self.scheduler = AsyncIOScheduler()
-        self.scheduler.add_job(self.checkForNewEvent, "interval", seconds=60)
+        self.scheduler.add_job(self.checkForNewEvent, "cron", minute=0)
+
+    event = discord.SlashCommandGroup(
+        "event", 
+        "",
+        integration_types={
+            discord.IntegrationType.guild_install
+        },
+        default_member_permission=discord.Permissions(manage_guild=True)
+    )
      
     async def postLoad(self):
 
@@ -44,6 +53,7 @@ class EventManager(commands.Cog):
         if not self.scheduler.running:
             self.scheduler.start()
 
+    
     def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str]:
 
         channels = self.events.fetchAllRegisteredChannels(event)
@@ -77,71 +87,70 @@ class EventManager(commands.Cog):
         return targetEvent
 
     
-    async def checkForNewEvent(self, guildID = None, eventName= None, isManual = None) -> None:
+    def getEventEmbeds(
+            self, 
+            guildID: str = None,
+            eventName: str = None,
+            isManual: bool = None
+    ) -> dict[str, typing.Union[list[discord.Embed], str, list[str]]]:
         
-        print("hello")
         currentTime = datetime.now(timezone.utc).timestamp() * 1000
+        eventEmbeds = []
 
-        for event, params in eventstoCheck.items():
+        params = eventstoCheck[eventName]
 
-            if eventName and event != eventName:
-                continue
+        eventURL = params["url"]
+        eventFunction = params["function"]
+        difficulties = params["difficulties"]
 
-            eventDifficulties = params["difficulties"]
-            eventURL = params["url"]
-            eventFunction = params["function"]
+        seenEvents = [] if isManual else self.events.fetchEventIds(eventName, guildID)
 
-            eventData = BaseCommand.useApiCall(eventURL)
-            mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
+        eventData = BaseCommand.useApiCall(eventURL)
+        mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
+        index, eventMetaData = self.getValidEvent(mainData, seenEvents, currentTime, isManual)
 
-            registeredChannels = self.getRegisteredChannels(event, guildID)  
+        for difficulty in difficulties:
+
+            if difficulty:
+                difficulty = difficulty.lower()
+
+            embed, _ = eventFunction(index, difficulty)
+            eventEmbeds.append(embed)
+            
+        return {
+            "Embeds": eventEmbeds, 
+            "EventID": eventMetaData.id,
+            "SeenEvents": seenEvents
+        }
+    
+        
+    async def checkForNewEvent(self):
+
+        for eventName in eventstoCheck: 
+
+            registeredChannels = self.getRegisteredChannels(eventName)
 
             for channel in registeredChannels:
-
-                channelID = await self.bot.fetch_channel(int(channel))
                 
-                if not channelID:
+                channelObject = await self.bot.fetch_channel(int(channel))
+
+                if not channelObject:
                     continue
-                
-                currentGuildID = str(channelID.guild.id)
 
-                seenEvents = [] if isManual else self.events.fetchEventIds(event, currentGuildID)
+                guildID = str(channelObject.guild.id)
+                currentEventInfo = self.getEventEmbeds(eventName=eventName, guildID=guildID)
 
-                validEvents = [
-                    (index, eventBody)
-                    for index, eventBody in enumerate(mainData.body)
-                    if eventBody.id not in seenEvents and currentTime < eventBody.end
-                ] 
+                message = await channelObject.send(embeds=currentEventInfo["Embeds"])
 
-                targetEvent = min(validEvents, key=lambda event: event[1].end, default=None)
-
-                if isManual and not validEvents:
-                    targetEvent = (0, mainData.body[0])
-
-                if not targetEvent:
-                    continue 
-
-                eventEmbeds = []
-
-                for difficulty in eventDifficulties:
-
-                    if difficulty:
-                        difficulty = difficulty.lower()
-
-                    embed, _ = eventFunction(targetEvent[0], difficulty)
-                    eventEmbeds.append(embed)
-
-                message = await channelID.send(embeds=eventEmbeds)
-
-                if channelID.type == discord.ChannelType.news:
+                if channelObject.type == discord.ChannelType.news:
                     await message.publish()
-                
-                if targetEvent[1].id not in seenEvents:
-                    self.events.appendEvent(targetEvent[1].id, event, currentGuildID)
-                
 
-    @discord.slash_command(name="post", description="post an event manually")
-    @discord.option(
+                if currentEventInfo["EventID"] not in currentEventInfo["SeenEvents"]:
+                    self.events.appendEvent(currentEventInfo["EventID"], eventName, guildID)
+
+
+    @event.slash_command(name="post", description="post an event manually")
+    @event.option(
         "event",
         description = "choose the event you want to post",
         choices = ["Race", "Odyssey", "Boss"],
@@ -168,7 +177,21 @@ class EventManager(commands.Cog):
 
         except Exception as e:
             raise ValueError(e)
-
+        
+    @event.slash_command(name="edit", description="overwrite an already existing message posted by the bot")
+    @event.option(
+        "message_id",
+        description = "enter the id for the message you want to change",
+        required = True 
+    )
+    @event.option(
+        "event",
+        description = "choose the event you want to post",
+        choices = ["Race", "Odyssey", "Boss"],
+        required = True 
+    )
+    async def edit(self, message_id: str, event: str):
+        pass
 
 def setup(bot: discord.Bot):
     bot.add_cog(EventManager(bot))

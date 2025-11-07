@@ -43,8 +43,7 @@ class EventManager(commands.Cog):
         "",
         integration_types={
             discord.IntegrationType.guild_install
-        },
-        default_member_permission=discord.Permissions(manage_guild=True)
+        }
     )
      
     async def postLoad(self):
@@ -87,12 +86,7 @@ class EventManager(commands.Cog):
         return targetEvent
 
     
-    def getEventEmbeds(
-            self, 
-            guildID: str = None,
-            eventName: str = None,
-            isManual: bool = None
-    ) -> dict[str, typing.Union[list[discord.Embed], str, list[str]]]:
+    def getEventEmbeds(self, guildID: str = None, eventName: str = None, isManual: bool = None) -> list[discord.Embed] | None:
         
         currentTime = datetime.now(timezone.utc).timestamp() * 1000
         eventEmbeds = []
@@ -107,7 +101,12 @@ class EventManager(commands.Cog):
 
         eventData = BaseCommand.useApiCall(eventURL)
         mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
-        index, eventMetaData = self.getValidEvent(mainData, seenEvents, currentTime, isManual)
+        validEvent = self.getValidEvent(mainData, seenEvents, currentTime, isManual)
+
+        if not validEvent:
+            return
+
+        index, eventMetaData = validEvent
 
         for difficulty in difficulties:
 
@@ -116,13 +115,11 @@ class EventManager(commands.Cog):
 
             embed, _ = eventFunction(index, difficulty)
             eventEmbeds.append(embed)
+
+        if eventMetaData.id not in seenEvents:
+            self.events.appendEvent(eventMetaData.id, eventName, guildID)
             
-        return {
-            "Embeds": eventEmbeds, 
-            "EventID": eventMetaData.id,
-            "SeenEvents": seenEvents
-        }
-    
+        return eventEmbeds
         
     async def checkForNewEvent(self):
 
@@ -131,22 +128,26 @@ class EventManager(commands.Cog):
             registeredChannels = self.getRegisteredChannels(eventName)
 
             for channel in registeredChannels:
-                
-                channelObject = await self.bot.fetch_channel(int(channel))
 
-                if not channelObject:
-                    continue
+                try:
+                    channelObject = await self.bot.fetch_channel(int(channel))
 
-                guildID = str(channelObject.guild.id)
-                currentEventInfo = self.getEventEmbeds(eventName=eventName, guildID=guildID)
+                    if not channelObject:
+                        continue
 
-                message = await channelObject.send(embeds=currentEventInfo["Embeds"])
+                    guildID = str(channelObject.guild.id)
+                    eventEmbeds = self.getEventEmbeds(eventName=eventName, guildID=guildID)
 
-                if channelObject.type == discord.ChannelType.news:
-                    await message.publish()
+                    if not eventEmbeds:
+                        continue
 
-                if currentEventInfo["EventID"] not in currentEventInfo["SeenEvents"]:
-                    self.events.appendEvent(currentEventInfo["EventID"], eventName, guildID)
+                    message = await channelObject.send(embeds=eventEmbeds)
+
+                    if channelObject.type == discord.ChannelType.news:
+                        await message.publish()
+
+                except Exception as error:
+                    print(f"{error} in Server: {guildID}")
 
 
     @event.slash_command(name="post", description="post an event manually")

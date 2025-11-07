@@ -17,7 +17,7 @@ How to use:
 
 1. install a postgresql server, i recommend watching a guide on how to do so. Check the .env example for depenecies.
 2. make sure postgresql is installed on your system.
-3. Run the following command: `psql -h <postgresql server ip> -U >your user> -d <your database> -a -f database/raw/schema.psql`
+3. Run the following command: `psql -h <postgresql server ip> -U <your user> -d <your database> -a -f database/raw/schema.psql`
 4. setup a discord bot, also recommend watching a tutorial on how to do so.
 5. clone git repo into a folder. 
 6. setup a virtual enviorement for python 3.12 (3.13+ doesnt work). I recommend using 3.12.8. or use a Docker container.

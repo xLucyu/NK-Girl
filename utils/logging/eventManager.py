@@ -44,7 +44,7 @@ class EventManager(commands.Cog):
         if not self.scheduler.running:
             self.scheduler.start()
 
-    def getRegisteredChannels(self, event: str, guildID = None) -> list[str]:
+    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str]:
 
         channels = self.events.fetchAllRegisteredChannels(event)
 
@@ -56,6 +56,25 @@ class EventManager(commands.Cog):
             ]
 
         return channels
+    
+
+    def getValidEvent(self, mainData: NkData, seenEvents: list, currentTime: str, isManual: bool) -> tuple[int, Body] | None:
+
+        validEvents = [
+            (index, eventBody)
+            for index, eventBody in enumerate(mainData.body)
+            if eventBody.id not in seenEvents and currentTime < eventBody.end
+        ] 
+
+        targetEvent = min(validEvents, key=lambda event: event[1].end, default=None)
+
+        if isManual and not validEvents:
+            targetEvent = (0, mainData.body[0])
+
+        if not targetEvent:
+            return
+        
+        return targetEvent
 
     
     async def checkForNewEvent(self, guildID = None, eventName= None, isManual = None) -> None:

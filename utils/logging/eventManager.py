@@ -1,4 +1,4 @@
-import discord, typing
+import discord
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from datetime import datetime, timezone
@@ -38,13 +38,6 @@ class EventManager(commands.Cog):
         self.scheduler = AsyncIOScheduler()
         self.scheduler.add_job(self.checkForNewEvent, "cron", minute=0)
 
-    event = discord.SlashCommandGroup(
-        "event", 
-        "",
-        integration_types={
-            discord.IntegrationType.guild_install
-        }
-    )
      
     async def postLoad(self):
 
@@ -53,9 +46,12 @@ class EventManager(commands.Cog):
             self.scheduler.start()
 
     
-    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str]:
+    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | None:
 
         channels = self.events.fetchAllRegisteredChannels(event)
+
+        if not channels:
+            return
 
         if guildID:
 
@@ -67,7 +63,7 @@ class EventManager(commands.Cog):
         return channels
     
 
-    def getValidEvent(self, mainData: NkData, seenEvents: list, currentTime: str, isManual: bool) -> tuple[int, Body] | None:
+    def getValidEvent(self, mainData: NkData, seenEvents: list, currentTime: int, isManual: bool) -> tuple[int, Body] | None:
 
         validEvents = [
             (index, eventBody)
@@ -88,7 +84,7 @@ class EventManager(commands.Cog):
     
     def getEventEmbeds(self, guildID: str = None, eventName: str = None, isManual: bool = None) -> list[discord.Embed] | None:
         
-        currentTime = datetime.now(timezone.utc).timestamp() * 1000
+        currentTime = int(datetime.now(timezone.utc).timestamp() * 1000)
         eventEmbeds = []
 
         params = eventstoCheck[eventName]
@@ -120,6 +116,7 @@ class EventManager(commands.Cog):
             self.events.appendEvent(eventMetaData.id, eventName, guildID)
             
         return eventEmbeds
+
         
     async def checkForNewEvent(self):
 
@@ -149,50 +146,6 @@ class EventManager(commands.Cog):
                 except Exception as error:
                     print(f"{error} in Server: {guildID}")
 
-
-    @event.slash_command(name="post", description="post an event manually")
-    @event.option(
-        "event",
-        description = "choose the event you want to post",
-        choices = ["Race", "Odyssey", "Boss"],
-        required = True 
-    )
-    async def post(self, ctx: discord.ApplicationContext, event: str):
-
-        await ctx.response.defer() 
-
-        if not ctx.author.guild_permissions.manage_guild:
-            await ctx.respond("You don't have permission to run this command.", ephemeral = True)
-            return 
-        
-        currentGuildChannel = self.getRegisteredChannels(event, str(ctx.guild.id))
-
-        if not currentGuildChannel:
-            await ctx.respond(f"No Channel has been set for {event} in this server.", ephemeral = True)
-            return
-        
-        try:
-
-            await self.checkForNewEvent(str(ctx.guild.id), event, isManual=True)
-            await ctx.respond(f"Succesfully posted **{event}** in this server.")
-
-        except Exception as e:
-            raise ValueError(e)
-        
-    @event.slash_command(name="edit", description="overwrite an already existing message posted by the bot")
-    @event.option(
-        "message_id",
-        description = "enter the id for the message you want to change",
-        required = True 
-    )
-    @event.option(
-        "event",
-        description = "choose the event you want to post",
-        choices = ["Race", "Odyssey", "Boss"],
-        required = True 
-    )
-    async def edit(self, message_id: str, event: str):
-        pass
 
 def setup(bot: discord.Bot):
     bot.add_cog(EventManager(bot))

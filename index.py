@@ -2,7 +2,6 @@ from config import BOTTOKEN
 import discord, os 
 from database.index import DataBaseConnection
 from utils.logging.eventManager import EventManager
-import asyncio
 
 
 class DiscordBotClient(discord.Bot):

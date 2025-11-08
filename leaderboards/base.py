@@ -30,7 +30,8 @@ class BaseLeaderboard:
         return ""
 
     @staticmethod
-    def timeLeftForLeaderboard(eventEnd: int) -> int | str: 
+    def timeLeftForLeaderboard(eventEnd: int) -> int | str:
+
         currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
         timeLeftInMs = eventEnd - currentTimeStamp 
         return BaseLeaderboard.convertMsToTime(timeLeftInMs) if timeLeftInMs > 0 else "Event ended"

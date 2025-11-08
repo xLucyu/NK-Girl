@@ -16,7 +16,8 @@ CATEGORIES = {
         "Psi": "Psi",
         "Geraldo": "Geraldo",
         "Corvus": "Corvus",
-        "Rosalia": "Rosalia"
+        "Rosalia": "Rosalia",
+        "Silas": "Silas"
     },
     "Primary": {
         "DartMonkey": "Dart",

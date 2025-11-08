@@ -139,6 +139,7 @@ EVENTURLS = {
         "Tinkerton": "https://static.wikia.nocookie.net/b__/images/a/af/Tinkerton_No_UI.png/revision/latest?cb=20240529062923&path-prefix=bloons",
         "Town Centre": "https://static.wikia.nocookie.net/b__/images/8/89/TownCenter_No_UI.png/revision/latest?cb=20200519013110&path-prefix=bloons",
         "Tree Stump": "https://static.wikia.nocookie.net/b__/images/b/b4/TreeStump_No_UI.png/revision/latest?cb=20200519013110&path-prefix=bloons",
+        "Three Mines Around": "https://static.wikia.nocookie.net/b__/images/b/bf/Three_Mines_Around_No_UI.png/revision/latest?cb=20251015174111&path-prefix=bloons",
         "Underground": "https://static.wikia.nocookie.net/b__/images/5/59/Underground_No_UI.png/revision/latest?cb=20200519013124&path-prefix=bloons",
         "Water Park": "https://static.wikia.nocookie.net/b__/images/4/46/WaterPark_No_UI.png/revision/latest?cb=20230726125928&path-prefix=bloons",
         "Winter Park": "https://static.wikia.nocookie.net/b__/images/6/69/WinterPark_No_UI.png/revision/latest?cb=20200519013125&path-prefix=bloons",

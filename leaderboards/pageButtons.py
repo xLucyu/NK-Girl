@@ -2,7 +2,9 @@ import discord
 from leaderboards.pageFilter import PageModal
 
 class ButtonView(discord.ui.View):
+
     def __init__(self, **components):
+
         super().__init__(timeout=300) 
         
         self.message = components.get("Message", None)

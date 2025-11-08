@@ -22,11 +22,13 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
     modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers} 
     
     activeModifiers = {
-        modifier: multiplier*100 if type(multiplier) == float else multiplier
+        modifier: multiplier*100 if modifier not in NOKEYS else multiplier
         for modifier, multiplier in modifiers.items()
         if modifier not in NOKEYS and multiplier not in [9999, 1, -1]
         or modifier in NOKEYS and multiplier not in [9999, -1, False] 
     }
+
+    print(activeModifiers)
     
     formattedModifierList = []
     for modifier, multiplier in activeModifiers.items():
@@ -36,7 +38,7 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
         formattedEmote = f"<:{modifier}{emoteKey}:{emoteId}>" #<:bossIncrease:1335339243345809478> example 
 
         if modifier == "LeastCash":
-            multiplier = f"%{multiplier:,}"
+            multiplier = f"${multiplier:,}"
         elif isinstance(multiplier, bool): 
             multiplier = ""
         else:

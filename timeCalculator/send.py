@@ -48,8 +48,9 @@ class TimeSend(TimeBase):
             "Sending Time": [f"**{formattedInputTime}**", False],
             "Calculated Time": [f"You will get **{formattedTime}** if you perfectly clean round **{longestRoundIndex}**.\n", False]
         } 
+        
 
-        self.getLaterRounds(raceRounds, longestRoundIndex, sendTime, self.endRound)
+        self.getLaterRounds(raceRounds, longestRoundIndex, sendTime, self.endRound, eventData)
 
         title = "Race Time Calculator"
 

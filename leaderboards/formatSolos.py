@@ -4,6 +4,7 @@ from cogs.baseCommand import BaseCommand
 from utils.assets.medals import MEDALS
 
 class SoloLeaderboard(BaseLeaderboard):
+
     def __init__(self,
                  urls: dict,
                  apiData: dict,
@@ -12,6 +13,7 @@ class SoloLeaderboard(BaseLeaderboard):
                  difficulty: str,
                  lbType: str, 
                  emojis: dict) -> None:
+
         super().__init__()
         self.urls = urls
         self.apiData = apiData

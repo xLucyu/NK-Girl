@@ -37,7 +37,7 @@ class TimeBase:
 
         return f"{minutes}:{seconds:02}.{hundredths:02}"
 
-    def getLaterRounds(self, raceRounds: list, longestRoundIndex: int, specialTime: float, endRound: int) -> str | None:
+    def getLaterRounds(self, raceRounds: list, longestRoundIndex: int, specialTime: float, endRound: int, eventData: dict) -> None: 
         
         currentRound = longestRoundIndex 
 
@@ -61,7 +61,7 @@ class TimeBase:
 
             currentRound = nextLongestRound
 
-            return self.msToTimeString(sendingTime)
+            eventData["Calculated Time"][0] += (f"\nSend Round **{currentRound}** before **{TimeBase.msToTimeString(sendingTime)}**")
 
     @staticmethod
     def getEmotes() -> dict:

@@ -35,7 +35,7 @@ class BossLeaderboard(BaseLeaderboard):
             for score in scoreParts[:-1] #filter out submission time
         ]
 
-    def getMultiplayerLeaderboard(self):
+    def getMultiplayerLeaderboard(self) -> dict:
         
         base, _ = self.metaData.rsplit("/", 1)
         metaData = f"{base}/{self.players}"         
@@ -50,12 +50,11 @@ class BossLeaderboard(BaseLeaderboard):
             if not leaderboardData.success:
                 break
             
-            lbBody = leaderboardData.body  
-            leaderboardCompetitionType = lbBody[0].scoreParts[1].name 
+            lbBody = leaderboardData.body   
 
             for player in lbBody:    
                 playerName = player.displayName
-                initialScore = self.determineLeaderboardScore(leaderboardCompetitionType, player) 
+                initialScore = self.determineLeaderboardScore(player) 
                 teamScore = tuple(self.fetchTeamScore(player))
                 
                 if teamScore in teamScores:
@@ -67,7 +66,7 @@ class BossLeaderboard(BaseLeaderboard):
 
         return teamScores
 
-    def determineLeaderboardScore(self, player: Body):
+    def determineLeaderboardScore(self, player: Body) -> str | None:
         
         currentPlayerScore = player.scoreParts[1].score  
 
@@ -89,7 +88,7 @@ class BossLeaderboard(BaseLeaderboard):
 
         return formattedScore
 
-    def formatBossLeaderboard(self): 
+    def formatBossLeaderboard(self) -> tuple[str, int]: 
 
         data = self.getLeaderboardData(self.metaData, self.page)
         leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data) 
@@ -116,7 +115,8 @@ class BossLeaderboard(BaseLeaderboard):
 
         return playerData, totalScores
     
-    def formatMultiplayerLeaderboard(self, teamScores: dict): 
+    def formatMultiplayerLeaderboard(self, teamScores: dict) -> tuple[str, int]:
+
         totalScores = len(teamScores)
         playerData = str() 
 

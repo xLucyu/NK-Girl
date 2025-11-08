@@ -54,7 +54,7 @@ class TimeGoal(TimeBase):
             ), False]
         }
 
-        self.getLaterRounds(raceRounds, longestRoundIndex, timeInSeconds, self.endRound)
+        self.getLaterRounds(raceRounds, longestRoundIndex, timeInSeconds, self.endRound, eventData)
         
         title = "Goal Time Calculator"
         return eventData, title

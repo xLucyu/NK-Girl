@@ -148,6 +148,8 @@ def tileProfile(eventIndex: int, tileCode: str):
         } 
      
     currentEmote = getEmoteID(ctData.TileType, emotes, ctData.RelicType)
+
+    print(currentEmote)
      
     embed = BaseCommand.createEmbed(eventData,
                                     ctInfo["EventURL"], 

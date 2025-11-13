@@ -34,7 +34,7 @@ class BossDetails(commands.Cog):
             "Vortex",
             "Dreadbloon",
             "Phayze",
-            "Blastapopulous"
+            "Blastapopoulos"
         ],
         required = False 
     )

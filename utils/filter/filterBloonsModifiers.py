@@ -47,7 +47,7 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
         elif isinstance(multiplier, bool): 
             multiplier = ""
         else:
-            multiplier = int(multiplier)
+            multiplier = f"% {int(multiplier)}"
 
         formattedModifierList.append(f"{formattedEmote} {multiplier}{embedDisplayName}")
 

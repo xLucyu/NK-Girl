@@ -39,7 +39,7 @@ def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
 
     match tileType:
         case "Relic":
-            name, emoteid = next(((name, eid) for name, eid in emotes.items() if name == relicType), (None, None))
+            name, emoteid = relicType, emotes.get(relicType)
         case "Banner":
             name, emoteid = "Banner", emotes.get("Banner")
         case _:
@@ -147,9 +147,11 @@ def tileProfile(eventIndex: int, tileCode: str):
         "Support": ["\n".join(towers.get("Support", None)), True],
         } 
      
+    currentEmote = getEmoteID(ctData.TileType, emotes, ctData.RelicType)
+     
     embed = BaseCommand.createEmbed(eventData,
                                     ctInfo["EventURL"], 
-                                    title=f"{getEmoteID(ctData.TileType, emotes, ctData.RelicType)} Contested Territory #{eventIndex} - Tile {tileCode.upper()}"
+                                    title=f"{currentEmote} Contested Territory #{eventIndex} - Tile {tileCode.upper()}"
                                     )
     embed.set_image(url=EVENTURLS["Maps"][ctInfo["Map"]])
     return embed, categorizedTiles

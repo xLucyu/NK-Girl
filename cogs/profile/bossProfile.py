@@ -3,7 +3,6 @@ from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
 
-
 def bossProfile(index: int, difficulty: str): 
 
     urls = {
@@ -37,6 +36,9 @@ def bossProfile(index: int, difficulty: str):
     lbScoringType = bossLeaderboardType.get(getattr(mainData, lbTypeKey))
     modifiers = BaseCommand.getActiveModifiers(body, emotes) 
     towers = BaseCommand.getActiveTowers(body._towers, emotes) 
+
+    if mainData.bossType.lower() not in body.roundSets:
+        rounds += " (Custom Rounds)"
 
     eventData = { 
         f"{difficulty.title()} Difficulty": [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],

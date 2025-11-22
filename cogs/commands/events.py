@@ -94,7 +94,7 @@ class Event(commands.Cog):
             if not eventEmbeds:
                 return 
 
-            await message.edit(embeds = eventEmbeds)
+            await message.edit(embeds = eventEmbeds, files=[discord.File("CustomRounds.txt")])
             await ctx.respond(f"Succesfully updated {event} for this guild")
 
         except Exception as e:

@@ -9,7 +9,6 @@ from cogs.baseCommand import BaseCommand
 from database.logic.guilds import GuildTable
 from utils.dataclasses.main import NkData, Body
 
-
 eventstoCheck = {
     "Race": {
         "difficulties": [None],
@@ -47,7 +46,7 @@ class EventManager(commands.Cog):
 
     
     def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | None:
-
+         
         channels = self.events.fetchAllRegisteredChannels(event)
 
         if not channels:

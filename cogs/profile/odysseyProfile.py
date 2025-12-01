@@ -1,15 +1,40 @@
 from cogs.baseCommand import BaseCommand
 from utils.assets.eventUrls import EVENTURLS 
-from utils.dataclasses.odyssey import Odyssey
+from utils.assets.towerCategories import CATEGORIES
+from utils.dataclasses.odyssey import Odyssey, OdysseyBody
 from utils.dataclasses.main import Body
-from utils.dataclasses.metaData import MetaBody 
+from utils.dataclasses.metaData import MetaBody
+
+def getReward(body: OdysseyBody) -> str: 
+
+    importantReward = body._rewards[-1]
+    rewardType, rewardValue = importantReward.split(":")
+
+    if rewardType == "InstaMonkey":
+
+        name, tier = rewardValue.split(",")
+
+        formattedTowerName = next(
+            easyName for towers in CATEGORIES.values() 
+            for tower, easyName in towers.items() 
+            if tower == name
+        )
+
+        return f"{formattedTowerName} ({tier})"
+    
+    elif rewardType == "CollectionEvent":
+
+        return f"{rewardValue} Totems"
+    
+    else:
+
+        return rewardValue
+
 
 def validateTitle(isExtreme: bool, difficulty: str) -> str:
 
-    if isExtreme:
-        title = f"Difficulty: {difficulty.title()}, Extreme" 
-    else:
-        title = f"Difficulty: {difficulty.title()}"
+    title = f"Difficulty: {difficulty.title()}"
+    title += ", Extreme" if isExtreme else ""
  
     return title
 
@@ -17,6 +42,7 @@ def validateTitle(isExtreme: bool, difficulty: str) -> str:
 def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
 
     for index, map in enumerate(maps["body"],start=1):
+
         mapData = BaseCommand.transformDataToDataClass(MetaBody, map) 
         modifiers = BaseCommand.getActiveModifiers(mapData, emotes)
 
@@ -54,7 +80,8 @@ def odysseyProfile(index: int, difficulty: str):
         f"Max Monkeys: {body.maxMonkeysOnBoat}"
     )
 
-    towers = BaseCommand.getActiveTowers(body._availableTowers, emotes)
+    towers = BaseCommand.getActiveTowers(body._availableTowers, emotes) 
+    reward = getReward(body)
 
     eventData = {
         mainData.name: [title, False],
@@ -63,7 +90,8 @@ def odysseyProfile(index: int, difficulty: str):
         "Military": ["\n".join(towers.get("Military", None)), True],
         "": ["\n", False],
         "Magic": ["\n".join(towers.get("Magic", None)), True],
-        "Support": ["\n".join(towers.get("Support", None)), True]
+        "Support": ["\n".join(towers.get("Support", None)), True],
+        "": [f"{emotes.get("Reward", None)} {reward}", False]
         }
 
     mapsURL = body.maps

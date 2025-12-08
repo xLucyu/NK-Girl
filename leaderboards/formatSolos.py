@@ -5,14 +5,26 @@ from utils.assets.medals import MEDALS
 
 class SoloLeaderboard(BaseLeaderboard):
 
-    def __init__(self,
-                 urls: dict,
-                 apiData: dict,
-                 metaData: dict,
-                 page: int,
-                 difficulty: str,
+    def __init__(self, 
+                 urls: dict, 
+                 apiData: dict, 
+                 metaData: dict, 
+                 emojis: dict, 
+                 page: int, 
+                 difficulty: str, 
                  lbType: str, 
-                 emojis: dict) -> None:
+                 players: int,
+                 leaderboardCompetitionType: str) -> None:
+        super().__init__() 
+        self.urls = urls
+        self.apiData = apiData
+        self.metaData = metaData
+        self.emojis = emojis 
+        self.page = page
+        self.difficulty = difficulty
+        self.lbType = lbType
+        self.players = players 
+        self.leaderboardCompetitionType = leaderboardCompetitionType
 
         super().__init__()
         self.urls = urls

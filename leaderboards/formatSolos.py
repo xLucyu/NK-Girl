@@ -49,6 +49,34 @@ class SoloLeaderboard(BaseLeaderboard):
             playerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
         return playerData, totalScores
+
+    def formatBossLeaderboard(self) -> str: 
+
+        data = self.getLeaderboardData(self.metaData, self.page)
+        leaderboardData = BaseCommand.transformDataToDataClass(BossLB, data) 
+        totalScores = self.apiData.get(leaderboardData.totalScores, None) 
+        bossTiersMedal = f"<:BossTiers:{self.emojis.get('BossTiers')}>"
+
+        lbData = ""
+        page = self.page
+
+        for team in leaderboardData.teams[(page-1)*25:page*25]:
+
+            medal = self.getMedalForPosition(self.emojis, team.position, totalScores)
+            members = ", ".join(member.displayName for member in team.members)
+
+            if leaderboardData.scoringType == "LeastCash":
+                score = f"{team.scoreParts.score:,} {self.convertMsToTime(team.scoreParts.secondScore)}"
+
+            elif leaderboardData.scoringType == "LeastTiers":
+                score = f"{team.scoreParts.score}T {self.convertMsToTime(team.scoreParts.secondScore)}"
+
+            else: 
+                self.convertMsToTime(team.scoreParts.score)
+
+            lbData += f"{medal} {team.position:02} {bossTiersMedal} {team.scoreParts.bossTier} {members} ${score:<42}"
+
+        return lbData
     
     def determineLeaderboardScore(self, leaderboardCompetitionType: str, player: Body) -> int | str:
     

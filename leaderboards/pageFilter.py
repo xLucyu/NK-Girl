@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from leaderboards.pageButtons import ButtonView
 
 class PageModal(discord.ui.Modal):
+
     def __init__(self, **components):
         title = components.get("Title", None)
         label = components.get("Label", None)

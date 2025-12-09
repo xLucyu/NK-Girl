@@ -1,6 +1,5 @@
-import discord
-from leaderboards.formatSolos import SoloLeaderboard
-from leaderboards.formatBossLeaderboard import BossLeaderboard 
+import discord 
+from leaderboards.formatLeaderboards import FormatLeaderboards
 from utils.dataclasses.main import Body
 from cogs.baseCommand import BaseCommand
 
@@ -10,18 +9,15 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     leaderboardUrls = {
         "race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
-            "extension": "leaderboard",
-            "totalscores": "totalScores",
+            "extension": "leaderboard"
         },
         "boss": {
             "base": "https://data.ninjakiwi.com/btd6/bosses",
-            "extension": f"leaderboard_{difficulty}_players_1", 
-            "totalscores": f"totalScores_{difficulty}",
+            "extension": f"leaderboard_{difficulty}_players_1",  
         },
         "ct": {
             "base": "https://data.ninjakiwi.com/btd6/ct",
-            "extension": f"leaderboard_{difficulty}",
-            "totalscores": f"totalScores_{difficulty}"
+            "extension": f"leaderboard_{difficulty}"
         }
     } 
 
@@ -33,19 +29,34 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     emojis = BaseCommand.getAllEmojis()
     
     if lbType != "boss":
-        leaderboard = SoloLeaderboard(urls, apiData, metaData, page, difficulty, lbType, emojis)
-        playerData, totalScores = leaderboard.formatLeaderboard() 
+
+        leaderboard = FormatLeaderboards(
+            urls=urls, 
+            apiData=apiData, 
+            metaData=metaData, 
+            emojis=emojis, 
+            page=page, 
+            difficulty=difficulty, 
+            lbType=lbType, 
+            players=1, 
+            leaderboardCompetitionType="")
+
+        playerData = leaderboard.formatLeaderboard()
+
     else:
 
-        scoreTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType"
-        leaderboardCompetitionType = getattr(mainData, scoreTypeKey)
-        leaderboard = BossLeaderboard(urls, apiData, metaData, emojis, page, difficulty, lbType, players, leaderboardCompetitionType)
-        if players > 1:
-            if not teamScores:
-                teamScores = leaderboard.getMultiplayerLeaderboard()
-            playerData, totalScores = leaderboard.formatMultiplayerLeaderboard(teamScores)
-        else:
-            playerData, totalScores = leaderboard.formatBossLeaderboard() 
+        scoreTypeKey = mainData.eliteScoringType if difficulty.lower() == "elite" else mainData.normalScoringType
+        leaderboard = FormatLeaderboards(
+            urls=urls, 
+            apiData=apiData,
+            metaData=metaData,
+            emojis=emojis,
+            page=page,
+            difficulty=difficulty,
+            lbType=lbType,
+            players=players,
+            leaderboardCompetitionType=scoreTypeKey
+        )
 
     eventEnd = mainData.end
     timeLeft = leaderboard.timeLeftForLeaderboard(eventEnd)
@@ -56,7 +67,7 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     return {
         "Embed": embed, 
         "TeamScores": teamScores,
-        "TotalScores": totalScores,
+        "TotalScores": mainData.totalScores,
         "ScoreType": scoreType,
         "LeaderboardURL": metaData 
     } 

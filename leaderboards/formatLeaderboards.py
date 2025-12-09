@@ -1,9 +1,10 @@
 from leaderboards.base import BaseLeaderboard
 from utils.dataclasses.leaderboard import Leaderboard, Body
-from cogs.baseCommand import BaseCommand
+from utils.dataclasses.bossLB import BossLB
 from utils.assets.medals import MEDALS
+from cogs.baseCommand import BaseCommand
 
-class SoloLeaderboard(BaseLeaderboard):
+class FormatLeaderboards(BaseLeaderboard):
 
     def __init__(self, 
                  urls: dict, 
@@ -15,6 +16,7 @@ class SoloLeaderboard(BaseLeaderboard):
                  lbType: str, 
                  players: int,
                  leaderboardCompetitionType: str) -> None:
+
         super().__init__() 
         self.urls = urls
         self.apiData = apiData
@@ -26,16 +28,8 @@ class SoloLeaderboard(BaseLeaderboard):
         self.players = players 
         self.leaderboardCompetitionType = leaderboardCompetitionType
 
-        super().__init__()
-        self.urls = urls
-        self.apiData = apiData
-        self.metaData = metaData
-        self.page = page 
-        self.difficulty = difficulty 
-        self.lbType = lbType
-        self.emojis = emojis
 
-    def formatLeaderboard(self):
+    def formatRegularLeaderboard(self):
      
         data = self.getLeaderboardData(self.metaData, self.page)
         leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data)
@@ -60,31 +54,33 @@ class SoloLeaderboard(BaseLeaderboard):
 
             playerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
-        return playerData, totalScores
+        return playerData
 
     def formatBossLeaderboard(self) -> str: 
 
         data = self.getLeaderboardData(self.metaData, self.page)
         leaderboardData = BaseCommand.transformDataToDataClass(BossLB, data) 
-        totalScores = self.apiData.get(leaderboardData.totalScores, None) 
         bossTiersMedal = f"<:BossTiers:{self.emojis.get('BossTiers')}>"
+        totalScores = leaderboardData.totalScores
+        mode = MEDALS[self.difficulty]
 
         lbData = ""
-        page = self.page
 
-        for team in leaderboardData.teams[(page-1)*25:page*25]:
+        for team in leaderboardData.teams[(self.page-1)*25:self.page*25]:
 
-            medal = self.getMedalForPosition(self.emojis, team.position, totalScores)
+            medal = self.getMedalForPosition(self.emojis, team.position, totalScores, mode)
             members = ", ".join(member.displayName for member in team.members)
+            
+            match leaderboardData.scoringType:
 
-            if leaderboardData.scoringType == "LeastCash":
-                score = f"{team.scoreParts.score:,} {self.convertMsToTime(team.scoreParts.secondScore)}"
+                case "LeastCash":
+                    score = f"{team.scoreParts.score:,} {self.convertMsToTime(team.scoreParts.secondScore)}"
 
-            elif leaderboardData.scoringType == "LeastTiers":
-                score = f"{team.scoreParts.score}T {self.convertMsToTime(team.scoreParts.secondScore)}"
+                case "LeastTiers":
+                    score = f"{team.scoreParts.score}T {self.convertMsToTime(team.scoreParts.secondScore)}"
 
-            else: 
-                self.convertMsToTime(team.scoreParts.score)
+                case _:
+                    score = self.convertMsToTime(team.scoreParts.score)
 
             lbData += f"{medal} {team.position:02} {bossTiersMedal} {team.scoreParts.bossTier} {members} ${score:<42}"
 

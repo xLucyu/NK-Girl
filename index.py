@@ -9,7 +9,7 @@ class DiscordBotClient(discord.Bot):
     def __init__(self):
 
         super().__init__(intents=discord.Intents.all())
-        self.database = DataBaseConnection()
+        #self.database = DataBaseConnection()
 
     async def on_ready(self): 
 
@@ -29,7 +29,7 @@ class DiscordBotClient(discord.Bot):
 
     def initializeDatabase(self):
         
-        self.database.connectToPostgre()
+      #  self.database.connectToPostgre()
         print("database connected")
 
     async def loadEventManager(self):

@@ -57,7 +57,7 @@ class BossDetails(commands.Cog):
             "Emoji": "<:Coop:1341515962410598521>",
             "Boss": boss, 
             "Button": [
-                    ["Normal", "STANDARD", "success"], #having different custom_ids for the buttons make a difference
+                    ["Normal", "STANDARD", "success"], #having different custom_ids for the buttons makes a difference
                     ["Elite", "ELITE", "danger"]
                 ]
             }

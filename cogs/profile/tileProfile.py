@@ -27,11 +27,14 @@ livesForDifficulty = {
 
 def getCurrentCtNumber() -> int:
 
-    url = "https://data.ninjakiwi.com/btd6/ct"
+    url = "https://data.ninjakiwi.com/btd6/ct" 
     
+    index = BaseCommand.getCurrentIndexForEvent(None, url)
+
     ctList = BaseCommand.useApiCall(url)
     ctListBody = BaseCommand.transformDataToDataClass(NkData, ctList)
-    ctTimeStamp = ctListBody.body[0].start
+
+    ctTimeStamp = ctListBody.body[index].start
     return BaseCommand.getCurrentEventNumber(ctTimeStamp, "ct")
 
 

@@ -42,7 +42,10 @@ def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
     }    
     
     if not boss:
-        data = BaseCommand.getCurrentEventData(urls, index=0)
+        
+        index = BaseCommand.getCurrentIndexForEvent(None, urls["base"])
+
+        data = BaseCommand.getCurrentEventData(urls, index)
         eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
         mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
         metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)

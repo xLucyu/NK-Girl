@@ -16,7 +16,7 @@ class Race(commands.Cog):
     async def race(self, ctx: discord.ApplicationContext) -> None:
         await ctx.response.defer() 
 
-        embed, names = raceProfile(index=0, difficulty=None) 
+        embed, names = raceProfile(index=None, difficulty=None) 
 
         data = {
             "Author": ctx.author.id,

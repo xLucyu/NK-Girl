@@ -4,7 +4,7 @@ from utils.dataclasses.main import Body
 from utils.dataclasses.metaData import MetaData
 
 
-def raceProfile(index, difficulty=None):
+def raceProfile(index = None, difficulty=None):
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/races",
@@ -12,6 +12,8 @@ def raceProfile(index, difficulty=None):
     }
    
     eventURL = EVENTURLS["Race"]["race"]
+
+    index = BaseCommand.getCurrentIndexForEvent(index, urls["base"])
 
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))

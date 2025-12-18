@@ -3,12 +3,14 @@ from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
 
-def bossProfile(index: int, difficulty: str): 
+def bossProfile(index: int = None, difficulty: str = ""): 
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
-    }   
+    }  
+
+    index = BaseCommand.getCurrentIndexForEvent(index, urls["base"])
 
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))

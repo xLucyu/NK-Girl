@@ -76,7 +76,7 @@ class EventManager(commands.Cog):
         return None
 
     
-    def getEventEmbeds(self, guildID: str = None, eventName: str = None, isManual: bool = None) -> list[discord.Embed] | None:
+    def getEventEmbeds(self, guildID: str = "", eventName: str = "", isManual: bool = False) -> list[discord.Embed] | None:
         
         eventEmbeds = []
 

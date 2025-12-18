@@ -57,13 +57,15 @@ def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
         eventData[title] = value
              
 
-def odysseyProfile(index: int, difficulty: str):
+def odysseyProfile(index: int = None, difficulty: str = ""):
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/odyssey",
         "extension": f"metadata_{difficulty}"
     }
     
+    index = BaseCommand.getCurrentIndexForEvent(index, urls["base"])
+
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
     mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))

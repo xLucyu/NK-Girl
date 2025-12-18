@@ -1,6 +1,6 @@
 import dacite
 from discord import Embed
-from typing import Type, TypeVar, Any, Dict, List, Union, Tuple
+from typing import Type, TypeVar, Any, Dict, List, Union, Tuple, Optional
 from datetime import datetime, timezone 
 from cogs.eventNumber import getNumberForEvent
 from cogs.regex import *
@@ -92,8 +92,19 @@ class BaseCommand:
     @staticmethod
     def getCurrentEvent(mainData: NkData) -> Tuple[int, Body]:
 
-        currentTimeStamp = getCurrentTimeStamp()
+        currentTimeStamp = BaseCommand.getCurrentTimeStamp()
         return getCurrentActiveEvent(mainData, currentTimeStamp)
+    
+    @staticmethod
+    def getCurrentIndexForEvent(index: Optional[int], baseURL: str) -> int:
+
+        if index is None:
+
+            rawNkData = BaseCommand.useApiCall(baseURL)
+            mainData = BaseCommand.transformDataToDataClass(NkData, rawNkData)
+            index, _ = BaseCommand.getCurrentEvent(mainData)
+
+        return index
 
     @staticmethod 
     def createEmbed(eventData: Dict[str, List[Union[str, bool]]], url: str, title: str) -> Embed:

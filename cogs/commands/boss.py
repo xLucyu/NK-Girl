@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.bossProfile import bossProfile
 from utils.discord.viewMenu import SelectView
+from cogs.baseCommand import BaseCommand
 
 class Boss(commands.Cog):
 
@@ -26,7 +27,7 @@ class Boss(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
          
-        embed, names = bossProfile(index=0, difficulty=difficulty.lower())  
+        embed, names = bossProfile(difficulty=difficulty.lower())  
 
         data = {
             "Author": ctx.author.id, 

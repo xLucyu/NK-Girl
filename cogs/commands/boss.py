@@ -45,7 +45,3 @@ class Boss(commands.Cog):
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)
         view.message = message   
-
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Boss(bot))

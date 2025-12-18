@@ -1,15 +1,21 @@
 from config import BOTTOKEN
-import discord, os 
-from database.index import DataBaseConnection
-from utils.logging.eventManager import EventManager
+import discord 
+from database.index import DatabasePool
+from database.logic.guilds import GuildTable 
+from database.logic.usage import UsageTable 
 
+from cogs.commands import * 
+from utils.logging import *
 
 class DiscordBotClient(discord.Bot):
 
     def __init__(self):
 
         super().__init__(intents=discord.Intents.all())
-        #self.database = DataBaseConnection()
+        pool = DatabasePool()
+
+        self.guildTable = GuildTable(pool)
+        self.usageTable = UsageTable(pool)
 
     async def on_ready(self): 
 
@@ -18,19 +24,31 @@ class DiscordBotClient(discord.Bot):
 
 
     def load_cogs(self) -> None:
-        # loads all cogs in commands folder
-        for file in os.listdir('./cogs/commands/'):
-            if file.endswith(".py"):
-                self.load_extension(f"cogs.commands.{file[:-3]}") 
 
-        self.load_extension("utils.logging.errorHandler")
-        self.load_extension("utils.logging.logger")
-        self.load_extension("utils.logging.eventManager") 
+        cogs = [
+            Admin(bot, self.usageTable),
+            Boss(bot),
+            BossDetails(bot),
+            Challenge(bot),
+            Channel(bot, self.guildTable),
+            Event(bot, self.guildTable),
+            Feedback(bot, self.usageTable),
+            Help(bot),
+            Leaderboard(bot),
+            Odyssey(bot),
+            Race(bot),
+            Tile(bot),
+            Time(bot),
+            ErrorHandler(bot),
+            EventManager(bot, self.guildTable),
+            CommandLogger(bot, self.usageTable)
+        ] 
 
-    def initializeDatabase(self):
-        
-      #  self.database.connectToPostgre()
-        print("database connected")
+        for cog in cogs:
+            bot.add_cog(cog)
+
+        print("loaded cogs")
+
 
     async def loadEventManager(self):
 
@@ -43,6 +61,5 @@ class DiscordBotClient(discord.Bot):
 if __name__ =="__main__":
     bot = DiscordBotClient() 
     bot.load_cogs() 
-    bot.initializeDatabase()
-    bot.loop.create_task(bot.loadEventManager()) 
+    bot.loop.create_task(bot.loadEventManager())
     bot.run(BOTTOKEN)

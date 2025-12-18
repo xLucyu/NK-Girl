@@ -5,11 +5,11 @@ from database.logic.guilds import GuildTable
 
 class Event(commands.Cog):
 
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 
         self.bot = bot
-        self.eventManager = EventManager(bot)
-        self.database = GuildTable()
+        self.eventManager = EventManager(bot, guildTable)
+        self.database = guildTable
 
 
     events = discord.SlashCommandGroup(

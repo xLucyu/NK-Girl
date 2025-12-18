@@ -1,44 +1,57 @@
-import psycopg2
+from psycopg2.pool import SimpleConnectionPool
+from psycopg2.extensions import cursor 
 from config import HOST, PORT, DATABASE, USER, PASSWORD 
 
 
-class DataBaseConnection:
+class DatabasePool:
 
-    def __init__(self) -> None:
+    def __init__(self):
 
-        self.connector = None 
-        self.cursor = None 
-        self.connected = False 
+        self.pool = SimpleConnectionPool(
+            minconn = 1, 
+            maxconn = 5,
+            user = USER,
+            password = PASSWORD,
+            host = HOST,
+            port = PORT, 
+            database = DATABASE
+        )
 
-    def connectToPostgre(self) -> None:
-        
-        if not self.connected:
-            try:
+    def connection(self):
 
-                self.connector = psycopg2.connect(
-                    host = HOST, 
-                    port = PORT,
-                    dbname = DATABASE,
-                    user = USER,
-                    password = PASSWORD 
-                )
+        return PoolHelper(self)
 
-                self.cursor = self.connector.cursor() 
-                self.connected = True 
+    def close(self) -> None:
 
-            except Exception as e:
-                print("failed to load connection", e)
+        self.pool.closeall()
 
-    def getCursor(self) -> psycopg2.extensions.cursor:
-        
-        if not self.connected:
-            self.connectToPostgre()
 
-        return self.cursor
+class PoolHelper:
 
-    def getConnector(self) -> psycopg2.extensions.connection:
+    def __init__(self, pool: DatabasePool):
 
-        if not self.connected:
-            self.connectToPostgre()
+        self.poolDB = pool 
+        self.poolConnection = None 
+        self.poolCursor = None 
 
-        return self.connector 
+    def __enter__(self) -> cursor:
+
+        self.poolConnection = self.poolDB.pool.getconn()
+        self.poolCursor = self.poolConnection.cursor()
+
+        return self.poolCursor
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+
+        if self.poolCursor:
+            self.poolCursor.close()
+
+        if self.poolConnection:
+
+            if not exc_type:
+                self.poolConnection.commit()
+
+            else:
+                self.poolConnection.rollback()
+
+            self.poolDB.pool.putconn(self.poolConnection)

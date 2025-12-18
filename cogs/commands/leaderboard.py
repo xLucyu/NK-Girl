@@ -109,6 +109,3 @@ class Leaderboard(commands.Cog):
         view = ButtonView(**components)
         message = await ctx.respond(embed=lbData.get("Embed"), view=view)
         view.message = message
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Leaderboard(bot))

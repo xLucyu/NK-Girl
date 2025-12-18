@@ -19,7 +19,7 @@ def getData(url: str, headers: dict = None) -> dict:
     except requests.exceptions.RequestException as e:
         raise ValueError(e)
 
-def getCurrentActiveLeaderboard(ids: list, leaderboardApiKey: str) -> dict | None:
+def getCurrentActiveLeaderboard(ids: list[dict], leaderboardApiKey: str) -> dict | None:
 
     # this is used to check for the latest leaderboard which has players in them since they get released early
     for currentApiIndex in ids: 

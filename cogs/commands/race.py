@@ -5,6 +5,7 @@ from utils.discord.viewMenu import SelectView
 
 
 class Race(commands.Cog):
+
     def __init__(self, bot: discord.Bot):
 
         self.bot = bot
@@ -30,6 +31,3 @@ class Race(commands.Cog):
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)
         view.message = message
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Race(bot))

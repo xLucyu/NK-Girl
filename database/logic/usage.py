@@ -1,25 +1,25 @@
-from database.index import DataBaseConnection
+from database.index import DatabasePool
 
+class UsageTable:
 
-class UsageTable(DataBaseConnection):
+    def __init__(self, pool: DatabasePool):
 
-    def __init__(self):
-
-        super().__init__()
-        self.connector = self.getConnector()
-        self.cursor = self.getCursor()
+        self.pool = pool
 
     def increaseCommandUsage(self, command: str) -> None:
         
-        self.cursor.execute(
-            """
-            insert into usage (command, uses) values (%s, 1)
-            on conflict(command) do update set uses = usage.uses + 1
-            """, (command,)
-        )
-        self.connector.commit()
+        with self.pool.connection() as cursor:
+            cursor.execute(
+                """
+                insert into usage (command, uses) values (%s, 1)
+                on conflict(command) do update set uses = usage.uses + 1
+                """, (command,)
+            )
+       
     
     def fetchCommands(self) -> list:
         
-        self.cursor.execute("select * from usage order by uses desc")
-        return self.cursor.fetchall()
+        with self.pool.connection() as cursor:
+            
+            cursor.execute("select * from usage order by uses desc")
+            return cursor.fetchall()

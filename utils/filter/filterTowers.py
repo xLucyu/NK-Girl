@@ -35,7 +35,6 @@ def filterTowers(towers: List[Tower], emotes: dict) -> dict:
     availableTowers = {tower.tower: tower for tower in towers if tower.max != 0} # filter out towers early 
     towerCategories = {category: [] for category in CATEGORIES} # creates an array for each category 
     
-    print(towerKeys)
     seenTowers = set() # avoid duplicates 
     for category, tower in towerKeys:
          

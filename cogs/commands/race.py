@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.raceProfile import raceProfile 
 from utils.discord.viewMenu import SelectView
-
+from utils.logging.eventManager import EventManager
 
 class Race(commands.Cog):
 
@@ -14,9 +14,22 @@ class Race(commands.Cog):
                            integration_types={discord.IntegrationType.user_install,
                                               discord.IntegrationType.guild_install})
     async def race(self, ctx: discord.ApplicationContext) -> None:
-        await ctx.response.defer() 
 
-        embed, names = raceProfile(index=None, difficulty=None) 
+        await ctx.response.defer()
+
+        index = None 
+
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+        cachedEvent = eventManager.getCachedEvent("Race")
+
+        if cachedEvent:
+            index = cachedEvent.get("Index")
+
+        eventDetails = raceProfile(index, difficulty=None) 
+
+        embed = eventDetails["Embed"]
+        names = eventDetails["Names"]
+        index = eventDetails["Index"]
 
         data = {
             "Author": ctx.author.id,
@@ -24,6 +37,7 @@ class Race(commands.Cog):
             "PreviousEvents": names,
             "Function": raceProfile,
             "Difficulty": None,
+            "Index": index,
             "Message": None,
             "Emoji": "<:EventRace:1338550190390382694>"
         }

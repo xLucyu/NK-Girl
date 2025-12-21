@@ -65,4 +65,8 @@ def bossProfile(index: int = None, difficulty: str = ""):
     for name in data.get("Names", []):
         names.append(BaseCommand.splitBossNames(name))
 
-    return embed, names
+    return {
+        "Embed": embed,
+        "Names": names,
+        "Index": index
+    }

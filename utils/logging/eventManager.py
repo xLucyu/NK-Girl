@@ -8,6 +8,7 @@ from cogs.baseCommand import BaseCommand
 from database.logic.guilds import GuildTable
 from utils.dataclasses.main import NkData, Body
 
+
 eventstoCheck = {
     "Race": {
         "difficulties": [None],
@@ -36,7 +37,18 @@ class EventManager(commands.Cog):
         self.scheduler = AsyncIOScheduler()
         self.scheduler.add_job(self.checkForNewEvent, "cron", minute=0)
 
-     
+        self.cachedEventIndex: dict[str, int] = {}
+ 
+    def getCachedEvent(self, event: str) -> dict[str, int]:
+        
+        return self.cachedEventIndex.get(event)
+
+    def _saveEventCacheIndex(self, index: int, eventName: str) -> None:
+
+        self.cachedEventIndex[eventName] = {
+            "Index": index
+        } 
+
     async def postLoad(self):
 
         #cogs need to be loaded first
@@ -68,7 +80,7 @@ class EventManager(commands.Cog):
         if not nextEvent:
             return None
 
-        _, event = nextEvent
+        event = nextEvent
 
         if isManual or event.id not in seenEvents:
             return nextEvent
@@ -107,7 +119,10 @@ class EventManager(commands.Cog):
 
         if eventMetaData.id not in seenEvents:
             self.events.appendEvent(eventMetaData.id, eventName, guildID)
-            
+       
+
+        self._saveEventCacheIndex(index, eventName)
+ 
         return eventEmbeds
 
         
@@ -135,6 +150,7 @@ class EventManager(commands.Cog):
 
                     if channelObject.type == discord.ChannelType.news:
                         await message.publish()
+
 
                 except Exception as error:
                     print(f"{error} in Server: {guildID}")

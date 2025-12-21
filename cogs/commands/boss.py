@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.bossProfile import bossProfile
 from utils.discord.viewMenu import SelectView
-from cogs.baseCommand import BaseCommand
+from utils.logging.eventManager import EventManager
 
 class Boss(commands.Cog):
 
@@ -24,10 +24,22 @@ class Boss(commands.Cog):
 
         await ctx.response.defer()
 
+        index = None
+        
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+        cachedEvent = eventManager.getCachedEvent("Boss")
+        
         if difficulty == "Normal":
             difficulty = "Standard"
-         
-        embed, names = bossProfile(difficulty=difficulty.lower())  
+
+        if cachedEvent:
+            index = cachedEvent.get("Index")
+             
+        eventDetails = bossProfile(index, difficulty=difficulty.lower())  
+
+        embed = eventDetails["Embed"]
+        names = eventDetails["Names"]
+        index = eventDetails["Index"]
 
         data = {
             "Author": ctx.author.id, 
@@ -36,6 +48,7 @@ class Boss(commands.Cog):
             "Function": bossProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
+            "Index": index,
             "Emoji": "<:BossChallenge:1338550202889404487>", 
             "Button": [
                     ["Normal", "standard", "success"],

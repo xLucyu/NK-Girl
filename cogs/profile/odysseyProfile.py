@@ -87,13 +87,13 @@ def odysseyProfile(index: int = None, difficulty: str = ""):
 
     eventData = {
         mainData.name: [title, False],
+        "Reward": [f"{emotes.get("Reward", None)} {reward}", False],
         "Heroes": ["\n".join(towers.get("Heroes", None)), False],
         "Primary": ["\n".join(towers.get("Primary", None)), True],
         "Military": ["\n".join(towers.get("Military", None)), True],
         "": ["\n", False],
         "Magic": ["\n".join(towers.get("Magic", None)), True],
-        "Support": ["\n".join(towers.get("Support", None)), True],
-        "": [f"{emotes.get("Reward", None)} {reward}", False]
+        "Support": ["\n".join(towers.get("Support", None)), True]
         }
 
     mapsURL = body.maps
@@ -104,4 +104,8 @@ def odysseyProfile(index: int = None, difficulty: str = ""):
     embed = BaseCommand.createEmbed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
     names = data.get("Names", None)
 
-    return embed, names
+    return {
+        "Embed": embed,
+        "Names": names,
+        "Index": index
+    }

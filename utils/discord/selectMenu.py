@@ -33,42 +33,27 @@ class SelectMenu(discord.ui.Select):
         
     async def callback(self, interaction:discord.Interaction) -> None:
         
-        messageID = self.parentView.message.id
-        userID = interaction.user.id #type: ignore
-
-        if userID != self.userID:
+        if interaction.user.id != self.userID:
             await interaction.response.send_message("You are not the original User of this command.", ephemeral=True)
             return 
 
-        try:
-            await interaction.response.defer()
-
-            if messageID not in self.parentView.index:
-                self.parentView.index[messageID] = dict()
+        await interaction.response.defer()
             
-            data = self.parentView.index[messageID]
-            selectedIndex = int(self.values[0]) #type: ignore
+        selectedIndex = int(self.values[0])
 
-            data["EventIndex"] = selectedIndex #insert Eventindex into the parentView
-            difficulty = data.get("Difficulty", self.difficulty)
+        args = [selectedIndex, self.parentView.difficulty]
 
-            if difficulty is not None:
-                difficulty = difficulty.lower()
-            data["Difficulty"] = difficulty
+        if self.boss:
+            args.append(self.boss)
 
-            args = [selectedIndex, difficulty]
-
-            if self.boss:
-                args.append(self.boss)
-
-            if self.tiles:
-                args[0] = self.ctEventIndex
-                args[1] = self.tiles[selectedIndex][0]
+        if self.tiles:
+            args[0] = self.ctEventIndex
+            args[1] = self.tiles[selectedIndex][0]
             
-            embed, _ = self.function(*args)
+        eventDetails = self.function(*args)
 
-            await interaction.edit_original_response(embed=embed)
-            self.parentView.message = await interaction.original_response()   
+        embed = eventDetails["Embed"]
 
-        except Exception:
-            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)
+        self.parentView.index = selectedIndex 
+        await interaction.edit_original_response(embed=embed)
+        self.parentView.message = await interaction.original_response()   

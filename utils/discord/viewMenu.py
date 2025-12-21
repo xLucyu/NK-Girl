@@ -5,7 +5,9 @@ from utils.discord.buttonMenu import ButtonMenu
 useButton = ["Boss", "Odyssey", "Coop Mode", None]
 
 class SelectView(discord.ui.View):
+
     def __init__(self, data: dict):
+
         super().__init__(timeout=180)
         self.message = data.get("message", None)
         self.userID = data.get("Author", None)
@@ -18,12 +20,15 @@ class SelectView(discord.ui.View):
         self.boss = data.get("Boss", None)
         self.tiles = data.get("Tiles", None)
         self.ctEventIndex = data.get("CTEventIndex", None)
-        self.index = dict() #safe current index for button and select menu 
+        self.index = data.get("Index", 0) #safe current index for button and select menu 
         self.handleViewMenus()
     
-    def handleViewMenus(self): 
-        if self.tiles: 
+    def handleViewMenus(self):
+
+        if self.tiles:
+
             for category in range(len(self.tiles)): 
+
                 selectMenuView = SelectMenu(
                     View = self,
                     Event = self.event[category],
@@ -34,13 +39,17 @@ class SelectView(discord.ui.View):
                     CTEventIndex = self.ctEventIndex
                 )
                 self.add_item(selectMenuView)
+
         else: 
+
             if self.event in useButton: 
                 self.addButtonMenu()
+
             if self.event is not None: 
                 self.addSelectMenu()
  
     def addSelectMenu(self):  
+
         selectMenuView = SelectMenu(
                 View = self,
                 Event = self.event,
@@ -55,6 +64,7 @@ class SelectView(discord.ui.View):
         self.add_item(selectMenuView)
 
     def addButtonMenu(self):
+
         for layout in self.buttonLayout:
             selectButtonView = ButtonMenu(
                 View = self,
@@ -70,6 +80,7 @@ class SelectView(discord.ui.View):
         if self.message:
             try:
                 await self.message.edit(view=None)
-                self.index.clear()
+                self.index = 0
+                self.difficulty = None
             except discord.NotFound:
                 pass

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.odysseyProfile import odysseyProfile
 from utils.discord.viewMenu import SelectView
-
+from utils.logging.eventManager import EventManager
 
 class Odyssey(commands.Cog):
 
@@ -23,7 +23,19 @@ class Odyssey(commands.Cog):
 
         await ctx.response.defer()
 
-        embed, names = odysseyProfile(index=None, difficulty=difficulty.lower()) 
+        index = None
+
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+        cachedEvent = eventManager.getCachedEvent("Boss")
+
+        if cachedEvent:
+            index = cachedEvent.get("Index")
+
+        eventDetails = odysseyProfile(index, difficulty=difficulty.lower()) 
+
+        embed = eventDetails["Embed"]
+        names = eventDetails["Names"]
+        index = eventDetails["Index"]
 
         data = {
             "Author": ctx.author.id,
@@ -31,6 +43,7 @@ class Odyssey(commands.Cog):
             "PreviousEvents": names,
             "Function": odysseyProfile,
             "Difficulty": difficulty.lower(),
+            "Index": index,
             "Message": None,
             "Emoji": "<:OdysseyCrewBtn:1338551267043180635>",
             "Button": [

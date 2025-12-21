@@ -8,7 +8,6 @@ class Event(commands.Cog):
     def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 
         self.bot = bot
-        self.eventManager = EventManager(bot, guildTable)
         self.database = guildTable
 
 
@@ -30,7 +29,9 @@ class Event(commands.Cog):
     )
     async def post(self, ctx: discord.ApplicationContext, event: str):
 
-        await ctx.response.defer() 
+        await ctx.response.defer()
+
+        eventManager: EventManager = self.bot.get_cog("EventManager")
 
         if not ctx.author.guild_permissions.manage_guild:
             await ctx.respond("You don't have permission to run this command.", ephemeral = True)
@@ -38,7 +39,7 @@ class Event(commands.Cog):
 
         guildID = str(ctx.guild.id)
         
-        currentGuildChannel = self.eventManager.getRegisteredChannels(event, guildID)
+        currentGuildChannel = eventManager.getRegisteredChannels(event, guildID)
         channelObject = self.bot.get_channel(int(currentGuildChannel[0]))
 
         if not channelObject:
@@ -47,7 +48,7 @@ class Event(commands.Cog):
         
         try:
 
-            eventEmbeds = self.eventManager.getEventEmbeds(guildID, event, isManual=True)
+            eventEmbeds = eventManager.getEventEmbeds(guildID, event, isManual=True)
 
             if not eventEmbeds:
                 return
@@ -75,12 +76,14 @@ class Event(commands.Cog):
 
         await ctx.response.defer()
 
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+
         if not ctx.author.guild_permissions.manage_guild:
             await ctx.respond("You don't have permission to run this command.", ephemeral = True)
             return 
         
         guildID = str(ctx.guild.id)
-        channelID = self.eventManager.getRegisteredChannels(event, guildID)
+        channelID = eventManager.getRegisteredChannels(event, guildID)
 
         if not channelID:
             return
@@ -90,7 +93,7 @@ class Event(commands.Cog):
         try:
             
             message: discord.Message = await channelObject.fetch_message(int(message_id))
-            eventEmbeds = self.eventManager.getEventEmbeds(guildID, event, isManual=True)
+            eventEmbeds = eventManager.getEventEmbeds(guildID, event, isManual=True)
             if not eventEmbeds:
                 return 
 

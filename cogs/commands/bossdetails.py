@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
 from utils.discord.viewMenu import SelectView
-
+from utils.logging.eventManager import EventManager
 
 class BossDetails(commands.Cog):
 
@@ -42,10 +42,22 @@ class BossDetails(commands.Cog):
 
         await ctx.response.defer()
 
+        index = None
+        
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+        cachedEvent = eventManager.getCachedEvent("Boss")
+        
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, modes = bossdetailsProfile(players-1, difficulty.lower(), boss) 
+        if cachedEvent:
+            index = cachedEvent.get("Index")
+
+        eventDetails = bossdetailsProfile(index, players-1, difficulty.lower(), boss)
+
+        embed = eventDetails["Embed"]
+        modes = eventDetails["Modes"]
+        index = eventDetails["Index"]
 
         data = {
             "Author": ctx.author.id, 
@@ -54,6 +66,7 @@ class BossDetails(commands.Cog):
             "Function": bossdetailsProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
+            "Index": index,
             "Emoji": "<:Coop:1341515962410598521>",
             "Boss": boss, 
             "Button": [

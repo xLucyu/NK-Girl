@@ -31,7 +31,7 @@ def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, player
         False]
 
 
-def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
+def bossdetailsProfile(index: int, players: int, difficulty: str, boss: str = ""):
     
     modes = [1, 2, 3, 4]
     players = modes[players]
@@ -82,4 +82,8 @@ def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
     embed.set_image(url=bannerURL) 
 
-    return embed, modes
+    return {
+        "Embed": embed,
+        "Modes": modes, 
+        "Index": index
+    }

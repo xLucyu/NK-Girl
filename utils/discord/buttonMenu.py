@@ -1,7 +1,9 @@
 import discord
 
 class ButtonMenu(discord.ui.Button):
-    def __init__(self, **components):
+
+    def __init__(self, **components): 
+
         self.parentView = components.get("View", None)
         self.boss = components.get("Boss", None)
         self.userID = components.get("UserID", None)
@@ -15,33 +17,23 @@ class ButtonMenu(discord.ui.Button):
         )
 
     async def callback(self, interaction:discord.Interaction) -> None:
-        messageID = self.parentView.message.id
-        userID = interaction.user.id #type: ignore
+        
+        if interaction.user.id != self.userID:
+            await interaction.response.send_message("You are not the original user.", ephemeral=True)
+            return 
 
-        if userID != self.userID:
-            await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
-            return
-         
-        try: 
-            await interaction.response.defer()
+        await interaction.response.defer()
 
-            difficulty = self.custom_id 
-            if messageID not in self.parentView.index:
-                self.parentView.index[messageID] = dict() 
-            
-            data = self.parentView.index[messageID] 
-            data["Difficulty"] = difficulty 
+        difficulty = self.custom_id 
+        args = [self.parentView.index, difficulty.lower()]
 
-            selectedIndex = data.get("EventIndex", 0)
-            args = [selectedIndex, difficulty.lower()]
+        if self.boss:
+            args.append(self.boss)
 
-            if self.boss:
-                args.append(self.boss)
+        eventDetails = self.function(*args)
 
-            embed, _ = self.function(*args)
+        embed = eventDetails["Embed"]
+        self.parentView.difficulty = difficulty.lower() 
 
-            await interaction.edit_original_response(embed=embed)
-            self.parentView.message = await interaction.original_response()
-
-        except:
-            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)   
+        await interaction.edit_original_response(embed=embed)
+        self.parentView.message = await interaction.original_response()

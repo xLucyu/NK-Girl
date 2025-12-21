@@ -53,4 +53,8 @@ def raceProfile(index = None, difficulty=None):
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = data.get("Names") 
 
-    return embed, names 
+    return {
+        "Embed": embed,
+        "Names": names,
+        "Index": index
+    } 

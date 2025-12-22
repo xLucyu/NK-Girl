@@ -40,22 +40,22 @@ class FormatLeaderboards(BaseLeaderboard):
 
         lbPlayerData = ""
 
-        for position, player in enumerate(leaderboardData.body):
+        for position, player in enumerate(leaderboardData.body, start = 1):
 
             currentPosition = entriesPerPage * (self.page - 1) + position 
             playerName = player.displayName.replace("(disbanded)", "").strip() # mainly for CT
 
             medal = self.getMedalForPosition(self.emojis, currentPosition, self.totalScores, mode)
-            formattedScore = self._getScoringType()
+            formattedScore = self._getScoringType(player)
 
             lbPlayerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
         return lbPlayerData, self.totalScores
 
 
-    def _getScoringType(self, lbType: str, player: Body) -> str | int:
+    def _getScoringType(self, player: Body) -> str | int:
 
-        if lbType == "Race":
+        if self.lbType == "Race":
             return self.convertMsToTime(player.score)
         
         return player.score

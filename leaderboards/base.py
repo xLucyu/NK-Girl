@@ -36,19 +36,19 @@ class BaseLeaderboard:
     def formatEventInfo(mainData: Body, lbType: str, difficulty: str) -> str:
     
         match lbType:
-            case "race":
+            case "Race":
                 eventTimeStamp = mainData.start 
                 eventNumber = BaseCommand.getCurrentEventNumber(eventTimeStamp, "race")
                 eventName = mainData.name
                 title = f"Race #{eventNumber} - {eventName}"  
 
-            case "boss":
+            case "Boss":
                 eventNumber = BaseCommand.splitBossNames(mainData.name)
                 eventName = mainData.bossType
                 scoreTypeKey = mainData.eliteScoringType if difficulty == "elite" else mainData.normalScoringType 
                 title = f"{difficulty.title()} {eventNumber} - {scoreTypeKey}"
 
-            case "ct":
+            case "CT":
                 currentIndex = mainData.start 
                 eventNumber = BaseCommand.getCurrentEventNumber(currentIndex, "ct")
                 title = f"Contested Territory #{eventNumber} - {difficulty.title()}"

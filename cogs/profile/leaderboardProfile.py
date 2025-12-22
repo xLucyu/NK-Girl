@@ -22,16 +22,16 @@ def getTotalScoreKey(mainData: Body, difficulty: str) -> int:
 def leaderboardProfile(lbType, page, difficulty="", players=None):
 
     leaderboardUrls = {
-        "Race": {
+        "race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
             "extension": "leaderboard",
             "TotalScores": "totalScores"
         },
-        "Boss": {
+        "boss": {
             "base": "https://data.ninjakiwi.com/btd6/bosses", 
             "TotalScores": f"totalScores_{difficulty}"
         },
-        "CT": {
+        "ct": {
             "base": "https://data.ninjakiwi.com/btd6/ct",
             "extension": f"leaderboard_{difficulty}",
             "TotalScores": f"totalScores_{difficulty}"

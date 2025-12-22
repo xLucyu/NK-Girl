@@ -1,23 +1,40 @@
-import discord 
+import discord
 from leaderboards.formatLeaderboards import FormatLeaderboards
 from utils.dataclasses.main import Body
 from cogs.baseCommand import BaseCommand
 
+def getTotalScoreKey(mainData: Body, difficulty: str) -> int:
 
-def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=None, scoreType=None):
+    match difficulty:
+
+        case "Team":
+            return mainData.totalScores_team
+        
+        case "Player":
+            return mainData.totalScores_player
+        
+        case _:
+            return mainData.totalScores
+        
+    return 0
+
+
+def leaderboardProfile(lbType, page, difficulty="", players=None):
 
     leaderboardUrls = {
         "race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
-            "extension": "leaderboard"
+            "extension": "leaderboard",
+            "TotalScores": "totalScores"
         },
         "boss": {
-            "base": "https://data.ninjakiwi.com/btd6/bosses",
-            "extension": f"leaderboard_{difficulty}_players_1",  
+            "base": "https://data.ninjakiwi.com/btd6/bosses", 
+            "TotalScores": f"totalScores_{difficulty}"
         },
         "ct": {
             "base": "https://data.ninjakiwi.com/btd6/ct",
-            "extension": f"leaderboard_{difficulty}"
+            "extension": f"leaderboard_{difficulty}",
+            "TotalScores": f"totalScores_{difficulty}"
         }
     } 
 
@@ -25,49 +42,21 @@ def leaderboardProfile(lbType, page, difficulty="", players=None, teamScores=Non
     data = BaseCommand.getCurrentEventData(urls, index=0)
     apiData = data.get("Data", {})
     mainData = BaseCommand.transformDataToDataClass(Body, apiData) 
-    metaData = data.get("MetaData", None)
+    metaData = data.get("MetaData")
     emojis = BaseCommand.getAllEmojis()
-    
-    if lbType != "boss":
 
-        leaderboard = FormatLeaderboards(
-            urls=urls, 
-            apiData=apiData, 
-            metaData=metaData, 
-            emojis=emojis, 
-            page=page, 
-            difficulty=difficulty, 
-            lbType=lbType, 
-            players=1, 
-            leaderboardCompetitionType="")
+    leaderboard = FormatLeaderboards(
+        url = metaData,
+        lbType = lbType,
+        difficulty = difficulty,
+        page = page,
+        emojis = emojis,
+        totalScores = getTotalScoreKey(mainData, difficulty)
+    )
 
-        playerData = leaderboard.formatLeaderboard()
+    playerData, totalScores = leaderboard.handleFormatting()
+    title = leaderboard.formatEventInfo(mainData, lbType, difficulty)
+    embed = discord.Embed(title=f"{title}, page {page}", description = playerData, color = discord.Color.green())
+    embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {leaderboard.timeLeftForLeaderboard(mainData.end)}")
 
-    else:
-
-        scoreTypeKey = mainData.eliteScoringType if difficulty.lower() == "elite" else mainData.normalScoringType
-        leaderboard = FormatLeaderboards(
-            urls=urls, 
-            apiData=apiData,
-            metaData=metaData,
-            emojis=emojis,
-            page=page,
-            difficulty=difficulty,
-            lbType=lbType,
-            players=players,
-            leaderboardCompetitionType=scoreTypeKey
-        )
-
-    eventEnd = mainData.end
-    timeLeft = leaderboard.timeLeftForLeaderboard(eventEnd)
-    eventData = leaderboard.formatEventInfo(mainData, lbType, difficulty)
-    embed = discord.Embed(title=f"{eventData}, page {page}", description=playerData, color=discord.Color.green())
-    embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {timeLeft}")
-
-    return {
-        "Embed": embed, 
-        "TeamScores": teamScores,
-        "TotalScores": mainData.totalScores,
-        "ScoreType": scoreType,
-        "LeaderboardURL": metaData 
-    } 
+    return embed

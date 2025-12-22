@@ -1,96 +1,99 @@
 from leaderboards.base import BaseLeaderboard
 from utils.dataclasses.leaderboard import Leaderboard, Body
-from utils.dataclasses.bossLB import BossLB
+from utils.dataclasses.bossLB import BossLB, Team
 from utils.assets.medals import MEDALS
 from cogs.baseCommand import BaseCommand
 
 class FormatLeaderboards(BaseLeaderboard):
 
-    def __init__(self, 
-                 urls: dict, 
-                 apiData: dict, 
-                 metaData: dict, 
-                 emojis: dict, 
-                 page: int, 
-                 difficulty: str, 
-                 lbType: str, 
-                 players: int,
-                 leaderboardCompetitionType: str) -> None:
+    def __init__(self,
+                 url: str,
+                 lbType: str,
+                 difficulty: str,
+                 page: int,
+                 emojis: dict,
+                 totalScores: int):
 
-        super().__init__() 
-        self.urls = urls
-        self.apiData = apiData
-        self.metaData = metaData
-        self.emojis = emojis 
-        self.page = page
-        self.difficulty = difficulty
+        self.url = url 
         self.lbType = lbType
-        self.players = players 
-        self.leaderboardCompetitionType = leaderboardCompetitionType
+        self.difficulty = difficulty
+        self.page = page 
+        self.emojis = emojis 
+        self.totalScores = totalScores
 
 
-    def formatRegularLeaderboard(self):
+    def handleFormatting(self):
+
+        if self.lbType == "Boss":
+            return self._formatBossLeaderboard()
+
+        return self._formatRegularLeaderboard()
+
+    def _formatRegularLeaderboard(self):
      
-        data = self.getLeaderboardData(self.metaData, self.page)
+        data = BaseCommand.useApiCall(self.url)
         leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data)
- 
-        totalScores = self.apiData.get(self.urls.get("totalscores"), None)
-        leaderboardCompetitionType = self.apiData.get("scoringType", "GameTime")
 
-        lbBody = leaderboardData.body 
-        leaderboardEntriesPerPage = 50 if self.lbType == "race" else 25
-        maxNameLength = max(len(player.displayName.replace("(disbanded)", "").strip()) for player in lbBody) 
+        entriesPerPage = 50 if self.lbType == "Race" else 25 
+        maxNameLength = max(len(player.displayName.replace("(disbanded)", "").strip()) for player in leaderboardData.body)
+        mode = MEDALS[f"{self.lbType}{self.difficulty}"] if self.lbType != "race" else MEDALS[self.lbType]
 
-        playerData = str()
-        mode = MEDALS[f"{self.lbType}{self.difficulty}"] if self.lbType != "race" else MEDALS[self.lbType] # deal with it  
-         
-        for position, player in enumerate(lbBody, start=1):
-            currentPosition = leaderboardEntriesPerPage * (self.page - 1) + position
-            playerName = player.displayName
-            playerName = playerName.replace("(disbanded)", "").strip()
+        lbPlayerData = ""
 
-            medal = self.getMedalForPosition(self.emojis, currentPosition, totalScores, mode)
-            formattedScore = self.determineLeaderboardScore(leaderboardCompetitionType, player) 
+        for position, player in enumerate(leaderboardData.body):
 
-            playerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
+            currentPosition = entriesPerPage * (self.page - 1) + position 
+            playerName = player.displayName.replace("(disbanded)", "").strip() # mainly for CT
 
-        return playerData
+            medal = self.getMedalForPosition(self.emojis, currentPosition, self.totalScores, mode)
+            formattedScore = self._getScoringType()
 
-    def formatBossLeaderboard(self) -> str: 
+            lbPlayerData += f"{medal} `{currentPosition:02}` `{playerName.ljust(maxNameLength)} {str(formattedScore).rjust(10)}`\n"
 
-        data = self.getLeaderboardData(self.metaData, self.page)
-        leaderboardData = BaseCommand.transformDataToDataClass(BossLB, data) 
+        return lbPlayerData, self.totalScores
+
+
+    def _getScoringType(self, lbType: str, player: Body) -> str | int:
+
+        if lbType == "Race":
+            return self.convertMsToTime(player.score)
+        
+        return player.score
+
+
+    def _formatBossLeaderboard(self): 
+
+        data = BaseCommand.useApiCall(self.url)
+        leaderboardData = BaseCommand.transformDataToDataClass(BossLB, data)
         bossTiersMedal = f"<:BossTiers:{self.emojis.get('BossTiers')}>"
         totalScores = leaderboardData.totalScores
         mode = MEDALS[self.difficulty]
 
-        lbData = ""
+        lbPlayerData = ""
 
-        for team in leaderboardData.teams[(self.page-1)*25:self.page*25]:
+        for team in leaderboardData.teams[(self.page-1) * 25:self.page*25]:
 
             medal = self.getMedalForPosition(self.emojis, team.position, totalScores, mode)
             members = ", ".join(member.displayName for member in team.members)
-            
-            match leaderboardData.scoringType:
 
-                case "LeastCash":
-                    score = f"{team.scoreParts.score:,} {self.convertMsToTime(team.scoreParts.secondScore)}"
+            score = self._getBossLbScoringType(leaderboardData.scoringType, team)
 
-                case "LeastTiers":
-                    score = f"{team.scoreParts.score}T {self.convertMsToTime(team.scoreParts.secondScore)}"
+            lbPlayerData += f"{medal} {team.position:02} {bossTiersMedal} {team.scoreParts.bossTier} {members} ${score:<42}"
 
-                case _:
-                    score = self.convertMsToTime(team.scoreParts.score)
+        return lbPlayerData, totalScores
 
-            lbData += f"{medal} {team.position:02} {bossTiersMedal} {team.scoreParts.bossTier} {members} ${score:<42}"
 
-        return lbData
-    
-    def determineLeaderboardScore(self, leaderboardCompetitionType: str, player: Body) -> int | str:
-    
-        currentPlayerScore = player.score
+    def _getBossLbScoringType(self, scoringType: str, team: Team) -> str:
 
-        if leaderboardCompetitionType == "GameTime" and self.lbType != "ct":
-            return self.convertMsToTime(currentPlayerScore)
-        else:
-            return currentPlayerScore 
+        match scoringType:
+
+            case "LeastCash":
+                score = f"{team.scoreParts.score:,} {self.convertMsToTime(team.scoreParts.secondScore)}"
+
+            case "LeastTiers":
+                score = f"{team.scoreParts.score}T {self.convertMsToTime(team.scoreParts.secondScore)}"
+
+            case _:
+                score = self.convertMsToTime(team.scoreParts.score)
+
+        return score

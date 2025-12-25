@@ -15,14 +15,13 @@ class Leaderboard(commands.Cog):
     async def race(self, ctx: discord.ApplicationContext) -> None:    
 
         await ctx.response.defer()
-        lbData = leaderboardProfile(lbType="race", page=1)
+        lbData = leaderboardProfile(lbType="Race", page=1)
 
         components = {
-            "Mode": "race",
+            "Mode": "Race",
             "TotalScores": lbData.get("TotalScores"),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
-            "Page": 1, 
             "Message": None,
             "URL": lbData.get("LeaderboardURL"),
             "Layout": [
@@ -56,7 +55,7 @@ class Leaderboard(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        lbData = leaderboardProfile(lbType="boss", page=1, difficulty=difficulty.lower(), players=players)
+        lbData = leaderboardProfile(lbType="Boss", page=1, difficulty=difficulty.lower(), players=players)
 
         components = {
             "Mode": "boss",
@@ -64,10 +63,8 @@ class Leaderboard(commands.Cog):
             "ScoreType": lbData.get("scoreType"),
             "Players": players,
             "SubMode": difficulty.lower(),
-            "TeamScores": lbData.get("TeamScores"),   
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
-            "Page": 1, 
             "Message": None,
             "URL": lbData.get("LeaderboardURL"),
             "Layout": [
@@ -87,15 +84,14 @@ class Leaderboard(commands.Cog):
     async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
 
         await ctx.response.defer()
-        lbData = leaderboardProfile(lbType="ct", page=1, difficulty=option.lower()) 
+        lbData = leaderboardProfile(lbType="CT", page=1, difficulty=option.lower()) 
 
         components = {
-            "Mode": "ct",
+            "Mode": "CT",
             "TotalScores": lbData.get("TotalScores"),
             "SubMode": option.lower(),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
-            "Page": 1,
             "Message": None,
             "URL": lbData.get("LeaderboardURL"),
             "Layout": [

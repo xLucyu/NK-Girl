@@ -7,31 +7,29 @@ def getTotalScoreKey(mainData: Body, difficulty: str) -> int:
 
     match difficulty:
 
-        case "Team":
+        case "team":
             return mainData.totalScores_team
         
-        case "Player":
+        case "player":
             return mainData.totalScores_player
         
         case _:
             return mainData.totalScores
         
-    return 0
-
 
 def leaderboardProfile(lbType, page, difficulty="", players=None):
 
     leaderboardUrls = {
-        "race": {
+        "Race": {
             "base": "https://data.ninjakiwi.com/btd6/races",
             "extension": "leaderboard",
             "TotalScores": "totalScores"
         },
-        "boss": {
+        "Boss": {
             "base": "https://data.ninjakiwi.com/btd6/bosses", 
             "TotalScores": f"totalScores_{difficulty}"
         },
-        "ct": {
+        "CT": {
             "base": "https://data.ninjakiwi.com/btd6/ct",
             "extension": f"leaderboard_{difficulty}",
             "TotalScores": f"totalScores_{difficulty}"
@@ -39,11 +37,14 @@ def leaderboardProfile(lbType, page, difficulty="", players=None):
     } 
 
     urls = leaderboardUrls.get(lbType, {})
-    data = BaseCommand.getCurrentEventData(urls, index=0)
+    data = BaseCommand.getCurrentEventData(urls, index=0) #index=0 doesnt matter in this case
     apiData = data.get("Data", {})
     mainData = BaseCommand.transformDataToDataClass(Body, apiData) 
-    metaData = data.get("MetaData")
+    metaData = data.get("MetaData", None)
     emojis = BaseCommand.getAllEmojis()
+
+    if lbType == "Boss":
+        metaData = f"https://storage.googleapis.com/btd6_boss_leaderboard/{mainData.id}/{difficulty}/{players}/leaderboard.json"
 
     leaderboard = FormatLeaderboards(
         url = metaData,
@@ -53,10 +54,14 @@ def leaderboardProfile(lbType, page, difficulty="", players=None):
         emojis = emojis,
         totalScores = getTotalScoreKey(mainData, difficulty)
     )
-
+    
     playerData, totalScores = leaderboard.handleFormatting()
     title = leaderboard.formatEventInfo(mainData, lbType, difficulty)
     embed = discord.Embed(title=f"{title}, page {page}", description = playerData, color = discord.Color.green())
     embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {leaderboard.timeLeftForLeaderboard(mainData.end)}")
 
-    return embed
+    return {
+        "Embed": embed,
+        "LeaderboardURL": metaData,
+        "TotalScores": totalScores
+    }

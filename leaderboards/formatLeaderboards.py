@@ -36,7 +36,7 @@ class FormatLeaderboards(BaseLeaderboard):
 
         entriesPerPage = 50 if self.lbType == "Race" else 25 
         maxNameLength = max(len(player.displayName.replace("(disbanded)", "").strip()) for player in leaderboardData.body)
-        mode = MEDALS[f"{self.lbType}{self.difficulty}"] if self.lbType != "race" else MEDALS[self.lbType]
+        mode = MEDALS[f"{self.lbType}{self.difficulty}"] if self.lbType != "Race" else MEDALS[self.lbType]
 
         lbPlayerData = ""
 
@@ -78,7 +78,7 @@ class FormatLeaderboards(BaseLeaderboard):
 
             score = self._getBossLbScoringType(leaderboardData.scoringType, team)
 
-            lbPlayerData += f"{medal} {team.position:02} {bossTiersMedal} {team.scoreParts.bossTier} {members} ${score:<42}"
+            lbPlayerData += f"{medal} `{team.position:02}` {bossTiersMedal} `{team.scoreParts.bossTier}` `{members}` `{score:<42}`\n"
 
         return lbPlayerData, totalScores
 
@@ -88,10 +88,10 @@ class FormatLeaderboards(BaseLeaderboard):
         match scoringType:
 
             case "LeastCash":
-                score = f"{team.scoreParts.score:,} {self.convertMsToTime(team.scoreParts.secondScore)}"
+                score = f"${team.scoreParts.score:,} ({self.convertMsToTime(team.scoreParts.secondScore)})"
 
             case "LeastTiers":
-                score = f"{team.scoreParts.score}T {self.convertMsToTime(team.scoreParts.secondScore)}"
+                score = f"{team.scoreParts.score}T ({self.convertMsToTime(team.scoreParts.secondScore)})"
 
             case _:
                 score = self.convertMsToTime(team.scoreParts.score)

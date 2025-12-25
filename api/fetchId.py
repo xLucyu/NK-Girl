@@ -34,7 +34,7 @@ def getID(urls: dict, index: int) -> dict | None:
      
     ids = data.get("body", None)
     selectedID = ids[index] 
-    leaderboardApiKey = urls.get("totalscores", None)  
+    leaderboardApiKey = urls.get("TotalScores", None) 
 
     if leaderboardApiKey: # will check if leaderboard has a key for total players 
         selectedID = getCurrentActiveLeaderboard(ids, leaderboardApiKey)

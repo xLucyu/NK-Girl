@@ -24,7 +24,7 @@ class Boss(commands.Cog):
 
         await ctx.response.defer()
 
-        index = None
+        index = 0
         
         eventManager: EventManager = self.bot.get_cog("EventManager")
         cachedEvent = eventManager.getCachedEvent("Boss")

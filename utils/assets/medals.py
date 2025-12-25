@@ -1,5 +1,5 @@
 MEDALS = {
-    "race": {
+    "Race": {
         (1, 1): "RaceFirst",
         (2, 2): "RaceSecond",
         (3, 3): "RaceThird",
@@ -35,7 +35,7 @@ MEDALS = {
         (0.50, 0.75): "BossET75Perc",
         (0.75, 1.0): "Participant"
     },
-    "ctplayer": {
+    "CTplayer": {
         (1, 25): "CTPT25",
         (26, 100): "CTPT100",
         (0.00, 0.01): "CTPT1Perc",
@@ -45,7 +45,7 @@ MEDALS = {
         (0.50, 0.75): "CTPT75Perc",
         (0.75, 1.0): "Participant"
     },
-    "ctteam": {
+    "CTteam": {
         (1, 1): "CTTFirst",
         (2, 2): "CTTSecond",
         (3, 3): "CTTThird",

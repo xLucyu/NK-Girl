@@ -34,7 +34,7 @@ class BaseLeaderboard:
 
     @staticmethod  
     def formatEventInfo(mainData: Body, lbType: str, difficulty: str) -> str:
-    
+        
         match lbType:
             case "Race":
                 eventTimeStamp = mainData.start 

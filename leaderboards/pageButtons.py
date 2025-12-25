@@ -11,97 +11,74 @@ class ButtonView(discord.ui.View):
         self.totalScores = components.get("TotalScores", None)
         self.scoreType = components.get("ScoreType", None)
         self.lbType = components.get("Mode", None)
-        self.teamScores = components.get("TeamScores", None)
         self.submode = components.get("SubMode", None)
         self.playerCount = components.get("Players", None)
         self.userID = components.get("Author", None)
         self.function = components.get("Function", None)
-        self.page = components.get("Page", None)
+        self.page = 1
         self.layout = components.get("Layout", None)
         self.url = components.get("URL", None) 
   
         for button in self.layout:
+
             button = discord.ui.Button(
                 label = button[0],
                 custom_id = button[1],
                 style = getattr(discord.ButtonStyle, button[2]),
                 disabled = True if button[1] == "-1" else False
             )
+                        
             button.callback = self.callback
             self.add_item(button)
         
-    async def callback(self, interaction:discord.Interaction, defered=True): 
-        userID = interaction.user.id #type: ignore
+    async def callback(self, interaction:discord.Interaction, deferred=True): 
 
-        if userID != self.userID:
-            await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
+        if interaction.user.id != self.userID:
+            await interaction.response.send_message("You are not the original user.", ephemeral=True)
             return 
 
-        selectedButton = str(interaction.custom_id)
-        match selectedButton:
-            case "searchPage":
-                modal = self.generatePageModal()
-                await interaction.response.send_modal(modal)
-                return 
-            
-            case "searchPlayer": 
-                modal = self.generatePlayerModal()
-                await interaction.response.send_modal(modal)
-                return
-
-            case "1" | "-1":  
-                self.page += int(selectedButton)
-
-        if defered:
+        if deferred:
             await interaction.response.defer()
         
-        self.checkButtons()
-        await self.updateLeaderboard(interaction) 
+        selectedButton = str(interaction.custom_id)
 
-    async def updateLeaderboard(self, interaction: discord.Interaction):
+        match selectedButton:
 
-        lbData = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType) 
-        await interaction.edit_original_response(embed=lbData.get("Embed"), view=self)
-        self.message = await interaction.original_response()
+            case "searchPlayer":
+                pass   
+
+            case "searchPage":
+                pass 
+
+            case "1" | "-1":
+                self.page += int(selectedButton)
+
+        self.updateButtonState()
 
 
-    def checkButtons(self) -> None:
+    def updateButtonState(self) -> None:
+
         for button in self.children:
+            
             if not isinstance(button, discord.ui.Button):
-                return 
-
+                continue 
+            
             if button.custom_id == "-1":
-                button.disabled = self.page <= 1 
+                button.disabled = self.page <= 1
 
-            if button.custom_id == "1": 
-                if self.lbType == "race":
-                    button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
-                else:
-                    button.disabled = self.page >= 40 or (self.page * 25) >= self.totalScores
-                return 
-        
+            if button.custom_id == "1":
 
-    def generatePageModal(self): 
-        return PageModal(  
-            Title = "Search for a page on the leaderboard!",
-            Label = "Enter the page number",
-            Placeholder = "Please only enter a full number.",
-            View = self,  
-            Filter = "pageNumber"
-            ) 
+                pageLimit = 20 if self.lbType == "Race" else 40
+                pageSize = 50 if self.lbType == "Race" else 25 
 
-    def generatePlayerModal(self):
-        return PageModal(
-            Title = "Search for a player on the leaderboard!",
-            Label = "Enter a player name",
-            Placeholder = "Please enter a valid player name",
-            View = self,
-            Url = self.url,
-            TeamScores = self.teamScores,
-            Filter = "pageSearch" 
-        )
+                button.disabled = (
+                    self.page >= pageLimit 
+                    or (self.page * pageSize) >= self.totalScores
+                )
+
 
     async def on_timeout(self):
+
         try:
             if self.message:
                 await self.message.edit(view=None)

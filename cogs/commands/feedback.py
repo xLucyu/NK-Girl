@@ -60,6 +60,3 @@ class Feedback(commands.Cog):
         submissionChannel = self.bot.get_channel(int(SUBCID)) #type: ignore 
         modal = FeedbackModal(submissionChannel, user, avatar, self.database)
         await ctx.send_modal(modal)
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Feedback(bot))

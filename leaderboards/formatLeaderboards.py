@@ -61,7 +61,7 @@ class FormatLeaderboards(BaseLeaderboard):
         return player.score
 
 
-    def _formatBossLeaderboard(self): 
+    def _formatBossLeaderboard(self):
 
         data = BaseCommand.useApiCall(self.url)
         leaderboardData = BaseCommand.transformDataToDataClass(BossLB, data)

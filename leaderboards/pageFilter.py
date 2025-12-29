@@ -1,6 +1,7 @@
 import discord 
 from cogs.baseCommand import BaseCommand
 from utils.dataclasses.leaderboard import Leaderboard
+from utils.dataclasses.bossLB import BossLB
 
 from typing import TYPE_CHECKING 
 if TYPE_CHECKING:
@@ -34,10 +35,13 @@ class PageModal(discord.ui.Modal):
         match self.filter:
 
             case "pageNumber":
-                page = await self.getPage(interaction)
+                page = await self._getPageRaw(interaction)
 
             case "pagePlayer":
-                pass
+                page = await self._getPageByPlayer(interaction)
+
+            case _:
+                page = None
 
         if not page:
             return 
@@ -48,12 +52,10 @@ class PageModal(discord.ui.Modal):
         await self.buttonView.updateLeaderboard(interaction)
 
 
-    async def getPage(self, interaction: discord.Interaction) -> int | None:
- 
-        value = self.children[0].value
-        
+    async def _getPageRaw(self, interaction: discord.Interaction) -> int | None:
+  
         try:
-            page = int(value)
+            page = int(self.children[0].value)
 
         except ValueError:
             await interaction.response.send_message("Please enter a number", ephemeral = True)
@@ -61,11 +63,34 @@ class PageModal(discord.ui.Modal):
             
         maxPage = 20 if self.lbType == "Race" else 40
 
-        print(self.lbType, maxPage)
-
         if not 1 <= page <= maxPage:
             await interaction.response.send_message(f"Page must be between 1 and {maxPage}", ephemeral = True)
             return
 
         return page 
+        
+    
+    async def _getPageByPlayer(self, interaction: discord.Interaction) -> int | None:
 
+        value = str(self.children[0].value)
+        index = None 
+
+        if self.lbType == "Boss":
+ 
+            data = BaseCommand.useApiCall(self.url)
+            mainData = BaseCommand.transformDataToDataClass(BossLB, data)
+
+            index = next(
+                (team.position // 25 + 1 for team in mainData.teams
+                for member in team.members 
+                if member.displayName.lower() == value.lower()
+                ), None 
+            )
+            
+            if not index:
+                await interaction.response.send_message("Player wasn't found", ephemeral = True)
+
+            return index
+
+        else:
+            pass 

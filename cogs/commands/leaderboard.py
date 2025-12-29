@@ -58,7 +58,7 @@ class Leaderboard(commands.Cog):
         lbData = leaderboardProfile(lbType="Boss", page=1, difficulty=difficulty.lower(), players=players)
 
         components = {
-            "Mode": "boss",
+            "Mode": "Boss",
             "TotalScores": lbData.get("TotalScores"),
             "ScoreType": lbData.get("scoreType"),
             "Players": players,

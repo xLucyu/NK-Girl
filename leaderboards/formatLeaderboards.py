@@ -30,8 +30,8 @@ class FormatLeaderboards(BaseLeaderboard):
         return self._formatRegularLeaderboard()
 
     def _formatRegularLeaderboard(self):
-     
-        data = BaseCommand.useApiCall(self.url)
+        
+        data = BaseCommand.useApiCall(f"{self.url}?page={self.page}")
         leaderboardData = BaseCommand.transformDataToDataClass(Leaderboard, data)
 
         entriesPerPage = 50 if self.lbType == "Race" else 25 

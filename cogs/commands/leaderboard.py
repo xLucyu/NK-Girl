@@ -62,7 +62,7 @@ class Leaderboard(commands.Cog):
             "TotalScores": lbData.get("TotalScores"),
             "ScoreType": lbData.get("scoreType"),
             "Players": players,
-            "SubMode": difficulty.lower(),
+            "Difficulty": difficulty.lower(),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Message": None,
@@ -89,7 +89,7 @@ class Leaderboard(commands.Cog):
         components = {
             "Mode": "CT",
             "TotalScores": lbData.get("TotalScores"),
-            "SubMode": option.lower(),
+            "Difficulty": option.lower(),
             "Author": ctx.author.id,
             "Function": leaderboardProfile,
             "Message": None,

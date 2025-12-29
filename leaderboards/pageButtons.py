@@ -11,7 +11,7 @@ class ButtonView(discord.ui.View):
         self.totalScores = components.get("TotalScores", None)
         self.scoreType = components.get("ScoreType", None)
         self.lbType = components.get("Mode", None)
-        self.submode = components.get("SubMode", None)
+        self.difficulty = components.get("Difficulty", None)
         self.playerCount = components.get("Players", None)
         self.userID = components.get("Author", None)
         self.function = components.get("Function", None)
@@ -25,42 +25,55 @@ class ButtonView(discord.ui.View):
                 label = button[0],
                 custom_id = button[1],
                 style = getattr(discord.ButtonStyle, button[2]),
-                disabled = True if button[1] == "-1" else False
+                disabled = (button[1] == "-1")
             )
                         
             button.callback = self.callback
             self.add_item(button)
         
+
     async def callback(self, interaction:discord.Interaction, deferred=True): 
 
         if interaction.user.id != self.userID:
             await interaction.response.send_message("You are not the original user.", ephemeral=True)
             return 
-
-        if deferred:
-            await interaction.response.defer()
-        
+ 
         selectedButton = str(interaction.custom_id)
 
         match selectedButton:
 
             case "searchPlayer":
-                pass   
-
+                modal = self._buildPlayerModal()
+                await interaction.response.send_modal(modal=modal)
+                return 
+                
             case "searchPage":
-                pass 
+                modal = self._buildPageModal()
+                await interaction.response.send_modal(modal=modal)
+                return 
 
             case "1" | "-1":
                 self.page += int(selectedButton)
+        
+        if deferred:
+            await interaction.response.defer()
 
         self.updateButtonState()
+        await self.updateLeaderboard(interaction)
+
+
+    async def updateLeaderboard(self, interaction: discord.Interaction) -> None:
+
+        lbData = self.function(self.lbType, self.page, self.difficulty, self.playerCount)
+        await interaction.edit_original_response(embed=lbData.get("Embed"), view=self)
+        self.message = await interaction.original_response()  
 
 
     def updateButtonState(self) -> None:
 
         for button in self.children:
             
-            if not isinstance(button, discord.ui.Button):
+            if not isinstance(button, discord.ui.Button) or button.custom_id in ["searchPage", "searchPlayer"]:
                 continue 
             
             if button.custom_id == "-1":
@@ -72,9 +85,33 @@ class ButtonView(discord.ui.View):
                 pageSize = 50 if self.lbType == "Race" else 25 
 
                 button.disabled = (
-                    self.page >= pageLimit 
+                self.page >= pageLimit 
                     or (self.page * pageSize) >= self.totalScores
                 )
+    
+    def _buildPageModal(self) -> discord.ui.Modal:
+
+        return PageModal(
+            Title = "Search for a page",
+            Label = "Enter a page number",
+            PlaceHolder = "Only use whole numbers",
+            View = self,
+            LbType = self.lbType,
+            Filter = "pageNumber"
+        )
+
+
+    def _buildPlayerModal(self) -> discord.ui.Modal:
+
+        return PageModal(
+            Title = "Search for a player",
+            Label = "Enter a player name",
+            Placeholder = "Enter a valid player name",
+            View = self,
+            Url = self.url, 
+            LbType = self.lbType,
+            Filter = "pagePlayer" 
+        )
 
 
     async def on_timeout(self):

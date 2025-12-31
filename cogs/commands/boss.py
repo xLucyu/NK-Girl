@@ -24,7 +24,7 @@ class Boss(commands.Cog):
 
         await ctx.response.defer()
 
-        index = 0
+        index = None
         
         eventManager: EventManager = self.bot.get_cog("EventManager")
         cachedEvent = eventManager.getCachedEvent("Boss")
@@ -34,7 +34,7 @@ class Boss(commands.Cog):
 
         if cachedEvent:
             index = cachedEvent.get("Index")
-             
+ 
         eventDetails = bossProfile(index, difficulty=difficulty.lower())  
 
         embed = eventDetails["Embed"]

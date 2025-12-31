@@ -38,9 +38,12 @@ class Event(commands.Cog):
             return 
 
         guildID = str(ctx.guild.id)
-        
-        currentGuildChannel = eventManager.getRegisteredChannels(event, guildID)
-        channelObject = self.bot.get_channel(int(currentGuildChannel[0]))
+        channelID = eventManager.getRegisteredChannels(event, guildID)
+
+        if not channelID:
+            return
+
+        channelObject = self.bot.get_channel(int(channelID))
 
         if not channelObject:
             await ctx.respond(f"No Channel has been set for {event} in this server.", ephemeral = True)
@@ -88,22 +91,17 @@ class Event(commands.Cog):
         if not channelID:
             return
 
-        channelObject = await self.bot.fetch_channel(int(channelID[0]))
+        channelObject = await self.bot.fetch_channel(int(channelID))
 
         try:
-            
             message: discord.Message = await channelObject.fetch_message(int(message_id))
             eventEmbeds = eventManager.getEventEmbeds(guildID, event, isManual=True)
+
             if not eventEmbeds:
                 return 
 
-            await message.edit(embeds = eventEmbeds, files=[discord.File("CustomRounds.txt")])
+            await message.edit(embeds = eventEmbeds)
             await ctx.respond(f"Succesfully updated {event} for this guild")
 
         except Exception as e:
-
             raise ValueError(e)
-
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Event(bot))

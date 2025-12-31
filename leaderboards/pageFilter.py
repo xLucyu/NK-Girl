@@ -32,6 +32,8 @@ class PageModal(discord.ui.Modal):
 
     async def callback(self, interaction:discord.Interaction): 
         
+        await interaction.response.defer()
+
         match self.filter:
 
             case "pageNumber":
@@ -46,7 +48,6 @@ class PageModal(discord.ui.Modal):
         if not page:
             return 
         
-        await interaction.response.defer()
         self.buttonView.page = page
         self.buttonView.updateButtonState()
         await self.buttonView.updateLeaderboard(interaction)
@@ -58,13 +59,13 @@ class PageModal(discord.ui.Modal):
             page = int(self.children[0].value)
 
         except ValueError:
-            await interaction.response.send_message("Please enter a number", ephemeral = True)
+            await interaction.followup.send("Please enter a number", ephemeral = True)
             return 
             
         maxPage = 20 if self.lbType == "Race" else 40
 
         if not 1 <= page <= maxPage:
-            await interaction.response.send_message(f"Page must be between 1 and {maxPage}", ephemeral = True)
+            await interaction.followup.send(f"Page must be between 1 and {maxPage}", ephemeral = True)
             return
 
         return page 
@@ -73,24 +74,51 @@ class PageModal(discord.ui.Modal):
     async def _getPageByPlayer(self, interaction: discord.Interaction) -> int | None:
 
         value = str(self.children[0].value)
-        index = None 
+        position = None
+
+        folMSG = await interaction.followup.send(f"Searching for player {value}...", ephemeral = True)
 
         if self.lbType == "Boss":
  
             data = BaseCommand.useApiCall(self.url)
             mainData = BaseCommand.transformDataToDataClass(BossLB, data)
 
-            index = next(
-                (team.position // 25 + 1 for team in mainData.teams
+            position = next(
+                (team.position for team in mainData.teams
                 for member in team.members 
                 if member.displayName.lower() == value.lower()
                 ), None 
             )
             
-            if not index:
-                await interaction.response.send_message("Player wasn't found", ephemeral = True)
+            if not position:
+                await folMSG.edit(f"Player {value} wasn't found.")
+                return 
 
-            return index
+            await folMSG.edit(f"{value} found at position {position}.")
+            return position // 25 + 1
+
 
         else:
-            pass 
+
+            initialPage = 1
+            position = 1
+
+            while True:
+
+                data = BaseCommand.useApiCall(f"{self.url}?page={initialPage}")
+                mainData = BaseCommand.transformDataToDataClass(Leaderboard, data)
+
+                if not mainData.success or initialPage > 15:
+
+                    await folMSG.edit(f"Player {value} wasn't found.")
+                    return
+
+                for player in mainData.body:
+                    if player.displayName.lower() == value.lower():
+
+                        await folMSG.edit(f"{value} found at position {position}.")
+                        return initialPage
+
+                    position += 1
+                        
+                initialPage += 1  

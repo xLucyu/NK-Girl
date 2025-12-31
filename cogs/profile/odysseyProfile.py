@@ -23,12 +23,10 @@ def getReward(body: OdysseyBody) -> str:
         return f"{formattedTowerName} ({tier})"
     
     elif rewardType == "CollectionEvent":
-
         return f"{rewardValue} Totems"
     
     else:
-
-        return rewardValue
+        return BaseCommand.splitUppercaseLetters(rewardValue)
 
 
 def validateTitle(isExtreme: bool, difficulty: str) -> str:
@@ -87,7 +85,7 @@ def odysseyProfile(index: int = None, difficulty: str = ""):
 
     eventData = {
         mainData.name: [title, False],
-        "Reward": [f"{emotes.get("Reward", None)} {reward}", False],
+        "Reward": [f"<:Reward:{emotes.get("Reward", None)}> {reward}", False],
         "Heroes": ["\n".join(towers.get("Heroes", None)), False],
         "Primary": ["\n".join(towers.get("Primary", None)), True],
         "Military": ["\n".join(towers.get("Military", None)), True],

@@ -64,8 +64,6 @@ class ButtonView(discord.ui.View):
 
     async def updateLeaderboard(self, interaction: discord.Interaction) -> None:
 
-        print(self.lbType, self.page, self.difficulty, self.playerCount)
-
         lbData = self.function(self.lbType, self.page, self.difficulty, self.playerCount)
         await interaction.edit_original_response(embed=lbData.get("Embed"), view=self)
         self.message = await interaction.original_response()  

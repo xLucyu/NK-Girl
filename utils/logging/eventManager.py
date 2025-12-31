@@ -43,11 +43,13 @@ class EventManager(commands.Cog):
         
         return self.cachedEventIndex.get(event)
 
+
     def _saveEventCacheIndex(self, index: int, eventName: str) -> None:
 
         self.cachedEventIndex[eventName] = {
             "Index": index
-        } 
+        }
+
 
     async def postLoad(self):
 
@@ -56,20 +58,23 @@ class EventManager(commands.Cog):
             self.scheduler.start()
 
     
-    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | None:
+    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | str | None:
          
         channels = self.events.fetchAllRegisteredChannels(event)
-
+        
         if not channels:
             return
-
+        
         if guildID:
 
-            return [
-                channel for channel in channels
-                if str(self.bot.get_channel(int(channel)).guild.id) == str(guildID)
-            ]
+            for channel in channels:
+                channelObject = self.bot.get_channel(int(channel))
 
+                if not channelObject:
+                    continue 
+                
+                return str(channelObject.id)
+                
         return channels
     
 
@@ -78,11 +83,9 @@ class EventManager(commands.Cog):
         nextEvent = BaseCommand.getCurrentEvent(mainData)
 
         if not nextEvent:
-            return None
+            return None 
 
-        event = nextEvent
-
-        if isManual or event.id not in seenEvents:
+        if isManual or nextEvent[1].id not in seenEvents:
             return nextEvent
 
         return None
@@ -114,13 +117,12 @@ class EventManager(commands.Cog):
             if difficulty:
                 difficulty = difficulty.lower()
 
-            embed, _ = eventFunction(index, difficulty)
-            eventEmbeds.append(embed)
+            eventData = eventFunction(index, difficulty)
+            eventEmbeds.append(eventData.get("Embed"))
 
         if eventMetaData.id not in seenEvents:
             self.events.appendEvent(eventMetaData.id, eventName, guildID)
-       
-
+        
         self._saveEventCacheIndex(index, eventName)
  
         return eventEmbeds

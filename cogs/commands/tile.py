@@ -44,7 +44,7 @@ class Tile(commands.Cog):
         )
     @discord.option(
         "event",
-        description = "CT Week, default will be the latest week.", 
+        description = "CT Week, default will be the current week.", 
         required = False
         )
     async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:

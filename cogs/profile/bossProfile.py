@@ -3,15 +3,13 @@ from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
 
-def bossProfile(index: int = None, difficulty: str = ""): 
+def bossProfile(index: int, difficulty: str = ""): 
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
-    }  
-
-    index = BaseCommand.getCurrentIndexForEvent(index, urls["base"])
-
+    } 
+ 
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
     mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
@@ -34,8 +32,8 @@ def bossProfile(index: int = None, difficulty: str = ""):
         "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
     
-    lbTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType"
-    lbScoringType = bossLeaderboardType.get(getattr(mainData, lbTypeKey))
+    lbTypeKey = mainData.eliteScoringType if difficulty == "elite" else mainData.normalScoringType
+    lbScoringType = bossLeaderboardType.get(lbTypeKey, None)
     modifiers = BaseCommand.getActiveModifiers(body, emotes) 
     towers = BaseCommand.getActiveTowers(body._towers, emotes) 
 

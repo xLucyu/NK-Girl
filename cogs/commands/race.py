@@ -17,15 +17,10 @@ class Race(commands.Cog):
 
         await ctx.response.defer()
 
-        index = None 
-
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEvent = eventManager.getCachedEvent("Race")
+        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Race")
 
-        if cachedEvent:
-            index = cachedEvent.get("Index")
-
-        eventDetails = raceProfile(index, difficulty=None) 
+        eventDetails = raceProfile(cachedEventIndex) 
 
         embed = eventDetails["Embed"]
         names = eventDetails["Names"]

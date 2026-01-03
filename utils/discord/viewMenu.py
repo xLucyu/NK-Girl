@@ -16,11 +16,13 @@ class SelectView(discord.ui.View):
         self.emoji = data.get("Emoji", None)
         self.buttonLayout = data.get("Button", None)
         self.function = data.get("Function", None)
-        self.boss = data.get("Boss", None)
         self.tiles = data.get("Tiles", None)
         self.ctEventIndex = data.get("CTEventIndex", None)
         self.index = data.get("Index", 0) 
         self.difficulty = data.get("Difficulty", None) 
+        self.boss = data.get("Boss", None)
+        self.hpMultiplier = data.get("HpMultiplier", 0.0)
+        self.playerCount = data.get("PlayerCount", 0)
         self._buildView()
 
     def _buildView(self):

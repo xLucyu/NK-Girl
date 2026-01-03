@@ -58,7 +58,7 @@ def leaderboardProfile(lbType, page, difficulty="", players=None):
     playerData, totalScores = leaderboard.handleFormatting()
     title = leaderboard.formatEventInfo(mainData, lbType, difficulty)
     embed = discord.Embed(title=f"{title}, page {page}", description = playerData, color = discord.Color.green())
-    embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {leaderboard.timeLeftForLeaderboard(mainData.end)}")
+    embed.set_footer(text=f"Total Entries: {totalScores}\nTime Left: {leaderboard.timeLeftForLeaderboard(mainData.end)} \n*It might take up to 30 minutes for the leaderboard to update.")
 
     return {
         "Embed": embed,

@@ -1,14 +1,19 @@
 import discord
 
+from typing import TYPE_CHECKING 
+if TYPE_CHECKING:
+    from utils.discord.viewMenu import SelectView
+
 class ButtonMenu(discord.ui.Button):
 
     def __init__(self, **components): 
 
-        self.parentView = components.get("View", None)
+        self.parentView: SelectView = components.get("View", None)
         self.boss = components.get("Boss", None)
         self.userID = components.get("UserID", None)
         self.function = components.get("Function", None)
-        self.layout = components.get("Layout", None) 
+        self.layout = components.get("Layout", None)
+        self.firstUse = True
          
         super().__init__(
             label=(self.layout[0]),
@@ -27,8 +32,12 @@ class ButtonMenu(discord.ui.Button):
         difficulty = self.custom_id 
         args = [self.parentView.index, difficulty.lower()]
 
-        if self.boss:
+        if self.parentView.playerCount: # mainly for boss details
+
+            args.append(self.parentView.playerCount - (1 if self.firstUse else 0))
             args.append(self.boss)
+            args.append(self.parentView.hpMultiplier)
+            self.firstUse = False
 
         eventDetails = self.function(*args)
 

@@ -38,22 +38,27 @@ class BossDetails(commands.Cog):
         ],
         required = False 
     )
-    async def bossdetails(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", players: int = 1, boss: str = "") -> None:
+    @discord.option(
+        "multiplier",
+        description = "Choose a hp multiplier, this is optional. Will show on the event boss too, if you select it.",
+        required = False
+    )
+    async def bossdetails(self,
+                          ctx: discord.ApplicationContext, 
+                          difficulty: str = "Normal", 
+                          players: int = 1, 
+                          boss: str = "", 
+                          multiplier: float = 0.0) -> None:
 
         await ctx.response.defer()
-
-        index = None
-        
+ 
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEvent = eventManager.getCachedEvent("Boss")
+        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Boss")
         
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        if cachedEvent:
-            index = cachedEvent.get("Index")
-
-        eventDetails = bossdetailsProfile(index, players-1, difficulty.lower(), boss)
+        eventDetails = bossdetailsProfile(cachedEventIndex, difficulty.lower(), players-1, boss, multiplier)
 
         embed = eventDetails["Embed"]
         modes = eventDetails["Modes"]
@@ -67,10 +72,12 @@ class BossDetails(commands.Cog):
             "Difficulty": difficulty.lower(),
             "Message": None,
             "Index": index,
+            "PlayerCount": players,
+            "HpMultiplier": multiplier,
             "Emoji": "<:Coop:1341515962410598521>",
             "Boss": boss, 
             "Button": [
-                    ["Normal", "STANDARD", "success"], #having different custom_ids for the buttons makes a difference
+                    ["Normal", "STANDARD", "success"], 
                     ["Elite", "ELITE", "danger"]
                 ]
             }

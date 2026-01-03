@@ -17,10 +17,10 @@ class TimeGoal(TimeBase):
         if self.startRound >= self.endRound:
             raise ValueError("InvalidStartRound")
 
-        if not 1 <= self.startRound <= 139:
+        if not 0 <= self.startRound <= 139:
             raise ValueError("StartRoundOutOfBounce")
 
-        if not 2 <= self.endRound <= 140:
+        if not 1 <= self.endRound <= 140:
             raise ValueError("EndRoundOutOfBounce")
 
         if longestRoundInSeconds > timeInSeconds:
@@ -28,20 +28,20 @@ class TimeGoal(TimeBase):
     
     def formatTime(self):
 
-        timeInSeconds = TimeBase.parseTime(self.goalTime)
-        raceRounds = TimeBase.getRaceRounds(self.isAbr)
-        emotes = TimeBase.getEmotes()
+        timeInSeconds = self.parseTime(self.goalTime)
+        raceRounds = self.getRaceRounds(self.isAbr)
+        emotes = self.getEmotes()
  
         roundIcon = emotes.get("Round", None)
 
         longestRoundInSeconds = max(raceRounds[self.startRound:self.endRound + 1])
         longestRoundIndex = raceRounds.index(longestRoundInSeconds)
 
-        sendingTime = TimeBase.calculateSendingTime(longestRoundIndex, self.startRound, longestRoundInSeconds)        
+        sendingTime = self.calculateSendingTime(longestRoundIndex, self.startRound, longestRoundInSeconds)        
         goalTime = timeInSeconds - sendingTime
  
-        formattedTime = TimeBase.msToTimeString(goalTime) 
-        formattedInputTime = TimeBase.msToTimeString(timeInSeconds)
+        formattedTime = self.msToTimeString(goalTime) 
+        formattedInputTime = self.msToTimeString(timeInSeconds)
 
         eventData = {
             "Rounds": [f"<:Round:{roundIcon}> {self.startRound} -> {self.endRound}", False],

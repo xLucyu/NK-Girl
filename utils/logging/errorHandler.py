@@ -69,6 +69,3 @@ class ErrorHandler(commands.Cog):
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url) 
         await ctx.respond(embed=embed)
         return
-
-def setup(bot: discord.Bot):
-    bot.add_cog(ErrorHandler(bot))

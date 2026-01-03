@@ -15,7 +15,7 @@ class TimeBase:
     @staticmethod 
     def calculateSendingTime(longestRound: int, startRound: int, longestRoundInSeconds: float, extraTime: float = 0) -> float:
         
-        offRound = 0 if startRound == 1 else 1
+        offRound = 1 if startRound == 0 else 0
         
         return (
             (longestRound - startRound - offRound) * 0.2 

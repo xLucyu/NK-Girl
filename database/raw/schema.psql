@@ -3,9 +3,9 @@ create table if not exists GUILDS (
   RaceChannelID TEXT,
   BossChannelID TEXT,
   OdysseyChannelID TEXT,
-  Raceids JSONB not null default '[]',
-  Bossids JSONB not null default '[]',
-  Odysseyids JSONB not null default '[]'
+  Raceids TEXT,
+  Bossids TEXT,
+  Odysseyids TEXT
 );
 
 

@@ -23,15 +23,10 @@ class Odyssey(commands.Cog):
 
         await ctx.response.defer()
 
-        index = None
-
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEvent = eventManager.getCachedEvent("Boss")
+        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Odyssey")
 
-        if cachedEvent:
-            index = cachedEvent.get("Index")
-
-        eventDetails = odysseyProfile(index, difficulty=difficulty.lower()) 
+        eventDetails = odysseyProfile(cachedEventIndex, difficulty=difficulty.lower()) 
 
         embed = eventDetails["Embed"]
         names = eventDetails["Names"]

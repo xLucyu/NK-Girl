@@ -37,25 +37,37 @@ class EventManager(commands.Cog):
         self.scheduler = AsyncIOScheduler()
         self.scheduler.add_job(self.checkForNewEvent, "cron", minute=0)
 
-        self.cachedEventIndex: dict[str, int] = {}
- 
-    def getCachedEvent(self, event: str) -> dict[str, int]:
-        
-        return self.cachedEventIndex.get(event)
-
-
-    def _saveEventCacheIndex(self, index: int, eventName: str) -> None:
-
-        self.cachedEventIndex[eventName] = {
-            "Index": index
+        self.currentEventCache: dict[str, int] = {
+            "Race": 0,
+            "Boss": 0,
+            "Odyssey": 0
         }
 
-
     async def postLoad(self):
+        
+        await self.bot.wait_until_ready() 
+        await self.checkForNewEvent() # run it once initially to get the cache informed
 
-        #cogs need to be loaded first
+        #cogs need to be loaded first 
         if not self.scheduler.running:
             self.scheduler.start()
+
+    
+    def getCurrentEventCacheIndex(self, eventName: str) -> int:
+
+        return self.currentEventCache[eventName]
+
+        
+    async def _saveEventCacheIndex(self, eventName: str) -> None:
+
+        params = eventstoCheck[eventName]
+        eventURL = params["url"]
+
+        eventData = BaseCommand.useApiCall(eventURL)
+        mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
+        index, _ = BaseCommand.getCurrentEvent(mainData)
+
+        self.currentEventCache[eventName] = index
 
     
     def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | str | None:
@@ -122,17 +134,20 @@ class EventManager(commands.Cog):
 
         if eventMetaData.id not in seenEvents:
             self.events.appendEvent(eventMetaData.id, eventName, guildID)
-        
-        self._saveEventCacheIndex(index, eventName)
- 
+         
         return eventEmbeds
 
         
     async def checkForNewEvent(self):
 
-        for eventName in eventstoCheck: 
+        for eventName in eventstoCheck:
+
+            await self._saveEventCacheIndex(eventName)
 
             registeredChannels = self.getRegisteredChannels(eventName)
+
+            if not registeredChannels:
+                continue
 
             for channel in registeredChannels:
 
@@ -153,6 +168,7 @@ class EventManager(commands.Cog):
                     if channelObject.type == discord.ChannelType.news:
                         await message.publish()
 
+                except Exception:
+                    continue
 
-                except Exception as error:
-                    print(f"{error} in Server: {guildID}")
+

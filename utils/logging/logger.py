@@ -15,5 +15,4 @@ class CommandLogger(commands.Cog):
         commandName = str(ctx.command.name) 
         
         if commandName not in ["usage", "sync"]:
-
             self.database.increaseCommandUsage(commandName)  

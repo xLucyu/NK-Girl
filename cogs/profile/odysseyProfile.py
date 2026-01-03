@@ -55,21 +55,18 @@ def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
         eventData[title] = value
              
 
-def odysseyProfile(index: int = None, difficulty: str = ""):
+def odysseyProfile(index: int, difficulty: str = ""):
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/odyssey",
         "extension": f"metadata_{difficulty}"
     }
     
-    index = BaseCommand.getCurrentIndexForEvent(index, urls["base"])
-
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
     mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
     metaData = BaseCommand.transformDataToDataClass(Odyssey, eventMetaData)
     emotes = BaseCommand.getAllEmojis()
-    eventURL = EVENTURLS["Odyssey"][difficulty]
 
     body = metaData.body   
 
@@ -99,6 +96,7 @@ def odysseyProfile(index: int = None, difficulty: str = ""):
     getAllMaps(mapsData, eventData, emotes) #add the maps data -> each difficulty has a set amount of maps
 
     eventNumber = BaseCommand.getCurrentEventNumber(mainData.start, "odyssey")
+    eventURL = EVENTURLS["Odyssey"][difficulty]
     embed = BaseCommand.createEmbed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
     names = data.get("Names", None)
 

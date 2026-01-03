@@ -31,7 +31,7 @@ def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, player
         False]
 
 
-def bossdetailsProfile(index: int, players: int, difficulty: str, boss: str = ""):
+def bossdetailsProfile(index: int, difficulty: str, players, boss: str = "", multiplier: float = 0.0):
     
     modes = [1, 2, 3, 4]
     players = modes[players]
@@ -43,8 +43,6 @@ def bossdetailsProfile(index: int, players: int, difficulty: str, boss: str = ""
     
     if not boss:
         
-        index = BaseCommand.getCurrentIndexForEvent(None, urls["base"])
-
         data = BaseCommand.getCurrentEventData(urls, index)
         eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
         mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
@@ -57,7 +55,10 @@ def bossdetailsProfile(index: int, players: int, difficulty: str, boss: str = ""
     else:
         bossName = boss 
         bossHpMultiplier = 1
-        eventNumber = boss 
+        eventNumber = boss
+
+    if multiplier > 0:
+        bossHpMultiplier = multiplier
 
     emotes = BaseCommand.getAllEmojis()
 

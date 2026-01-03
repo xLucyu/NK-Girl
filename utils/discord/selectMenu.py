@@ -1,9 +1,14 @@
 import discord
 
+from typing import TYPE_CHECKING 
+if TYPE_CHECKING:
+    from utils.discord.viewMenu import SelectView
+
 class SelectMenu(discord.ui.Select):
+
     def __init__(self, **components): 
 
-        self.parentView = components.get("View", None)  
+        self.parentView: SelectView = components.get("View", None)  
         self.eventName = components.get("Event", None) 
         self.difficulty = components.get("Difficulty", None) 
         self.userID = components.get("UserID", None) 
@@ -40,20 +45,26 @@ class SelectMenu(discord.ui.Select):
         await interaction.response.defer()
             
         selectedIndex = int(self.values[0])
-
         args = [selectedIndex, self.parentView.difficulty]
 
-        if self.boss:
+        if self.parentView.playerCount:
+
+            args[0] = self.parentView.index  
+            args.append(selectedIndex)
             args.append(self.boss)
+            args.append(self.parentView.hpMultiplier)
+            self.parentView.playerCount = selectedIndex
 
         if self.tiles:
+
             args[0] = self.ctEventIndex
             args[1] = self.tiles[selectedIndex][0]
             
         eventDetails = self.function(*args)
-
         embed = eventDetails["Embed"]
+        
+        if not self.parentView.playerCount:
+            self.parentView.index = selectedIndex
 
-        self.parentView.index = selectedIndex 
         await interaction.edit_original_response(embed=embed)
         self.parentView.message = await interaction.original_response()   

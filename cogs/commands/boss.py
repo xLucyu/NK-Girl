@@ -23,19 +23,14 @@ class Boss(commands.Cog):
     async def boss(self, ctx: discord.ApplicationContext, difficulty: str = "Normal") -> None:
 
         await ctx.response.defer()
-
-        index = None
-        
+ 
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEvent = eventManager.getCachedEvent("Boss")
-        
+        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Boss")
+ 
         if difficulty == "Normal":
             difficulty = "Standard"
-
-        if cachedEvent:
-            index = cachedEvent.get("Index")
  
-        eventDetails = bossProfile(index, difficulty=difficulty.lower())  
+        eventDetails = bossProfile(index=cachedEventIndex, difficulty=difficulty.lower())  
 
         embed = eventDetails["Embed"]
         names = eventDetails["Names"]

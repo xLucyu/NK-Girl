@@ -4,16 +4,12 @@ from utils.dataclasses.main import Body
 from utils.dataclasses.metaData import MetaData
 
 
-def raceProfile(index = None, difficulty=None):
+def raceProfile(index: int = None, difficulty: str = None):
      
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/races",
         "extension": "metadata"
-    }
-   
-    eventURL = EVENTURLS["Race"]["race"]
-
-    index = BaseCommand.getCurrentIndexForEvent(index, urls["base"])
+    } 
 
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
@@ -49,6 +45,7 @@ def raceProfile(index = None, difficulty=None):
         }  
         
     eventNumber = BaseCommand.getCurrentEventNumber(mainData.start, "race") 
+    eventURL = EVENTURLS["Race"]["race"]
     embed = BaseCommand.createEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])
     names = data.get("Names") 

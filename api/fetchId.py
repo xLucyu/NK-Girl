@@ -1,49 +1,84 @@
-import requests
+import aiohttp
+from utils.dataclasses.main import NkData, Body
 
-def getData(url: str, headers: dict = None) -> dict:
+from typing import TYPE_CHECKING 
+if TYPE_CHECKING:
+    from cogs.baseCommand import BaseCommand
 
-    # optional headers for bot emotes
+class ApiWrapper:
 
-    try: 
-        data = requests.get(url, headers=headers) 
-        match data.status_code:
-            case 200:
-                return data.json()
-            case 400 | 403 | 404 :
-                raise ValueError("RequestNoSuccess")
-            case 500 | 502 | 503 | 504:
-                raise ValueError("ServerDown")
-            case _:
-                raise ValueError()
+    def __init__(self, baseURL: str):
 
-    except requests.exceptions.RequestException as e:
-        raise ValueError(e)
+        self._baseURL = baseURL
+        self._endPoint = ""
+        self._headers = {}
+        self._session: aiohttp.ClientSession | None = None
 
-def getCurrentActiveLeaderboard(ids: list[dict], leaderboardApiKey: str) -> dict | None:
 
-    # this is used to check for the latest leaderboard which has players in them since they get released early
-    for currentApiIndex in ids: 
-        if currentApiIndex.get(leaderboardApiKey) != 0:
-            return currentApiIndex 
+    async def initializeSession(self):
 
-    return None 
-
-def getID(urls: dict, index: int) -> dict | None:
-
-    data = getData(urls.get("base", None))
-     
-    ids = data.get("body", None)
-    selectedID = ids[index] 
-    leaderboardApiKey = urls.get("TotalScores", None) 
-
-    if leaderboardApiKey: # will check if leaderboard has a key for total players 
-        selectedID = getCurrentActiveLeaderboard(ids, leaderboardApiKey)
+        self._session = aiohttp.ClientSession()
+        return
     
-    if not selectedID:
-        return None
 
-    return {
-        "Names": [entry.get("name", None) for entry in ids if entry], 
-        "MetaData": selectedID.get(urls.get("extension", None)),
-        "Data": selectedID
-    } 
+    async def closeSession(self) -> None:
+
+        await self._session.close()
+
+
+    def setEndpoint(self, endpoint: str):
+
+        self._endPoint = endpoint
+        return 
+    
+    
+    def setHeaders(self, headers: dict):
+
+        self._headers = headers 
+        return
+    
+
+    async def getData(self) -> dict:
+
+        async with self._session.get(
+            f"{self._baseURL}/{self._endPoint}",
+            headers=self._headers
+        ) as response:
+            
+            match response.status:
+
+                case 200:
+                    return await response.json()
+                
+                case 400 | 403 | 404:
+                    raise ValueError("RequestNoSuccess")
+                
+                case 500 | 502 | 503 | 504:
+                    raise ValueError("ServerDown")
+                
+                case _:
+                    raise ValueError()
+                    
+
+    def getCurrentActiveLeaderboard(self, data: NkData, urls: dict) -> int | None:
+
+        leaderboardKey = urls.get("TotalScores")
+
+        for index, _ in enumerate(data.body):
+            if leaderboardKey > 0:
+                return index 
+            
+        return
+         
+
+    async def getID(self, index: int) -> dict[list, Body]:
+
+        eventData = await self.getData()
+
+        mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
+        selectedID = mainData.body[index]
+
+        return {
+            "PreviousEvents": [entry.name for entry in mainData.body if entry], 
+            "Data": selectedID
+        } 

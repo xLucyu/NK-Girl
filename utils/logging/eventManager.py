@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from datetime import datetime, timezone
 from cogs.profile.raceProfile import raceProfile 
 from cogs.profile.bossProfile import bossProfile
 from cogs.profile.odysseyProfile import odysseyProfile
@@ -31,60 +30,74 @@ eventstoCheck = {
 
 class EventManager(commands.Cog):
 
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 
         self.bot = bot 
-        self.events = GuildTable()
+        self.events = guildTable
         self.scheduler = AsyncIOScheduler()
         self.scheduler.add_job(self.checkForNewEvent, "cron", minute=0)
 
-     
-    async def postLoad(self):
+        self.currentEventCache: dict[str, int] = {
+            "Race": 0,
+            "Boss": 0,
+            "Odyssey": 0
+        }
 
-        #cogs need to be loaded first
+    async def postLoad(self):
+        
+        await self.bot.wait_until_ready() 
+    
+        #cogs need to be loaded first 
         if not self.scheduler.running:
             self.scheduler.start()
 
     
-    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | None:
+    def getCurrentEventCacheIndex(self, eventName: str) -> int:
 
+        return self.currentEventCache[eventName]
+
+        
+    def _saveEventCacheIndex(self, eventName: str, index: int) -> None:
+
+        self.currentEventCache[eventName] = index 
+        print(self.currentEventCache)
+
+    
+    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | str | None:
+         
         channels = self.events.fetchAllRegisteredChannels(event)
-
+        
         if not channels:
             return
-
+        
         if guildID:
 
-            return [
-                channel for channel in channels
-                if str(self.bot.get_channel(int(channel)).guild.id) == str(guildID)
-            ]
+            for channel in channels:
+                channelObject = self.bot.get_channel(int(channel))
 
+                if not channelObject:
+                    continue 
+                
+                return str(channelObject.id)
+                
         return channels
     
 
-    def getValidEvent(self, mainData: NkData, seenEvents: list, currentTime: int, isManual: bool) -> tuple[int, Body] | None:
+    def getValidEvent(self, mainData: NkData, seenEvents: list, isManual: bool) -> tuple[int, Body] | None:
 
-        validEvents = [
-            (index, eventBody)
-            for index, eventBody in enumerate(mainData.body)
-            if eventBody.id not in seenEvents and currentTime < eventBody.end
-        ] 
+        nextEvent = BaseCommand.getCurrentEvent(mainData)
 
-        targetEvent = min(validEvents, key=lambda event: event[1].end, default=None)
+        if not nextEvent:
+            return None 
 
-        if isManual and not validEvents:
-            targetEvent = (0, mainData.body[0])
+        if isManual or nextEvent[1].id not in seenEvents:
+            return nextEvent
 
-        if not targetEvent:
-            return
-        
-        return targetEvent
+        return None
 
     
-    def getEventEmbeds(self, guildID: str = None, eventName: str = None, isManual: bool = None) -> list[discord.Embed] | None:
+    def getEventEmbeds(self, guildID: str = "", eventName: str = "", isManual: bool = False) -> list[discord.Embed] | None:
         
-        currentTime = int(datetime.now(timezone.utc).timestamp() * 1000)
         eventEmbeds = []
 
         params = eventstoCheck[eventName]
@@ -97,32 +110,37 @@ class EventManager(commands.Cog):
 
         eventData = BaseCommand.useApiCall(eventURL)
         mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
-        validEvent = self.getValidEvent(mainData, seenEvents, currentTime, isManual)
+        validEvent = self.getValidEvent(mainData, seenEvents, isManual)
 
         if not validEvent:
             return
 
         index, eventMetaData = validEvent
 
+        self._saveEventCacheIndex(eventName, index)
+
         for difficulty in difficulties:
 
             if difficulty:
                 difficulty = difficulty.lower()
 
-            embed, _ = eventFunction(index, difficulty)
-            eventEmbeds.append(embed)
+            eventData = eventFunction(index, difficulty)
+            eventEmbeds.append(eventData.get("Embed"))
 
         if eventMetaData.id not in seenEvents:
             self.events.appendEvent(eventMetaData.id, eventName, guildID)
-            
+         
         return eventEmbeds
 
         
     async def checkForNewEvent(self):
 
-        for eventName in eventstoCheck: 
+        for eventName in eventstoCheck:
 
             registeredChannels = self.getRegisteredChannels(eventName)
+
+            if not registeredChannels:
+                continue
 
             for channel in registeredChannels:
 
@@ -143,9 +161,5 @@ class EventManager(commands.Cog):
                     if channelObject.type == discord.ChannelType.news:
                         await message.publish()
 
-                except Exception as error:
-                    print(f"{error} in Server: {guildID}")
-
-
-def setup(bot: discord.Bot):
-    bot.add_cog(EventManager(bot))
+                except Exception:
+                    continue

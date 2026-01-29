@@ -1,31 +1,33 @@
-from datetime import datetime, timezone 
+from datetime import datetime 
 from utils.assets.eventUrls import EVENTURLS
 from cogs.baseCommand import BaseCommand
 from utils.dataclasses.main import NkData 
 from utils.dataclasses.metaData import MetaData 
 
+ONEDAY = 86400000
 
 def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> int:
 
     challengeListBody = challenges.body 
-    currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
+    currentTimeStamp = BaseCommand.getCurrentTimeStamp()
     dailyChallengeNumber = BaseCommand.getCurrentEventNumber(currentTimeStamp, difficulty.lower())
+    currentDay = datetime.now().weekday()
  
-    for index, challenge in enumerate(challengeListBody): 
+    for index, challenge in enumerate(challengeListBody):
+
         eventName = challenge.name 
 
         if difficulty != "coop" and str(dailyChallengeNumber) in eventName:
             return index
 
         eventTimeStamp = challenge.createdAt
-        currentDay = datetime.now().weekday()
-        currentTimeStamp = int(datetime.now(timezone.utc).timestamp() * 1000)
+
         if currentDay in [6, 0, 1]:
-            eventDuration = 86400000 * 3 # 3 days 
+            eventDuration = ONEDAY * 3 # 3 days 
         else:
-            eventDuration = 86400000 * 4 # 4 days 
+            eventDuration = ONEDAY * 4 # 4 days 
          
-        if eventTimeStamp <= currentTimeStamp <= eventTimeStamp + eventDuration and difficulty in eventName: 
+        if eventTimeStamp <= currentTimeStamp < eventTimeStamp + eventDuration and difficulty in eventName: 
             return index 
 
     return 0
@@ -34,11 +36,13 @@ def findIndexForCurrentDailyChallenge(challenges: NkData, difficulty: str) -> in
 def challengeProfile(index=None, difficulty=None):  
    
     if difficulty is None:
+
         url = f"https://data.ninjakiwi.com/btd6/challenges/challenge/{index}"
         challengeData = BaseCommand.useApiCall(url)
         metaData = BaseCommand.transformDataToDataClass(MetaData, challengeData)
 
     else:
+
         urls = {
             "base": "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
             "extension": "metadata"

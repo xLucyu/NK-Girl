@@ -44,7 +44,7 @@ class Tile(commands.Cog):
         )
     @discord.option(
         "event",
-        description = "CT Week, default will be the latest week.", 
+        description = "CT Week, default will be the current week.", 
         required = False
         )
     async def tile(self, ctx: discord.ApplicationContext, tile_code: str, event: int = 0) -> None:
@@ -66,7 +66,4 @@ class Tile(commands.Cog):
 
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)
-        view.message = message
-    
-def setup(bot: discord.Bot):
-    bot.add_cog(Tile(bot)) 
+        view.message = message 

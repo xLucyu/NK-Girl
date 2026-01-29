@@ -5,11 +5,10 @@ from database.logic.guilds import GuildTable
 
 class Event(commands.Cog):
 
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 
         self.bot = bot
-        self.eventManager = EventManager(bot)
-        self.database = GuildTable()
+        self.database = guildTable
 
 
     events = discord.SlashCommandGroup(
@@ -30,16 +29,21 @@ class Event(commands.Cog):
     )
     async def post(self, ctx: discord.ApplicationContext, event: str):
 
-        await ctx.response.defer() 
+        await ctx.response.defer()
+
+        eventManager: EventManager = self.bot.get_cog("EventManager")
 
         if not ctx.author.guild_permissions.manage_guild:
             await ctx.respond("You don't have permission to run this command.", ephemeral = True)
             return 
 
         guildID = str(ctx.guild.id)
-        
-        currentGuildChannel = self.eventManager.getRegisteredChannels(event, guildID)
-        channelObject = self.bot.get_channel(int(currentGuildChannel[0]))
+        channelID = eventManager.getRegisteredChannels(event, guildID)
+
+        if not channelID:
+            return
+
+        channelObject = self.bot.get_channel(int(channelID))
 
         if not channelObject:
             await ctx.respond(f"No Channel has been set for {event} in this server.", ephemeral = True)
@@ -47,7 +51,7 @@ class Event(commands.Cog):
         
         try:
 
-            eventEmbeds = self.eventManager.getEventEmbeds(guildID, event, isManual=True)
+            eventEmbeds = eventManager.getEventEmbeds(guildID, event, isManual=True)
 
             if not eventEmbeds:
                 return
@@ -75,22 +79,24 @@ class Event(commands.Cog):
 
         await ctx.response.defer()
 
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+
         if not ctx.author.guild_permissions.manage_guild:
             await ctx.respond("You don't have permission to run this command.", ephemeral = True)
             return 
         
         guildID = str(ctx.guild.id)
-        channelID = self.eventManager.getRegisteredChannels(event, guildID)
+        channelID = eventManager.getRegisteredChannels(event, guildID)
 
         if not channelID:
             return
 
-        channelObject = await self.bot.fetch_channel(int(channelID[0]))
+        channelObject = await self.bot.fetch_channel(int(channelID))
 
         try:
-            
             message: discord.Message = await channelObject.fetch_message(int(message_id))
-            eventEmbeds = self.eventManager.getEventEmbeds(guildID, event, isManual=True)
+            eventEmbeds = eventManager.getEventEmbeds(guildID, event, isManual=True)
+
             if not eventEmbeds:
                 return 
 
@@ -98,9 +104,4 @@ class Event(commands.Cog):
             await ctx.respond(f"Succesfully updated {event} for this guild")
 
         except Exception as e:
-
             raise ValueError(e)
-
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Event(bot))

@@ -31,7 +31,7 @@ def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, player
         False]
 
 
-def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
+def bossdetailsProfile(index: int, difficulty: str, players, boss: str = "", multiplier: float = 0.0):
     
     modes = [1, 2, 3, 4]
     players = modes[players]
@@ -42,7 +42,8 @@ def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
     }    
     
     if not boss:
-        data = BaseCommand.getCurrentEventData(urls, index=0)
+        
+        data = BaseCommand.getCurrentEventData(urls, index)
         eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
         mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
         metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
@@ -54,7 +55,10 @@ def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
     else:
         bossName = boss 
         bossHpMultiplier = 1
-        eventNumber = boss 
+        eventNumber = boss
+
+    if multiplier > 0:
+        bossHpMultiplier = multiplier
 
     emotes = BaseCommand.getAllEmojis()
 
@@ -79,4 +83,8 @@ def bossdetailsProfile(players: int, difficulty: str, boss: str = ""):
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
     embed.set_image(url=bannerURL) 
 
-    return embed, modes
+    return {
+        "Embed": embed,
+        "Modes": modes, 
+        "Index": index
+    }

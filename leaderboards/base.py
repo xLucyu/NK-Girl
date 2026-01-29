@@ -13,10 +13,6 @@ class BaseLeaderboard:
         milliseconds = score % 1000
 
         return (f"{days}d:" if days > 0 else "") + (f"{hours}:" if hours > 0 else "") + f"{minutes:02}:{seconds:02}.{milliseconds:03}"   
-    
-    @staticmethod
-    def getLeaderboardData(metaData: str, page: int) -> dict:
-        return BaseCommand.useApiCall(f"{metaData}?page={page}")
 
     @staticmethod
     def getMedalForPosition(emojis: dict, currentPosition: int, totalScores: int, mode: dict) -> str: 
@@ -37,23 +33,23 @@ class BaseLeaderboard:
         return BaseLeaderboard.convertMsToTime(timeLeftInMs) if timeLeftInMs > 0 else "Event ended"
 
     @staticmethod  
-    def formatEventInfo(apiData: Body, lbType: str, difficulty: str) -> str:
-    
+    def formatEventInfo(mainData: Body, lbType: str, difficulty: str) -> str:
+        
         match lbType:
-            case "race":
-                eventTimeStamp = apiData.start 
+            case "Race":
+                eventTimeStamp = mainData.start 
                 eventNumber = BaseCommand.getCurrentEventNumber(eventTimeStamp, "race")
-                eventName = apiData.name
+                eventName = mainData.name
                 title = f"Race #{eventNumber} - {eventName}"  
 
-            case "boss":
-                eventNumber = BaseCommand.splitBossNames(apiData.name)
-                eventName = apiData.bossType
-                scoreTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType" 
-                title = f"{difficulty.title()} {eventNumber} - {getattr(apiData, scoreTypeKey)}"
+            case "Boss":
+                eventNumber = BaseCommand.splitBossNames(mainData.name)
+                eventName = mainData.bossType
+                scoreTypeKey = mainData.eliteScoringType if difficulty == "elite" else mainData.normalScoringType 
+                title = f"{difficulty.title()} {eventNumber} - {scoreTypeKey}"
 
-            case "ct":
-                currentIndex = apiData.start 
+            case "CT":
+                currentIndex = mainData.start 
                 eventNumber = BaseCommand.getCurrentEventNumber(currentIndex, "ct")
                 title = f"Contested Territory #{eventNumber} - {difficulty.title()}"
 

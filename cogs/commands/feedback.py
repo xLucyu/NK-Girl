@@ -6,12 +6,12 @@ from database.logic.usage import UsageTable
 
 class FeedbackModal(discord.ui.Modal):
 
-    def __init__(self, submissionChannel: discord.TextChannel, user: str, avatar: str):
+    def __init__(self, submissionChannel: discord.TextChannel, user: str, avatar: str, usageTable: UsageTable):
 
         self.submissionChannel = submissionChannel
         self.user = user
         self.avatar = avatar
-        self.database = UsageTable()
+        self.usageTable = usageTable
         
         super().__init__(title="Feedback for NK-Girl")
         self.add_item(
@@ -44,9 +44,11 @@ class FeedbackModal(discord.ui.Modal):
             await interaction.response.send_message(f"Your submission was send! ID: {submissionNumber}", ephemeral=True)
 
 class Feedback(commands.Cog):
-    def __init__(self, bot: discord.Bot):
+
+    def __init__(self, bot: discord.Bot, usageTable: UsageTable):
 
         self.bot = bot 
+        self.database = usageTable 
 
     @discord.slash_command(name="feedback", description="give feedback or submit an error",
                            integration_types = {discord.IntegrationType.user_install,
@@ -56,8 +58,5 @@ class Feedback(commands.Cog):
         user = ctx.author.name
         avatar = ctx.author.avatar
         submissionChannel = self.bot.get_channel(int(SUBCID)) #type: ignore 
-        modal = FeedbackModal(submissionChannel, user, avatar)
+        modal = FeedbackModal(submissionChannel, user, avatar, self.database)
         await ctx.send_modal(modal)
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Feedback(bot))

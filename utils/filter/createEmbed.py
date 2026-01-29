@@ -1,6 +1,7 @@
 import discord
 
 def filterEmbed(eventData: dict, url: str, title: str) -> discord.Embed:
+
     embed = discord.Embed(title=title, description="", color=discord.Color.green())
     embed.set_thumbnail(url=url)
 

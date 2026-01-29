@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
 from utils.discord.viewMenu import SelectView
-
+from utils.logging.eventManager import EventManager
 
 class BossDetails(commands.Cog):
 
@@ -34,18 +34,35 @@ class BossDetails(commands.Cog):
             "Vortex",
             "Dreadbloon",
             "Phayze",
-            "Blastapopulous"
+            "Blastapopoulos"
         ],
         required = False 
     )
-    async def bossdetails(self, ctx: discord.ApplicationContext, difficulty: str = "Normal", players: int = 1, boss: str = "") -> None:
+    @discord.option(
+        "multiplier",
+        description = "Choose a hp multiplier, this is optional. Will show on the event boss too, if you select it.",
+        required = False
+    )
+    async def bossdetails(self,
+                          ctx: discord.ApplicationContext, 
+                          difficulty: str = "Normal", 
+                          players: int = 1, 
+                          boss: str = "", 
+                          multiplier: float = 0.0) -> None:
 
         await ctx.response.defer()
-
+ 
+        eventManager: EventManager = self.bot.get_cog("EventManager")
+        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Boss")
+        
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        embed, modes = bossdetailsProfile(players-1, difficulty.lower(), boss) 
+        eventDetails = bossdetailsProfile(cachedEventIndex, difficulty.lower(), players-1, boss, multiplier)
+
+        embed = eventDetails["Embed"]
+        modes = eventDetails["Modes"]
+        index = eventDetails["Index"]
 
         data = {
             "Author": ctx.author.id, 
@@ -54,10 +71,13 @@ class BossDetails(commands.Cog):
             "Function": bossdetailsProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
+            "Index": index,
+            "PlayerCount": players,
+            "HpMultiplier": multiplier,
             "Emoji": "<:Coop:1341515962410598521>",
             "Boss": boss, 
             "Button": [
-                    ["Normal", "STANDARD", "success"], #having different custom_ids for the buttons make a difference
+                    ["Normal", "STANDARD", "success"], 
                     ["Elite", "ELITE", "danger"]
                 ]
             }
@@ -65,9 +85,3 @@ class BossDetails(commands.Cog):
         view = SelectView(data)
         message = await ctx.respond(embed=embed, view=view)
         view.message = message   
-
-        
-def setup(bot: discord.Bot):
-    bot.add_cog(BossDetails(bot))
-
-

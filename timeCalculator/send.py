@@ -16,30 +16,30 @@ class TimeSend(TimeBase):
 
         if self.startRound >= self.endRound:
             raise ValueError("InvalidStartRound")
-        if not 1 <= self.startRound <= 139:
+        if not 0 <= self.startRound <= 139:
             raise ValueError("StartRoundOutOfBounce")
 
-        if not 2 <= self.endRound <= 140:
+        if not 1 <= self.endRound <= 140:
             raise ValueError("EndRoundOutOfBounce")
 
 
     def formatTime(self) -> tuple[dict, str]:
 
-        timeInSeconds = TimeBase.parseTime(self.time)
+        timeInSeconds = self.parseTime(self.time)
         self.validateInput(timeInSeconds)
 
-        raceRounds = TimeBase.getRaceRounds(self.isAbr)
-        emotes = TimeBase.getEmotes()
+        raceRounds = self.getRaceRounds(self.isAbr)
+        emotes = self.getEmotes()
 
         roundIcon = emotes.get("Round", None)
         
         longestRoundInSeconds = max(raceRounds[self.startRound:self.endRound + 1])
         longestRoundIndex = raceRounds.index(longestRoundInSeconds)
 
-        sendTime = TimeBase.calculateSendingTime(longestRoundIndex, self.startRound, longestRoundInSeconds, timeInSeconds)
+        sendTime = self.calculateSendingTime(longestRoundIndex, self.startRound, longestRoundInSeconds, timeInSeconds)
 
-        formattedTime = TimeBase.msToTimeString(sendTime) 
-        formattedInputTime = TimeBase.msToTimeString(timeInSeconds) 
+        formattedTime = self.msToTimeString(sendTime) 
+        formattedInputTime = self.msToTimeString(timeInSeconds) 
 
         eventData = {
             "Rounds": [f"<:Round:{roundIcon}> {self.startRound} -> {self.endRound}", False],
@@ -47,8 +47,7 @@ class TimeSend(TimeBase):
             "Round Set": ["ABR" if self.isAbr else "Regular", False],
             "Sending Time": [f"**{formattedInputTime}**", False],
             "Calculated Time": [f"You will get **{formattedTime}** if you perfectly clean round **{longestRoundIndex}**.\n", False]
-        } 
-        
+        }  
 
         self.getLaterRounds(raceRounds, longestRoundIndex, sendTime, self.endRound, eventData)
 

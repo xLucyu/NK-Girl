@@ -68,6 +68,3 @@ class Help(commands.Cog):
         embed.set_thumbnail(url=self.bot.user.avatar)
 
         await ctx.respond(embed=embed)
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Help(bot))

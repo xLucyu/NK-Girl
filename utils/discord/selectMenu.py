@@ -1,9 +1,14 @@
 import discord
 
+from typing import TYPE_CHECKING 
+if TYPE_CHECKING:
+    from utils.discord.viewMenu import SelectView
+
 class SelectMenu(discord.ui.Select):
+
     def __init__(self, **components): 
 
-        self.parentView = components.get("View", None)  
+        self.parentView: SelectView = components.get("View", None)  
         self.eventName = components.get("Event", None) 
         self.difficulty = components.get("Difficulty", None) 
         self.userID = components.get("UserID", None) 
@@ -33,42 +38,33 @@ class SelectMenu(discord.ui.Select):
         
     async def callback(self, interaction:discord.Interaction) -> None:
         
-        messageID = self.parentView.message.id
-        userID = interaction.user.id #type: ignore
-
-        if userID != self.userID:
+        if interaction.user.id != self.userID:
             await interaction.response.send_message("You are not the original User of this command.", ephemeral=True)
             return 
 
-        try:
-            await interaction.response.defer()
-
-            if messageID not in self.parentView.index:
-                self.parentView.index[messageID] = dict()
+        await interaction.response.defer()
             
-            data = self.parentView.index[messageID]
-            selectedIndex = int(self.values[0]) #type: ignore
+        selectedIndex = int(self.values[0])
+        args = [selectedIndex, self.parentView.difficulty]
 
-            data["EventIndex"] = selectedIndex #insert Eventindex into the parentView
-            difficulty = data.get("Difficulty", self.difficulty)
+        if self.parentView.playerCount:
 
-            if difficulty is not None:
-                difficulty = difficulty.lower()
-            data["Difficulty"] = difficulty
+            args[0] = self.parentView.index  
+            args.append(selectedIndex)
+            args.append(self.boss)
+            args.append(self.parentView.hpMultiplier)
+            self.parentView.playerCount = selectedIndex
 
-            args = [selectedIndex, difficulty]
+        if self.tiles:
 
-            if self.boss:
-                args.append(self.boss)
-
-            if self.tiles:
-                args[0] = self.ctEventIndex
-                args[1] = self.tiles[selectedIndex][0]
+            args[0] = self.ctEventIndex
+            args[1] = self.tiles[selectedIndex][0]
             
-            embed, _ = self.function(*args)
+        eventDetails = self.function(*args)
+        embed = eventDetails["Embed"]
+        
+        if not self.parentView.playerCount:
+            self.parentView.index = selectedIndex
 
-            await interaction.edit_original_response(embed=embed)
-            self.parentView.message = await interaction.original_response()   
-
-        except Exception:
-            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)
+        await interaction.edit_original_response(embed=embed)
+        self.parentView.message = await interaction.original_response()   

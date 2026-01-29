@@ -4,10 +4,10 @@ from database.logic.guilds import GuildTable
 
 class Channel(commands.Cog):
 
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 
         self.bot = bot 
-        self.database = GuildTable()
+        self.database = guildTable
  
     challenge = discord.SlashCommandGroup(
         "channel", 
@@ -68,6 +68,3 @@ class Channel(commands.Cog):
         
         except:
             raise ValueError("NoChannelSet")
-
-def setup(bot: discord.Bot):
-    bot.add_cog(Channel(bot))

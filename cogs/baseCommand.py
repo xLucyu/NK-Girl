@@ -1,8 +1,10 @@
 import dacite
 from discord import Embed
-from typing import Type, TypeVar, Any, Dict, List, Union 
+from typing import Type, TypeVar, Any, Dict, List, Union, Tuple, Optional
+from datetime import datetime, timezone 
 from cogs.eventNumber import getNumberForEvent
 from cogs.regex import *
+from cogs.currentEvent import getCurrentActiveEvent
 from api.fetchId import getID, getData 
 from api.emojis import getEmojis
 from utils.filter.filterTowers import filterTowers
@@ -10,6 +12,7 @@ from utils.filter.filterBloonsModifiers import filterModifiers
 from utils.filter.createEmbed import filterEmbed
 from utils.dataclasses.metaData import MetaBody, Tower
 from utils.dataclasses.ct import DcModel
+from utils.dataclasses.main import NkData, Body
 
 T = TypeVar("T")
 
@@ -79,9 +82,31 @@ class BaseCommand:
         return splitNumbers(string)
 
     @staticmethod
-    def convertStrToMs(string: str) -> int:
+    def convertStrToMs(string: str) -> float:
         return convertStringToMs(string)
+
+    @staticmethod 
+    def getCurrentTimeStamp() -> int:
+        return int(datetime.now(timezone.utc).timestamp() * 1000)
+
+    @staticmethod
+    def getCurrentEvent(mainData: NkData) -> Tuple[int, Body]:
+
+        currentTimeStamp = BaseCommand.getCurrentTimeStamp()
+        return getCurrentActiveEvent(mainData, currentTimeStamp)
+    
+    @staticmethod
+    def getCurrentIndexForEvent(index: Optional[int], baseURL: str) -> int:
+
+        if index is None:
+
+            rawNkData = BaseCommand.useApiCall(baseURL)
+            mainData = BaseCommand.transformDataToDataClass(NkData, rawNkData)
+            index, _ = BaseCommand.getCurrentEvent(mainData)
+
+        return index
 
     @staticmethod 
     def createEmbed(eventData: Dict[str, List[Union[str, bool]]], url: str, title: str) -> Embed:
         return filterEmbed(eventData, url, title)
+    

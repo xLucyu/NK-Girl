@@ -27,11 +27,14 @@ livesForDifficulty = {
 
 def getCurrentCtNumber() -> int:
 
-    url = "https://data.ninjakiwi.com/btd6/ct"
+    url = "https://data.ninjakiwi.com/btd6/ct" 
     
+    index = BaseCommand.getCurrentIndexForEvent(None, url)
+
     ctList = BaseCommand.useApiCall(url)
     ctListBody = BaseCommand.transformDataToDataClass(NkData, ctList)
-    ctTimeStamp = ctListBody.body[0].start
+
+    ctTimeStamp = ctListBody.body[index].start
     return BaseCommand.getCurrentEventNumber(ctTimeStamp, "ct")
 
 
@@ -39,7 +42,7 @@ def getEmoteID(tileType: str, emotes: dict, relicType: str) -> str:
 
     match tileType:
         case "Relic":
-            name, emoteid = next(((name, eid) for name, eid in emotes.items() if name == relicType), (None, None))
+            name, emoteid = relicType, emotes.get(relicType)
         case "Banner":
             name, emoteid = "Banner", emotes.get("Banner")
         case _:
@@ -147,9 +150,13 @@ def tileProfile(eventIndex: int, tileCode: str):
         "Support": ["\n".join(towers.get("Support", None)), True],
         } 
      
+    currentEmote = getEmoteID(ctData.TileType, emotes, ctData.RelicType)
+
+    print(currentEmote)
+     
     embed = BaseCommand.createEmbed(eventData,
                                     ctInfo["EventURL"], 
-                                    title=f"{getEmoteID(ctData.TileType, emotes, ctData.RelicType)} Contested Territory #{eventIndex} - Tile {tileCode.upper()}"
+                                    title=f"{currentEmote} Contested Territory #{eventIndex} - Tile {tileCode.upper()}"
                                     )
     embed.set_image(url=EVENTURLS["Maps"][ctInfo["Map"]])
     return embed, categorizedTiles

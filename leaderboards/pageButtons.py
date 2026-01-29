@@ -11,97 +11,111 @@ class ButtonView(discord.ui.View):
         self.totalScores = components.get("TotalScores", None)
         self.scoreType = components.get("ScoreType", None)
         self.lbType = components.get("Mode", None)
-        self.teamScores = components.get("TeamScores", None)
-        self.submode = components.get("SubMode", None)
+        self.difficulty = components.get("Difficulty", None)
         self.playerCount = components.get("Players", None)
         self.userID = components.get("Author", None)
         self.function = components.get("Function", None)
-        self.page = components.get("Page", None)
+        self.page = 1
         self.layout = components.get("Layout", None)
         self.url = components.get("URL", None) 
   
         for button in self.layout:
+
             button = discord.ui.Button(
                 label = button[0],
                 custom_id = button[1],
                 style = getattr(discord.ButtonStyle, button[2]),
-                disabled = True if button[1] == "-1" else False
+                disabled = (button[1] == "-1")
             )
+                        
             button.callback = self.callback
             self.add_item(button)
         
-    async def callback(self, interaction:discord.Interaction, defered=True): 
-        userID = interaction.user.id #type: ignore
 
-        if userID != self.userID:
-            await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
+    async def callback(self, interaction:discord.Interaction, deferred=True): 
+
+        if interaction.user.id != self.userID:
+            await interaction.response.send_message("You are not the original user.", ephemeral=True)
             return 
-
+ 
         selectedButton = str(interaction.custom_id)
+
         match selectedButton:
+
+            case "searchPlayer":
+                modal = self._buildPlayerModal()
+                await interaction.response.send_modal(modal=modal)
+                return 
+                
             case "searchPage":
-                modal = self.generatePageModal()
-                await interaction.response.send_modal(modal)
+                modal = self._buildPageModal()
+                await interaction.response.send_modal(modal=modal)
                 return 
-            
-            case "searchPlayer": 
-                modal = self.generatePlayerModal()
-                await interaction.response.send_modal(modal)
-                return
 
-            case "1" | "-1":  
+            case "1" | "-1":
                 self.page += int(selectedButton)
-
-        if defered:
+        
+        if deferred:
             await interaction.response.defer()
-        
-        self.checkButtons()
-        await self.updateLeaderboard(interaction) 
 
-    async def updateLeaderboard(self, interaction: discord.Interaction):
+        self.updateButtonState()
+        await self.updateLeaderboard(interaction)
 
-        lbData = self.function(self.lbType, self.page, self.submode, self.playerCount, self.teamScores, self.scoreType) 
+
+    async def updateLeaderboard(self, interaction: discord.Interaction) -> None:
+
+        lbData = self.function(self.lbType, self.page, self.difficulty, self.playerCount)
         await interaction.edit_original_response(embed=lbData.get("Embed"), view=self)
-        self.message = await interaction.original_response()
+        self.message = await interaction.original_response()  
 
 
-    def checkButtons(self) -> None:
+    def updateButtonState(self) -> None:
+
         for button in self.children:
-            if not isinstance(button, discord.ui.Button):
-                return 
-
+            
+            if not isinstance(button, discord.ui.Button) or button.custom_id in ["searchPage", "searchPlayer"]:
+                continue 
+            
             if button.custom_id == "-1":
-                button.disabled = self.page <= 1 
+                button.disabled = self.page <= 1
 
-            if button.custom_id == "1": 
-                if self.lbType == "race":
-                    button.disabled = self.page >= 20 or (self.page * 50) >= self.totalScores
-                else:
-                    button.disabled = self.page >= 40 or (self.page * 25) >= self.totalScores
-                return 
-        
+            if button.custom_id == "1":
 
-    def generatePageModal(self): 
-        return PageModal(  
-            Title = "Search for a page on the leaderboard!",
-            Label = "Enter the page number",
-            Placeholder = "Please only enter a full number.",
-            View = self,  
-            Filter = "pageNumber"
-            ) 
+                pageLimit = 20 if self.lbType == "Race" else 40
+                pageSize = 50 if self.lbType == "Race" else 25 
 
-    def generatePlayerModal(self):
+                button.disabled = (
+                self.page >= pageLimit 
+                    or (self.page * pageSize) >= self.totalScores
+                )
+    
+    def _buildPageModal(self) -> discord.ui.Modal:
+
         return PageModal(
-            Title = "Search for a player on the leaderboard!",
-            Label = "Enter a player name",
-            Placeholder = "Please enter a valid player name",
+            Title = "Search for a page",
+            Label = "Enter a page number",
+            PlaceHolder = "Only use whole numbers",
             View = self,
-            Url = self.url,
-            TeamScores = self.teamScores,
-            Filter = "pageSearch" 
+            LbType = self.lbType,
+            Filter = "pageNumber"
         )
 
+
+    def _buildPlayerModal(self) -> discord.ui.Modal:
+
+        return PageModal(
+            Title = "Search for a player",
+            Label = "Enter a player name",
+            Placeholder = "Enter a valid player name",
+            View = self,
+            Url = self.url, 
+            LbType = self.lbType,
+            Filter = "pagePlayer" 
+        )
+
+
     async def on_timeout(self):
+
         try:
             if self.message:
                 await self.message.edit(view=None)

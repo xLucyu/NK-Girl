@@ -1,12 +1,19 @@
 import discord
 
+from typing import TYPE_CHECKING 
+if TYPE_CHECKING:
+    from utils.discord.viewMenu import SelectView
+
 class ButtonMenu(discord.ui.Button):
-    def __init__(self, **components):
-        self.parentView = components.get("View", None)
+
+    def __init__(self, **components): 
+
+        self.parentView: SelectView = components.get("View", None)
         self.boss = components.get("Boss", None)
         self.userID = components.get("UserID", None)
         self.function = components.get("Function", None)
-        self.layout = components.get("Layout", None) 
+        self.layout = components.get("Layout", None)
+        self.firstUse = True
          
         super().__init__(
             label=(self.layout[0]),
@@ -15,33 +22,27 @@ class ButtonMenu(discord.ui.Button):
         )
 
     async def callback(self, interaction:discord.Interaction) -> None:
-        messageID = self.parentView.message.id
-        userID = interaction.user.id #type: ignore
+        
+        if interaction.user.id != self.userID:
+            await interaction.response.send_message("You are not the original user.", ephemeral=True)
+            return 
 
-        if userID != self.userID:
-            await interaction.response.send_message("You are not the original user of this command.", ephemeral=True)
-            return
-         
-        try: 
-            await interaction.response.defer()
+        await interaction.response.defer()
 
-            difficulty = self.custom_id 
-            if messageID not in self.parentView.index:
-                self.parentView.index[messageID] = dict() 
-            
-            data = self.parentView.index[messageID] 
-            data["Difficulty"] = difficulty 
+        difficulty = self.custom_id 
+        args = [self.parentView.index, difficulty.lower()]
 
-            selectedIndex = data.get("EventIndex", 0)
-            args = [selectedIndex, difficulty.lower()]
+        if self.parentView.playerCount: # mainly for boss details
 
-            if self.boss:
-                args.append(self.boss)
+            args.append(self.parentView.playerCount - (1 if self.firstUse else 0))
+            args.append(self.boss)
+            args.append(self.parentView.hpMultiplier)
+            self.firstUse = False
 
-            embed, _ = self.function(*args)
+        eventDetails = self.function(*args)
 
-            await interaction.edit_original_response(embed=embed)
-            self.parentView.message = await interaction.original_response()
+        embed = eventDetails["Embed"]
+        self.parentView.difficulty = difficulty.lower() 
 
-        except:
-            await interaction.response.send_message(content="Something went wrong, please try again.", ephemeral=True)   
+        await interaction.edit_original_response(embed=embed)
+        self.parentView.message = await interaction.original_response()

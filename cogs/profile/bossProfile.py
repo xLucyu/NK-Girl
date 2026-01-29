@@ -3,14 +3,13 @@ from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
 
-
-def bossProfile(index: int, difficulty: str): 
+def bossProfile(index: int, difficulty: str = ""): 
 
     urls = {
         "base": "https://data.ninjakiwi.com/btd6/bosses",
         "extension": f"metadata{difficulty.title()}"
-    }   
-
+    } 
+ 
     data = BaseCommand.getCurrentEventData(urls, index)
     eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
     mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
@@ -33,10 +32,13 @@ def bossProfile(index: int, difficulty: str):
         "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
     
-    lbTypeKey = "eliteScoringType" if difficulty.lower() == "elite" else "normalScoringType"
-    lbScoringType = bossLeaderboardType.get(getattr(mainData, lbTypeKey))
+    lbTypeKey = mainData.eliteScoringType if difficulty == "elite" else mainData.normalScoringType
+    lbScoringType = bossLeaderboardType.get(lbTypeKey, None)
     modifiers = BaseCommand.getActiveModifiers(body, emotes) 
     towers = BaseCommand.getActiveTowers(body._towers, emotes) 
+
+    if mainData.bossType.lower() not in body.roundSets:
+        rounds += " (Custom Rounds)"
 
     eventData = { 
         f"{difficulty.title()} Difficulty": [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
@@ -61,4 +63,8 @@ def bossProfile(index: int, difficulty: str):
     for name in data.get("Names", []):
         names.append(BaseCommand.splitBossNames(name))
 
-    return embed, names
+    return {
+        "Embed": embed,
+        "Names": names,
+        "Index": index
+    }

@@ -3,6 +3,8 @@ import discord
 from database.index import DatabasePool
 from database.logic.guilds import GuildTable 
 from database.logic.usage import UsageTable 
+from api.wrapper import ApiWrapper
+
 
 from cogs.commands import * 
 from utils.logging import *
@@ -50,16 +52,22 @@ class DiscordBotClient(discord.Bot):
         print("loaded cogs")
 
 
-    async def loadEventManager(self):
+    async def loadEventManager(self) -> None:
 
         scheduler: EventManager = self.get_cog("EventManager")
         if scheduler:
             await scheduler.postLoad()
             print("EventManager running")
 
+    async def loadApiSession(self) -> None:
+
+        await ApiWrapper().start()
+        print("started ApiWrapper Session")
+
 
 if __name__ =="__main__":
     bot = DiscordBotClient() 
     bot.load_cogs() 
+    bot.loop.create_task(bot.loadApiSession())
     bot.loop.create_task(bot.loadEventManager())
     bot.run(BOTTOKEN)

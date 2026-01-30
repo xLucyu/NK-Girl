@@ -1,47 +1,28 @@
-import aiohttp
-from utils.dataclasses.main import NkData, Body
+import aiohttp 
+from typing import Coroutine
 
-from typing import TYPE_CHECKING 
-if TYPE_CHECKING:
-    from cogs.baseCommand import BaseCommand
-
-class ApiWrapper:
-
-    def __init__(self, baseURL: str):
-
-        self._baseURL = baseURL
-        self._endPoint = ""
-        self._headers = {}
-        self._session: aiohttp.ClientSession | None = None
-
-
-    async def initializeSession(self):
-
-        self._session = aiohttp.ClientSession()
-        return
+class ApiClient:
     
+    def __init__(self, session: aiohttp.ClientSession):
 
-    async def closeSession(self) -> None:
+        self._session = session
+        self._url = None 
+        self._headers = None 
 
-        await self._session.close()
+    def url(self, url: str):
 
-
-    def setEndpoint(self, endpoint: str):
-
-        self._endPoint = endpoint
-        return 
+        self._url = url 
+        return self
     
-    
-    def setHeaders(self, headers: dict):
+    def headers(self, headers: dict):
 
         self._headers = headers 
-        return
+        return self 
     
-
-    async def getData(self) -> dict:
+    async def get(self) -> Coroutine:
 
         async with self._session.get(
-            f"{self._baseURL}/{self._endPoint}",
+            url=self._url, 
             headers=self._headers
         ) as response:
             
@@ -55,30 +36,27 @@ class ApiWrapper:
                 
                 case 500 | 502 | 503 | 504:
                     raise ValueError("ServerDown")
-                
+
                 case _:
                     raise ValueError()
-                    
 
-    def getCurrentActiveLeaderboard(self, data: NkData, urls: dict) -> int | None:
+class ApiWrapper:
 
-        leaderboardKey = urls.get("TotalScores")
+    def __init__(self):
+        self._session = aiohttp.ClientSession | None = None 
 
-        for index, _ in enumerate(data.body):
-            if leaderboardKey > 0:
-                return index 
-            
-        return
-         
+    async def start(self) -> None:
 
-    async def getID(self, index: int) -> dict[list, Body]:
+        if not self._session:
+            self._session = aiohttp.ClientSession()
 
-        eventData = await self.getData()
+    async def stop(self) -> None:
 
-        mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
-        selectedID = mainData.body[index]
+        if self._session:
+            self._session.close()
 
-        return {
-            "PreviousEvents": [entry.name for entry in mainData.body if entry], 
-            "Data": selectedID
-        } 
+    def request(self) -> ApiClient:
+        if not self._session:
+            raise RuntimeError()
+        
+        return ApiClient(self._session)

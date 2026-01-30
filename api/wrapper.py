@@ -1,25 +1,24 @@
-import aiohttp 
-from typing import Coroutine
+from aiohttp import ClientSession 
 
 class ApiClient:
     
-    def __init__(self, session: aiohttp.ClientSession):
+    def __init__(self, session: ClientSession):
 
-        self._session = session
-        self._url = None 
-        self._headers = None 
+        self._session: ClientSession = session
+        self._url: str = "" 
+        self._headers: dict = {} 
 
     def url(self, url: str):
 
         self._url = url 
         return self
     
-    def headers(self, headers: dict):
+    def headers(self, headers: dict[str, str]):
 
         self._headers = headers 
         return self 
     
-    async def get(self) -> Coroutine:
+    async def get(self) -> dict:
 
         async with self._session.get(
             url=self._url, 
@@ -43,20 +42,23 @@ class ApiClient:
 class ApiWrapper:
 
     def __init__(self):
-        self._session = aiohttp.ClientSession | None = None 
+
+        self._session: ClientSession | None = None 
 
     async def start(self) -> None:
 
         if not self._session:
-            self._session = aiohttp.ClientSession()
+            self._session = ClientSession()
 
     async def stop(self) -> None:
 
         if self._session:
-            self._session.close()
+            await self._session.close()
+            self._session = None
 
     def request(self) -> ApiClient:
+
         if not self._session:
-            raise RuntimeError()
+            raise RuntimeError("Session not started")
         
         return ApiClient(self._session)

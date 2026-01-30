@@ -16,16 +16,29 @@ from utils.dataclasses.main import NkData, Body
 
 T = TypeVar("T")
 
-class BaseCommand:
+class CommandBase:
+
     _wrapper = ApiWrapper()
  
     @staticmethod 
-    def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 
-        return dacite.from_dict(data_class=dataclass, data=data) 
-     
+    async def useApiCall(url: str = "", headers: Optional[dict[str, str]] = None) -> dict:
+
+        if not headers:
+            headers = {}
+
+        client = CommandBase._wrapper.request()
+        
+        return await (
+            client
+                .url(url=url)
+                .headers(headers=headers)
+                .get()
+            )
+
     @staticmethod 
-    def useApiCall(url: str) -> dict:
-        return getData(url) or {} 
+    def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 
+        return dacite.from_dict(data_class=dataclass, data=data)
+         
  
     @staticmethod 
     def getCurrentEventData(urls: dict, index: int) -> dict:

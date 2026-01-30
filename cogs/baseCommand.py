@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from cogs.eventNumber import getNumberForEvent
 from cogs.regex import *
 from cogs.currentEvent import getCurrentActiveEvent
-from api.fetchId import getID, getData 
+from api.wrapper import ApiWrapper
 from api.emojis import getEmojis
 from utils.filter.filterTowers import filterTowers
 from utils.filter.filterBloonsModifiers import filterModifiers 
@@ -17,6 +17,7 @@ from utils.dataclasses.main import NkData, Body
 T = TypeVar("T")
 
 class BaseCommand:
+    _wrapper = ApiWrapper()
  
     @staticmethod 
     def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 

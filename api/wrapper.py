@@ -16,6 +16,7 @@ class ApiWrapper:
 
         if self._session is None:
             raise RuntimeError("No Valid API Session")
+
         return self._session
 
     async def stop(self) -> None:

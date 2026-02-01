@@ -1,41 +1,57 @@
 import dacite
 from discord import Embed
-from typing import Type, TypeVar, Any, Dict, List, Union, Tuple, Optional
 from datetime import datetime, timezone 
-from cogs.eventNumber import getNumberForEvent
-from cogs.regex import *
-from cogs.currentEvent import getCurrentActiveEvent
+from typing import (
+    Type,
+    TypeVar,
+    Any,
+    Dict,
+    List,
+    Union,
+    Tuple,
+    Optional
+)
 from api.wrapper import ApiWrapper
-from api.emojis import getEmojis
-from utils.filter.filterTowers import filterTowers
-from utils.filter.filterBloonsModifiers import filterModifiers 
-from utils.filter.createEmbed import filterEmbed
-from utils.dataclasses.metaData import MetaBody, Tower
-from utils.dataclasses.ct import DcModel
-from utils.dataclasses.main import NkData, Body
+from utils.dataclasses import (
+    MetaBody,
+    Tower,
+    DcModel,
+    NkData,
+    Body
+)
+from utils.helperFunctions import (
+    getCurrentActiveEvent,
+    getEmojis,
+    getNumberForEvent,
+    filterModifiers,
+    filterTowers, 
+    splitNumbers,
+    splitUppercase,
+    convertStringToMs
+) 
 
 T = TypeVar("T")
 
 class CommandBase:
 
     _wrapper = ApiWrapper()
+    _emojis = ""
  
     @staticmethod 
-    async def useApiCall(url: str = "", headers: Optional[dict[str, str]] = None) -> dict:
+    async def useApiCall(url: str, headers: Optional[dict[str, str]] = None) -> dict:
         return await CommandBase._wrapper.get(url, headers)
 
     @staticmethod 
     def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 
         return dacite.from_dict(data_class=dataclass, data=data)
-         
- 
+          
     @staticmethod 
     def getCurrentEventData(urls: dict, index: int) -> dict:
-        return getID(urls, index) or {} 
+        pass  
  
     @staticmethod 
     def getAllEmojis() -> dict:
-        return getEmojis() or {} 
+        pass 
  
     @staticmethod 
     def getActiveTowers(towers: list[Tower], emotes: dict) -> dict:
@@ -95,7 +111,7 @@ class CommandBase:
     @staticmethod
     def getCurrentEvent(mainData: NkData) -> Tuple[int, Body]:
 
-        currentTimeStamp = BaseCommand.getCurrentTimeStamp()
+        currentTimeStamp = CommandBase.getCurrentTimeStamp()
         return getCurrentActiveEvent(mainData, currentTimeStamp)
     
     @staticmethod
@@ -103,9 +119,9 @@ class CommandBase:
 
         if index is None:
 
-            rawNkData = BaseCommand.useApiCall(baseURL)
-            mainData = BaseCommand.transformDataToDataClass(NkData, rawNkData)
-            index, _ = BaseCommand.getCurrentEvent(mainData)
+            rawNkData = CommandBase.useApiCall(baseURL)
+            mainData = CommandBase.transformDataToDataClass(NkData, rawNkData)
+            index, _ = CommandBase.getCurrentEvent(mainData)
 
         return index
 

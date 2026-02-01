@@ -1,4 +1,4 @@
-from cogs.baseCommand import BaseCommand
+from cogs.commandBase import CommandBase
 from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.metaData import MetaData
 from utils.dataclasses.main import Body
@@ -10,11 +10,7 @@ def bossProfile(index: int, difficulty: str = ""):
         "extension": f"metadata{difficulty.title()}"
     } 
  
-    data = BaseCommand.getCurrentEventData(urls, index)
-    eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
-    mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
-    metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
-    emotes = BaseCommand.getAllEmojis()
+
 
     body = metaData.body
 

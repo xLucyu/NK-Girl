@@ -21,7 +21,6 @@ from utils.dataclasses import (
 )
 from utils.helperFunctions import (
     getCurrentActiveEvent,
-    getEmojis,
     getNumberForEvent,
     filterModifiers,
     filterTowers, 
@@ -35,7 +34,6 @@ T = TypeVar("T")
 class CommandBase:
 
     _wrapper = ApiWrapper()
-    _emojis = ""
  
     @staticmethod 
     async def useApiCall(url: str, headers: Optional[dict[str, str]] = None) -> dict:
@@ -45,14 +43,6 @@ class CommandBase:
     def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 
         return dacite.from_dict(data_class=dataclass, data=data)
           
-    @staticmethod 
-    def getCurrentEventData(urls: dict, index: int) -> dict:
-        pass  
- 
-    @staticmethod 
-    def getAllEmojis() -> dict:
-        pass 
- 
     @staticmethod 
     def getActiveTowers(towers: list[Tower], emotes: dict) -> dict:
         return filterTowers(towers, emotes) or {}

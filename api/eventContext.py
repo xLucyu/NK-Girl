@@ -16,10 +16,6 @@ class ProfileContext:
     metaData: MetaData
     emojiData: dict[str, str]
 
-@dataclass(slots=True)
-class EmojiData:
-    name: str 
-    id: str 
 
 class EventContext:
 
@@ -71,9 +67,9 @@ class EventContext:
         if not self._emojiCache:
             
             emojiAPIData = await CommandBase.useApiCall(URL, headers)
-            itemData: EmojiData = emojiAPIData.get("items", None)
+            itemData = emojiAPIData.get("items", None)
 
-            self._emojiCache = {emoji.name: emoji.id for emoji in itemData}
+            self._emojiCache = {emoji["name"]: emoji["id"] for emoji in itemData}
 
         return 
 

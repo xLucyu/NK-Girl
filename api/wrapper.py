@@ -1,29 +1,34 @@
 from aiohttp import ClientSession 
+from typing import Optional
 
-class ApiClient:
-    
-    def __init__(self, session: ClientSession):
+class ApiWrapper:
 
-        self._session: ClientSession = session
-        self._url: str = "" 
-        self._headers: dict = {} 
+    def __init__(self):
 
-    def url(self, url: str):
+        self._session: Optional[ClientSession] = None 
 
-        self._url = url 
-        return self
-    
-    def headers(self, headers: dict[str, str]):
+    async def start(self) -> None:
 
-        self._headers = headers 
-        return self 
-    
-    async def get(self) -> dict:
+        if not self._session:
+            self._session = ClientSession()
 
-        async with self._session.get(
-            url=self._url, 
-            headers=self._headers
-        ) as response:
+    def _checkSession(self) -> ClientSession:
+
+        if self._session is None:
+            raise RuntimeError("No Valid API Session")
+        return self._session
+
+    async def stop(self) -> None:
+
+        if self._session:
+            await self._session.close()
+            self._session = None
+
+    async def get(self, url: str, headers: Optional[dict[str, str]] = None) -> dict:
+
+        session = self._checkSession()
+
+        async with session.get(url=url, headers=headers) as response:
             
             match response.status:
 
@@ -38,27 +43,3 @@ class ApiClient:
 
                 case _:
                     raise ValueError()
-
-class ApiWrapper:
-
-    def __init__(self):
-
-        self._session: ClientSession | None = None 
-
-    async def start(self) -> None:
-
-        if not self._session:
-            self._session = ClientSession()
-
-    async def stop(self) -> None:
-
-        if self._session:
-            await self._session.close()
-            self._session = None
-
-    def request(self) -> ApiClient:
-
-        if not self._session:
-            raise RuntimeError("Session not started")
-        
-        return ApiClient(self._session)

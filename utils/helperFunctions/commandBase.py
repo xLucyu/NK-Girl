@@ -22,18 +22,7 @@ class CommandBase:
  
     @staticmethod 
     async def useApiCall(url: str = "", headers: Optional[dict[str, str]] = None) -> dict:
-
-        if not headers:
-            headers = {}
-
-        client = CommandBase._wrapper.request()
-        
-        return await (
-            client
-                .url(url=url)
-                .headers(headers=headers)
-                .get()
-            )
+        return await CommandBase._wrapper.get(url, headers)
 
     @staticmethod 
     def transformDataToDataClass(dataclass: Type[T], data: dict[str, Any]) -> T: 

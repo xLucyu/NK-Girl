@@ -2,7 +2,7 @@ from utils.assets.bossTierHp import BOSSHP
 from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.main import Body 
 from utils.dataclasses.metaData import MetaData
-from cogs.baseCommand import BaseCommand
+from cogs.commandBase import CommandBase
 
 
 def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:

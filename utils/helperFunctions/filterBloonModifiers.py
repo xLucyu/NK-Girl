@@ -27,8 +27,8 @@ def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
         for modifier, multiplier in modifiers.items()
         if (
             (modifier not in NOKEYS and multiplier not in [9999, 1, -1])
-            or (modifier in NOKEYS and multiplier not in [9999, -1, False])
-        )   
+            or (modifier in NOKEYS and not (isinstance(multiplier, bool)) and multiplier not in [9999, -1])
+        )
 
         and not (modifier == "MaxParagons" and multiplier == 10)
         and not (modifier == "MaxTowers" and multiplier == 0)

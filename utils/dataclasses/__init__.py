@@ -16,6 +16,6 @@ __all__ = [
     "BossLB",
     "Leaderboard",
     "Odyssey",
-    "EventURLs,
+    "EventURLs",
     "URLS
 ]

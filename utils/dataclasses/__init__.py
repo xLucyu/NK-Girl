@@ -4,6 +4,7 @@ from .metaData import MetaBody, Tower, MetaData
 from .bossLB import BossLB
 from .leaderboard import Leaderboard
 from .odyssey import Odyssey
+from .eventUrls import EventURLs, URLS
 
 __all__ = [
     "DcModel",
@@ -14,5 +15,7 @@ __all__ = [
     "MetaData",
     "BossLB",
     "Leaderboard",
-    "Odyssey"
+    "Odyssey",
+    "EventURLs,
+    "URLS
 ]

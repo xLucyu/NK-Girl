@@ -27,7 +27,6 @@ class DiscordBotClient(discord.Bot):
     async def setup_hook(self) -> None:
 
         self.load_cogs()
-        await self.loadApiSession()
         await self.loadEventManager()
 
 
@@ -65,9 +64,7 @@ class DiscordBotClient(discord.Bot):
             await scheduler.postLoad()
             print("EventManager running")
 
-    async def loadApiSession(self) -> None:
-        await clientSession.start()
-
 if __name__ =="__main__":
     bot = DiscordBotClient() 
     bot.run(BOTTOKEN)
+

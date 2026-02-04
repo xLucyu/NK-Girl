@@ -3,7 +3,7 @@ import discord
 from database.index import DatabasePool
 from database.logic.guilds import GuildTable 
 from database.logic.usage import UsageTable 
-from api.wrapper import ApiWrapper
+from api.clientSession import clientSession
 
 
 from cogs.commands import * 
@@ -23,6 +23,12 @@ class DiscordBotClient(discord.Bot):
 
         for guild in self.guilds:
             print(guild)
+
+    async def setup_hook(self) -> None:
+
+        self.load_cogs()
+        await self.loadApiSession()
+        await self.loadEventManager()
 
 
     def load_cogs(self) -> None:
@@ -60,14 +66,8 @@ class DiscordBotClient(discord.Bot):
             print("EventManager running")
 
     async def loadApiSession(self) -> None:
-
-        await ApiWrapper().start()
-        print("started ApiWrapper Session")
-
+        await clientSession.start()
 
 if __name__ =="__main__":
     bot = DiscordBotClient() 
-    bot.load_cogs() 
-    bot.loop.create_task(bot.loadApiSession())
-    bot.loop.create_task(bot.loadEventManager())
     bot.run(BOTTOKEN)

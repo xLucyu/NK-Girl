@@ -1,6 +1,7 @@
-import discord
+from discord import Embed, Color
+from typing import Union
 
-def filterEmbed(eventData: dict, url: str, title: str) -> discord.Embed:
+def filterEmbed(eventData: dict[str, list[Union[str, bool]]], url: str, title: str) -> Embed:
 
     embed = discord.Embed(title=title, description="", color=discord.Color.green())
     embed.set_thumbnail(url=url)

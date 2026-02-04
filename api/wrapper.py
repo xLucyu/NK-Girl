@@ -4,13 +4,21 @@ from typing import Optional
 class ApiWrapper:
 
     def __init__(self):
-
         self._session: Optional[ClientSession] = None 
+
+    async def __aenter__(self):
+
+        await self.start()
+        return self
+    
+    async def __aexit__(self, exc_type, exc, tb):
+        await self.stop()
 
     async def start(self) -> None:
 
         if not self._session:
             self._session = ClientSession()
+
 
     def _checkSession(self) -> ClientSession:
 

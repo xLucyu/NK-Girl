@@ -1,8 +1,8 @@
 from dataclasses import dataclass 
 from utils.dataclasses import NkData, MetaData
+from utils.dataclasses import EventURLs
 from cogs.commandBase import CommandBase
 from config import BOTID, BOTTOKEN
-
 
 @dataclass(slots=True)
 class MainContext:
@@ -21,29 +21,30 @@ class EventContext:
 
     _emojiCache = {}
 
-    def __init__(self, urls: dict[str, str], index: int):
+    def __init__(self, urls: EventURLs, index: int, difficulty: str):
 
         self._urls = urls 
         self._index = index
+        self._difficulty = difficulty
 
 
     async def _getMainApiContext(self) -> MainContext:
         
-        mainApiData = await CommandBase.useApiCall(self._urls["base"])
+        mainApiData = await CommandBase.useApiCall(self._urls.base)
         mainPage = CommandBase.transformDataToDataClass(NkData, mainApiData)
 
         allEvents = mainPage.body
         selectedID = allEvents[self._index]
 
-        totalScoresKey = self._urls.get("TotalScores", None)
+        totalScoresKey = self._urls.totalScores
 
         if totalScoresKey:
             selectedID = self._getCurrentActiveLeaderboard(allEvents, totalScoresKey)
 
         return MainContext(
             previousEvents = [event.name for event in allEvents if event],
-            metaDataURL = selectedID.get(self._urls.get("extension", None)),
-            selectedID = selectedID 
+            metaDataURL = selectedID.get(self._urls.extension.format(self._difficulty)),
+            selectedID = selectedID
         )
 
 

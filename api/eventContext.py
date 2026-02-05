@@ -6,7 +6,7 @@ from utils.dataclasses import (
 )
 from utils.helperFunctions import transformDataToDataClass
 from config import BOTID, BOTTOKEN
-from .client import wrapper
+from .client import client
 
 @dataclass(slots=True)
 class MainContext:
@@ -33,7 +33,7 @@ class EventContext:
 
     async def _getMainApiContext(self) -> MainContext:
         
-        mainApiData = await wrapper.get(url=self._urls.base)
+        mainApiData = await client.get(url=self._urls.base)
 
         mainPage = transformDataToDataClass(NkData, mainApiData)
 
@@ -72,7 +72,7 @@ class EventContext:
             "Content-Type": "application/json"
         }
             
-        emojiAPIData = await wrapper.get(url = URL, headers = headers)
+        emojiAPIData = await client.get(url = URL, headers = headers)
         itemData = emojiAPIData.get("items", None)
 
         self._emojiCache = {emoji["name"]: emoji["id"] for emoji in itemData}
@@ -82,7 +82,7 @@ class EventContext:
 
         mainData = await self._getMainApiContext()
         
-        metaAPIData = await wrapper.get(url=mainData.metaDataURL if mainData.metaDataURL else "")
+        metaAPIData = await client.get(url=mainData.metaDataURL if mainData.metaDataURL else "")
         metaData = transformDataToDataClass(MetaData, metaAPIData)
 
         await self._testForEmojis()

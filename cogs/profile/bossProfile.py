@@ -1,26 +1,28 @@
-from cogs.commandBase import CommandBase
 from utils.assets.eventUrls import EVENTURLS
-from utils.dataclasses.metaData import MetaData
-from utils.dataclasses.main import Body
-
-def bossProfile(index: int, difficulty: str = ""): 
-
-    urls = {
-        "base": "https://data.ninjakiwi.com/btd6/bosses",
-        "extension": f"metadata{difficulty.title()}"
-    } 
- 
+from api.eventContext import ProfileContext
+from utils.helperFunctions import (
+    splitUppercase,
+    filterModifiers, 
+    filterTowers,
+    splitNumbers,
+    filterEmbed
+)
 
 
-    body = metaData.body
+def bossProfile(eventContext: ProfileContext): 
 
-    selectedMap = BaseCommand.splitUppercaseLetters(body.map)
-    selectedDifficulty = BaseCommand.splitUppercaseLetters(body.difficulty)
-    selectedMode = BaseCommand.splitUppercaseLetters(body.mode)
+    body = eventContext.metaData.body
+    mainData = eventContext.mainData.selectedID
+    emotes = eventContext.emojiData
+    difficulty = eventContext.difficulty
+
+    selectedMap = splitUppercase(body.map)
+    selectedDifficulty = splitUppercase(body.difficulty)
+    selectedMode = splitUppercase(body.mode)
 
     lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
     cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
-    rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{metaData.body.endRound}"
+    rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{body.endRound}"
      
     bossLeaderboardType = {
         "GameTime": f"<:EventRace:{emotes.get('EventRace')}> **Timed Leaderboard**",
@@ -30,8 +32,9 @@ def bossProfile(index: int, difficulty: str = ""):
     
     lbTypeKey = mainData.eliteScoringType if difficulty == "elite" else mainData.normalScoringType
     lbScoringType = bossLeaderboardType.get(lbTypeKey, None)
-    modifiers = BaseCommand.getActiveModifiers(body, emotes) 
-    towers = BaseCommand.getActiveTowers(body._towers, emotes) 
+
+    modifiers = filterModifiers(body, emotes) 
+    towers = filterTowers(body._towers, emotes) 
 
     if mainData.bossType.lower() not in body.roundSets:
         rounds += " (Custom Rounds)"
@@ -50,17 +53,14 @@ def bossProfile(index: int, difficulty: str = ""):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }
  
-    eventNumber = BaseCommand.splitBossNames(mainData.name)
+    eventNumber = splitNumbers(mainData.name)
     eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
-    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"{eventNumber}")
+    embed = filterEmbed(eventData, eventURL, title=f"{eventNumber}")
     embed.set_image(url=EVENTURLS["Maps"][selectedMap])
-    names = list()
 
-    for name in data.get("Names", []):
-        names.append(BaseCommand.splitBossNames(name))
+    previousEvents = [splitNumbers(event) for event in eventContext.mainData.previousEvents]
 
     return {
         "Embed": embed,
-        "Names": names,
-        "Index": index
+        "PreviousEvents": previousEvents
     }

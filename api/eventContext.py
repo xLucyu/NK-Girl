@@ -1,8 +1,12 @@
 from dataclasses import dataclass 
-from utils.dataclasses import NkData, MetaData
-from utils.dataclasses import EventURLs
-from cogs.commandBase import CommandBase
+from utils.dataclasses import (
+    NkData,
+    MetaData, 
+    EventURLs
+)
+from utils.helperFunctions import transformDataToDataClass
 from config import BOTID, BOTTOKEN
+from .client import wrapper
 
 @dataclass(slots=True)
 class MainContext:
@@ -27,11 +31,11 @@ class EventContext:
         self._index = index
         self._difficulty = difficulty
 
-
     async def _getMainApiContext(self) -> MainContext:
         
-        mainApiData = await CommandBase.useApiCall(self._urls.base)
-        mainPage = CommandBase.transformDataToDataClass(NkData, mainApiData)
+        mainApiData = await wrapper.get(url=self._urls.base)
+
+        mainPage = transformDataToDataClass(NkData, mainApiData)
 
         allEvents = mainPage.body
         selectedID = allEvents[self._index]
@@ -58,29 +62,28 @@ class EventContext:
 
     async def _testForEmojis(self) -> None:
 
+        if self._emojiCache:
+            return 
+            
         URL = f"https://discord.com/api/v10/applications/{BOTID}/emojis"
 
         headers = {
             "Authorization": f"Bot {BOTTOKEN}",
             "Content-Type": "application/json"
         }
-
-        if not self._emojiCache:
             
-            emojiAPIData = await CommandBase.useApiCall(URL, headers)
-            itemData = emojiAPIData.get("items", None)
+        emojiAPIData = await wrapper.get(url = URL, headers = headers)
+        itemData = emojiAPIData.get("items", None)
 
-            self._emojiCache = {emoji["name"]: emoji["id"] for emoji in itemData}
-
-        return 
+        self._emojiCache = {emoji["name"]: emoji["id"] for emoji in itemData}
 
 
     async def buildEventContext(self) -> ProfileContext:
 
         mainData = await self._getMainApiContext()
         
-        metaAPIData = await CommandBase.useApiCall(url=mainData.metaDataURL if mainData.metaDataURL else "")
-        metaData = CommandBase.transformDataToDataClass(MetaData, metaAPIData)
+        metaAPIData = await wrapper.get(url=mainData.metaDataURL if mainData.metaDataURL else "")
+        metaData = transformDataToDataClass(MetaData, metaAPIData)
 
         await self._testForEmojis()
 

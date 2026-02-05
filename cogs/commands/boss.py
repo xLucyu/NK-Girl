@@ -1,10 +1,11 @@
 import discord 
 from discord.ext import commands
-from cogs.profile.bossProfile import bossProfile
+from cogs.profile import bossProfile
 from utils.discord.viewMenu import SelectView
 from utils.logging.eventManager import EventManager
-from api.eventContext import EventContext
 from utils.dataclasses import EventURLs
+from api.eventContext import EventContext
+
 
 class Boss(commands.Cog):
 
@@ -32,26 +33,24 @@ class Boss(commands.Cog):
         context = await EventContext(
             urls=EventURLs["boss"],
             index=cachedEventIndex,
-            difficulty=difficulty
+            difficulty=difficulty,
         ).buildEventContext()
  
         if difficulty == "Normal":
             difficulty = "Standard"
  
-        eventDetails = bossProfile(context, difficulty=difficulty.lower())  
+        eventDetails = bossProfile(context)  
 
         embed = eventDetails["Embed"]
-        names = eventDetails["Names"]
-        index = eventDetails["Index"]
+        previousEvents = eventDetails["PreviousEvents"]
 
         data = {
             "Author": ctx.author.id, 
+            "EventContext": context,
             "EventName": "Boss",
-            "PreviousEvents": names,
+            "PreviousEvents": previousEvents,
             "Function": bossProfile,
-            "Difficulty": difficulty.lower(),
             "Message": None,
-            "Index": index,
             "Emoji": "<:BossChallenge:1338550202889404487>", 
             "Button": [
                     ["Normal", "standard", "success"],

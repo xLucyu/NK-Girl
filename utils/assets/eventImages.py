@@ -1,3 +1,8 @@
+RACE_IMAGE = "https://static.wikia.nocookie.net/b__/images/4/40/EventRaceIcon.png/revision/latest?cb=20210625211459&path-prefix=bloons"
+LEASTCASH_IMAGE = "https://static.wikia.nocookie.net/b__/images/b/bc/LeastCashIcon.png/revision/latest?cb=20220703150039&path-prefix=bloons"
+LEASTTIERS_IMAGE = "https://static.wikia.nocookie.net/b__/images/a/ac/LeastTiersIcon.png/revision/latest?cb=20220703150038&path-prefix=bloons"
+CT_IMAGE = "https://www.bloonswiki.com/images/e/e7/BTD6_ContestedTerritoryEvent.png?20240609232601" 
+
 BOSS_IMAGE = {
     "standard": {
         "Image": {
@@ -37,10 +42,6 @@ BOSS_IMAGE = {
     }
 }
 
-RACE_IMAGE = "https://static.wikia.nocookie.net/b__/images/4/40/EventRaceIcon.png/revision/latest?cb=20210625211459&path-prefix=bloons"
-LEASTCASH_IMAGE = "https://static.wikia.nocookie.net/b__/images/b/bc/LeastCashIcon.png/revision/latest?cb=20220703150039&path-prefix=bloons"
-LEASTTIERS_IMAGE = "https://static.wikia.nocookie.net/b__/images/a/ac/LeastTiersIcon.png/revision/latest?cb=20220703150038&path-prefix=bloons"
-
 ODYSSEY_IMAGE = {
     "easy": "https://static.wikia.nocookie.net/b__/images/9/9a/OdysseyModeEasyBtn.png/revision/latest?cb=20201219224324&path-prefix=bloons",
     "medium": "https://static.wikia.nocookie.net/b__/images/6/66/OdysseyModeMediumBtn.png/revision/latest?cb=20201219224311&path-prefix=bloons",
@@ -51,9 +52,7 @@ CHALLENGE_IMAGE = {
     "daily": "https://static.wikia.nocookie.net/b__/images/b/bf/DailyChallengeBtn.png/revision/latest?cb=20200601042405&path-prefix=bloons",
     "challenge": "https://static.wikia.nocookie.net/b__/images/8/86/CreateChallengeIcon.png/revision/latest?cb=20200601042401&path-prefix=bloons" 
 }
-
-CT_IMAGE = "https://www.bloonswiki.com/images/e/e7/BTD6_ContestedTerritoryEvent.png?20240609232601" 
-    
+ 
 MAPS_IMAGE = {
     "Adoras Temple": "https://static.wikia.nocookie.net/b__/images/0/0a/AdorasTemple_No_UI.png/revision/latest?cb=20200519012904&path-prefix=bloons",
     "Alpine Run": "https://static.wikia.nocookie.net/b__/images/0/07/AlpineRun_No_UI.png/revision/latest?cb=20200519012905&path-prefix=bloons",

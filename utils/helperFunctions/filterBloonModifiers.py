@@ -1,5 +1,5 @@
-from dataclasses import asdict
-from utils.assets.bloonsModifiers import MODIFIERS
+from utils.assets import MODIFIERS 
+from utils.dataclasses import MetaBody  
 
 NOKEYS = [
     "MaxParagons", 
@@ -14,43 +14,35 @@ NOKEYS = [
     "PowersDisabled"
 ]
 
+MODIFIER_KEYS = [
+    "speedMultiplier",
+    "moabSpeedMultiplier",
+    "bossSpeedMultiplier",
+    "regrowRateMultiplier",
+    "bloons",
+    "moabs",
+    "boss",
+    "allCamo",
+    "allRegen",
+    "MKDisabled",
+    "NoSelling",
+    "AbilityCoolDown",
+    "NoContinues",
+    "MaxTowers",
+    "MaxParagons",
+    "LeastCash",
+    "LeastTiers",
+    "PowersDisabled",
+    "RemoveableCost"
+]
 
-def filterModifiers(modifiers: dict, emotes: dict) -> list[str]:
 
-    flattenBloonModifiers = asdict(modifiers.pop("BloonModifiers"))
-    flattenHealthModifiers = flattenBloonModifiers.pop("healthMultipliers")
-    modifiers = {**flattenBloonModifiers, **flattenHealthModifiers, **modifiers} 
-    
-    activeModifiers = {
+def filterModifiers(body: MetaBody, emojis: dict[str,  str]) -> list[str]:
 
-        modifier: multiplier*100 if modifier not in NOKEYS else multiplier
-        for modifier, multiplier in modifiers.items()
-        if (
-            (modifier not in NOKEYS and multiplier not in [9999, 1, -1])
-            or (modifier in NOKEYS and not (isinstance(multiplier, bool)) and multiplier not in [9999, -1])
-        )
-
-        and not (modifier == "MaxParagons" and multiplier == 10)
-        and not (modifier == "MaxTowers" and multiplier == 0)
-
+    validModifiers = {
+        modifier: value*100 if modifier not in NOKEYS else value 
+        for modifier, value in vars(body).items() 
+        if modifier in MODIFIER_KEYS
     }
-    
-    formattedModifierList = []
-    for modifier, multiplier in activeModifiers.items():
-        embedDisplayName = MODIFIERS.get(modifier, "")
-        emoteKey = "" if modifier in NOKEYS else "Increase" if multiplier > 100 else "Decrease"
-        emoteId = emotes.get(f"{modifier}{emoteKey}")
-        formattedEmote = f"<:{modifier}{emoteKey}:{emoteId}>" #<:bossIncrease:1335339243345809478> example 
-        
-        if modifier == "LeastCash":
-            multiplier = f"${multiplier:,}"
-        elif modifier in ["MaxParagons", "MaxTowers"]:
-            multiplier = multiplier
-        elif isinstance(multiplier, bool): 
-            multiplier = ""
-        else:
-            multiplier = f"{int(multiplier)}% "
 
-        formattedModifierList.append(f"{formattedEmote} {multiplier}{embedDisplayName}")
-
-    return formattedModifierList
+    print(validModifiers)

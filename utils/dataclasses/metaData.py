@@ -66,9 +66,9 @@ class MetaBody:
     lossesUnique: int = 0
     powers: List[Any] = field(default_factory=list)
     _bloonModifiers: BloonModifiers = field(default_factory=BloonModifiers)
-    _towers: Optional[List[Tower]] = field(default_factory=list)
+    _towers: Optional[List[Tower]] = field(default_factory=List[Tower])
 
 @dataclass
 class MetaData:
     success: bool = False
-    body: MetaBody = field(default_factory=MetaBody)
+    body: List[MetaBody] = field(default_factory=ListMetaBody)

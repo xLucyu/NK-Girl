@@ -1,6 +1,6 @@
 from utils.assets.towerCategories import CATEGORIES
 from utils.dataclasses.metaData import Tower
-from typing import List 
+
 
 def formatTowerToString(tower: Tower, tiers: list[int], emotes: dict, friendlyTowerName: str) -> str:
 
@@ -29,7 +29,7 @@ def getTiers(tower: Tower) -> list[int]:
     ] 
 
 
-def filterTowers(towers: List[Tower], emotes: dict) -> dict:
+def filterTowers(towers: list[Tower], emotes: dict) -> dict:
 
     towerKeys = [(category, tower) for category, tower in CATEGORIES.items() for tower in tower.items()] 
     availableTowers = {tower.tower: tower for tower in towers if tower.max != 0} # filter out towers early 

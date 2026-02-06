@@ -29,7 +29,7 @@ URLS: dict[str, EventURLs] = {
     ),
     "Tile": EventURLs(
         base = "https://storage.googleapis.com/btd6-ct-map/events",
-        extensions =  "{}/tiles.json"
+        extension = "{}/tiles.json"
     ),
     "BossLB": EventURLs(
         base = "https://storage.googleapis.com/btd6_boss_leaderboard/{}/{}/{}/leaderboard.json"
@@ -40,5 +40,8 @@ URLS: dict[str, EventURLs] = {
     "ChallengeDaily": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
         extension = "metadata"
+    ),
+    "Emojis": EventURLs(
+        base = "https://discord.com/api/v10/applications/{}/emojis"
     )
 }

@@ -1,24 +1,28 @@
+from api import client 
 from dataclasses import dataclass 
 from utils.dataclasses import (
     NkData,
     MetaData, 
-    EventURLs
+    EventURLs,
+    Body
 )
 from utils.helperFunctions import transformDataToDataClass
-from config import BOTID, BOTTOKEN
-from .client import client
+from config import BOTID, BOTTOKEN 
+
 
 @dataclass(slots=True)
 class MainContext:
     previousEvents: list[str]
     metaDataURL: str | None  
-    selectedID: dict
+    selectedID: Body
 
 @dataclass(slots=True)
 class ProfileContext:
     mainData: MainContext
     metaData: MetaData
     emojiData: dict[str, str]
+    difficulty: str 
+    index: int 
 
 
 class EventContext:
@@ -33,7 +37,7 @@ class EventContext:
 
     async def _getMainApiContext(self) -> MainContext:
         
-        mainApiData = await client.get(url=self._urls.base)
+        mainApiData = await client.fetch(url=self._urls.base)
 
         mainPage = transformDataToDataClass(NkData, mainApiData)
 
@@ -47,7 +51,7 @@ class EventContext:
 
         return MainContext(
             previousEvents = [event.name for event in allEvents if event],
-            metaDataURL = selectedID.get(self._urls.extension.format(self._difficulty)),
+            metaDataURL = selectedID.get(self._urls.extension.format(self._difficulty), None),
             selectedID = selectedID
         )
 
@@ -65,14 +69,14 @@ class EventContext:
         if self._emojiCache:
             return 
             
-        URL = f"https://discord.com/api/v10/applications/{BOTID}/emojis"
+        emojiURL = f"https://discord.com/api/v10/applications/{BOTID}/emojis"
 
         headers = {
             "Authorization": f"Bot {BOTTOKEN}",
             "Content-Type": "application/json"
         }
             
-        emojiAPIData = await client.get(url = URL, headers = headers)
+        emojiAPIData = await client.fetch(url = emojiURL, headers = headers)
         itemData = emojiAPIData.get("items", None)
 
         self._emojiCache = {emoji["name"]: emoji["id"] for emoji in itemData}
@@ -81,14 +85,16 @@ class EventContext:
     async def buildEventContext(self) -> ProfileContext:
 
         mainData = await self._getMainApiContext()
-        
-        metaAPIData = await client.get(url=mainData.metaDataURL if mainData.metaDataURL else "")
-        metaData = transformDataToDataClass(MetaData, metaAPIData)
 
+        metaAPIData = await client.fetch(url=mainData.metaDataURL if mainData.metaDataURL else "")
+        metaData = transformDataToDataClass(MetaData, metaAPIData)
+            
         await self._testForEmojis()
 
         return ProfileContext(
             mainData = mainData, 
             metaData = metaData, 
-            emojiData = self._emojiCache
+            emojiData = self._emojiCache,
+            difficulty = self._difficulty,
+            index = self._index
         )

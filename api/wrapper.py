@@ -25,22 +25,26 @@ class ApiWrapper:
             await self._session.close()
             self._session = None
 
-    async def get(self, url: str, headers: Optional[dict[str, str]] = None) -> dict:
+    async def fetch(self, url: str, headers: Optional[dict[str, str]] = None) -> dict:
 
         session = self._checkSession()
-
-        async with session.get(url=url, headers=headers) as response:
+        
+        try:
+            async with session.get(url=url, headers=headers) as response:
             
-            match response.status:
+                match response.status:
 
-                case 200:
-                    return await response.json()
+                    case 200:
+                        return await response.json()
                 
-                case 400 | 403 | 404:
-                    raise ValueError("RequestNoSuccess")
+                    case 400 | 403 | 404:
+                        raise ValueError("RequestNoSuccess")
                 
-                case 500 | 502 | 503 | 504:
-                    raise ValueError("ServerDown")
+                    case 500 | 502 | 503 | 504:
+                        raise ValueError("ServerDown")
 
-                case _:
-                    raise ValueError()
+                    case _:
+                        raise ValueError()
+
+        except Exception:
+            return {}

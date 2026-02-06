@@ -3,7 +3,7 @@ from discord.ext import commands
 from cogs.profile import bossProfile
 from utils.discord.viewMenu import SelectView
 from utils.logging.eventManager import EventManager
-from utils.dataclasses import EventURLs
+from utils.dataclasses import URLS
 from api.eventContext import EventContext
 
 
@@ -31,9 +31,9 @@ class Boss(commands.Cog):
         cachedEventIndex = eventManager.getCurrentEventCacheIndex("Boss")
 
         context = await EventContext(
-            urls=EventURLs["boss"],
-            index=cachedEventIndex,
-            difficulty=difficulty,
+            urls = URLS["boss"],
+            index = cachedEventIndex,
+            difficulty = difficulty,
         ).buildEventContext()
  
         if difficulty == "Normal":

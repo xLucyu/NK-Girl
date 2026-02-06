@@ -1,4 +1,3 @@
-from utils.assets.eventUrls import EVENTURLS
 from api.eventContext import ProfileContext
 from utils.helperFunctions import (
     splitUppercase,
@@ -7,34 +6,38 @@ from utils.helperFunctions import (
     splitNumbers,
     filterEmbed
 )
+from utils.assets import (
+    BOSS_IMAGE,
+    MAPS_IMAGE
+)
 
 
 def bossProfile(eventContext: ProfileContext): 
 
     body = eventContext.metaData.body
     mainData = eventContext.mainData.selectedID
-    emotes = eventContext.emojiData
+    emojis = eventContext.emojiData
     difficulty = eventContext.difficulty
 
     selectedMap = splitUppercase(body.map)
     selectedDifficulty = splitUppercase(body.difficulty)
     selectedMode = splitUppercase(body.mode)
 
-    lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
-    cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
-    rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{body.endRound}"
+    lives = f"<:Lives:{emojis.get('Lives')}> {body.lives}"
+    cash = f"<:Cash:{emojis.get('Cash')}> ${body.startingCash:,}"
+    rounds = f"<:Round:{emojis.get('Round')}> {body.startRound}/{body.endRound}"
      
     bossLeaderboardType = {
-        "GameTime": f"<:EventRace:{emotes.get('EventRace')}> **Timed Leaderboard**",
-        "LeastCash": f"<:LeastCash:{emotes.get('LeastCash')}> **Least Cash Leaderboard**",
-        "LeastTiers": f"<:LeastTiers:{emotes.get('LeastTiers')}> **Least Tiers Leaderboard**"
+        "GameTime": f"<:EventRace:{emojis.get('EventRace')}> **Timed Leaderboard**",
+        "LeastCash": f"<:LeastCash:{emojis.get('LeastCash')}> **Least Cash Leaderboard**",
+        "LeastTiers": f"<:LeastTiers:{emojis.get('LeastTiers')}> **Least Tiers Leaderboard**"
     }
     
     lbTypeKey = mainData.eliteScoringType if difficulty == "elite" else mainData.normalScoringType
     lbScoringType = bossLeaderboardType.get(lbTypeKey, None)
 
-    modifiers = filterModifiers(body, emotes) 
-    towers = filterTowers(body._towers, emotes) 
+    modifiers = filterModifiers(body, emojis) 
+    towers = filterTowers(body._towers, emojis) 
 
     if mainData.bossType.lower() not in body.roundSets:
         rounds += " (Custom Rounds)"
@@ -54,9 +57,9 @@ def bossProfile(eventContext: ProfileContext):
         }
  
     eventNumber = splitNumbers(mainData.name)
-    eventURL = EVENTURLS["Boss"][difficulty]["Image"][mainData.bossType.title()]
+    eventURL = BOSS_IMAGE[difficulty]["Image"][mainData.bossType.title()]
     embed = filterEmbed(eventData, eventURL, title=f"{eventNumber}")
-    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
+    embed.set_image(url=MAPS_IMAGE[selectedMap])
 
     previousEvents = [splitNumbers(event) for event in eventContext.mainData.previousEvents]
 

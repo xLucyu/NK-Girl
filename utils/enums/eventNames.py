@@ -4,3 +4,4 @@ class Events(Enum):
     Race = "Race"
     Boss = "Boss"
     Odyssey = "Odyssey"
+    CT = "CT"

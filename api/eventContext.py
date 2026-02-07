@@ -1,4 +1,4 @@
-from api import client 
+from api.client import client 
 from dataclasses import dataclass 
 from utils.dataclasses import (
     NkData,
@@ -29,11 +29,12 @@ class EventContext:
 
     _emojiCache = {}
 
-    def __init__(self, urls: EventURLs, index: int, difficulty: str):
+    def __init__(self, urls: EventURLs, index: int, difficulty: str, isLeaderboard: bool):
 
         self._urls = urls 
         self._index = index
         self._difficulty = difficulty
+        self._isLeaderboard = isLeaderboard 
 
     async def _getMainApiContext(self) -> MainContext:
         
@@ -43,24 +44,24 @@ class EventContext:
 
         allEvents = mainPage.body
         selectedID = allEvents[self._index]
-
-        totalScoresKey = self._urls.totalScores
-
-        if totalScoresKey:
+        
+        if self._isLeaderboard:
+            totalScoresKey = self._urls.totalScores.format(self._difficulty.lower() if self._difficulty else "")
             selectedID = self._getCurrentActiveLeaderboard(allEvents, totalScoresKey)
-
+    
         return MainContext(
             previousEvents = [event.name for event in allEvents if event],
-            metaDataURL = selectedID.get(self._urls.extension.format(self._difficulty), None),
+            metaDataURL = self._urls.getExtensionAttribute(selectedID, self._difficulty), 
             selectedID = selectedID
         )
 
 
-    def _getCurrentActiveLeaderboard(self, allEvents: list[dict], totalScoresKey: str) -> dict | None:
-
+    def _getCurrentActiveLeaderboard(self, allEvents: list[Body], totalScoresKey: str) -> Body | None:
+        
         for currentEntry in allEvents: 
-            if currentEntry.get(totalScoresKey) != 0:
-                return currentEntry 
+            value = getattr(currentEntry, totalScoresKey) 
+            if value != 0:
+                return currentEntry
 
         return
 
@@ -88,7 +89,7 @@ class EventContext:
 
         metaAPIData = await client.fetch(url=mainData.metaDataURL if mainData.metaDataURL else "")
         metaData = transformDataToDataClass(MetaData, metaAPIData)
-            
+          
         await self._testForEmojis()
 
         return ProfileContext(

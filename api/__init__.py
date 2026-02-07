@@ -1,9 +1,10 @@
 from .eventContext import EventContext
 from .wrapper import ApiWrapper
+from .client import client 
 
-client = ApiWrapper()
 
 __all__ = [
     "EventContext",
-    "ApiWrapper"
+    "ApiWrapper",
+    "client"
 ]

@@ -1,5 +1,3 @@
-from cogs.baseCommand import BaseCommand
-from utils.assets.eventUrls import EVENTURLS
 from utils.dataclasses.main import Body 
 from utils.dataclasses.metaData import MetaData
 

@@ -4,15 +4,36 @@ from typing import Optional
 @dataclass
 class EventURLs:
     base: str 
-    extension: Optional[str] = None 
+    extension: Optional[dict[str, str]] | str = None 
     totalScores: Optional[str] = None
 
 
+    def getExtensionAttribute(self, object, difficulty: str) -> str | None:
+        
+        if not self.extension:
+            return 
+
+        if isinstance(self.extension, dict):
+            attributeName = self.extension.get(difficulty, None)
+
+            if not attributeName:
+                return
+
+        else: 
+            attributeName = self.extension
+
+        return getattr(object, attributeName)
+
+
 URLS: dict[str, EventURLs] = {
+
     "Boss": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/bosses",
-        extension = "metadata{}",
-        totalScores = "totalScores{}"
+        extension = {
+            "Standard": "metadataStandard",
+            "Elite": "metaDataElite"
+        },
+        totalScores = "totalScores_{}"
     ),
     "Race": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/races",
@@ -21,11 +42,15 @@ URLS: dict[str, EventURLs] = {
     ),
     "Odyssey": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/odyssey",
-        extension = "metadata{}"
+        extension = {
+            "easy": "metadata_easy",
+            "medium": "metadata_medium",
+            "hard": "metadata_hard"
+        }
     ),
     "CT": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/ct",
-        totalScores = "totalScores{}"
+        totalScores = "totalScores_{}"
     ),
     "Tile": EventURLs(
         base = "https://storage.googleapis.com/btd6-ct-map/events",

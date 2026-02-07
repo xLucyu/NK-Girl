@@ -9,7 +9,6 @@ from .transformToDataClass import transformDataToDataClass
 
 __all__ = [
     "getCurrentActiveEvent",
-    "getEmojis",
     "getNumberForEvent",
     "filterModifiers",
     "filterTowers",

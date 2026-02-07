@@ -11,7 +11,6 @@ class ApiWrapper:
         if not self._session:
             self._session = ClientSession()
 
-
     def _checkSession(self) -> ClientSession:
 
         if self._session is None:
@@ -47,4 +46,4 @@ class ApiWrapper:
                         raise ValueError()
 
         except Exception:
-            return {}
+            return {} 

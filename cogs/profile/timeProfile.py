@@ -1,7 +1,5 @@
 from timeCalculator.send import TimeSend  
 from timeCalculator.goal import TimeGoal 
-from cogs.baseCommand import BaseCommand
-from utils.assets.eventUrls import EVENTURLS
 
 def timeProfile(**components):
 

@@ -1,7 +1,6 @@
 import discord
 from leaderboards.formatLeaderboards import FormatLeaderboards
 from utils.dataclasses.main import Body
-from cogs.baseCommand import BaseCommand
 
 def getTotalScoreKey(mainData: Body, difficulty: str) -> int:
 

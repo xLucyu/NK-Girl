@@ -1,10 +1,10 @@
-from config import BOTTOKEN
+import asyncio
 import discord 
+from config import BOTTOKEN
 from database.index import DatabasePool
 from database.logic.guilds import GuildTable 
 from database.logic.usage import UsageTable 
-from api.clientSession import clientSession
-
+from api import client
 
 from cogs.commands import * 
 from utils.logging import *
@@ -20,39 +20,33 @@ class DiscordBotClient(discord.Bot):
         self.usageTable = UsageTable(pool)
 
     async def on_ready(self): 
-
+        
         for guild in self.guilds:
             print(guild)
-
-    async def setup_hook(self) -> None:
-
-        self.load_cogs()
-        await self.loadEventManager()
-
 
     def load_cogs(self) -> None:
 
         cogs = [
-            Admin(bot, self.usageTable),
-            Boss(bot),
-            BossDetails(bot),
-            Challenge(bot),
-            Channel(bot, self.guildTable),
-            Event(bot, self.guildTable),
-            Feedback(bot, self.usageTable),
-            Help(bot),
-            Leaderboard(bot),
-            Odyssey(bot),
-            Race(bot),
-            Tile(bot),
-            Time(bot),
-            ErrorHandler(bot),
-            EventManager(bot, self.guildTable),
-            CommandLogger(bot, self.usageTable)
+            Admin(self, self.usageTable),
+            Boss(self),
+            BossDetails(self),
+            Challenge(self),
+            Channel(self, self.guildTable),
+            Event(self, self.guildTable),
+            Feedback(self, self.usageTable),
+            Help(self),
+            Leaderboard(self),
+            Odyssey(self),
+            Race(self),
+            Tile(self),
+            Time(self),
+            ErrorHandler(self),
+            EventManager(self, self.guildTable),
+            CommandLogger(self, self.usageTable)
         ] 
 
         for cog in cogs:
-            bot.add_cog(cog)
+            self.add_cog(cog)
 
         print("loaded cogs")
 
@@ -64,7 +58,20 @@ class DiscordBotClient(discord.Bot):
             await scheduler.postLoad()
             print("EventManager running")
 
-if __name__ =="__main__":
-    bot = DiscordBotClient() 
-    bot.run(BOTTOKEN)
+    async def startApiSession(self) -> None:
 
+        await client.start()
+        print("started api session")
+    
+    async def on_disconnect(self) -> None:
+
+        await client.stop()
+        print("stopped api session")
+
+if __name__ =="__main__":
+
+    bot = DiscordBotClient()
+    bot.load_cogs()
+    bot.loop.create_task(bot.loadEventManager())
+    bot.loop.create_task(bot.startApiSession())
+    bot.run(BOTTOKEN)

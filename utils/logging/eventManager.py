@@ -4,7 +4,6 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from cogs.profile.raceProfile import raceProfile 
 from cogs.profile.bossProfile import bossProfile
 from cogs.profile.odysseyProfile import odysseyProfile
-from cogs.baseCommand import BaseCommand
 from database.logic.guilds import GuildTable
 from utils.dataclasses.main import NkData, Body
 

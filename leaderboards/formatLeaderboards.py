@@ -2,7 +2,6 @@ from leaderboards.base import BaseLeaderboard
 from utils.dataclasses.leaderboard import Leaderboard, Body
 from utils.dataclasses.bossLB import BossLB, Team
 from utils.assets.medals import MEDALS
-from cogs.baseCommand import BaseCommand
 
 class FormatLeaderboards(BaseLeaderboard):
 

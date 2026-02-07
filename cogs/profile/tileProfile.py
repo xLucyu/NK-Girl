@@ -1,5 +1,3 @@
-from utils.assets.eventUrls import EVENTURLS
-from cogs.baseCommand import BaseCommand
 from utils.dataclasses.ct import TileCode
 from utils.dataclasses.main import NkData
 

@@ -1,5 +1,3 @@
-from cogs.baseCommand import BaseCommand
-from utils.assets.eventUrls import EVENTURLS 
 from utils.assets.towerCategories import CATEGORIES
 from utils.dataclasses.odyssey import Odyssey, OdysseyBody
 from utils.dataclasses.main import Body

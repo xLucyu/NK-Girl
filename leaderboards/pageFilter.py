@@ -1,5 +1,4 @@
 import discord 
-from cogs.baseCommand import BaseCommand
 from utils.dataclasses.leaderboard import Leaderboard
 from utils.dataclasses.bossLB import BossLB
 

@@ -3,7 +3,7 @@ from typing import Union
 
 def filterEmbed(eventData: dict[str, list[Union[str, bool]]], url: str, title: str) -> Embed:
 
-    embed = discord.Embed(title=title, description="", color=discord.Color.green())
+    embed = Embed(title=title, description="", color=Color.green())
     embed.set_thumbnail(url=url)
 
     for key, value in eventData.items():

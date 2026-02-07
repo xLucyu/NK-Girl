@@ -1,6 +1,5 @@
 from datetime import timezone, datetime 
 from utils.dataclasses.main import Body
-from cogs.baseCommand import BaseCommand 
 
 class BaseLeaderboard:
     

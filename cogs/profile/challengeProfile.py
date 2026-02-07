@@ -1,6 +1,4 @@
 from datetime import datetime 
-from utils.assets.eventUrls import EVENTURLS
-from cogs.baseCommand import BaseCommand
 from utils.dataclasses.main import NkData 
 from utils.dataclasses.metaData import MetaData 
 

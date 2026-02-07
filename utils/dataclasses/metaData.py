@@ -71,4 +71,4 @@ class MetaBody:
 @dataclass
 class MetaData:
     success: bool = False
-    body: List[MetaBody] = field(default_factory=ListMetaBody)
+    body: MetaBody = field(default_factory=MetaBody)

@@ -1,3 +1,4 @@
+from .bloonsModifiers import Modifier, buildModifiers 
 from .ct import DcModel
 from .main import NkData, Body
 from .metaData import MetaBody, Tower, MetaData
@@ -7,6 +8,8 @@ from .odyssey import Odyssey
 from .eventURLs import EventURLs, URLS 
 
 __all__ = [
+    "Modifier",
+    "buildModifiers",
     "DcModel",
     "NkData",
     "Body",

@@ -1,4 +1,3 @@
-from .bloonsModifiers import MODIFIERS
 from .bossTierHp import BOSSHP
 from .eventImages import (
     RACE_IMAGE,
@@ -15,7 +14,6 @@ from .raceRounds import REGULAR, ABR
 from .towerCategories import CATEGORIES
 
 __all__ = [
-    "MODIFIERS",
     "BOSSHP",
     "RACE_IMAGE",
     "LEASTCASH_IMAGE",

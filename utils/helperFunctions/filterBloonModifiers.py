@@ -8,26 +8,14 @@ def filterModifiers(body: MetaBody, emojis: dict[str,  str], isCT: bool = False)
     
     modifierDict: dict[str, Modifier] = buildModifiers(body)
     
-    activeModifiers = []
-
-    for key, modifier in modifierDict.items():
-
-        if key == "maxTowers" and modifier.api != 0:
-            activeModifiers.append(f"{modifier.api} {modifier.label}")
-
-        elif key == "maxParagons" and modifier.api != 10:
-            activeModifiers.append(f"{modifier.api} {modifier.label}")
-
-        elif key == "LeastCashUsed":
-            activeModifiers.append(f"${modifier.api} {modifier.label}")
-            
-        elif modifier.hasKey and modifier.api not in [-1, 0, 9999, False]:
-
-            modifier.api *= 100
-            activeModifiers.append(f"{modifier.api} {modifier.label}")
-            
-        else:
-            activeModifiers.append(f"{modifier.api} {modifier.label}")
-
-    return activeModifiers
+    activeModifiers = {
+        key: mod.api
+        for key, mod in modifierDict.items()
+        if not (
+            (mod.api is False and isinstance(mod.api, bool))
+            or mod.api in [1, -1, 9999]
+            or (key == "maxParagons" and mod == 10)
+            or (key == "maxTowers" and mod == 0)
+        )
+    }
 

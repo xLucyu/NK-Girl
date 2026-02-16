@@ -24,7 +24,7 @@ class DiscordBotClient(discord.Bot):
         for guild in self.guilds:
             print(guild)
 
-    def load_cogs(self) -> None:
+    def loadCogs(self) -> None:
 
         cogs = [
             Admin(self, self.usageTable),
@@ -71,7 +71,8 @@ class DiscordBotClient(discord.Bot):
 if __name__ =="__main__":
 
     bot = DiscordBotClient()
-    bot.load_cogs()
+    bot.loadCogs()
     bot.loop.create_task(bot.loadEventManager())
     bot.loop.create_task(bot.startApiSession())
     bot.run(BOTTOKEN)
+

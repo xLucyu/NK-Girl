@@ -46,4 +46,4 @@ class ApiWrapper:
                         raise ValueError()
 
         except Exception:
-            return {} 
+            raise ValueError()

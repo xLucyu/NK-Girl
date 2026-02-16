@@ -2,15 +2,14 @@ from utils.assets.bossTierHp import BOSSHP
 from utils.dataclasses.main import Body 
 from utils.dataclasses.metaData import MetaData
 
+healthMultiplierMode = {
+    1: 1,
+    2: 1.20,
+    3: 1.40,
+    4: 1.60
+}
 
 def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, players: int, emojis: dict) -> None:
-
-    healthMultiplierMode = {
-        1: 1,
-        2: 1.20,
-        3: 1.40,
-        4: 1.60
-    }
     
     shieldHpMultiplier = bossIndex.get("Shield", 1)
     skulls = bossIndex.get("Skulls", 1) 

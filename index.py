@@ -63,7 +63,7 @@ class DiscordBotClient(discord.Bot):
         await client.start()
         print("started api session")
     
-    async def on_disconnect(self) -> None:
+    async def close(self) -> None:
 
         await client.stop()
         print("stopped api session")
@@ -75,4 +75,5 @@ if __name__ =="__main__":
     bot.loop.create_task(bot.loadEventManager())
     bot.loop.create_task(bot.startApiSession())
     bot.run(BOTTOKEN)
+
 

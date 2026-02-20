@@ -9,9 +9,14 @@ class Tile(commands.Cog):
 
         self.bot = bot        
 
-    @discord.message_command(name="Tile Lookup", description="If this message has a tile code for CT, you can look it up.",
-                             integration_types={discord.IntegrationType.user_install,
-                                             discord.IntegrationType.guild_install}) 
+    @discord.message_command(
+        name="Tile Lookup",
+        description="If this message has a tile code for CT, you can look it up.",
+        integration_types={
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    ) 
     async def getTileCode(self, ctx: discord.ApplicationContext, message: discord.Message):
          
         eventIndex = getCurrentCtNumber()
@@ -32,9 +37,14 @@ class Tile(commands.Cog):
 
         await self.tile(ctx, tile_code=tileCode, event=eventIndex) 
  
-    @discord.slash_command(name="tile", description="Get CT Tile Data", 
-                           integration_types={discord.IntegrationType.user_install,
-                                              discord.IntegrationType.guild_install}) 
+    @discord.slash_command(
+        name="tile",
+        description="Get CT Tile Data", 
+        integration_types={
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     @commands.cooldown(1, 5, commands.BucketType.user) 
     @discord.option(
         "tile_code", 

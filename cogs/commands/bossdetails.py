@@ -9,9 +9,14 @@ class BossDetails(commands.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @discord.slash_command(name="bossdetails", description="Show details about the current Boss.",
-                           integration_types = {discord.IntegrationType.user_install,
-                                                discord.IntegrationType.guild_install})
+    @discord.slash_command(
+        name="bossdetails",
+        description="Show details about the current Boss.",
+        integration_types = {
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "difficulty",
@@ -43,7 +48,7 @@ class BossDetails(commands.Cog):
         description = "Choose a hp multiplier, this is optional. Will show on the event boss too, if you select it.",
         required = False
     )
-    async def bossdetails(self,
+    async def execute(self,
                           ctx: discord.ApplicationContext, 
                           difficulty: str = "Normal", 
                           players: int = 1, 

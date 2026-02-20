@@ -12,14 +12,16 @@ class Channel(commands.Cog):
     challenge = discord.SlashCommandGroup(
         "channel", 
         "",
-        integration_types={
+        integration_types = {
             discord.IntegrationType.guild_install
         },
         default_member_permission=discord.Permissions(manage_guild=True)
     )
-    
     @commands.cooldown(1, 5, commands.BucketType.user)
-    @challenge.command(name = "add", description = "add a channel for the specific event")
+    @challenge.command(
+        name = "add",
+        description = "add a channel for the specific event"
+    )
     @discord.option(
         "event",
         description = "Events will be automatically posted in this channel",

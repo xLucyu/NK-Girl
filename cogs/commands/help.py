@@ -7,9 +7,14 @@ class Help(commands.Cog):
 
         self.bot = bot
 
-    @discord.slash_command(name="help", description="get an overview of this bot", 
-                           integration_types={discord.IntegrationType.user_install,
-                                              discord.IntegrationType.guild_install})
+    @discord.slash_command(
+        name="help",
+        description="get an overview of this bot", 
+        integration_types={
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     async def help(self, ctx: discord.ApplicationContext) -> None:
 
         embed = discord.Embed(

@@ -8,6 +8,8 @@ def getCurrentTimeStamp() -> int:
         )
 
 def timeStampToUTCTimeFormat(timeStamp: int) -> str:
-    return datetime
-            .fromtimestamp(timestamp / 1000, tz = timezone.utc)
+    return (
+        datetime
+            .fromtimestamp(timeStamp / 1000, tz = timezone.utc)
             .strftime('%Y-%m-%d %H:%M:%S UTC')
+        )

@@ -9,12 +9,18 @@ class Challenge(commands.Cog):
 
         self.bot = bot
 
-    challenge = discord.SlashCommandGroup("challenge", "", integration_types={discord.IntegrationType.user_install,
-                                                                              discord.IntegrationType.guild_install})
-
-    @challenge.command(name="lookup", description="look up a challenge",
-                       integration_types = {discord.IntegrationType.user_install,
-                                             discord.IntegrationType.guild_install}) 
+    challenge = discord.SlashCommandGroup(
+        "challenge",
+        "", 
+        integration_types={
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
+    @challenge.command(
+        name="lookup",
+        description="look up a challenge"
+    ) 
     @discord.option(
         "code",
         description = "Enter a challenge code", 

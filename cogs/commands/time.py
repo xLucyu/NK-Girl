@@ -8,10 +8,19 @@ class Time(commands.Cog):
 
         self.bot = bot
 
-    time = discord.SlashCommandGroup("time", "", integration_types = {discord.IntegrationType.user_install,
-                                                                      discord.IntegrationType.guild_install})
+    time = discord.SlashCommandGroup(
+        "time",
+        "", 
+        integration_types = {
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     
-    @time.command(name="send", description="calculate the time you will get")
+    @time.command(
+        name="send",
+        description="calculate the time you will get"
+    )
     @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "start_round",
@@ -45,7 +54,10 @@ class Time(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @time.command(name="goal", description="calculate the time when you have to full send for your desired time")
+    @time.command(
+        name="goal",
+        description="calculate the time when you have to full send for your desired time"
+    )
     @discord.option(
         "start_round",
         description = "choose the round you want to full send from",

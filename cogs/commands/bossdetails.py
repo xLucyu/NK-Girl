@@ -10,8 +10,8 @@ class BossDetails(commands.Cog):
         self.bot = bot
 
     @discord.slash_command(
-        name="bossdetails",
-        description="Show details about the current Boss.",
+        name = "bossdetails",
+        description = "Show details about the current Boss.",
         integration_types = {
             discord.IntegrationType.user_install,
             discord.IntegrationType.guild_install

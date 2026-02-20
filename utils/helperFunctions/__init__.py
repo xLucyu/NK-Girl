@@ -3,6 +3,7 @@ from .eventNumber import getNumberForEvent
 from .filterBloonModifiers import filterModifiers
 from .filterTowers import filterTowers
 from .generateEmbed import filterEmbed
+from .processCollectionEvent import processCollectionEvent
 from .regex import splitNumbers, splitUppercase, convertStringToMs
 from .timeStamps import getCurrentTimeStamp, timeStampToUTCTimeFormat
 from .transformToDataClass import transformDataToDataClass
@@ -13,6 +14,7 @@ __all__ = [
     "filterModifiers",
     "filterTowers",
     "filterEmbed",
+    "processCollectionEvent",
     "splitNumbers",
     "splitUppercase",
     "convertStringToMs",

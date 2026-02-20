@@ -10,9 +10,14 @@ class Odyssey(commands.Cog):
 
         self.bot = bot
     
-    @discord.slash_command(name="odyssey", description="Get Odyssey Data", 
-                           integration_types={discord.IntegrationType.user_install,
-                                              discord.IntegrationType.guild_install})
+    @discord.slash_command(
+        name = "odyssey",
+        description = "Get Odyssey Data", 
+        integration_types = {
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     @commands.cooldown(1, 5, commands.BucketType.user)
     @discord.option(
         "difficulty",

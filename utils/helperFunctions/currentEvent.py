@@ -1,16 +1,15 @@
-from utils.dataclasses.main import NkData, Body
-from typing import Tuple 
+from utils.dataclasses import Events, EventBody
 
-def getCurrentActiveEvent(mainData: NkData, currentTimeStamp: int) -> Tuple[int, Body]:
+def getCurrentActiveEvent(mainData: Events, currentTimeStamp: int, mode: str) -> EventBody:
  
     try:
         return min(
-            (
-                (index, event)
-                for index, event in enumerate(mainData.body)
-                if event.end > currentTimeStamp
-            ), key=lambda event: event[1].end  
+            ( 
+                event 
+                for event in mainData.body 
+                if event.end > currentTimeStamp and event.type == mode 
+            ), key = lambda event: event.end
         )
      
     except ValueError:
-        return 0, mainData.body[0]
+        raise ValueError("NoEventFound")

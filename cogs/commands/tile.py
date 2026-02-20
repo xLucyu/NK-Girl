@@ -10,9 +10,9 @@ class Tile(commands.Cog):
         self.bot = bot        
 
     @discord.message_command(
-        name="Tile Lookup",
-        description="If this message has a tile code for CT, you can look it up.",
-        integration_types={
+        name = "Tile Lookup",
+        description = "If this message has a tile code for CT, you can look it up.",
+        integration_types = {
             discord.IntegrationType.user_install,
             discord.IntegrationType.guild_install
         }
@@ -38,9 +38,9 @@ class Tile(commands.Cog):
         await self.tile(ctx, tile_code=tileCode, event=eventIndex) 
  
     @discord.slash_command(
-        name="tile",
-        description="Get CT Tile Data", 
-        integration_types={
+        name = "tile",
+        description = "Get CT Tile Data", 
+        integration_types = {
             discord.IntegrationType.user_install,
             discord.IntegrationType.guild_install
         }

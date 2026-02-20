@@ -10,17 +10,17 @@ class Event(commands.Cog):
         self.bot = bot
         self.database = guildTable
 
-
     events = discord.SlashCommandGroup(
         "event", 
         "",
-        integration_types={
+        integration_types = {
             discord.IntegrationType.guild_install
         }
     )
-
-
-    @events.command(name="post", description="post an event manually")
+    @events.command(
+        name = "post",
+        description = "post an event manually"
+    )
     @discord.option(
         "event",
         description = "choose the event you want to post",

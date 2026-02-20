@@ -50,9 +50,14 @@ class Feedback(commands.Cog):
         self.bot = bot 
         self.database = usageTable 
 
-    @discord.slash_command(name="feedback", description="give feedback or submit an error",
-                           integration_types = {discord.IntegrationType.user_install,
-                                                discord.IntegrationType.guild_install})
+    @discord.slash_command(
+        name = "feedback",
+        description = "give feedback or submit an error",
+        integration_types = {
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     async def feedback(self, ctx: discord.ApplicationContext) -> None:
 
         user = ctx.author.name

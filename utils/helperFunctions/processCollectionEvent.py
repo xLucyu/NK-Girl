@@ -122,13 +122,13 @@ class CollectionEventHelper:
             currentPage -= pageSize
             outerIndex += 1
 
-        page_items = []
+        pageItems = []
 
         for i in range(maxInstasPerPage):
             rotIndex = (i + outerIndex + currentPage * maxInstasPerPage) % totalCount
-            page_items.append(lst[rotIndex])
+            pageItems.append(lst[rotIndex])
 
-        return page_items
+        return pageItems
 
 
 def processCollectionEvent(eventData: EventBody) -> InstaSchedule:

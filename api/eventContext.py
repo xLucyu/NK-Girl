@@ -1,5 +1,5 @@
 from api.client import client 
-from dataclasses import dataclass 
+from dataclasses import dataclass, field
 from utils.dataclasses import (
     NkData,
     MetaData, 
@@ -7,12 +7,17 @@ from utils.dataclasses import (
     Body
 )
 from utils.helperFunctions import transformDataToDataClass
+from utils.dataclasses import URLS 
 from config import BOTID, BOTTOKEN 
 
+@dataclass
+class PreviousEvent:
+    name: str 
+    id: str
 
 @dataclass(slots=True)
 class MainContext:
-    previousEvents: list[str]
+    previousEvents: list[PreviousEvent] = field(default_factory=list[PreviousEvent])
     metaDataURL: str | None  
     selectedID: Body
 
@@ -22,35 +27,40 @@ class ProfileContext:
     metaData: MetaData
     emojiData: dict[str, str]
     difficulty: str 
-    index: int 
+    id: str 
 
 
 class EventContext:
 
     _emojiCache = {}
 
-    def __init__(self, urls: EventURLs, index: int, difficulty: str, isLeaderboard: bool):
+    def __init__(self, urls: EventURLs, id: str, difficulty: str, isLeaderboard: bool):
 
         self._urls = urls 
-        self._index = index
+        self._id = id
         self._difficulty = difficulty
         self._isLeaderboard = isLeaderboard 
 
     async def _getMainApiContext(self) -> MainContext:
         
         mainApiData = await client.fetch(url=self._urls.base)
-
         mainPage = transformDataToDataClass(NkData, mainApiData)
 
         allEvents = mainPage.body
-        selectedID = allEvents[self._index]
+        selectedID = next(event for event in allEvents if event.id == self._id)
         
         if self._isLeaderboard:
             totalScoresKey = self._urls.totalScores.format(self._difficulty.lower() if self._difficulty else "")
             selectedID = self._getCurrentActiveLeaderboard(allEvents, totalScoresKey)
     
         return MainContext(
-            previousEvents = [event.name for event in allEvents if event],
+            previousEvents = [
+                PreviousEvent(
+                    name = event.name,
+                    id = event.id 
+                ) 
+                for event in allEvents if event
+            ],
             metaDataURL = self._urls.getExtensionAttribute(selectedID, self._difficulty), 
             selectedID = selectedID
         )
@@ -70,7 +80,7 @@ class EventContext:
         if self._emojiCache:
             return 
             
-        emojiURL = f"https://discord.com/api/v10/applications/{BOTID}/emojis"
+        emojiURL = URLS["Emojis"].base.format(BOTID)
 
         headers = {
             "Authorization": f"Bot {BOTTOKEN}",
@@ -97,5 +107,5 @@ class EventContext:
             metaData = metaData, 
             emojiData = self._emojiCache,
             difficulty = self._difficulty,
-            index = self._index
+            index = self._id
         )

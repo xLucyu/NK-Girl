@@ -17,7 +17,10 @@ class Leaderboard(commands.Cog):
             discord.IntegrationType.guild_install
         }
     ) 
-    @leaderboard.command(name="race", description="look up race leaderboard")
+    @leaderboard.command(
+        name = "race",
+        description = "look up race leaderboard"
+    )
     async def race(self, ctx: discord.ApplicationContext) -> None:    
 
         await ctx.response.defer()
@@ -42,7 +45,10 @@ class Leaderboard(commands.Cog):
         message = await ctx.respond(embed=lbData.get("Embed"), view=view)
         view.message = message 
 
-    @leaderboard.command(name="boss", description="look up boss leaderboard")
+    @leaderboard.command(
+        name = "boss",
+        description = "look up boss leaderboard"
+    )
     @discord.option(
         "difficulty", 
         description="choose a difficulty, default is normal", 
@@ -52,10 +58,11 @@ class Leaderboard(commands.Cog):
     @discord.option(
         "players", 
         description="choose a mode, default is solo", 
-        choices=[1,2,3,4], 
+        choices=[1, 2, 3, 4], 
         required=False
         )
     async def boss(self, ctx:discord.ApplicationContext, difficulty: str = "Normal", players: int = 1) -> None:
+        
         await ctx.response.defer()
 
         if difficulty == "Normal":
@@ -85,7 +92,10 @@ class Leaderboard(commands.Cog):
         message = await ctx.respond(embed=lbData.get("Embed"), view=view) 
         view.message = message
   
-    @leaderboard.command(name="ct", description="")
+    @leaderboard.command(
+        name="ct",
+        description=""
+    )
     @discord.option("option", description="", choices = ["Player", "Team"], required=True)
     async def ct(self, ctx:discord.ApplicationContext, option: str) -> None:
 

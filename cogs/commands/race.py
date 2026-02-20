@@ -10,9 +10,14 @@ class Race(commands.Cog):
 
         self.bot = bot
 
-    @discord.slash_command(name="race", description="Show Race Data", 
-                           integration_types={discord.IntegrationType.user_install,
-                                              discord.IntegrationType.guild_install})
+    @discord.slash_command(
+        name="race",
+        description="Show Race Data", 
+        integration_types={
+            discord.IntegrationType.user_install,
+            discord.IntegrationType.guild_install
+        }
+    )
     async def race(self, ctx: discord.ApplicationContext) -> None:
 
         await ctx.response.defer()

@@ -68,5 +68,8 @@ URLS: dict[str, EventURLs] = {
     ),
     "Emojis": EventURLs(
         base = "https://discord.com/api/v10/applications/{}/emojis"
+    ),
+    "Events": EventURLs(
+        base = "https://data.ninjakiwi.com/btd6/events"
     )
 }

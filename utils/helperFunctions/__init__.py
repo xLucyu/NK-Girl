@@ -4,7 +4,7 @@ from .filterBloonModifiers import filterModifiers
 from .filterTowers import filterTowers
 from .generateEmbed import filterEmbed
 from .regex import splitNumbers, splitUppercase, convertStringToMs
-from .timeStamps import getCurrentTimeStamp
+from .timeStamps import getCurrentTimeStamp, timeStampToUTCTimeFormat
 from .transformToDataClass import transformDataToDataClass
 
 __all__ = [
@@ -17,5 +17,6 @@ __all__ = [
     "splitUppercase",
     "convertStringToMs",
     "getCurrentTimeStamp",
+    "timeStampToUTCTimeFormat",
     "transformDataToDataClass"
 ]

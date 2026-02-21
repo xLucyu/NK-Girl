@@ -1,7 +1,8 @@
 from enum import Enum 
 
-class Events(Enum):
-    Race = "Race"
-    Boss = "Boss"
-    Odyssey = "Odyssey"
-    CT = "CT"
+class EventType(Enum):
+    Race = "raceEvent"
+    Boss = "bossEvent"
+    Odyssey = "odysseyEvent"
+    Collection = "collectableEvent"
+    ContestedTerritory = "ct"

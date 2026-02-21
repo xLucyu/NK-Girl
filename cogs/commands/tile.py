@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from cogs.profile.tileProfile import tileProfile, getCurrentCtNumber
-from utils.discord.viewMenu import SelectView
+from components.viewMenu import SelectView
 
 class Tile(commands.Cog):
 

@@ -66,11 +66,12 @@ class SeededRandom:
         self.seed = seed
 
     def next(self) -> int:
+
         self.seed = toLong(self.seed * 16807)
         self.seed = self.seed % MOD_PM
         return self.seed
 
-    def next_float(self) -> float:
+    def nextFloat(self) -> float:
         return self.next() / MOD_PM_MINUS1_NUM
 
     def range(self, minVal: int, maxVal: int) -> int:
@@ -131,7 +132,7 @@ class CollectionEventHelper:
         return pageItems
 
 
-def processCollectionEvent(eventData: EventBody) -> InstaSchedule:
+def collectionEventProfile(eventData: EventBody) -> InstaSchedule:
 
     seed = getSeedLong(eventData.id)
 

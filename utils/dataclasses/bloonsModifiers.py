@@ -1,4 +1,4 @@
-from utils.dataclasses import MetaBody
+from utils.dataclasses.metaData import MetaBody
 from dataclasses import dataclass 
 from typing import Union 
 

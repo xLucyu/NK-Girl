@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from cogs.profile.raceProfile import raceProfile 
-from utils.discord.viewMenu import SelectView
+from components.viewMenu import SelectView
 from utils.logging.eventManager import EventManager
 
 class Race(commands.Cog):

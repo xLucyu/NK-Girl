@@ -1,6 +1,6 @@
 import discord 
-from utils.discord.selectMenu import SelectMenu
-from utils.discord.buttonMenu import ButtonMenu
+from components.selectMenu import SelectMenu
+from components.buttonMenu import ButtonMenu
 
 USEBUTTON = ["Boss", "Odyssey", "Coop Mode", None]
 

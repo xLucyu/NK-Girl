@@ -15,11 +15,11 @@ class PreviousEvent:
     name: str 
     id: str
 
-@dataclass(slots=True)
+@dataclass(frozen=True)
 class MainContext:
     previousEvents: list[PreviousEvent] = field(default_factory=list[PreviousEvent])
-    metaDataURL: str | None  
-    selectedID: Body
+    metaDataURL: str = "" 
+    selectedID: Body = None
 
 @dataclass(slots=True)
 class ProfileContext:
@@ -45,6 +45,9 @@ class EventContext:
         
         mainApiData = await client.fetch(url=self._urls.base)
         mainPage = transformDataToDataClass(NkData, mainApiData)
+
+        if not mainPage.success:
+            raise ValueError()
 
         allEvents = mainPage.body
         selectedID = next(event for event in allEvents if event.id == self._id)
@@ -107,5 +110,5 @@ class EventContext:
             metaData = metaData, 
             emojiData = self._emojiCache,
             difficulty = self._difficulty,
-            index = self._id
+            id = self._id
         )

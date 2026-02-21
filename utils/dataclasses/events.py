@@ -1,7 +1,7 @@
 from dataclasses import dataclass 
 
 @dataclass
-class EventBody 
+class EventBody: 
   id: str 
   type: str
   name: str

@@ -1,10 +1,9 @@
 import discord 
 from discord.ext import commands
 from cogs.profile import bossProfile
-from utils.discord.viewMenu import SelectView
+from components.viewMenu import SelectView
 from utils.logging.eventManager import EventManager
 from utils.dataclasses import URLS
-from utils.enums import Events
 from api.eventContext import EventContext
 
 
@@ -31,22 +30,18 @@ class Boss(commands.Cog):
         )
     async def execute(self, ctx: discord.ApplicationContext, difficulty: str = "Normal") -> None:
 
-        print("hello")
-
         await ctx.response.defer()
  
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Boss")
+        cachedEventID = eventManager.getCurrentEventCacheIndex("Boss")
 
         if difficulty == "Normal":
             difficulty = "Standard"
 
         context = await EventContext(
-            urls = URLS["Boss"],
-            index = cachedEventIndex,
-            difficulty = difficulty,
-            isLeaderboard = False
-        ).buildEventContext()
+            urls = URLS["Boss"]
+
+        ) 
  
  
         eventDetails = bossProfile(context)  

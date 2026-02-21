@@ -1,28 +1,43 @@
 import discord
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from cogs.profile.raceProfile import raceProfile 
-from cogs.profile.bossProfile import bossProfile
-from cogs.profile.odysseyProfile import odysseyProfile
+from api.client import client
+from cogs.profile import (
+    raceProfile,
+    bossProfile,
+    odysseyProfile,
+    collectionEventProfile
+)
 from database.logic.guilds import GuildTable
-from utils.dataclasses.main import NkData, Body
-
+from utils.dataclasses import Events, URLS, EventBody 
+from utils.helperFunctions import (
+    getCurrentActiveEvent, 
+    getCurrentTimeStamp, 
+    transformDataToDataClass
+)
+from utils.enums import EventType 
 
 eventstoCheck = {
     "Race": {
         "difficulties": [None],
-        "url": "https://data.ninjakiwi.com/btd6/races",
-        "function": raceProfile
+        "function": raceProfile,
+        "type": EventType.Race 
     },
     "Boss": {
         "difficulties": ["Standard", "Elite"],
-        "url": "https://data.ninjakiwi.com/btd6/bosses",
-        "function": bossProfile
+        "function": bossProfile,
+        "type": EventType.Boss 
     },
     "Odyssey": {
         "difficulties": ["Easy", "Medium", "Hard"],
-        "url": "https://data.ninjakiwi.com/btd6/odyssey",
-        "function": odysseyProfile
+        "function": odysseyProfile,
+        "type": EventType.Odyssey
+    },
+    "CollectionEvent": {
+        "difficulties": [None],
+        "function": collectionEventProfile,
+        "type": EventType.Collection
+        
     }
 }
 
@@ -36,10 +51,11 @@ class EventManager(commands.Cog):
         self.scheduler = AsyncIOScheduler()
         self.scheduler.add_job(self.checkForNewEvent, "cron", minute=0)
 
-        self.currentEventCache: dict[str, int] = {
-            "Race": 0,
-            "Boss": 0,
-            "Odyssey": 0
+        self.currentEventCache: dict[str, str] = {
+            "Race": "",
+            "Boss": "",
+            "Odyssey": "",
+            "CollectionEvent": ""
         }
 
     async def postLoad(self):
@@ -48,7 +64,9 @@ class EventManager(commands.Cog):
     
         #cogs need to be loaded first 
         if not self.scheduler.running:
-            self.scheduler.start()
+            self.scheduler.start() 
+
+        await self.checkForNewEvent()
 
     
     def getCurrentEventCacheIndex(self, eventName: str) -> int:
@@ -56,9 +74,9 @@ class EventManager(commands.Cog):
         return self.currentEventCache[eventName]
 
         
-    def _saveEventCacheIndex(self, eventName: str, index: int) -> None:
+    def _saveEventCacheIndex(self, eventName: str, id: str) -> None:
 
-        self.currentEventCache[eventName] = index 
+        self.currentEventCache[eventName] = id  
         print(self.currentEventCache)
 
     
@@ -82,41 +100,56 @@ class EventManager(commands.Cog):
         return channels
     
 
-    def getValidEvent(self, mainData: NkData, seenEvents: list, isManual: bool) -> tuple[int, Body] | None:
+    def getValidEvent(
+            self,
+            mainData: Events,
+            currentTimeStamp: int,
+            seenEvents: list,
+            eventType: str, 
+            isManual: bool
+    ) -> EventBody | None:
 
-        nextEvent = BaseCommand.getCurrentEvent(mainData)
+        nextEvent = getCurrentActiveEvent(mainData, currentTimeStamp, eventType)
+        print(nextEvent)
 
         if not nextEvent:
             return None 
 
-        if isManual or nextEvent[1].id not in seenEvents:
+        if isManual or nextEvent.id not in seenEvents:
             return nextEvent
 
         return None
 
     
-    def getEventEmbeds(self, guildID: str = "", eventName: str = "", isManual: bool = False) -> list[discord.Embed] | None:
+    async def getEventEmbeds(
+            self,
+            guildID: str = "",
+            eventType: str = "",
+            timeStamp: int = 0,
+            isManual: bool = False
+    ) -> list[discord.Embed] | None:
         
         eventEmbeds = []
 
-        params = eventstoCheck[eventName]
+        params = eventstoCheck[eventType]
 
-        eventURL = params["url"]
+        eventsURL = URLS["Events"].base
+        eventType = params["EventType"]
         eventFunction = params["function"]
         difficulties = params["difficulties"]
 
-        seenEvents = [] if isManual else self.events.fetchEventIds(eventName, guildID)
+        seenEvents = [] if isManual else self.events.fetchEventIds(eventType, guildID)
 
-        eventData = BaseCommand.useApiCall(eventURL)
-        mainData = BaseCommand.transformDataToDataClass(NkData, eventData)
-        validEvent = self.getValidEvent(mainData, seenEvents, isManual)
+        eventData = await client.fetch(eventsURL)
+        mainData = transformDataToDataClass(Events, eventData)
+        validEvent = self.getValidEvent(mainData, timeStamp, seenEvents, eventType, isManual)
 
         if not validEvent:
             return
 
-        index, eventMetaData = validEvent
+        eventMetaData = validEvent
 
-        self._saveEventCacheIndex(eventName, index)
+        self._saveEventCacheIndex()
 
         for difficulty in difficulties:
 
@@ -134,6 +167,8 @@ class EventManager(commands.Cog):
         
     async def checkForNewEvent(self):
 
+        currentTimeStamp = getCurrentTimeStamp()
+
         for eventName in eventstoCheck:
 
             registeredChannels = self.getRegisteredChannels(eventName)
@@ -150,7 +185,7 @@ class EventManager(commands.Cog):
                         continue
 
                     guildID = str(channelObject.guild.id)
-                    eventEmbeds = self.getEventEmbeds(eventName=eventName, guildID=guildID)
+                    eventEmbeds = self.getEventEmbeds(eventName=eventName, guildID=guildID, timeStamp=currentTimeStamp)
 
                     if not eventEmbeds:
                         continue

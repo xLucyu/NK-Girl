@@ -1,7 +1,7 @@
-from .eventNames import Events
+from .eventNames import EventType 
 from .scoreTypes import ScoreTypes
 
 __all__ = [
-  "Events",
+  "EventType",
   "ScoreTypes"
 ]

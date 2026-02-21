@@ -3,9 +3,11 @@ create table if not exists GUILDS (
   RaceChannelID TEXT,
   BossChannelID TEXT,
   OdysseyChannelID TEXT,
+  CollectionChannelID TEXT,
   Raceids TEXT,
   Bossids TEXT,
-  Odysseyids TEXT
+  Odysseyids TEXT,
+  Collectionids TEXT
 );
 
 

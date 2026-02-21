@@ -1,7 +1,7 @@
 import discord 
 from discord.ext import commands
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
-from utils.discord.viewMenu import SelectView
+from components.viewMenu import SelectView
 from utils.logging.eventManager import EventManager
 
 class BossDetails(commands.Cog):

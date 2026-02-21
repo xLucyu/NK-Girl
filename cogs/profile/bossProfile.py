@@ -14,7 +14,6 @@ from utils.assets import (
 
 def bossProfile(eventContext: ProfileContext): 
    
-    print(eventContext)
 
     body = eventContext.metaData.body
     mainData = eventContext.mainData.selectedID

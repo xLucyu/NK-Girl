@@ -1,14 +1,12 @@
 from utils.dataclasses import Events, EventBody
 
-def getCurrentActiveEvent(mainData: Events, currentTimeStamp: int, mode: str) -> EventBody:
+def getCurrentActiveEvent(mainData: Events, currentTimeStamp: int, eventType: str) -> EventBody:
  
     try:
-        return min(
-            ( 
-                event 
-                for event in mainData.body 
-                if event.end > currentTimeStamp and event.type == mode 
-            ), key = lambda event: event.end
+        return next(  
+            event 
+            for event in mainData.body 
+            if event.end > currentTimeStamp and event.type == eventType
         )
      
     except ValueError:

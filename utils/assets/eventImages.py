@@ -2,6 +2,7 @@ RACE_IMAGE = "https://static.wikia.nocookie.net/b__/images/4/40/EventRaceIcon.pn
 LEASTCASH_IMAGE = "https://static.wikia.nocookie.net/b__/images/b/bc/LeastCashIcon.png/revision/latest?cb=20220703150039&path-prefix=bloons"
 LEASTTIERS_IMAGE = "https://static.wikia.nocookie.net/b__/images/a/ac/LeastTiersIcon.png/revision/latest?cb=20220703150038&path-prefix=bloons"
 CT_IMAGE = "https://www.bloonswiki.com/images/e/e7/BTD6_ContestedTerritoryEvent.png?20240609232601" 
+COLLECTION_IMAGE = "https://www.bloonswiki.com/Collection_Event_(BTD6)#/media/File:BTD6_CollectingEventTotemBtn.png"
 
 BOSS_IMAGE = {
     "standard": {

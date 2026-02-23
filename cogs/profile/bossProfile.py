@@ -4,7 +4,8 @@ from utils.helperFunctions import (
     filterModifiers, 
     filterTowers,
     splitNumbers,
-    filterEmbed
+    filterEmbed,
+    timeStampToUTCTimeFormat
 )
 from utils.assets import (
     BOSS_IMAGE,
@@ -62,7 +63,11 @@ def bossProfile(eventContext: ProfileContext):
     embed = filterEmbed(eventData, eventURL, title=f"{eventNumber}")
     embed.set_image(url=MAPS_IMAGE[selectedMap])
 
-    previousEvents = [splitNumbers(event) for event in eventContext.mainData.previousEvents]
+    previousEvents = [{
+        "label": splitNumbers(event.name),
+        "value": event.id,
+        "description": f"{timeStampToUTCTimeFormat(event.eventStart)} - {timeStampToUTCTimeFormat(event.eventEnd)}"
+    } for event in eventContext.mainData.previousEvents]
 
     return {
         "Embed": embed,

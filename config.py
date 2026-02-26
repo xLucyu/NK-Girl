@@ -3,6 +3,8 @@ import os
 
 load_dotenv()
 
+ADMINIDS = []
+
 BOTTOKEN = os.getenv("BOT_TOKEN")
 BOTID = os.getenv("BOT_ID")
 GUILDID = os.getenv("GUILD_ID")

@@ -1,8 +1,10 @@
 import discord 
 from discord.ext import commands
+from api import EventContext
 from cogs.profile.bossdetailsProfile import bossdetailsProfile
 from components.viewMenu import SelectView
-from utils.logging.eventManager import EventManager
+from utils.logging import EventManager
+from utils.dataclasses import URLS
 
 class BossDetails(commands.Cog):
 
@@ -26,7 +28,7 @@ class BossDetails(commands.Cog):
         )
     @discord.option(
         "players",
-        description = "Choose the mode, default is solo",
+        description = "Choose the mode, default is solo.",
         choices = [1, 2, 3, 4],
         required = False
         )
@@ -45,29 +47,37 @@ class BossDetails(commands.Cog):
     )
     @discord.option(
         "multiplier",
-        description = "Choose a hp multiplier, this is optional. Will show on the event boss too, if you select it.",
+        description = "Choose a health multiplier, this is optional. Will show on the event boss too, if you select it.",
         required = False
     )
-    async def execute(self,
-                          ctx: discord.ApplicationContext, 
-                          difficulty: str = "Normal", 
-                          players: int = 1, 
-                          boss: str = "", 
-                          multiplier: float = 0.0) -> None:
+    async def execute(
+        self,
+        ctx: discord.ApplicationContext, 
+        difficulty: str = "Normal", 
+        players: int = 1, 
+        boss: str = "", 
+        multiplier: float = 0.0
+    ) -> None:
 
         await ctx.response.defer()
  
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Boss")
-        
+        cachedEventID = eventManager.getCurrentEventCache("Boss")
+
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        eventDetails = bossdetailsProfile(cachedEventIndex, difficulty.lower(), players-1, boss, multiplier)
+        eventContext = await EventContext(
+            urls = URLS["Boss"],
+            id = cachedEventID,
+            difficulty = difficulty,
+            isLeaderboard = False
+        ).buildEventContext()
+
+        eventDetails = bossdetailsProfile(eventContext, players, boss, multiplier)
 
         embed = eventDetails["Embed"]
-        modes = eventDetails["Modes"]
-        index = eventDetails["Index"]
+        modes = eventDetails["PreviousEvents"]
 
         data = {
             "Author": ctx.author.id, 
@@ -76,7 +86,6 @@ class BossDetails(commands.Cog):
             "Function": bossdetailsProfile,
             "Difficulty": difficulty.lower(),
             "Message": None,
-            "Index": index,
             "PlayerCount": players,
             "HpMultiplier": multiplier,
             "Emoji": "<:Coop:1341515962410598521>",

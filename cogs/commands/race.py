@@ -3,6 +3,8 @@ from discord.ext import commands
 from cogs.profile.raceProfile import raceProfile 
 from components.viewMenu import SelectView
 from utils.logging.eventManager import EventManager
+from api.eventContext import EventContext
+from utils.dataclasses import URLS
 
 class Race(commands.Cog):
 
@@ -12,34 +14,39 @@ class Race(commands.Cog):
 
     @discord.slash_command(
         name="race",
-        description="Show Race Data", 
+        description="Show Race Data.", 
         integration_types={
             discord.IntegrationType.user_install,
             discord.IntegrationType.guild_install
         }
     )
-    async def race(self, ctx: discord.ApplicationContext) -> None:
+    async def execute(self, ctx: discord.ApplicationContext) -> None:
 
         await ctx.response.defer()
 
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Race")
+        cachedEventID = eventManager.getCurrentEventCache("Race")
 
-        eventDetails = raceProfile(cachedEventIndex) 
+        eventContext = await EventContext(
+            urls = URLS["Race"],
+            id = cachedEventID,
+            difficulty = "",
+            isLeaderboard = False
+        ).buildEventContext()
+
+        eventDetails = raceProfile(eventContext) 
 
         embed = eventDetails["Embed"]
-        names = eventDetails["Names"]
-        index = eventDetails["Index"]
+        previousEvents = eventDetails["PreviousEvents"]
 
         data = {
             "Author": ctx.author.id,
             "EventName": "Race",
-            "PreviousEvents": names,
+            "EventContext": eventContext,
+            "PreviousEvents": previousEvents,
             "Function": raceProfile,
-            "Difficulty": None,
-            "Index": index,
             "Message": None,
-            "Emoji": "<:EventRace:1338550190390382694>"
+            "Emoji": f"<:EventRace:{eventContext.emojiData.get("EventRace")}>"
         }
 
         view = SelectView(data)

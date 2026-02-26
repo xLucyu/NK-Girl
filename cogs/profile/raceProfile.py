@@ -1,32 +1,33 @@
-from utils.dataclasses.main import Body 
-from utils.dataclasses.metaData import MetaData
+from api.eventContext import ProfileContext
+from utils.helperFunctions import (
+    filterModifiers, 
+    filterTowers, 
+    splitUppercase,
+    getNumberForEvent,
+    filterEmbed,
+    timeStampToUTCTimeFormat
+)
+from utils.assets import (
+    RACE_IMAGE,
+    MAPS_IMAGE
+)
 
-
-def raceProfile(index: int = None, difficulty: str = None):
+def raceProfile(eventContext: ProfileContext):
      
-    urls = {
-        "base": "https://data.ninjakiwi.com/btd6/races",
-        "extension": "metadata"
-    } 
+    mainData = eventContext.mainData.selectedID
+    emojis = eventContext.emojiData
+    body = eventContext.metaData.body
 
-    data = BaseCommand.getCurrentEventData(urls, index)
-    eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
-    mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
-    metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
-    emotes = BaseCommand.getAllEmojis()
- 
-    body = metaData.body 
+    lives = f"<:Lives:{emojis.get('Lives')}> {body.lives}"
+    cash = f"<:Cash:{emojis.get('Cash')}> ${body.startingCash:,}"
+    rounds = f"<:Round:{emojis.get('Round')}> {body.startRound}/{body.endRound}"
 
-    selectedMap = BaseCommand.splitUppercaseLetters(body.map)
-    selectedDifficulty = BaseCommand.splitUppercaseLetters(body.difficulty)
-    selectedMode = BaseCommand.splitUppercaseLetters(body.mode)
+    selectedMap = splitUppercase(body.map)
+    selectedDifficulty = splitUppercase(body.difficulty)
+    selectedMode = body.mode
 
-    lives = f"<:Lives:{emotes.get('Lives')}> {body.lives}"
-    cash = f"<:Cash:{emotes.get('Cash')}> ${body.startingCash:,}"
-    rounds = f"<:Round:{emotes.get('Round')}> {body.startRound}/{metaData.body.endRound}"
-
-    modifiers = BaseCommand.getActiveModifiers(body, emotes) 
-    towers = BaseCommand.getActiveTowers(body._towers, emotes) 
+    modifiers = filterModifiers(body, emojis) 
+    towers = filterTowers(body._towers, emojis) 
 
     eventData = { 
         body.name: [f"{selectedMap}, {selectedDifficulty} - {selectedMode}", False],
@@ -42,14 +43,18 @@ def raceProfile(index: int = None, difficulty: str = None):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }  
         
-    eventNumber = BaseCommand.getCurrentEventNumber(mainData.start, "race") 
-    eventURL = EVENTURLS["Race"]["race"]
-    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
-    embed.set_image(url=EVENTURLS["Maps"][selectedMap])
-    names = data.get("Names") 
+    eventNumber = getNumberForEvent(mainData, "race")
+    eventURL = RACE_IMAGE
+    embed = filterEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
+    embed.set_image(url=MAPS_IMAGE[selectedMap])
+
+    previousEvents = [{
+        "label": splitUppercase(event.name),
+        "value": event.id,
+        "description": f"{timeStampToUTCTimeFormat(event.eventStart)} - {timeStampToUTCTimeFormat(event.eventEnd)}"
+    } for event in eventContext.mainData.previousEvents]
 
     return {
         "Embed": embed,
-        "Names": names,
-        "Index": index
+        "PreviousEvents": previousEvents
     } 

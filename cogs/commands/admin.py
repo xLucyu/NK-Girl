@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from database.logic.usage import UsageTable
+from config import ADMINIDS, GUILDID
 
 class Admin(commands.Cog):
 
@@ -19,7 +20,7 @@ class Admin(commands.Cog):
 
         await ctx.response.defer()
 
-        if ctx.author.id != 1220815634515099718:
+        if ctx.author.id not in ADMINIDS:
             await ctx.respond("You're not the owner")
             return
 
@@ -32,7 +33,7 @@ class Admin(commands.Cog):
 
             else:
                 await ctx.edit(content="syncing commands per guild..")
-                await self.bot.sync_commands(guild_ids=[1292232444363276310]) 
+                await self.bot.sync_commands(guild_ids=[GUILDID]) 
                 await ctx.edit(content="commands are synced") 
 
         except Exception as e:
@@ -41,12 +42,12 @@ class Admin(commands.Cog):
     @discord.slash_command(name="usage", description="owner only") 
     async def usage(self, ctx: discord.ApplicationContext) -> None:
 
-        if ctx.author.id != 1220815634515099718:
+        if ctx.author.id not in ADMINIDS:
             await ctx.respond("You're not the owner")
             return
 
         usageTable = self.database.fetchCommands()
-        string = str()
+        string = ""
 
         for command in usageTable:
             string += f"\nCommand: {command[0]}, uses: {command[1]}"

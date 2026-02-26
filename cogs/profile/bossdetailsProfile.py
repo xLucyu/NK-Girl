@@ -1,6 +1,9 @@
-from utils.assets.bossTierHp import BOSSHP
-from utils.dataclasses.main import Body 
-from utils.dataclasses.metaData import MetaData
+from utils.assets import (
+    BOSSHP,
+    BOSS_IMAGE
+)
+from utils.helperFunctions import filterEmbed, splitNumbers
+from api.eventContext import ProfileContext
 
 healthMultiplierMode = {
     1: 1,
@@ -28,60 +31,52 @@ def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, player
         False]
 
 
-def bossdetailsProfile(index: int, difficulty: str, players, boss: str = "", multiplier: float = 0.0):
-    
-    modes = [1, 2, 3, 4]
-    players = modes[players]
+def bossdetailsProfile(profileContext: ProfileContext, playerCount: int, boss: str = "", multiplier: float = 0.0):
         
-    urls = {
-        "base": "https://data.ninjakiwi.com/btd6/bosses",
-        "extension": f"metadata{difficulty.title()}"
-    }    
-    
+    difficulty = profileContext.difficulty
+    emojis = profileContext.emojiData
+    mainData = profileContext.mainData.selectedID
+
     if not boss:
-        
-        data = BaseCommand.getCurrentEventData(urls, index)
-        eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
-        mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
-        metaData = BaseCommand.transformDataToDataClass(MetaData, eventMetaData)
 
-        bossHpMultiplier = metaData.body._bloonModifiers.healthMultipliers.boss  
         bossName = mainData.bossType
-        eventNumber = BaseCommand.splitBossNames(mainData.name)
+        bossHpMultiplier = profileContext.metaData.body._bloonModifiers.healthMultipliers.boss
+        eventNumber = splitNumbers(mainData.name)
 
-    else:
+    else: 
+
         bossName = boss 
-        bossHpMultiplier = 1
+        multiplier = 1.0 if multiplier == 0.0 else multiplier
         eventNumber = boss
 
-    if multiplier > 0:
-        bossHpMultiplier = multiplier
-
-    emotes = BaseCommand.getAllEmojis()
-
     bossIndex = BOSSHP[difficulty][bossName.title()]
-    bossEmote = f"<:bossIncrease:{emotes.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emotes.get('bossDecrease')}>"   
+    bossEmote = f"<:bossIncrease:{emojis.get('bossIncrease')}>" if bossHpMultiplier >= 1 else f"<:bossDecrease:{emojis.get('bossDecrease')}>"   
 
     eventData = {
-        "Players": [players, False],
+        "Players": [playerCount, False],
         "Skulls": [bossIndex["Skulls"], False],
         "Health Multiplier": [f"{bossEmote} {int(bossHpMultiplier*100)}%", False]
     }
     
-    addBossTiers(bossHpMultiplier, bossIndex, eventData, players, emotes)
+    addBossTiers(bossHpMultiplier, bossIndex, eventData, playerCount, emojis)
 
-    eventURL = EVENTURLS["Boss"][difficulty]["Image"][bossName.title()]
-    bannerURL = EVENTURLS["Boss"][difficulty]["Banner"][bossName.title()]
+    eventURL = BOSS_IMAGE[difficulty]["Image"][bossName.title()]
+    bannerURL = BOSS_IMAGE[difficulty]["Banner"][bossName.title()]
     
     if difficulty == "standard":
         difficulty = "normal" 
 
-    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
+    embed = filterEmbed(eventData, eventURL, title=f"{difficulty.title()} {eventNumber}")
     embed.set_footer(text="*Dreadbloon and Phayze have their Shield Health included.")
     embed.set_image(url=bannerURL) 
 
+    previousEvents = [{
+        "label": num,
+        "value": num,
+        "description": ""
+    } for num in range(1, 5)]
+
     return {
         "Embed": embed,
-        "Modes": modes, 
-        "Index": index
+        "PreviousEvents": previousEvents
     }

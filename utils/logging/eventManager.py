@@ -125,16 +125,16 @@ class EventManager(commands.Cog):
     async def buildEventEmbeds(
             self, 
             eventName: str,
-            difficulties: list[str | None],
-            eventID: str, 
-            function: callable,
-            metaDataObject: Type[T]
+            eventID: str,
+            eventChecks: EventCheck
         ) -> list[discord.Embed]:
 
         if eventName is "ContestedTerritory":
             return []
         
         eventEmbeds = []
+
+        difficulties = eventChecks.Difficulties
 
         if difficulties:
 
@@ -144,7 +144,7 @@ class EventManager(commands.Cog):
                     id = eventID,
                     difficulty = difficulty,
                     isLeaderboard = False
-                ).buildEventContext(metaDataObject)
+                ).buildEventContext(eventChecks.MetaDataObject)
 
                 eventDetails = function(context)
                 eventEmbeds.append(eventDetails["Embed"])
@@ -215,9 +215,7 @@ class EventManager(commands.Cog):
             unannouncedChannels = await self._getUnannouncedChannels(eventName, validEvent)
             eventEmbeds = await self.buildEventEmbeds(
                 eventName,
-                eventChecks.Difficulties,
                 validEvent.id,
-                eventChecks.Function,
-                eventChecks.Type
+                eventChecks
             )
             await self.postAnnouncement(eventEmbeds, unannouncedChannels)

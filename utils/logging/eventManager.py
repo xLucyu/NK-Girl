@@ -1,49 +1,69 @@
 import discord
+from typing import TypeVar, Type
 from discord.ext import commands
 from dataclasses import dataclass
-#from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from api import client, EventContext
 from cogs.profile import (
     raceProfile,
     bossProfile,
     odysseyProfile,
-    collectionEventProfile
+    collectionProfile
 )
 from database.logic.guilds import GuildTable
-from utils.dataclasses import Events, URLS, EventBody 
-from utils.helperFunctions import (
-    getCurrentActiveEvent, 
-    getCurrentTimeStamp, 
+from utils.dataclasses import (
+    Events,
+    EventBody,
+    MetaData,
+    Odyssey,
+    URLS 
+)
+from utils.helperFunctions import ( 
+    getCurrentTimeStamp,
     transformDataToDataClass
 )
 from utils.enums import EventType 
+
+T = TypeVar("T", MetaData, Odyssey, None)
 
 @dataclass(frozen=True)
 class EventCheck:
     Difficulties: list[str | None]
     Function: callable
     Type: EventType
+    MetaDataObject: T
 
 EVENTS_TO_CHECK = {
     "Race": EventCheck(
         Difficulties = [None],
         Function = raceProfile,
-        Type = EventType.Race
+        Type = EventType.Race,
+        MetaDataObject = MetaData
+
     ),
     "Boss": EventCheck(
         Difficulties = ["Standard", "Elite"],
         Function = bossProfile,
-        Type = EventType.Boss
+        Type = EventType.Boss,
+        MetaDataObject = MetaData 
     ),
     "Odyssey": EventCheck(
         Difficulties = ["Easy", "Medium", "Hard"],
         Function = odysseyProfile,
-        Type = EventType.Odyssey
+        Type = EventType.Odyssey,
+        MetaDataObject = Odyssey
     ),
     "CollectionEvent": EventCheck(
         Difficulties = [None],
-        Function = collectionEventProfile,
-        Type = EventType.Collection
+        Function = collectionProfile,
+        Type = EventType.Collection,
+        MetaDataObject = None 
+    ),
+    "ContestedTerritory": EventCheck(
+        Difficulties = [None],
+        Function = None,
+        Type = EventType.ContestedTerritory,
+        MetaDataObject = None   
     )
 }
 
@@ -61,7 +81,8 @@ class EventManager(commands.Cog):
             "Race": "",
             "Boss": "",
             "Odyssey": "",
-            "CollectionEvent": ""
+            "CollectionEvent": "",
+            "ContestedTerritory": ""
         }
 
     async def postLoad(self):
@@ -72,7 +93,7 @@ class EventManager(commands.Cog):
         if not self.scheduler.running:
             self.scheduler.start() 
 
-        await self.checkForNewEvent()
+        await self.checkForNewEvent(onStartup = True)
 
     
     def getCurrentEventCache(self, eventName: str) -> int:
@@ -82,135 +103,121 @@ class EventManager(commands.Cog):
     def _saveEventCache(self, eventName: str, id: str) -> None:
         self.currentEventCache[eventName] = id  
 
-    
-    def getRegisteredChannels(self, event: str, guildID: str = None) -> list[str] | str | None:
-         
-        channels = self.database.fetchAllRegisteredChannels(event)
+
+    def _getCurrentActiveEvent(
+            self,
+            mainData: Events,
+            currentTimeStamp: int, 
+            eventType: str
+        )-> EventBody | None:
+ 
+        try:
+            return next(  
+                event 
+                for event in mainData.body 
+                if event.end > currentTimeStamp and event.type == eventType
+            )
         
-        if not channels:
+        except ValueError:
             return
-        
-        if guildID:
-
-            for channel in channels:
-                channelObject = self.bot.get_channel(int(channel))
-
-                if not channelObject:
-                    continue 
-                
-                return str(channelObject.id)
-                
-        return channels
-    
-
-    def getValidEvent(
-        self,
-        mainData: Events,
-        timeStamp: int,
-        seenEvents: list[str],
-        eventType: EventType,
-        isManual: bool
-    ) -> EventBody | None:
-
-        nextEvent = getCurrentActiveEvent(mainData, timeStamp, eventType)
-
-        if not nextEvent:
-            return
-
-        if isManual or nextEvent.id not in seenEvents:
-            return nextEvent
-
-        return
 
 
     async def buildEventEmbeds(
-            self,
+            self, 
             eventName: str,
-            mainData: Events,
-            guildID: str,
-            eventType: str,
-            timeStamp: int,
-            isManual: bool = False
-    ) -> list[discord.Embed] | None:
+            difficulties: list[str | None],
+            eventID: str, 
+            function: callable,
+            metaDataObject: Type[T]
+        ) -> list[discord.Embed]:
+
+        if eventName is "ContestedTerritory":
+            return []
         
-        params = EVENTS_TO_CHECK[eventName]
+        eventEmbeds = []
 
-        eventType = params.Type.value
-        eventFunction = params.Function
-        difficulties = params.Difficulties
+        if difficulties:
 
-        seenEvents = [] if isManual else self.database.fetchEventIds(eventType, guildID)
+            for difficulty in difficulties:
+                context = await EventContext(
+                    urls = URLS[eventName],
+                    id = eventID,
+                    difficulty = difficulty,
+                    isLeaderboard = False
+                ).buildEventContext(metaDataObject)
 
-        validEvent = self.getValidEvent(
-            mainData,
-            timeStamp,
-            seenEvents,
-            eventType,
-            isManual
-        )
+                eventDetails = function(context)
+                eventEmbeds.append(eventDetails["Embed"])
 
-        embeds = []
+        return eventEmbeds
+    
+    
+    async def _getUnannouncedChannels(self, eventName: str, event: EventBody) -> list[discord.TextChannel]:
 
-        for difficulty in difficulties:
-            difficulty = difficulty.lower() if difficulty else None
+        channels = self.database.fetchAllRegisteredChannels(eventName)
 
-            result = eventFunction(validEvent.id, difficulty)
-            embed = result.get("Embed")
-
-            if embed:
-                embeds.append(embed)
-
-        if validEvent.id not in seenEvents:
-            self.database.appendEvent(validEvent.id, eventName, guildID)
-
-        self._saveEventCache(eventName, validEvent.id)
-
-        contextBuilder = EventContext(
-                urls=URLS[eventName],
-                id=validEvent.id,
-                difficulty=difficulty,
-                isLeaderboard = False
-            )
+        if not channels:
+            return 
         
-        profileContext = await contextBuilder.buildEventContext()
-        embeds.append(eventFunction(profileContext))
+        unnanouncedChannels = []
+        for channelId in channels:
 
-        return embeds
+            channel = await self.bot.fetch_channel(int(channelId))
+
+            if not channel:
+                continue
+
+            guildID = str(channel.guild.id)
+            seenEvents = self.database.fetchEventIds(eventName, guildID)
+
+            if event.id not in seenEvents:
+                unnanouncedChannels.append(channelId)
         
-    async def checkForNewEvent(self):
+        return unnanouncedChannels
+    
+
+    async def postAnnouncement(
+            self,
+            eventEmbeds: list[discord.Embed], 
+            unanouncedChannels: list[discord.TextChannel]
+        ) -> None:
+
+        for channel in unanouncedChannels:
+
+            message: discord.Message = await channel.send(embeds = eventEmbeds)
+
+            if channel.type == discord.ChannelType.news:
+                await message.publish()
+            
+
+    async def checkForNewEvent(self, onStartup: bool = False):
 
         currentTimeStamp = getCurrentTimeStamp()
         rawData = await client.fetch(URLS["Events"].base)
         mainData = transformDataToDataClass(Events, rawData)
 
-        for eventName in EVENTS_TO_CHECK:
+        for eventName, eventChecks in EVENTS_TO_CHECK.items():
 
-            channels = self.getRegisteredChannels(eventName)
+            validEvent = self._getCurrentActiveEvent(
+                mainData,
+                currentTimeStamp, 
+                eventChecks.Type.value
+            )
 
-            if not channels:
+            if validEvent.id == self.currentEventCache.get(eventName):
                 continue
             
-            for channelId in channels:
+            self._saveEventCache(eventName, validEvent.id)
 
-                try:
-                    channel = await self.bot.fetch_channel(int(channelId))
-
-                    if not channel:
-                        continue
-
-                    guildID = str(channel.guild.id)
-
-                    embeds = await self.buildEventEmbeds(
-                        eventName=eventName,
-                        mainData=mainData,
-                        guildID=guildID,
-                        currentTimeStamp=currentTimeStamp
-                    )
-
-                    message = await channel.send(embeds=embeds)
-
-                    if channel.type == discord.ChannelType.news:
-                        await message.publish()
-
-                except Exception:
-                    continue
+            if onStartup:
+                continue 
+        
+            unannouncedChannels = await self._getUnannouncedChannels(eventName, validEvent)
+            eventEmbeds = await self.buildEventEmbeds(
+                eventName,
+                eventChecks.Difficulties,
+                validEvent.id,
+                eventChecks.Function,
+                eventChecks.Type
+            )
+            await self.postAnnouncement(eventEmbeds, unannouncedChannels)

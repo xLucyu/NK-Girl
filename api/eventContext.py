@@ -96,7 +96,13 @@ class EventContext:
         self._emojiCache = {emoji["name"]: emoji["id"] for emoji in itemData}
 
 
-    async def buildEventContext(self) -> ProfileContext:
+    async def buildEventContext(
+            self, 
+            difficulty: str, 
+            metaDataObject: Type[T], 
+            subResourceObject: Type[K] | None = None,
+            subURLResolver: Callable[[MainContext, T], str] | None = None 
+        ) -> ProfileContext[T, K]:
 
         mainData = await self._getMainApiContext()
 

@@ -1,6 +1,11 @@
 from dataclasses import dataclass, field  
 from typing import List, Any 
-from utils.dataclasses.metaData import Tower
+from utils.dataclasses import Tower, MetaBody
+
+@dataclass
+class MapsData:
+    success: bool = True 
+    body: List[MetaBody] = field(default_factory=field[List[MetaBody]])
 
 @dataclass 
 class OdysseyBody:

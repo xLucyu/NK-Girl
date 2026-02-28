@@ -29,7 +29,7 @@ class MainContext:
 @dataclass(frozen=True)
 class ProfileContext(Generic[T, K]):
     mainData: MainContext
-    metaData: T | None 
+    metaData: T 
     secondaryData: K | None  
     emojiData: dict[str, str]
     difficulty: str 
@@ -59,7 +59,7 @@ class EventContext:
         selectedID = next((event for event in allEvents if event.id == self._id), None)
         
         if self._isLeaderboard:
-            totalScoresKey = self._urls.totalScores.format(difficulty.lower() if difficulty else "")
+            totalScoresKey = self._urls.totalScores.format(difficulty.lower())
             selectedID = self._getCurrentActiveLeaderboard(allEvents, totalScoresKey)
     
         return MainContext(
@@ -72,7 +72,7 @@ class EventContext:
                 ) 
                 for event in allEvents if event
             ],
-            metaDataURL = self._urls.getExtensionAttribute(selectedID, difficulty), 
+            metaDataURL = self._urls.getExtensionAttribute(selectedID, difficulty.lower()), 
             selectedID = selectedID
         )
 
@@ -106,7 +106,6 @@ class EventContext:
         return subData
 
         
-
     async def _testForEmojis(self) -> None:
 
         if self._emojiCache:
@@ -140,10 +139,10 @@ class EventContext:
         metaAPIData = await client.fetch(url=mainData.metaDataURL if mainData.metaDataURL else "")
         metaData = transformDataToDataClass(metaDataObject, metaAPIData)
          
-        if callable(subURLResolver):
+        if callable(subURLResolver) and subResourceObject:
             subData = await self._getSubApiContext(metaData, subResourceObject, subURLResolver)
 
-          
+
         await self._testForEmojis()
 
         return ProfileContext[T, K](

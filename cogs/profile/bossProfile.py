@@ -1,4 +1,4 @@
-from api.eventContext import ProfileContext
+from api.eventContext import ProfileContext 
 from utils.helperFunctions import (
     splitUppercase,
     filterModifiers, 
@@ -11,11 +11,14 @@ from utils.assets import (
     BOSS_IMAGE,
     MAPS_IMAGE
 )
+from utils.dataclasses import (
+    EventResult,
+    PreviousEventLabel
+)
 
 
-def bossProfile(eventContext: ProfileContext): 
+def bossProfile(eventContext: ProfileContext) -> EventResult: 
    
-
     body = eventContext.metaData.body
     mainData = eventContext.mainData.selectedID
     emojis = eventContext.emojiData
@@ -63,13 +66,14 @@ def bossProfile(eventContext: ProfileContext):
     embed = filterEmbed(eventData, eventURL, title=f"{eventNumber}")
     embed.set_image(url=MAPS_IMAGE[selectedMap])
 
-    previousEvents = [{
-        "label": splitNumbers(event.name),
-        "value": event.id,
-        "description": f"{timeStampToUTCTimeFormat(event.eventStart)} - {timeStampToUTCTimeFormat(event.eventEnd)}"
-    } for event in eventContext.mainData.previousEvents]
-
-    return {
-        "Embed": embed,
-        "PreviousEvents": previousEvents
-    }
+    return EventResult(
+        embed = embed,
+        previousEvents = [
+            PreviousEventLabel(
+                label = splitNumbers(event.name),
+                value = event.id,
+                description = f"{timeStampToUTCTimeFormat(event.start)} - {timeStampToUTCTimeFormat(event.end)}"
+            ) 
+            for event in eventContext.mainData.previousEvents
+        ]
+    )

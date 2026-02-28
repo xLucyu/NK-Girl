@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from database.logic.guilds import GuildTable
 
-class Channel(commands.Cog):
+class ChannelCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 

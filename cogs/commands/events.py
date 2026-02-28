@@ -3,7 +3,7 @@ from discord.ext import commands
 from utils.logging.eventManager import EventManager
 from database.logic.guilds import GuildTable
 
-class Event(commands.Cog):
+class EventCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot, guildTable: GuildTable):
 

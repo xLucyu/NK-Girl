@@ -30,8 +30,8 @@ URLS: dict[str, EventURLs] = {
     "Boss": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/bosses",
         extension = {
-            "Standard": "metadataStandard",
-            "Elite": "metaDataElite"
+            "standard": "metadataStandard",
+            "elite": "metaDataElite"
         },
         totalScores = "totalScores_{}"
     ),

@@ -3,7 +3,7 @@ from discord.ext import commands
 from cogs.profile.tileProfile import tileProfile, getCurrentCtNumber
 from components.viewMenu import SelectView
 
-class Tile(commands.Cog):
+class TileCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 

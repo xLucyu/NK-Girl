@@ -43,7 +43,7 @@ class ApiWrapper:
                         raise ValueError("ServerDown")
 
                     case _:
-                        raise ValueError()
+                        raise ValueError("Api fetching failed")
 
-        except Exception:
-            raise ValueError()
+        except Exception as e:
+            raise ValueError(e)

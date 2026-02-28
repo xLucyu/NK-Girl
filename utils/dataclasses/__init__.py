@@ -5,7 +5,7 @@ from .main import NkData, Body
 from .metaData import MetaBody, Tower, MetaData
 from .bossLB import BossLB
 from .leaderboard import Leaderboard
-from .odyssey import Odyssey, MapsData
+from .odyssey import Odyssey, OdysseyBody, MapsData
 from .eventURLs import EventURLs, URLS 
 
 __all__ = [
@@ -22,6 +22,7 @@ __all__ = [
     "BossLB",
     "Leaderboard",
     "Odyssey",
+    "OdysseyBody",
     "MapsData",
     "EventURLs",
     "URLS"

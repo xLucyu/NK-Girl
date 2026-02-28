@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field  
-from typing import List, Any 
+from typing import Any 
 from utils.dataclasses import Tower, MetaBody
 
 @dataclass
 class MapsData:
     success: bool = True 
-    body: List[MetaBody] = field(default_factory=field[List[MetaBody]])
+    body: list[MetaBody] = field(default_factory=list[MetaBody])
 
 @dataclass 
 class OdysseyBody:
@@ -15,9 +15,9 @@ class OdysseyBody:
     maxMonkeysOnBoat: int = 0
     maxPowerSlots: int = 0
     startingHealth: int = 0
-    _rewards: List[Any] = field(default_factory=List[Any])  
-    _availablePowers: List[Any] = field(default_factory=List[Any])
-    _availableTowers: List[Tower] = field(default_factory=list)
+    _rewards: list[Any] = field(default_factory=list[Any])  
+    _availablePowers: list[Any] = field(default_factory=list[Any])
+    _availableTowers: list[Tower] = field(default_factory=list)
     maps: str = ""
 
 @dataclass 

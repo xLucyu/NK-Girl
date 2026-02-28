@@ -36,7 +36,7 @@ class DiscordBotClient(discord.Bot):
             Feedback(self, self.usageTable),
             Help(self),
             Leaderboard(self),
-            Odyssey(self),
+            OdysseyCog(self),
             Race(self),
             Tile(self),
             Time(self),

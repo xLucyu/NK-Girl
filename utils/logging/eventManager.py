@@ -1,5 +1,5 @@
 import discord
-from typing import TypeVar, Type
+from typing import TypeVar, Callable
 from discord.ext import commands
 from dataclasses import dataclass
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -24,12 +24,12 @@ from utils.helperFunctions import (
 )
 from utils.enums import EventType 
 
-T = TypeVar("T", MetaData, Odyssey, None)
+T = TypeVar("T")
 
 @dataclass(frozen=True)
-class EventCheck:
+class EventCheck[T]:
     Difficulties: list[str | None]
-    Function: callable
+    Function: Callable | None
     Type: EventType
     MetaDataObject: T
 
@@ -91,17 +91,24 @@ class EventManager(commands.Cog):
     
         #cogs need to be loaded first 
         if not self.scheduler.running:
-            self.scheduler.start() 
+            self.scheduler.start()
 
         await self.checkForNewEvent(onStartup = True)
 
     
-    def getCurrentEventCache(self, eventName: str) -> int:
-        return self.currentEventCache.get(eventName)
+    def getCurrentEventCache(self, eventName: str) -> str:
+
+        cachedID = self.currentEventCache.get(eventName, None)
+
+        if not cachedID:
+            raise ValueError()
+
+        return cachedID
 
         
     def _saveEventCache(self, eventName: str, id: str) -> None:
-        self.currentEventCache[eventName] = id  
+        self.currentEventCache[eventName] = id 
+        print(self.currentEventCache)
 
 
     def _getCurrentActiveEvent(
@@ -110,13 +117,15 @@ class EventManager(commands.Cog):
             currentTimeStamp: int, 
             eventType: str
         )-> EventBody | None:
- 
+        
         try:
             return next(  
-                event 
-                for event in mainData.body 
-                if event.end > currentTimeStamp and event.type == eventType
-            )
+                (
+                    event 
+                    for event in mainData.body 
+                    if event.end > currentTimeStamp and event.type == eventType
+                ), None
+            ) 
         
         except ValueError:
             return
@@ -129,7 +138,7 @@ class EventManager(commands.Cog):
             eventChecks: EventCheck
         ) -> list[discord.Embed]:
 
-        if eventName is "ContestedTerritory":
+        if eventName == "ContestedTerritory":
             return []
         
         eventEmbeds = []
@@ -137,7 +146,7 @@ class EventManager(commands.Cog):
         difficulties = eventChecks.Difficulties
 
         if difficulties:
-
+            """
             for difficulty in difficulties:
                 context = await EventContext(
                     urls = URLS[eventName],
@@ -148,11 +157,11 @@ class EventManager(commands.Cog):
 
                 eventDetails = function(context)
                 eventEmbeds.append(eventDetails["Embed"])
-
+            """
         return eventEmbeds
     
     
-    async def _getUnannouncedChannels(self, eventName: str, event: EventBody) -> list[discord.TextChannel]:
+    async def _getUnannouncedChannels(self, eventName: str, event: EventBody) -> list[discord.TextChannel] | None:
 
         channels = self.database.fetchAllRegisteredChannels(eventName)
 
@@ -203,6 +212,9 @@ class EventManager(commands.Cog):
                 currentTimeStamp, 
                 eventChecks.Type.value
             )
+
+            if not validEvent:
+                continue
 
             if validEvent.id == self.currentEventCache.get(eventName):
                 continue

@@ -2,12 +2,12 @@ import discord
 from discord.ext import commands
 from cogs.profile import bossProfile
 from components.viewMenu import SelectView
-from utils.logging.eventManager import EventManager
-from utils.dataclasses import URLS
+from utils.logging import EventManager
+from utils.dataclasses import URLS, MetaData 
 from api.eventContext import EventContext
 
 
-class Boss(commands.Cog):
+class BossCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 
@@ -33,27 +33,27 @@ class Boss(commands.Cog):
         await ctx.response.defer()
  
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEventID = eventManager.getCurrentEventCacheIndex("Boss")
+        cachedEventID = eventManager.getCurrentEventCache("Boss")
 
         if difficulty == "Normal":
             difficulty = "Standard"
 
         context = await EventContext(
-            urls = URLS["Boss"]
-
+            urls = URLS["Boss"], 
+            id = cachedEventID,
+            isLeaderboard = False 
+        ).buildEventContext(
+            difficulty = difficulty.lower(),
+            metaDataObject = MetaData 
         ) 
  
- 
-        eventDetails = bossProfile(context)  
-
-        embed = eventDetails["Embed"]
-        previousEvents = eventDetails["PreviousEvents"]
+        eventDetails = bossProfile(context) 
 
         data = {
             "Author": ctx.author.id, 
             "EventContext": context,
             "EventName": "Boss",
-            "PreviousEvents": previousEvents,
+            "PreviousEvents": eventDetails.previousEvents,
             "Function": bossProfile,
             "Message": None,
             "Emoji": "<:BossChallenge:1338550202889404487>", 
@@ -64,7 +64,7 @@ class Boss(commands.Cog):
             }
 
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=eventDetails.embed, view=view)
         view.message = message   
 
 

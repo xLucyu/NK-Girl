@@ -5,7 +5,7 @@ from profile.collectionEventProfile import collectionEventProfile
 from utils.dataclasses import Events, URLS
 from utils.helperFunctions import getCurrentTimeStamp
 
-class CollectionEvent(commands.Cog):
+class CollectionCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 

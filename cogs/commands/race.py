@@ -6,7 +6,7 @@ from utils.logging.eventManager import EventManager
 from api.eventContext import EventContext
 from utils.dataclasses import URLS
 
-class Race(commands.Cog):
+class RaceCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 

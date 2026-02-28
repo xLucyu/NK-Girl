@@ -6,7 +6,7 @@ from components.viewMenu import SelectView
 from utils.logging import EventManager
 from utils.dataclasses import URLS
 
-class BossDetails(commands.Cog):
+class BossDetailsCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
         self.bot = bot

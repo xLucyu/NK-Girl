@@ -43,7 +43,7 @@ class FeedbackModal(discord.ui.Modal):
             await self.submissionChannel.send(embed=embed)
             await interaction.response.send_message(f"Your submission was send! ID: {submissionNumber}", ephemeral=True)
 
-class Feedback(commands.Cog):
+class FeedbackCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot, usageTable: UsageTable):
 

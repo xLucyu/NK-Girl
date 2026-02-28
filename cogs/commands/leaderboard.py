@@ -3,7 +3,7 @@ from discord.ext import commands
 from cogs.profile.leaderboardProfile import leaderboardProfile
 from leaderboards.pageButtons import ButtonView
 
-class Leaderboard(commands.Cog):
+class LeaderboardCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 

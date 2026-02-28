@@ -3,7 +3,7 @@ from discord.ext import commands
 from cogs.profile.challengeProfile import challengeProfile
 from components.viewMenu import SelectView
 
-class Challenge(commands.Cog):
+class ChallengeCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 

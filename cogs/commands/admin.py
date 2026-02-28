@@ -3,7 +3,7 @@ from discord.ext import commands
 from database.logic.usage import UsageTable
 from config import ADMINIDS, GUILDID
 
-class Admin(commands.Cog):
+class AdminCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot, usageTable: UsageTable):
         

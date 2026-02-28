@@ -6,7 +6,8 @@ from .metaData import MetaBody, Tower, MetaData
 from .bossLB import BossLB
 from .leaderboard import Leaderboard
 from .odyssey import Odyssey, OdysseyBody, MapsData
-from .eventURLs import EventURLs, URLS 
+from .eventURLs import EventURLs, URLS
+from .selectModel import EventResult, PreviousEventLabel
 
 __all__ = [
     "Modifier",
@@ -25,5 +26,7 @@ __all__ = [
     "OdysseyBody",
     "MapsData",
     "EventURLs",
-    "URLS"
+    "URLS",
+    "EventResult",
+    "PreviousEventLabel"
 ]

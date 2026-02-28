@@ -3,7 +3,11 @@ from discord.ext import commands
 from cogs.profile import bossProfile
 from components.viewMenu import SelectView
 from utils.logging import EventManager
-from utils.dataclasses import URLS, MetaData 
+from utils.dataclasses import (
+    URLS,
+    MetaData,
+    ViewContext
+)
 from api.eventContext import EventContext
 
 
@@ -49,19 +53,20 @@ class BossCog(commands.Cog):
  
         eventDetails = bossProfile(context) 
 
-        data = {
-            "Author": ctx.author.id, 
-            "EventContext": context,
-            "EventName": "Boss",
-            "PreviousEvents": eventDetails.previousEvents,
-            "Function": bossProfile,
-            "Message": None,
-            "Emoji": "<:BossChallenge:1338550202889404487>", 
-            "Button": [
-                    ["Normal", "standard", "success"],
-                    ["Elite", "elite", "danger"]
-                ]
-            }
+        data = ViewContext(
+            userID = ctx.author.id, 
+            eventContext = context,
+            eventName = "Boss",
+            metaDataObject = MetaData,
+            previousEvents = eventDetails.previousEvents,
+            function = bossProfile,
+            message = None,
+            emoji = f"<:BossChallenge:{emojis.get("BossChallenge")}>", 
+            buttonLayout = [
+                ["Normal", "standard", "success"],
+                ["Elite", "elite", "danger"]
+            ]
+        )
 
         view = SelectView(data)
         message = await ctx.respond(embed=eventDetails.embed, view=view)

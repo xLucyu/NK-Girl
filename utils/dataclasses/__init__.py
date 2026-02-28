@@ -8,6 +8,7 @@ from .leaderboard import Leaderboard
 from .odyssey import Odyssey, OdysseyBody, MapsData
 from .eventURLs import EventURLs, URLS
 from .selectModel import EventResult, PreviousEventLabel
+from .viewContext import ViewContext 
 
 __all__ = [
     "Modifier",
@@ -28,5 +29,6 @@ __all__ = [
     "EventURLs",
     "URLS",
     "EventResult",
-    "PreviousEventLabel"
+    "PreviousEventLabel",
+    "ViewContext"
 ]

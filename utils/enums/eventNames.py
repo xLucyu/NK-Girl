@@ -2,7 +2,7 @@ from enum import Enum
 
 class EventType(Enum):
     Race = "raceEvent"
-    Boss = "bossEvent"
+    Boss = "bossBloon"
     Odyssey = "odysseyEvent"
     Collection = "collectableEvent"
     ContestedTerritory = "ct"

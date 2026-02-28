@@ -1,10 +1,12 @@
 import discord
 from discord.ext import commands
-from cogs.profile.odysseyProfile import odysseyProfile
+from api import EventContext
+from cogs.profile.odysseyProfile import odysseyProfile, mapsURLResolver
 from components.viewMenu import SelectView
-from utils.logging.eventManager import EventManager
+from utils.logging import EventManager
+from utils.dataclasses import Odyssey, URLS, MapsData
 
-class Odyssey(commands.Cog):
+class OdysseyCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
 
@@ -29,7 +31,20 @@ class Odyssey(commands.Cog):
         await ctx.response.defer()
 
         eventManager: EventManager = self.bot.get_cog("EventManager")
-        cachedEventIndex = eventManager.getCurrentEventCacheIndex("Odyssey")
+        cachedEventID = eventManager.getCurrentEventCache("Odyssey")
+
+        context = await EventContext(
+            urls = URLS["Odyssey"], 
+            id = cachedEventID,
+            isLeaderboard = False 
+        ).buildEventContext(
+            difficulty = difficulty.lower(),
+            metaDataObject = Odyssey,
+            subURLResolver = mapsURLResolver, 
+            subResourceObject = MapsData 
+        )
+        
+        print(context)
 
         eventDetails = odysseyProfile(cachedEventIndex, difficulty=difficulty.lower()) 
 

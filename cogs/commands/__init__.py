@@ -7,7 +7,7 @@ from .events import Event
 from .feedback import Feedback 
 from .help import Help 
 from .leaderboard import Leaderboard 
-from .odyssey import Odyssey 
+from .odyssey import OdysseyCog  
 from .race import Race 
 from .tile import Tile 
 from .time import Time 
@@ -23,7 +23,7 @@ __all__ = [
     "Feedback",
     "Help",
     "Leaderboard",
-    "Odyssey",
+    "OdysseyCog",
     "Race",
     "Tile",
     "Time"

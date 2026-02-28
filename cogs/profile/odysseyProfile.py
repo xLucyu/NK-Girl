@@ -1,7 +1,14 @@
 from utils.assets.towerCategories import CATEGORIES
-from utils.dataclasses.odyssey import Odyssey, OdysseyBody
-from utils.dataclasses.main import Body
-from utils.dataclasses.metaData import MetaBody
+from utils.dataclasses import (
+    Odyssey,
+    OdysseyBody,
+    Body, 
+    MetaBody
+)
+
+def mapsURLResolver(main: Odyssey) -> str:
+    return main.body.maps  
+
 
 def getReward(body: OdysseyBody) -> str: 
 

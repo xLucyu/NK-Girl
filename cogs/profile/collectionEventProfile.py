@@ -132,7 +132,7 @@ class CollectionEventHelper:
         return pageItems
 
 
-def collectionEventProfile(eventData: EventBody) -> InstaSchedule:
+def collectionProfile(eventData: EventBody) -> InstaSchedule:
 
     seed = getSeedLong(eventData.id)
 

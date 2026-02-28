@@ -1,30 +1,36 @@
+from typing import TypeVar, Type, Callable, Generic 
 from api.client import client 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from utils.dataclasses import (
     NkData,
-    MetaData, 
-    EventURLs,
-    Body
+    Body,
+    EventURLs
 )
 from utils.helperFunctions import transformDataToDataClass
 from utils.dataclasses import URLS 
 from config import BOTID, BOTTOKEN 
 
-@dataclass
+T = TypeVar("T")
+K = TypeVar("K")
+
+@dataclass(frozen=True)
 class PreviousEvent:
     name: str 
     id: str
+    start: int 
+    end: int
 
 @dataclass(frozen=True)
 class MainContext:
-    previousEvents: list[PreviousEvent] = field(default_factory=list[PreviousEvent])
-    metaDataURL: str = "" 
-    selectedID: Body = None
+    previousEvents: list[PreviousEvent]
+    metaDataURL: str | None
+    selectedID: Body 
 
-@dataclass(slots=True)
-class ProfileContext:
+@dataclass(frozen=True)
+class ProfileContext(Generic[T, K]):
     mainData: MainContext
-    metaData: MetaData
+    metaData: T | None 
+    secondaryData: K | None  
     emojiData: dict[str, str]
     difficulty: str 
     id: str 
@@ -34,14 +40,14 @@ class EventContext:
 
     _emojiCache = {}
 
-    def __init__(self, urls: EventURLs, id: str, difficulty: str, isLeaderboard: bool):
+    def __init__(self, urls: EventURLs, id: str, isLeaderboard: bool):
 
-        self._urls = urls 
-        self._id = id
-        self._difficulty = difficulty
-        self._isLeaderboard = isLeaderboard 
+        self._urls = urls   
+        self._id = id 
+        self._isLeaderboard = isLeaderboard
 
-    async def _getMainApiContext(self) -> MainContext:
+
+    async def _getMainApiContext(self, difficulty: str) -> MainContext:
         
         mainApiData = await client.fetch(url=self._urls.base)
         mainPage = transformDataToDataClass(NkData, mainApiData)
@@ -50,21 +56,23 @@ class EventContext:
             raise ValueError()
 
         allEvents = mainPage.body
-        selectedID = next(event for event in allEvents if event.id == self._id)
+        selectedID = next((event for event in allEvents if event.id == self._id), None)
         
         if self._isLeaderboard:
-            totalScoresKey = self._urls.totalScores.format(self._difficulty.lower() if self._difficulty else "")
+            totalScoresKey = self._urls.totalScores.format(difficulty.lower() if difficulty else "")
             selectedID = self._getCurrentActiveLeaderboard(allEvents, totalScoresKey)
     
         return MainContext(
             previousEvents = [
                 PreviousEvent(
                     name = event.name,
-                    id = event.id 
+                    id = event.id,
+                    start = event.start,
+                    end = event.end 
                 ) 
                 for event in allEvents if event
             ],
-            metaDataURL = self._urls.getExtensionAttribute(selectedID, self._difficulty), 
+            metaDataURL = self._urls.getExtensionAttribute(selectedID, difficulty), 
             selectedID = selectedID
         )
 
@@ -77,6 +85,27 @@ class EventContext:
                 return currentEntry
 
         return
+
+    async def _getSubApiContext(
+            self,          
+            metaData: T, 
+            subResourceObject: Type[K],
+            subURLResolver: Callable[[T], str]
+    ) -> K | None:
+        
+        if callable(subURLResolver):
+            targetURL = subURLResolver(metaData)
+    
+        if targetURL and subResourceObject:
+            subApiData = await client.fetch(url = targetURL)
+            subData = transformDataToDataClass(subResourceObject, subApiData)
+
+        else:
+            return 
+
+        return subData
+
+        
 
     async def _testForEmojis(self) -> None:
 
@@ -101,20 +130,27 @@ class EventContext:
             difficulty: str, 
             metaDataObject: Type[T], 
             subResourceObject: Type[K] | None = None,
-            subURLResolver: Callable[[MainContext, T], str] | None = None 
+            subURLResolver: Callable[[T], str] | None = None 
         ) -> ProfileContext[T, K]:
 
-        mainData = await self._getMainApiContext()
+        subData = None
+
+        mainData = await self._getMainApiContext(difficulty)
 
         metaAPIData = await client.fetch(url=mainData.metaDataURL if mainData.metaDataURL else "")
-        metaData = transformDataToDataClass(MetaData, metaAPIData)
+        metaData = transformDataToDataClass(metaDataObject, metaAPIData)
+         
+        if callable(subURLResolver):
+            subData = await self._getSubApiContext(metaData, subResourceObject, subURLResolver)
+
           
         await self._testForEmojis()
 
-        return ProfileContext(
+        return ProfileContext[T, K](
             mainData = mainData, 
-            metaData = metaData, 
+            metaData = metaData,
+            secondaryData = subData,
             emojiData = self._emojiCache,
-            difficulty = self._difficulty,
+            difficulty = difficulty,
             id = self._id
         )

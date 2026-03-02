@@ -8,8 +8,10 @@ from functools import partial
 class ButtonMenu(discord.ui.Button):
 
     def __init__(self, viewContext: ViewContext, layout: list):
+        
         self._viewContext = viewContext
-        self._function = viewContext.function  # formatting function
+        self._function = viewContext.function  
+        
         super().__init__(
             label=layout[0],
             custom_id=layout[1],

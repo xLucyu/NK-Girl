@@ -1,6 +1,8 @@
-import discord
+import discord 
+from dataclasses import replace
 from utils.dataclasses import ViewContext, URLS 
 from api.eventContext import EventContext
+from functools import partial
 
 
 class ButtonMenu(discord.ui.Button):
@@ -24,10 +26,8 @@ class ButtonMenu(discord.ui.Button):
             )
             return
 
-        # update difficulty in shared state
         self._viewContext.difficulty = self.custom_id
-
-        # 1️⃣ fetch fresh data from API
+      
         context = await EventContext(
             urls=URLS[self._viewContext.eventName],
             id=self._viewContext.eventContext.id,
@@ -39,12 +39,18 @@ class ButtonMenu(discord.ui.Button):
             subURLResolver=self._viewContext.subURLResolver
         )
 
-        # 2️⃣ format with profile function
-        if self._function:
-            eventDetails = await self._function(context)
-        else:
-            raise RuntimeError("No formatting function assigned.")
+        if self._viewContext.boss:
 
-        # 3️⃣ update message
+            updatedFunction = partial(
+                self._viewContext.function,
+                players=self._viewContext.playerCount,
+                boss=self._viewContext.boss,
+                multiplier=self._viewContext.hpMultiplier
+        )
+            eventDetails = await currentFunction(context)
+
+        else:
+            eventDetails = self._function(context)
+
         await interaction.edit_original_response(embed=eventDetails.embed)
         self._viewContext.message = await interaction.original_message()

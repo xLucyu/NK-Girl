@@ -1,14 +1,20 @@
 import discord 
 from discord.ext import commands
+from functools import partial
 from api import EventContext
-from cogs.profile.bossdetailsProfile import bossdetailsProfile
+from cogs.profile import bossdetailsProfile
 from components.viewMenu import SelectView
 from utils.logging import EventManager
-from utils.dataclasses import URLS
+from utils.dataclasses import (
+    URLS, 
+    ViewContext, 
+    MetaData
+)
 
 class BossDetailsCog(commands.Cog):
 
     def __init__(self, bot: discord.Bot):
+        
         self.bot = bot
 
     @discord.slash_command(
@@ -72,30 +78,33 @@ class BossDetailsCog(commands.Cog):
             id = cachedEventID,
             difficulty = difficulty,
             isLeaderboard = False
-        ).buildEventContext()
+        ).buildEventContext(
+            difficulty = difficulty.lower(),
+            metaDataObject = MetaData
+        )
 
         eventDetails = bossdetailsProfile(eventContext, players, boss, multiplier)
-
-        embed = eventDetails["Embed"]
-        modes = eventDetails["PreviousEvents"]
-
-        data = {
-            "Author": ctx.author.id, 
-            "EventName": "Coop Mode",
-            "PreviousEvents": modes,
-            "Function": bossdetailsProfile,
-            "Difficulty": difficulty.lower(),
-            "Message": None,
-            "PlayerCount": players,
-            "HpMultiplier": multiplier,
-            "Emoji": "<:Coop:1341515962410598521>",
-            "Boss": boss, 
-            "Button": [
-                    ["Normal", "STANDARD", "success"], 
-                    ["Elite", "ELITE", "danger"]
-                ]
-            }
+        
+        data = ViewContext(
+            userID = ctx.author.id,
+            eventName = "Coop Mode",
+            previousEvents = modes,
+            eventContext = eventDetails.previousEvents,
+            function = partial(
+                bossdetailsProfile,
+                boss = boss,
+                hpMultiplier = multiplier,
+                playerCount = players
+            ),
+            difficulty = difficulty,
+            message = None,
+            emoji = "<:Coop:1341515962410598521>",
+            buttonLayout = [
+                ["Normal", "STANDARD", "success"], 
+                ["Elite", "ELITE", "danger"]
+            ]
+        )
          
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view)
-        view.message = message   
+        message = await ctx.respond(embed=eventDetails.embed, view=view)
+        view.message = message  

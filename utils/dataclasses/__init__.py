@@ -1,5 +1,5 @@
 from .bloonsModifiers import Modifier, buildModifiers 
-from .ct import TileCode, cGameData
+from .ct import TileCode, CTMetaData
 from .events import Events, EventBody
 from .main import NkData, Body
 from .metaData import MetaBody, Tower, MetaData
@@ -14,7 +14,7 @@ __all__ = [
     "Modifier",
     "buildModifiers",
     "TileCode",
-    "cGameData",
+    "CTMetaData",
     "Events",
     "EventBody",
     "NkData",

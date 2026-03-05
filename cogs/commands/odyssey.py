@@ -4,7 +4,12 @@ from api import EventContext
 from cogs.profile.odysseyProfile import odysseyProfile, mapsURLResolver
 from components.viewMenu import SelectView
 from utils.logging import EventManager
-from utils.dataclasses import Odyssey, URLS, MapsData
+from utils.dataclasses import (
+    Odyssey,
+    URLS, 
+    MapsData,
+    ViewContext
+)
 
 class OdysseyCog(commands.Cog):
 
@@ -26,14 +31,14 @@ class OdysseyCog(commands.Cog):
         description = "Choose a Difficulty, default is hard.",
         choices = ["Easy", "Medium", "Hard"]
         )
-    async def odyssey(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None:
+    async def execute(self, ctx: discord.ApplicationContext, difficulty: str = "Hard") -> None:
 
         await ctx.response.defer()
 
         eventManager: EventManager = self.bot.get_cog("EventManager")
         cachedEventID = eventManager.getCurrentEventCache("Odyssey")
 
-        context = await EventContext(
+        eventContext = await EventContext(
             urls = URLS["Odyssey"], 
             id = cachedEventID,
             isLeaderboard = False 
@@ -43,31 +48,24 @@ class OdysseyCog(commands.Cog):
             subURLResolver = mapsURLResolver, 
             subResourceObject = MapsData 
         )
-        
-        print(context)
 
-        eventDetails = odysseyProfile(cachedEventIndex, difficulty=difficulty.lower()) 
+        eventDetails = odysseyProfile(eventContext) 
 
-        embed = eventDetails["Embed"]
-        names = eventDetails["Names"]
-        index = eventDetails["Index"]
-
-        data = {
-            "Author": ctx.author.id,
-            "EventName": "Odyssey",
-            "PreviousEvents": names,
-            "Function": odysseyProfile,
-            "Difficulty": difficulty.lower(),
-            "Index": index,
-            "Message": None,
-            "Emoji": "<:OdysseyCrewBtn:1338551267043180635>",
-            "Button": [
+        data = ViewContext(
+            userID = ctx.author.id,
+            eventName = "Odyssey",
+            eventContext = eventContext,
+            previousEvents = eventDetails.previousEvents,
+            function = odysseyProfile,
+            message = None,
+            emoji = f"<:OdysseyCrewBtn:{eventContext.emojiData.get("OdysseyCrewBtn")}>",
+            buttonLayout = [
                 ["Easy", "easy", "success"],
                 ["Medium", "medium", "primary"],
                 ["Hard", "hard", "danger"]
             ]
-        }
+        )
         
         view = SelectView(data)
-        message = await ctx.respond(embed=embed, view=view)
+        message = await ctx.respond(embed=eventDetails.embed, view=view)
         view.message = message

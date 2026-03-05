@@ -41,7 +41,7 @@ class BossData:
     TierCount: int = 1
 
 @dataclass
-class cGameData:
+class CTMetaData:
     selectedMap: str = ""
     selectedMode: str = ""
     subGameType: int = 0
@@ -55,5 +55,5 @@ class TileCode:
     Code: str = ""
     TileType: str = ""
     RelicType: str = ""
-    GameData: cGameData = field(default_factory=cGameData)
+    GameData: CTMetaData = field(default_factory=CTMetaData)
 

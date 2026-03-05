@@ -1,10 +1,22 @@
-from utils.assets.towerCategories import CATEGORIES
+from utils.assets import CATEGORIES, ODYSSEY_IMAGE
 from utils.dataclasses import (
     Odyssey,
     OdysseyBody,
-    Body, 
-    MetaBody
+    MapsData,
+    EventResult,
+    PreviousEventLabel
 )
+from utils.helperFunctions import (
+    splitUppercase,
+    filterModifiers,
+    filterTowers,
+    filterEmbed,
+    getNumberForEvent,
+    getCurrentTimeStamp,
+    timeStampToUTCTimeFormat
+)
+from api.eventContext import ProfileContext
+
 
 def mapsURLResolver(main: Odyssey) -> str:
     return main.body.maps  
@@ -31,7 +43,7 @@ def getReward(body: OdysseyBody) -> str:
         return f"{rewardValue} Totems"
     
     else:
-        return BaseCommand.splitUppercaseLetters(rewardValue)
+        return splitUppercase(rewardValue)
 
 
 def validateTitle(isExtreme: bool, difficulty: str) -> str:
@@ -42,52 +54,46 @@ def validateTitle(isExtreme: bool, difficulty: str) -> str:
     return title
 
 
-def getAllMaps(maps: dict, eventData: dict, emotes: dict) -> None:
+def getAllMaps(maps: MapsData, eventData: dict, emojis: dict) -> None:
 
-    for index, map in enumerate(maps["body"],start=1):
+    if not maps:
+        return
 
-        mapData = BaseCommand.transformDataToDataClass(MetaBody, map) 
-        modifiers = BaseCommand.getActiveModifiers(mapData, emotes)
+    for index, map in enumerate(maps.body, start=1):
 
-        selectedMode = BaseCommand.splitUppercaseLetters(mapData.mode)
-        selectedDifficulty = BaseCommand.splitUppercaseLetters(mapData.difficulty)
-        selectedMap = BaseCommand.splitUppercaseLetters(mapData.map)
+        modifiers = filterModifiers(maps, emojis)
+
+        selectedMode = splitUppercase(map.mode)
+        selectedDifficulty = splitUppercase(map.difficulty)
+        selectedMap = splitUppercase(map.map)
+
         title = f"{index}. {selectedMap} ({selectedDifficulty}, {selectedMode})"
-        cash = f"<:Cash:{emotes.get('Cash')}> ${mapData.startingCash:,}"
-        round = f"<:Round:{emotes.get('Round')}> {mapData.startRound}/{mapData.endRound}"
+        cash = f"<:Cash:{emojis.get('Cash')}> ${map.startingCash:,}"
+        round = f"<:Round:{emojis.get('Round')}> {map.startRound}/{map.endRound}"
 
         value = [f"{cash}, {round}\n{', '.join(modifiers)}", False] 
         eventData[title] = value
              
 
-def odysseyProfile(index: int, difficulty: str = ""):
+def odysseyProfile(eventContext: ProfileContext[Odyssey, MapsData]) -> EventResult:
 
-    urls = {
-        "base": "https://data.ninjakiwi.com/btd6/odyssey",
-        "extension": f"metadata_{difficulty}"
-    }
-    
-    data = BaseCommand.getCurrentEventData(urls, index)
-    eventMetaData = BaseCommand.useApiCall(data.get("MetaData", None))
-    mainData = BaseCommand.transformDataToDataClass(Body, data.get("Data", None))
-    metaData = BaseCommand.transformDataToDataClass(Odyssey, eventMetaData)
-    emotes = BaseCommand.getAllEmojis()
-
-    body = metaData.body   
+    mainData = eventContext.mainData.selectedID
+    body = eventContext.metaData.body
+    emojis = eventContext.emojiData  
 
     title = (
-        f"{validateTitle(body.isExtreme, difficulty)}\n"
-        f"Lives: <:Lives:{emotes.get('Lives')}> {body.startingHealth}\n"
+        f"{validateTitle(body.isExtreme, eventContext.difficulty)}\n"
+        f"Lives: <:Lives:{emojis.get('Lives')}> {body.startingHealth}\n"
         f"Max Seats: {body.maxMonkeySeats}\n"
         f"Max Monkeys: {body.maxMonkeysOnBoat}"
     )
 
-    towers = BaseCommand.getActiveTowers(body._availableTowers, emotes) 
+    towers = filterTowers(body._availableTowers, emojis) 
     reward = getReward(body)
 
     eventData = {
         mainData.name: [title, False],
-        "Reward": [f"<:Reward:{emotes.get("Reward", None)}> {reward}", False],
+        "Reward": [f"<:Reward:{emojis.get("Reward", None)}> {reward}", False],
         "Heroes": ["\n".join(towers.get("Heroes", None)), False],
         "Primary": ["\n".join(towers.get("Primary", None)), True],
         "Military": ["\n".join(towers.get("Military", None)), True],
@@ -96,17 +102,18 @@ def odysseyProfile(index: int, difficulty: str = ""):
         "Support": ["\n".join(towers.get("Support", None)), True]
         }
 
-    mapsURL = body.maps
-    mapsData = BaseCommand.useApiCall(mapsURL)
-    getAllMaps(mapsData, eventData, emotes) #add the maps data -> each difficulty has a set amount of maps
+    eventNumber = getNumberForEvent(getCurrentTimeStamp(), "Odyssey")
+    getAllMaps(eventContext.secondaryData, eventData, emojis)
+    embed = filterEmbed(eventData, ODYSSEY_IMAGE, f"Odyssey #{eventNumber}")
 
-    eventNumber = BaseCommand.getCurrentEventNumber(mainData.start, "odyssey")
-    eventURL = EVENTURLS["Odyssey"][difficulty]
-    embed = BaseCommand.createEmbed(eventData, eventURL, title=f"Odyssey #{eventNumber}")
-    names = data.get("Names", None)
-
-    return {
-        "Embed": embed,
-        "Names": names,
-        "Index": index
-    }
+    return EventResult(
+        embed = embed,
+        previousEvents = [
+            PreviousEventLabel(
+                label = splitUppercase(event.name),
+                value = event.id,
+                description = f"{timeStampToUTCTimeFormat(event.start)} - {timeStampToUTCTimeFormat(event.end)}"
+            ) 
+            for event in eventContext.mainData.previousEvents
+        ]
+    )

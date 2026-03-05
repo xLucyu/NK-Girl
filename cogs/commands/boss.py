@@ -1,5 +1,6 @@
 import discord 
 from discord.ext import commands
+from api.eventContext import EventContext
 from cogs.profile import bossProfile
 from components.viewMenu import SelectView
 from utils.logging import EventManager
@@ -8,7 +9,6 @@ from utils.dataclasses import (
     MetaData,
     ViewContext
 )
-from api.eventContext import EventContext
 
 
 class BossCog(commands.Cog):
@@ -42,7 +42,7 @@ class BossCog(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        context = await EventContext(
+        eventContext = await EventContext(
             urls = URLS["Boss"], 
             id = cachedEventID,
             isLeaderboard = False 
@@ -51,17 +51,17 @@ class BossCog(commands.Cog):
             metaDataObject = MetaData 
         ) 
  
-        eventDetails = bossProfile(context) 
+        eventDetails = bossProfile(eventContext) 
 
         data = ViewContext(
             userID = ctx.author.id, 
-            eventContext = context,
+            eventContext = eventContext,
             eventName = "Boss",
             metaDataObject = MetaData,
             previousEvents = eventDetails.previousEvents,
             function = bossProfile,
             message = None,
-            emoji = f"<:BossChallenge:{emojis.get("BossChallenge")}>", 
+            emoji = f"<:BossChallenge:{eventContext.emojiData.get("BossChallenge")}>", 
             buttonLayout = [
                 ["Normal", "standard", "success"],
                 ["Elite", "elite", "danger"]
@@ -71,5 +71,3 @@ class BossCog(commands.Cog):
         view = SelectView(data)
         message = await ctx.respond(embed=eventDetails.embed, view=view)
         view.message = message   
-
-

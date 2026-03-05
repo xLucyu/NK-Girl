@@ -1,4 +1,4 @@
-from utils.dataclasses.metaData import MetaBody
+from utils.dataclasses import MetaBody, cGameData
 from dataclasses import dataclass 
 from typing import Union 
 
@@ -100,3 +100,42 @@ def buildModifiers(body: MetaBody) -> dict[str, Modifier]:
         ),
     }
 
+def buildCTModifiers(body: cGameData):
+
+    return {  
+        "bloons": Modifier(
+            label="Bloon Health",
+            api=body.dcModel.bloonModifiers.healthMultipliers.bloons,
+            hasKey=True
+        ),
+        "moabs": Modifier(
+            label="Moab Speed",
+            api=body.dcModel.bloonModifiers.healthMultipliers.moabs,
+            hasKey=True
+        ),
+        "regrowRateMultiplier": Modifier(
+            label="Regrow Rate",
+            api=body.dcModel.bloonModifiers.regrowRateMultiplier,
+            hasKey=True,
+        ),
+        "speedMultiplier": Modifier(
+            label="Ceramic Health",
+            api=body.dcModel.bloonModifiers.speedMultiplier,
+            hasKey=True 
+        ),
+        "disableMK": Modifier(
+            label="MK Disabled",
+            api=body.dcModel.disableMK,
+            hasKey=False 
+        ),
+        "disableSelling": Modifier(
+            label="No Selling",
+            api=body.dcModel.disableSelling,
+            hasKey=False 
+        ),
+        "maxTowers": Modifier(
+            label="Max Towers",
+            api=body.dcModel.maxTowers,
+            hasKey=False
+        )
+    }

@@ -11,8 +11,13 @@ from utils.assets import (
     RACE_IMAGE,
     MAPS_IMAGE
 )
+from utils.dataclasses import (
+    MetaData,
+    EventResult,
+    PreviousEventLabel
+)
 
-def raceProfile(eventContext: ProfileContext):
+def raceProfile(eventContext: ProfileContext[MetaData]) -> EventResult:
      
     mainData = eventContext.mainData.selectedID
     emojis = eventContext.emojiData
@@ -43,18 +48,18 @@ def raceProfile(eventContext: ProfileContext):
         "Support": ["\n".join(towers.get("Support", None)), True],
         }  
         
-    eventNumber = getNumberForEvent(mainData, "race")
-    eventURL = RACE_IMAGE
-    embed = filterEmbed(eventData, eventURL, title=f"Race #{eventNumber}")
+    eventNumber = getNumberForEvent(mainData, "Race")
+    embed = filterEmbed(eventData, RACE_IMAGE, title=f"Race #{eventNumber}")
     embed.set_image(url=MAPS_IMAGE[selectedMap])
 
-    previousEvents = [{
-        "label": splitUppercase(event.name),
-        "value": event.id,
-        "description": f"{timeStampToUTCTimeFormat(event.eventStart)} - {timeStampToUTCTimeFormat(event.eventEnd)}"
-    } for event in eventContext.mainData.previousEvents]
-
-    return {
-        "Embed": embed,
-        "PreviousEvents": previousEvents
-    } 
+    return EventResult(
+        embed = embed,
+        previousEvents = [
+            PreviousEventLabel(
+                label = splitUppercase(event.name),
+                value = event.id,
+                description = f"{timeStampToUTCTimeFormat(event.start)} - {timeStampToUTCTimeFormat(event.end)}"
+            ) 
+            for event in eventContext.mainData.previousEvents
+        ]
+    )

@@ -53,7 +53,7 @@ EVENTS_TO_CHECK = {
         Type = EventType.Odyssey,
         MetaDataObject = Odyssey
     ),
-    "CollectionEvent": EventCheck(
+    "Collection": EventCheck(
         Difficulties = [None],
         Function = collectionProfile,
         Type = EventType.Collection,

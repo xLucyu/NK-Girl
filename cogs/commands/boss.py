@@ -16,6 +16,10 @@ class BossCog(commands.Cog):
     def __init__(self, bot: discord.Bot):
 
         self.bot = bot
+        self.eventContext = EventContext(
+            urls = URLS["Boss"],
+            isLeaderboard = False 
+        )
     
     @discord.slash_command(
         name = "boss", 
@@ -42,20 +46,19 @@ class BossCog(commands.Cog):
         if difficulty == "Normal":
             difficulty = "Standard"
 
-        eventContext = await EventContext(
-            urls = URLS["Boss"], 
+        eventData = self.eventContext.buildEventContext(
             id = cachedEventID,
-            isLeaderboard = False 
-        ).buildEventContext(
             difficulty = difficulty.lower(),
             metaDataObject = MetaData 
         ) 
  
-        eventDetails = bossProfile(eventContext) 
+        eventDetails = bossProfile(eventData) 
 
-        data = ViewContext(
-            userID = ctx.author.id, 
-            eventContext = eventContext,
+        viewContext = ViewContext(
+            userID = ctx.author.id,
+            eventID = cachedEventID, 
+            eventContext = self.eventContext,
+            eventData = eventData,
             eventName = "Boss",
             metaDataObject = MetaData,
             previousEvents = eventDetails.previousEvents,
@@ -68,6 +71,6 @@ class BossCog(commands.Cog):
             ]
         )
 
-        view = SelectView(data)
+        view = SelectView(viewContext)
         message = await ctx.respond(embed=eventDetails.embed, view=view)
         view.message = message   

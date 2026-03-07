@@ -1,5 +1,4 @@
 import discord 
-from dataclasses import replace
 from utils.dataclasses import ViewContext, URLS 
 from api.eventContext import EventContext
 from functools import partial
@@ -49,7 +48,7 @@ class ButtonMenu(discord.ui.Button):
                 boss=self._viewContext.boss,
                 multiplier=self._viewContext.hpMultiplier
         )
-            eventDetails = await currentFunction(context)
+            eventDetails = await updatedFunction(context)
 
         else:
             eventDetails = self._function(context)

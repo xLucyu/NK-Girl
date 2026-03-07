@@ -1,9 +1,7 @@
 import discord 
 from components.selectMenu import SelectMenu
 from components.buttonMenu import ButtonMenu
-from utils.dataclasses import ViewContext, viewContext
-
-USEBUTTON = ["Boss", "Odyssey", "Coop Mode", None]
+from utils.dataclasses import ViewContext
 
 class SelectView(discord.ui.View):
 
@@ -15,22 +13,17 @@ class SelectView(discord.ui.View):
 
     def _buildView(self):
 
-        if self._viewContext.tiles:
-            ... 
-
-        if self._viewContext.eventName in USEBUTTON:
+        if self._viewContext.buttonLayout:
             
             for layout in self._viewContext.buttonLayout:
                 self.add_item(ButtonMenu(self._viewContext, layout))
 
-        if self._viewContext.eventName is not None:
-            ...
-     
+        if self._viewContext.previousEvents:
+            self.add_item(SelectMenu(self._viewContext))
+
 
     async def on_timeout(self):
         
         if self.message:
 
             await self.message.edit(view=None)
-            self.index = None
-            self.difficulty = None 

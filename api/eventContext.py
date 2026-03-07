@@ -40,14 +40,13 @@ class EventContext:
 
     _emojiCache = {}
 
-    def __init__(self, urls: EventURLs, id: str, isLeaderboard: bool):
+    def __init__(self, urls: EventURLs, isLeaderboard: bool):
 
         self._urls = urls   
-        self._id = id 
         self._isLeaderboard = isLeaderboard
 
 
-    async def _getMainApiContext(self, difficulty: str) -> MainContext:
+    async def _getMainApiContext(self, id: str, difficulty: str) -> MainContext:
         
         mainApiData = await client.fetch(url=self._urls.base)
         mainPage = transformDataToDataClass(NkData, mainApiData)
@@ -56,7 +55,7 @@ class EventContext:
             raise ValueError()
 
         allEvents = mainPage.body
-        selectedID = next((event for event in allEvents if event.id == self._id), None)
+        selectedID = next((event for event in allEvents if event.id == id), None)
         
         if self._isLeaderboard:
             totalScoresKey = self._urls.totalScores.format(difficulty.lower())
@@ -125,7 +124,8 @@ class EventContext:
 
 
     async def buildEventContext(
-            self, 
+            self,
+            id: str, 
             difficulty: str, 
             metaDataObject: Type[T], 
             subResourceObject: Type[K] | None = None,
@@ -134,7 +134,7 @@ class EventContext:
 
         subData = None
 
-        mainData = await self._getMainApiContext(difficulty)
+        mainData = await self._getMainApiContext(id, difficulty)
 
         metaAPIData = await client.fetch(url=mainData.metaDataURL if mainData.metaDataURL else "")
         metaData = transformDataToDataClass(metaDataObject, metaAPIData)
@@ -151,5 +151,5 @@ class EventContext:
             secondaryData = subData,
             emojiData = self._emojiCache,
             difficulty = difficulty,
-            id = self._id
+            id = id
         )

@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Callable, TypeVar, Generic 
 from discord import Message
-from api.eventContext import ProfileContext 
-from utils.dataclasses import EventResult
+from api.eventContext import EventContext, ProfileContext 
+from utils.dataclasses import EventResult, PreviousEventLabel
 
 T = TypeVar("T")
 K = TypeVar("K")
@@ -11,10 +11,12 @@ K = TypeVar("K")
 class ViewContext(Generic[T, K]):
     message: Message | None
     userID: int
+    eventID: str    
     difficulty: str 
-    eventName: str 
-    eventContext: ProfileContext
-    previousEvents: list 
+    eventName: str
+    eventContext: EventContext 
+    eventData: ProfileContext
+    previousEvents: list[PreviousEventLabel] 
     buttonLayout: list[list[str]] | None
     metaDataObject: T
     subResourceObject: K | None

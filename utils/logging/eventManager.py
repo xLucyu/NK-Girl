@@ -1,5 +1,5 @@
 import discord
-from typing import TypeVar, Callable
+from typing import TypeVar, Callable, Generic
 from discord.ext import commands
 from dataclasses import dataclass
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -27,7 +27,7 @@ from utils.enums import EventType
 T = TypeVar("T")
 
 @dataclass(frozen=True)
-class EventCheck[T]:
+class EventCheck(Generic[T]):
     Difficulties: list[str | None]
     Function: Callable | None
     Type: EventType

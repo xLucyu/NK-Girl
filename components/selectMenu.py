@@ -1,70 +1,77 @@
 import discord
-
-from typing import TYPE_CHECKING 
-if TYPE_CHECKING:
-    from utils.discord.viewMenu import SelectView
+from utils.dataclasses import ViewContext
+from functools import partial
 
 class SelectMenu(discord.ui.Select):
 
-    def __init__(self, **components): 
-
-        self.parentView: SelectView = components.get("View", None)  
-        self.eventName = components.get("Event", None) 
-        self.difficulty = components.get("Difficulty", None) 
-        self.userID = components.get("UserID", None) 
-        self.function = components.get("Function", None) 
-        self.emoji = components.get("Emoji", None) 
-        self.eventNames = components.get("EventNames", None) 
-        self.boss = components.get("Boss", None)
-        self.tiles = components.get("Tiles", None)
-        self.ctEventIndex = components.get("CTEventIndex", None)
-
-        if self.tiles: #only for ct
+    def __init__(self, viewContext: ViewContext): 
+        
+        self._viewContext = viewContext
+        self._function = viewContext.function
+        
+        if self._viewContext.tiles:
             options = [
-                discord.SelectOption(label=str(tile[0]), value=str(eventIndex), emoji=tile[1])
-                for eventIndex, tile in enumerate(self.tiles)
+                discord.SelectOption(
+                    label = str(tile[0]),
+                    value = str(eventIndex),
+                    emoji = tile[1]
+                )
+                for eventIndex, tile in enumerate(self._viewContext.tiles)
             ]
+
         else:
             options = [
-                discord.SelectOption(label=str(name), value=str(eventindex), emoji=self.emoji)
-                for eventindex, name in enumerate(self.eventNames) 
+                discord.SelectOption(
+                    label = event.label,  
+                    value = event.value, 
+                    description = event.description,
+                    emoji = self._viewContext.emoji
+                )
+                for event in self._viewContext.previousEvents
             ]
-
+    
         super().__init__(
-            placeholder=f"Please select a {self.eventName}",
-            options=options,
-            disabled=False
+            placeholder = f"Please select a {self._viewContext.eventName}",
+            options = options,
+            disabled = False 
         )
-        
-    async def callback(self, interaction:discord.Interaction) -> None:
-        
-        if interaction.user.id != self.userID:
-            await interaction.response.send_message("You are not the original User of this command.", ephemeral=True)
-            return 
+
+    async def callback(self, interaction: discord.Interaction) -> None:
 
         await interaction.response.defer()
-            
-        selectedIndex = int(self.values[0])
-        args = [selectedIndex, self.parentView.difficulty]
 
-        if self.parentView.playerCount:
+        if interaction.user.id != self._viewContext.userID:
+            await interaction.followup.send(
+                "You are not the original user.", 
+                ephemeral=True
+            )
+            return
 
-            args[0] = self.parentView.index  
-            args.append(selectedIndex)
-            args.append(self.boss)
-            args.append(self.parentView.hpMultiplier)
-            self.parentView.playerCount = selectedIndex
+        self._viewContext.eventID = self.values[0]
 
-        if self.tiles:
+        eventData = self._viewContext.eventContext.buildEventContext(
+            id = self._viewContext.eventID,
+            difficulty = self._viewContext.difficulty,
+            metaDataObject=self._viewContext.metaDataObject,
+            subResourceObject=self._viewContext.subResourceObject,
+            subURLResolver=self._viewContext.subURLResolver
+        )
 
-            args[0] = self.ctEventIndex
-            args[1] = self.tiles[selectedIndex][0]
-            
-        eventDetails = self.function(*args)
-        embed = eventDetails["Embed"]
-        
-        if not self.parentView.playerCount:
-            self.parentView.index = selectedIndex
+        if self._viewContext.boss:
 
-        await interaction.edit_original_response(embed=embed)
-        self.parentView.message = await interaction.original_response()   
+            self._viewContext.playerCount = int(self.values[0])
+
+            updatedFunction = partial(
+                self._viewContext.function,
+                players = self._viewContext.playerCount,
+                boss = self._viewContext.boss,
+                multiplier = self._viewContext.hpMultiplier
+            )
+
+            eventDetails = await updatedFunction(eventData)
+
+        else:
+            eventDetails = self._function(eventData)
+
+        await interaction.edit_original_response(embed=eventDetails.embed)
+        self._viewContext.message = await interaction.original_message()

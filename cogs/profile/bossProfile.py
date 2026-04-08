@@ -1,12 +1,3 @@
-from api.eventContext import ProfileContext 
-from utils.helperFunctions import (
-    splitUppercase,
-    filterModifiers, 
-    filterTowers,
-    splitNumbers,
-    filterEmbed,
-    timeStampToUTCTimeFormat
-)
 from utils.assets import (
     BOSS_IMAGE,
     MAPS_IMAGE
@@ -17,7 +8,7 @@ from utils.dataclasses import (
 )
 
 
-def bossProfile(eventContext: ProfileContext) -> EventResult: 
+def bossProfile(eventContext) -> EventResult: 
    
     body = eventContext.metaData.body
     mainData = eventContext.mainData.selectedID

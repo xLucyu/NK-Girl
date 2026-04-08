@@ -47,3 +47,5 @@ class ApiWrapper:
 
         except Exception as e:
             raise ValueError(e)
+
+wrapper = ApiWrapper()

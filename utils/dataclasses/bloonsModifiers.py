@@ -1,4 +1,5 @@
-from utils.dataclasses import MetaBody, cGameData
+from utils.dataclasses.metaData import MetaBody
+from utils.dataclasses.ct import CTMetaData
 from dataclasses import dataclass 
 from typing import Union 
 
@@ -100,7 +101,7 @@ def buildModifiers(body: MetaBody) -> dict[str, Modifier]:
         ),
     }
 
-def buildCTModifiers(body: cGameData):
+def buildCTModifiers(body: CTMetaData):
 
     return {  
         "bloons": Modifier(

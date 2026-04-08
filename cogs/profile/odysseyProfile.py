@@ -6,16 +6,6 @@ from utils.dataclasses import (
     EventResult,
     PreviousEventLabel
 )
-from utils.helperFunctions import (
-    splitUppercase,
-    filterModifiers,
-    filterTowers,
-    filterEmbed,
-    getNumberForEvent,
-    getCurrentTimeStamp,
-    timeStampToUTCTimeFormat
-)
-from api.eventContext import ProfileContext
 
 
 def mapsURLResolver(main: Odyssey) -> str:
@@ -75,7 +65,7 @@ def getAllMaps(maps: MapsData, eventData: dict, emojis: dict) -> None:
         eventData[title] = value
              
 
-def odysseyProfile(eventContext: ProfileContext[Odyssey, MapsData]) -> EventResult:
+def odysseyProfile() -> EventResult:
 
     mainData = eventContext.mainData.selectedID
     body = eventContext.metaData.body

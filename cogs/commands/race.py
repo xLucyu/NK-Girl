@@ -2,8 +2,6 @@ import discord
 from discord.ext import commands
 from cogs.profile.raceProfile import raceProfile 
 from components.viewMenu import SelectView
-from utils.logging.eventManager import EventManager
-from api.eventContext import EventContext
 from utils.dataclasses import URLS
 
 class RaceCog(commands.Cog):

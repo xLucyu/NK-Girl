@@ -1,14 +1,20 @@
 from discord.ext import commands 
-import discord
+from discord import (
+    Bot,
+    ApplicationContext,
+    DiscordException,
+    Embed,
+    Color
+)
 
 class ErrorHandler(commands.Cog):
 
-    def __init__(self, bot: discord.Bot):
+    def __init__(self, bot: Bot):
 
         self.bot = bot
   
     @commands.Cog.listener()
-    async def on_application_command_error(self, ctx: discord.ApplicationContext, error: discord.DiscordException) -> None:
+    async def on_application_command_error(self, ctx: ApplicationContext, error: DiscordException) -> None:
 
         if isinstance(error, commands.CommandOnCooldown):
             title = "Command on Cooldown"
@@ -65,7 +71,7 @@ class ErrorHandler(commands.Cog):
                     title = "Unexpected Error"
                     message = f"Something unexpected went wrong. \nError: {error}"
           
-        embed = discord.Embed(title=f"**{title}**", description=message, color=discord.Color.red())
+        embed = Embed(title=f"**{title}**", description=message, color=Color.red())
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar.url) 
         await ctx.respond(embed=embed)
         return

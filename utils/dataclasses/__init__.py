@@ -6,7 +6,7 @@ from .metaData import MetaBody, Tower, MetaData
 from .bossLB import BossLB
 from .leaderboard import Leaderboard
 from .odyssey import Odyssey, OdysseyBody, MapsData
-from .eventURLs import EventURLs, URLS
+from .urls import EventURLs, URLS
 from .selectModel import EventResult, PreviousEventLabel
 from .viewContext import ViewContext 
 

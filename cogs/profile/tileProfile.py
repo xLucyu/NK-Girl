@@ -1,5 +1,5 @@
-from utils.dataclasses.ct import TileCode
-from utils.dataclasses.main import NkData
+from utils.dataclasses import TileCode
+from utils.dataclasses import NkData
 
 subGameType = {
     2: ["Race", "race", "EventRace"],

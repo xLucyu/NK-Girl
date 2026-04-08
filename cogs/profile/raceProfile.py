@@ -1,12 +1,3 @@
-from api.eventContext import ProfileContext
-from utils.helperFunctions import (
-    filterModifiers, 
-    filterTowers, 
-    splitUppercase,
-    getNumberForEvent,
-    filterEmbed,
-    timeStampToUTCTimeFormat
-)
 from utils.assets import (
     RACE_IMAGE,
     MAPS_IMAGE
@@ -17,7 +8,7 @@ from utils.dataclasses import (
     PreviousEventLabel
 )
 
-def raceProfile(eventContext: ProfileContext[MetaData]) -> EventResult:
+def raceProfile() -> EventResult:
      
     mainData = eventContext.mainData.selectedID
     emojis = eventContext.emojiData

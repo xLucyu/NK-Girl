@@ -2,8 +2,6 @@ from utils.assets import (
     BOSSHP,
     BOSS_IMAGE
 )
-from utils.helperFunctions import filterEmbed, splitNumbers
-from api.eventContext import ProfileContext
 
 healthMultiplierMode = {
     1: 1,
@@ -31,7 +29,7 @@ def addBossTiers(bossHpMultiplier: int, bossIndex: dict, eventData: dict, player
         False]
 
 
-def bossdetailsProfile(profileContext: ProfileContext, playerCount: int, boss: str = "", multiplier: float = 0.0):
+def bossdetailsProfile(playerCount: int, boss: str = "", multiplier: float = 0.0):
         
     difficulty = profileContext.difficulty
     emojis = profileContext.emojiData

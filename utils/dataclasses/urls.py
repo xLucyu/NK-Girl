@@ -7,22 +7,17 @@ class EventURLs:
     extension: Optional[dict[str, str]] | str = None 
     totalScores: Optional[str] = None
 
-
-    def getExtensionAttribute(self, object, difficulty: str) -> str | None:
+    def getExtension(self, difficulty: str | None = None) -> str:
         
-        if not self.extension:
-            return 
+        if not difficulty:
+            return self.base 
 
         if isinstance(self.extension, dict):
-            attributeName = self.extension.get(difficulty, None)
+            attr = self.extension.get(difficulty.lower())
+        else:
+            attr = self.extension
 
-            if not attributeName:
-                return
-
-        else: 
-            attributeName = self.extension
-
-        return getattr(object, attributeName)
+        return f"{self.base}/{attr}"
 
 
 URLS: dict[str, EventURLs] = {
@@ -73,3 +68,4 @@ URLS: dict[str, EventURLs] = {
         base = "https://data.ninjakiwi.com/btd6/events"
     )
 }
+

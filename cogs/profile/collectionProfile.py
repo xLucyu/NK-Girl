@@ -1,7 +1,5 @@
 from math import ceil
 from dataclasses import dataclass
-from utils.dataclasses import EventBody
-from utils.helperFunctions.timeStamps import timeStampToUTCTimeFormat
 
 @dataclass(frozen=True) 
 class RotationPage:
@@ -18,6 +16,16 @@ TWO64 = 1 << 64
 TWO63 = 1 << 63
 MOD_PM = 2147483647
 MOD_PM_MINUS1_NUM = 2147483646
+
+featuredInstas = [
+    "Alchemist", "BananaFarm", "BombShooter", "BoomerangMonkey",
+    "DartMonkey", "Druid", "GlueGunner", "HeliPilot",
+    "IceMonkey", "MonkeyAce", "MonkeyBuccaneer", "MonkeySub",
+    "MonkeyVillage", "NinjaMonkey", "SniperMonkey", "SpikeFactory",
+    "SuperMonkey", "TackShooter", "WizardMonkey", "MortarMonkey",
+    "EngineerMonkey", "DartlingGunner", "BeastHandler",
+    "Mermonkey", "Desperado"
+]
 
 
 def toLong(num: int) -> int:
@@ -132,7 +140,7 @@ class CollectionEventHelper:
         return pageItems
 
 
-def collectionProfile(eventData: EventBody) -> InstaSchedule:
+def collectionProfile(eventData) -> InstaSchedule:
 
     seed = getSeedLong(eventData.id)
 
@@ -142,16 +150,6 @@ def collectionProfile(eventData: EventBody) -> InstaSchedule:
         (eventData.end - eventData.start) /
         (secondsPerRotation * 1000)
     )
-
-    featuredInstas = [
-        "Alchemist", "BananaFarm", "BombShooter", "BoomerangMonkey",
-        "DartMonkey", "Druid", "GlueGunner", "HeliPilot",
-        "IceMonkey", "MonkeyAce", "MonkeyBuccaneer", "MonkeySub",
-        "MonkeyVillage", "NinjaMonkey", "SniperMonkey", "SpikeFactory",
-        "SuperMonkey", "TackShooter", "WizardMonkey", "MortarMonkey",
-        "EngineerMonkey", "DartlingGunner", "BeastHandler",
-        "Mermonkey", "Desperado"
-    ]
 
     shuffledInstas = shuffleSeed(seed, featuredInstas)
 

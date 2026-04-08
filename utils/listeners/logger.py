@@ -1,16 +1,16 @@
-import discord
+from discord import Bot, ApplicationContext  
 from discord.ext import commands 
 from database.logic.usage import UsageTable 
 
 class CommandLogger(commands.Cog):
 
-    def __init__(self, bot: commands.Bot, usageTable: UsageTable):
+    def __init__(self, bot: Bot, usageTable: UsageTable):
 
         self.bot = bot 
         self.database = usageTable
 
     @commands.Cog.listener()
-    async def on_application_command(self, ctx: discord.ApplicationContext):
+    async def on_application_command(self, ctx: ApplicationContext):
 
         commandName = str(ctx.command.name) 
         

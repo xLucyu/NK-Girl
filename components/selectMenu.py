@@ -1,6 +1,5 @@
 import discord
 from utils.dataclasses import ViewContext
-from functools import partial
 
 class SelectMenu(discord.ui.Select):
 
@@ -49,29 +48,9 @@ class SelectMenu(discord.ui.Select):
 
         self._viewContext.eventID = self.values[0]
 
-        eventData = self._viewContext.eventContext.buildEventContext(
-            id = self._viewContext.eventID,
-            difficulty = self._viewContext.difficulty,
-            metaDataObject=self._viewContext.metaDataObject,
-            subResourceObject=self._viewContext.subResourceObject,
-            subURLResolver=self._viewContext.subURLResolver
-        )
+        eventDetails = await updatedFunction(eventData)
 
-        if self._viewContext.boss:
-
-            self._viewContext.playerCount = int(self.values[0])
-
-            updatedFunction = partial(
-                self._viewContext.function,
-                players = self._viewContext.playerCount,
-                boss = self._viewContext.boss,
-                multiplier = self._viewContext.hpMultiplier
-            )
-
-            eventDetails = await updatedFunction(eventData)
-
-        else:
-            eventDetails = self._function(eventData)
+        eventDetails = self._function(eventData)
 
         await interaction.edit_original_response(embed=eventDetails.embed)
         self._viewContext.message = await interaction.original_message()

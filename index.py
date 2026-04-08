@@ -1,13 +1,13 @@
-import asyncio
-import discord 
+import discord
+from datetime import datetime 
 from config import BOTTOKEN
 from database.index import DatabasePool
 from database.logic.guilds import GuildTable 
 from database.logic.usage import UsageTable 
-from api import client
-
+from api import wrapper
 from cogs.commands import * 
-from utils.logging import *
+from utils.listeners import *
+from utils.eventManager.cache.eventCache import EventManager
 
 class DiscordBotClient(discord.Bot):
 
@@ -41,7 +41,6 @@ class DiscordBotClient(discord.Bot):
             TileCog(self),
             TimeCog(self),
             ErrorHandler(self),
-            EventManager(self, self.guildTable),
             CommandLogger(self, self.usageTable)
         ] 
 
@@ -51,29 +50,30 @@ class DiscordBotClient(discord.Bot):
         print("loaded cogs")
 
 
-    async def loadEventManager(self) -> None:
-
-        scheduler: EventManager = self.get_cog("EventManager")
-        if scheduler:
-            await scheduler.postLoad()
-            print("EventManager running")
+    async def loadEventManager(self, eventManager: EventManager) -> None:
+        
+        await eventManager.checkForNewEvent()
+        print("started building event cache")
+        await eventManager.startScheduler()
+        print(f"started event scheduler at: {datetime.now()}")
 
     async def startApiSession(self) -> None:
 
-        await client.start()
+        await wrapper.start()
         print("started api session")
     
     async def close(self) -> None:
 
-        await client.stop()
+        await wrapper.stop()
         print("stopped api session")
 
 if __name__ =="__main__":
 
     bot = DiscordBotClient()
+    eventManager = EventManager()
     bot.loadCogs()
-    bot.loop.create_task(bot.loadEventManager())
     bot.loop.create_task(bot.startApiSession())
+    bot.loop.create_task(bot.loadEventManager(eventManager))
     bot.run(BOTTOKEN)
 
 

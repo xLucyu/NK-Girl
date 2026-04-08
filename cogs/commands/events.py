@@ -1,6 +1,5 @@
 import discord 
 from discord.ext import commands
-from utils.logging.eventManager import EventManager, EVENTS_TO_CHECK
 from database.logic.guilds import GuildTable
 
 class EventCog(commands.Cog):

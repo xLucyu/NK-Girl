@@ -1,9 +1,7 @@
 import discord
 from discord.ext import commands
-from api import EventContext
 from cogs.profile.odysseyProfile import odysseyProfile, mapsURLResolver
 from components.viewMenu import SelectView
-from utils.logging import EventManager
 from utils.dataclasses import (
     Odyssey,
     URLS, 

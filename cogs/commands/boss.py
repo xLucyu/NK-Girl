@@ -1,9 +1,7 @@
 import discord 
 from discord.ext import commands
-from api.eventContext import EventContext
 from cogs.profile import bossProfile
 from components.viewMenu import SelectView
-from utils.logging import EventManager
 from utils.dataclasses import (
     URLS,
     MetaData,
@@ -16,10 +14,7 @@ class BossCog(commands.Cog):
     def __init__(self, bot: discord.Bot):
 
         self.bot = bot
-        self.eventContext = EventContext(
-            urls = URLS["Boss"],
-            isLeaderboard = False 
-        )
+
     
     @discord.slash_command(
         name = "boss", 
@@ -40,7 +35,7 @@ class BossCog(commands.Cog):
 
         await ctx.response.defer()
  
-        eventManager: EventManager = self.bot.get_cog("EventManager")
+        eventManager = self.bot.get_cog("EventManager")
         cachedEventID = eventManager.getCurrentEventCache("Boss")
 
         if difficulty == "Normal":

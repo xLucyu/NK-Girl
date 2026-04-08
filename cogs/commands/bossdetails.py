@@ -1,10 +1,8 @@
 import discord 
 from discord.ext import commands
 from functools import partial
-from api import EventContext
 from cogs.profile import bossdetailsProfile
 from components.viewMenu import SelectView
-from utils.logging import EventManager
 from utils.dataclasses import (
     URLS, 
     ViewContext, 

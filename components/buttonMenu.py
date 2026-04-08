@@ -1,6 +1,5 @@
 import discord 
 from utils.dataclasses import ViewContext, URLS 
-from api.eventContext import EventContext
 from functools import partial
 
 
@@ -29,29 +28,9 @@ class ButtonMenu(discord.ui.Button):
 
         self._viewContext.difficulty = self.custom_id
       
-        context = await EventContext(
-            urls=URLS[self._viewContext.eventName],
-            id=self._viewContext.eventContext.id,
-            isLeaderboard=False
-        ).buildEventContext(
-            difficulty=self._viewContext.difficulty,
-            metaDataObject=self._viewContext.metaDataObject,
-            subResourceObject=self._viewContext.subResourceObject,
-            subURLResolver=self._viewContext.subURLResolver
-        )
+ #       Details = await updatedFunction(context)
 
-        if self._viewContext.boss:
-
-            updatedFunction = partial(
-                self._viewContext.function,
-                players=self._viewContext.playerCount,
-                boss=self._viewContext.boss,
-                multiplier=self._viewContext.hpMultiplier
-        )
-            eventDetails = await updatedFunction(context)
-
-        else:
-            eventDetails = self._function(context)
+#            eventDetails = self._function(context)
 
         await interaction.edit_original_response(embed=eventDetails.embed)
         self._viewContext.message = await interaction.original_message()

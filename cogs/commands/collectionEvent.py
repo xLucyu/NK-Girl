@@ -1,9 +1,6 @@
 import discord 
 from discord.ext import commands 
-from api.client import client
-from profile.collectionEventProfile import collectionEventProfile
 from utils.dataclasses import Events, URLS
-from utils.helperFunctions import getCurrentTimeStamp
 
 class CollectionCog(commands.Cog):
 

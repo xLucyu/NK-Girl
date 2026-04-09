@@ -7,17 +7,16 @@ class EventURLs:
     extension: Optional[dict[str, str]] | str = None 
     totalScores: Optional[str] = None
 
-    def getExtension(self, difficulty: str | None = None) -> str:
-        
-        if not difficulty:
-            return self.base 
+    def getExtension(self, eventId: str, difficulty: str | None = None) -> str:
 
         if isinstance(self.extension, dict):
-            attr = self.extension.get(difficulty.lower())
+            attribute = f"/{eventId}/{self.extension.get(difficulty.lower(), "")}"
+        elif self.extension:
+            attribute = f"/{eventId}/{self.extension}"
         else:
-            attr = self.extension
+            attribute = ""
 
-        return f"{self.base}/{attr}"
+        return f"{self.base}{attribute}"
 
 
 URLS: dict[str, EventURLs] = {
@@ -25,8 +24,8 @@ URLS: dict[str, EventURLs] = {
     "Boss": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/bosses",
         extension = {
-            "standard": "metadataStandard",
-            "elite": "metaDataElite"
+            "standard": "metadata/standard",
+            "elite": "metadata/elite"
         },
         totalScores = "totalScores_{}"
     ),
@@ -38,9 +37,9 @@ URLS: dict[str, EventURLs] = {
     "Odyssey": EventURLs(
         base = "https://data.ninjakiwi.com/btd6/odyssey",
         extension = {
-            "easy": "metadata_easy",
-            "medium": "metadata_medium",
-            "hard": "metadata_hard"
+            "easy": "easy",
+            "medium": "medium",
+            "hard": "hard"
         }
     ),
     "CT": EventURLs(

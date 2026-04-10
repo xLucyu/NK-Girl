@@ -130,17 +130,23 @@ class EventManager:
         return [event["id"] for event in data.get("body", [])]
 
 
-    async def _getMetaData(self, event: EventCheck, currentEvent: EventBody) -> list | None:
-         
+    async def _getMetaData(self, event: EventCheck, currentEvent: EventBody) -> dict[str, object] | None:
+        
         if not event.Url:
             return None
 
-        urls = [
-            event.Url.getExtension(difficulty)
+        urls = {
+            difficulty: event.Url.getExtension(currentEvent.id, difficulty)
             for difficulty in event.Difficulties
-        ]
+        }
 
-        return await gather(*(self._fetch(url) for url in urls))
+        results = await gather(*(self._fetch(url) for url in urls.values()))
+
+        return {
+            difficulty: transformDataToDataClass(event.MetaDataObject, data)
+            for difficulty, data in zip(urls.keys(), results)
+            if data.get("success") and event.MetaDataObject is not None
+        }
 
 
     async def _buildEventData(self, key: str, event: EventCheck, currentEvent: EventBody) -> tuple[str, dict]:

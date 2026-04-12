@@ -1,0 +1,33 @@
+{
+  "dependencies": {
+    "discord.js": "^14.26.2",
+    "dotenv": "^17.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  },
+  "name": "nk-girl",
+  "version": "1.0.0",
+  "description": "**NK-Girl** is a project by [xLucyu](https://github.com/xLucyu).  \r This repository contains the source code and configuration files for the project. Further documentation, development roadmap, and usage instructions can be found below.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsup src/index.ts --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xLucyu/NK-Girl.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/xLucyu/NK-Girl/issues"
+  },
+  "homepage": "https://github.com/xLucyu/NK-Girl#readme"
+}

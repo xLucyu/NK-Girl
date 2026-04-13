@@ -1,6 +1,8 @@
+import { BaseBody, EventBody } from "../../types";
+
 export interface CurrentEventData<T, K> {
   data: T;
-  metaData: Record<string, K> | null;
+  metaData?: Record<string, K> | null;
 }
 
 export interface EventCacheEntry<T, K> {
@@ -8,18 +10,16 @@ export interface EventCacheEntry<T, K> {
   previousEvents: string[] | null;
 }
 
-export abstract class BaseEventCache<T extends { id: string }, K> {
+export abstract class BaseEventCache<T extends (BaseBody | EventBody),K = never> {
 
   protected cache: EventCacheEntry<T, K> | null = null;
-
-  protected abstract getCurrentActiveEvent(now: number): Promise<T>;
-  protected abstract getMetaData(event: T): Promise<Record<string, K> | null>;
 
   protected async getPreviousEventIds(event: T): Promise<string[] | null> {
     return null;
   }
 
   async check(): Promise<void> {
+
     const now = Date.now();
     const currentEvent = await this.getCurrentActiveEvent(now);
 
@@ -38,4 +38,9 @@ export abstract class BaseEventCache<T extends { id: string }, K> {
       previousEvents,
     };
   }
+
+  protected abstract getCurrentActiveEvent(now: number): Promise<T>;
+
+  protected abstract getMetaData(event: T): Promise<Record<string, K> | null>;
+  
 }

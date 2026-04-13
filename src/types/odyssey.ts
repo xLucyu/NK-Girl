@@ -1,12 +1,11 @@
-import { Tower } from "./metadata";
-import { MetaBody } from "./metadata";
+import type { Tower, MetaBody } from "./metadata";
 
 export interface MapsData {
   success: boolean;
   body: MetaBody[];
 }
 
-export interface OdysseyBody {
+export interface OdysseyMetaData {
   id: string;
   isExtreme: boolean;
   maxMonkeySeats: number;
@@ -18,7 +17,8 @@ export interface OdysseyBody {
   _availableTowers: Tower[];
   maps: string;
 }
+
 export interface Odyssey {
   success: boolean;
-  body: OdysseyBody;
+  body: OdysseyMetaData;
 }

@@ -1,4 +1,4 @@
-import { BaseBody, EventBody, NkData } from "../../utils/types";
+import type { BaseBody } from "../../utils/types";
 
 export interface CurrentEventData<T, K> {
   data: T;

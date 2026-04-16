@@ -37,7 +37,12 @@ export interface OdysseyBody extends BaseBody {
   metadata_hard: string;
 }
 
-export interface NkData {
+export interface EventBody extends BaseBody {
+  type: string;
+  url?: string | null;
+}
+
+export interface NkData<T extends BaseBody> {
   success: boolean;
-  body: BaseBody[];
+  body: T[];
 }

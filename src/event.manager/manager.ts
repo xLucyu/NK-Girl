@@ -17,16 +17,16 @@ export class EventManager {
         await this.runChecks();
         });
 
-        await this.runChecks();
+        await this.runChecks(true);
     }
 
 
-    private async runChecks(): Promise<void> {
+    private async runChecks(firstUse: boolean = false): Promise<void> {
 
         if (!this.job) return;
 
         const results = await Promise.allSettled([
-            this.boss
+            this.boss.check(firstUse)
         ]);
 
         for (const result of results) {

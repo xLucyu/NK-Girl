@@ -1,9 +1,15 @@
-import { BossBody, MetaData, NkData } from "../../utils/types";
-import { BaseEventCache } from "./base";
+import { BossBody, MetaData, NkData, MetaBody } from "../../utils/types";
+import { BaseEventCache, EventType } from "./base";
 import { getData } from "../../api/wrapper";
-import { URLS, BOSSDIFFICULTIES, BossDifficulty } from "../../utils/assets";
+import { URLS } from "../../utils/assets";
 
-export class BossCache extends BaseEventCache<BossBody, MetaData> {
+export const BossDifficulties = ["Standard", "Elite"] as const;
+export type BossDifficulty = typeof BossDifficulties[number];
+
+
+export class BossCache extends BaseEventCache<BossBody, MetaBody> {
+
+    protected eventType: EventType = EventType.Boss;
 
     protected async getEventData(): Promise<BossBody[]> {
 
@@ -11,25 +17,35 @@ export class BossCache extends BaseEventCache<BossBody, MetaData> {
        return data.body 
     }
 
-    protected getCurrentActiveEvent(events: BossBody[], now: number): BossBody {
+    protected getCurrentActiveEvent(events: BossBody[], now: number, firstUse: boolean): BossBody {
 
-        const currentEvent = events.find((event) => event.end > now);
+        let currentEvent: BossBody | undefined;
+        
+        if (firstUse) {
+            currentEvent = events[0];
+        } else {
+            currentEvent = events.find((event) => event.end > now);
+        }
 
         if (!currentEvent) throw new Error();
         return currentEvent;
     }
 
-    protected async getMetaData(event: BossBody): Promise<Record<BossDifficulty, MetaData> | null | undefined> {
+    protected async getMetaData(event: BossBody): Promise<Record<BossDifficulty, MetaBody>> {
 
         const entries = await Promise.all(
-            BOSSDIFFICULTIES.map(async (difficulty) => {
+            BossDifficulties.map(async (difficulty) => {
                 const url = difficulty === "Standard"
                     ? event.metadataStandard
                     : event.metadataElite;
                 const data = await getData<MetaData>(url);
-                return [difficulty, data] as const;
+                return [difficulty, data.body] as const;
             })
         )
-        return Object.fromEntries(entries) as Record<BossDifficulty, MetaData>;
+        return Object.fromEntries(entries) as Record<BossDifficulty, MetaBody>;
+    }
+
+    protected getPreviousEventIds(events: BossBody[]): string[] | null {
+        return events.map((event) => event.id);
     }
 }

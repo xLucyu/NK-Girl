@@ -1,34 +1,41 @@
 import type { BaseBody } from "../../utils/types";
 
+export enum EventType {
+  Boss = "Boss",
+  Race = "Race",
+  Odyssey = "Odyssey",
+  Collection = "Collection",
+  CT = "CT"
+}
+
 export interface CurrentEventData<T, K> {
   data: T;
   metaData?: Record<string, K> | null;
 }
 
 export interface EventCacheEntry<T, K> {
+  eventType: EventType;
   currentEvent: CurrentEventData<T, K>;
   previousEvents: string[] | null;
 }
 
 export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
-  protected cache: EventCacheEntry<T, K> | null = null;
-
-  protected getPreviousEventIds(events: T[]): string[] | null {
-    return null;
-  }
+  public cache: EventCacheEntry<T, K> | null = null;
+  protected eventType!: EventType;
 
   protected abstract getEventData(): Promise<T[]>;
-  protected abstract getCurrentActiveEvent(events: T[], now: number): T;
-  protected abstract getMetaData(event: T): Promise<Record<string, K> | null | undefined>;
+  protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
+  protected abstract getMetaData(event: T): Promise<Record<string, K>>;
+  protected abstract getPreviousEventIds(events: T[]): string[] | null;
 
-  async check(): Promise<void> {
+  async check(firstUse: boolean): Promise<void> {
 
     const now = Date.now(); // get date time
 
     const events = await this.getEventData(); // get the the event body
 
-    const currentEvent = this.getCurrentActiveEvent(events, now); // get the ongoing event
+    const currentEvent = this.getCurrentActiveEvent(events, now, firstUse); // get the ongoing event
 
     if (this.cache && this.cache.currentEvent.data.id === currentEvent.id) return;
 
@@ -37,6 +44,7 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
     const previousEvents = this.getPreviousEventIds(events); // get previous events for later select menu
 
     this.cache = {
+      eventType: this.eventType,
       currentEvent: {
         data: currentEvent,
         metaData: metaData ?? null 

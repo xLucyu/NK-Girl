@@ -1,3 +1,5 @@
+import { BossDifficulty } from "../../event.manager/cache";
+
 export enum Boss {
     Bloonarius = "Bloonarius",
     Lych = "Lych",
@@ -7,8 +9,6 @@ export enum Boss {
     Blastapopoulos = "Blastapopoulos",
     Diamondback = "Diamondback"
 }
-
-export type BossDifficulty = "Standard" | "Elite";
 
 export interface BossValue {
     TierHP: number[];

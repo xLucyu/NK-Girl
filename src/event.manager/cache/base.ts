@@ -1,4 +1,4 @@
-import { BaseBody, EventBody } from "../../utils/types";
+import { BaseBody, EventBody, NkData } from "../../utils/types";
 
 export interface CurrentEventData<T, K> {
   data: T;
@@ -10,7 +10,7 @@ export interface EventCacheEntry<T, K> {
   previousEvents: string[] | null;
 }
 
-export abstract class BaseEventCache<T extends (BaseBody | EventBody), K = never> {
+export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
   protected cache: EventCacheEntry<T, K> | null = null;
 

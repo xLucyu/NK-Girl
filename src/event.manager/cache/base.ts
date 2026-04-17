@@ -26,7 +26,7 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
   protected abstract getEventData(): Promise<T[]>;
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
-  protected abstract getMetaData(event: T): Promise<Record<string, K>>;
+  protected abstract getMetaData(event: T): Promise<K>;
   protected abstract getPreviousEventIds(events: T[]): string[] | null;
 
   async check(firstUse: boolean): Promise<void> {

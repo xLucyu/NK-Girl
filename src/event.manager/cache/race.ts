@@ -33,4 +33,7 @@ export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
         return data.body as MetaBody;
     }
 
+    protected getPreviousEventIds(events: RaceBody[]): string[] | null {
+        return events.map((event) => event.id);
+    }
 }

@@ -1,51 +1,55 @@
-import { BossBody, MetaData, NkData, MetaBody } from "../../utils/types";
-import { BaseEventCache, EventType } from "./base";
-import { getData } from "../../api/wrapper";
-import { URLS } from "../../utils/assets";
+import type { BaseBody } from "../../utils/types";
 
-export const BossDifficulties = ["Standard", "Elite"] as const;
-export type BossDifficulty = typeof BossDifficulties[number];
+export enum EventType {
+  Boss = "Boss",
+  Race = "Race",
+  Odyssey = "Odyssey",
+  Collection = "Collection",
+  CT = "CT"
+}
 
+export interface CurrentEventData<T, K> {
+  data: T;
+  metaData?: Record<string, K> | null;
+}
 
-export class BossCache extends BaseEventCache<BossBody, MetaBody> {
+export interface EventCacheEntry<T, K> {
+  eventType: EventType;
+  currentEvent: CurrentEventData<T, K>;
+  previousEvents: string[] | null;
+}
 
-    protected eventType: EventType = EventType.Boss;
+export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
-    protected async getEventData(): Promise<BossBody[]> {
+  public cache: EventCacheEntry<T, K> | null = null;
+  protected eventType!: EventType;
 
-       const data = await getData<NkData<BossBody>>(URLS.Boss.base)
-       return data.body 
+  protected abstract getEventData(): Promise<T[]>;
+  protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
+  protected abstract getMetaData(event: T): Promise<K>;
+  protected abstract getPreviousEventIds(events: T[]): string[] | null;
+
+  async check(firstUse: boolean): Promise<void> {
+
+    const now = Date.now(); // get date time
+
+    const events = await this.getEventData(); // get the the event body
+
+    const currentEvent = this.getCurrentActiveEvent(events, now, firstUse); // get the ongoing event
+
+    if (this.cache && this.cache.currentEvent.data.id === currentEvent.id) return;
+
+    const metaData = await this.getMetaData(currentEvent); // get meta data for the event, if present 
+
+    const previousEvents = this.getPreviousEventIds(events); // get previous events for later select menu
+
+    this.cache = {
+      eventType: this.eventType,
+      currentEvent: {
+        data: currentEvent,
+        metaData: metaData ?? null 
+      },
+      previousEvents
     }
-
-    protected getCurrentActiveEvent(events: BossBody[], now: number, firstUse: boolean): BossBody {
-
-        let currentEvent: BossBody | undefined;
-        
-        if (firstUse) {
-            currentEvent = events[0];
-        } else {
-            currentEvent = events.find((event) => event.end > now);
-        }
-
-        if (!currentEvent) throw new Error();
-        return currentEvent;
-    }
-
-    protected async getMetaData(event: BossBody): Promise<Record<BossDifficulty, MetaBody>> {
-
-        const entries = await Promise.all(
-            BossDifficulties.map(async (difficulty) => {
-                const url = difficulty === "Standard"
-                    ? event.metadataStandard
-                    : event.metadataElite;
-                const data = await getData<MetaData>(url);
-                return [difficulty, data.body] as const;
-            })
-        )
-        return Object.fromEntries(entries) as Record<BossDifficulty, MetaBody>;
-    }
-
-    protected getPreviousEventIds(events: BossBody[]): string[] | null {
-        return events.map((event) => event.id);
-    }
+  }
 }

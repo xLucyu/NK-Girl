@@ -14,9 +14,7 @@ export function getNumberForEvent(eventStart: number, mode: string): number | nu
 
   const [firstTimeStamp, duration] = eventsByFirstTimeStampAndDuration[mode];
   const timeDifference = eventStart - firstTimeStamp;
-  const calculateNumber = Math.floor(
-    timeDifference / (duration * 24 * 60 * 60 * 1000)
-  );
+  const calculateNumber = Math.floor(timeDifference / (duration * 24 * 60 * 60 * 1000));
 
   return calculateNumber;
 }

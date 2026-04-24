@@ -53,8 +53,7 @@ export const URLS: Record<string, EventURLs> = {
   },
 
   Tile: {
-    base: "https://storage.googleapis.com/btd6-ct-map/events",
-    extension: "{}/tiles.json"
+    base: "https://storage.googleapis.com/btd6-ct-map/events/{}/tiles.json",
   },
 
   BossLB: {

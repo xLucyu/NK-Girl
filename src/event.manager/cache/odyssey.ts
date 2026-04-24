@@ -1,6 +1,11 @@
 import { getData } from "../../api/wrapper";
 import { URLS } from "../../utils/assets";
-import { MapsData, NkData, Odyssey, OdysseyBody, OdysseyMetaData } from "../../utils/types";
+import { 
+    MapsData,
+    Odyssey, 
+    OdysseyBody, 
+    OdysseyMetaData
+} from "../../utils/types";
 import { BaseEventCache, EventType } from "./base";
 
 const OdysseyDifficulties = ["Easy", "Medium", "Hard"] as const;
@@ -8,14 +13,8 @@ export type OdysseyDifficulty = typeof OdysseyDifficulties[number];
 
 export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDifficulty, OdysseyMetaData>> {
 
-    protected eventType: EventType = EventType.Odyssey;
-
-    protected async getEventData(): Promise<OdysseyBody[]> {
-    
-        const data = await getData<NkData<OdysseyBody>>(URLS.Odyssey.base);
-        return data.body;
-    }
-
+    protected eventType= EventType.Odyssey;
+    protected url = URLS.Odyssey;
   
     protected getCurrentActiveEvent(events: OdysseyBody[], now: number, firstUse: boolean): OdysseyBody {
 
@@ -51,10 +50,5 @@ export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDiff
             })
         )
         return Object.fromEntries(entries) as Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MapsData }>;
-    }
-
-
-    protected getPreviousEventIds(events: OdysseyBody[]): string[] | null {
-        return events.map((event) => event.id);
     }
 }

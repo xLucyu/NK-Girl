@@ -7,8 +7,7 @@ export enum EventType {
   Race = "Race",
   Odyssey = "Odyssey",
   Collection = "Collection",
-  CT = "CT",
-  Daily = "Daily"
+  CT = "CT"
 }
 
 export interface CurrentEventData<T, K> {
@@ -16,31 +15,35 @@ export interface CurrentEventData<T, K> {
   metaData?: K | null;
 }
 
+interface PreviousEvent {
+  id: string;
+  name: string;
+}
+
 export interface EventCacheEntry<T, K> {
   eventType: EventType;
   currentEvent: CurrentEventData<T, K>;
-  previousEvents: string[] | null;
+  previousEvents: PreviousEvent[] | null;
 }
 
 export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
   public cache: EventCacheEntry<T, K> | null = null;
-  protected abstract urls: EventURLs;
+  protected abstract url: EventURLs;
   protected abstract eventType: EventType;
 
   protected async getEventData(): Promise<T[]> {
 
-    const data = await getData<NkData<T>>(this.urls.base);
+    const data = await getData<NkData<T>>(this.url.base);
     return data.body;
   }
 
-  protected getPreviousEventIds(events: T[]): string[] | null {
-    return events.map((event) => event.id);
-  }
-
-  protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
-  protected abstract getMetaData(event: T, now?: number): Promise<K>;
-
+  protected getPreviousEvents(events: T[]): PreviousEvent[] | null {
+    return events.map((event) => ({
+      id: event.id,
+      name: event.name
+    }))
+  } 
 
   async check(firstUse: boolean): Promise<void> {
 
@@ -54,7 +57,7 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
     const metaData = await this.getMetaData(currentEvent); // get meta data for the event, if present 
 
-    const previousEvents = this.getPreviousEventIds(events); // get previous events for later select menu
+    const previousEvents = this.getPreviousEvents(events);
 
     this.cache = {
       eventType: this.eventType,
@@ -64,5 +67,9 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
       },
       previousEvents
     }
+    console.log(this.cache)
   }
+
+  protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
+  protected abstract getMetaData(event: T, now?: number): Promise<K>;
 }

@@ -4,10 +4,10 @@ import { URLS } from "../../utils/assets";
 import { EventBody, NkData } from "../../utils/types";
 import { BaseEventCache, EventType } from "./base";
 
-
 export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
 
-    protected eventType: EventType = EventType.Collection;
+    protected eventType = EventType.Collection;
+    protected url = URLS.Events; // only place available for collectionevent
 
     protected async getEventData(): Promise<EventBody[]> {
         
@@ -15,7 +15,6 @@ export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
         return data.body;
     }
 
-  
     protected getCurrentActiveEvent(events: EventBody[], now: number, firstUse: boolean): EventBody {
         
         let currentEvent: EventBody | undefined;
@@ -30,13 +29,11 @@ export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
         return currentEvent;
     }
 
-  
     protected async getMetaData(event: EventBody): Promise<InstaSchedule> {
         return collectionProfile(event);
     }
 
-  
-    protected getPreviousEventIds(events: EventBody[]): string[] | null {
+    protected override getPreviousEvents(): null {
         return null;
     }
 }

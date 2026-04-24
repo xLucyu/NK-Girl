@@ -1,4 +1,4 @@
-import { BossBody, MetaData, NkData, MetaBody } from "../../utils/types";
+import type { BossBody, MetaData, MetaBody } from "../../utils/types";
 import { BaseEventCache, EventType } from "./base";
 import { getData } from "../../api/wrapper";
 import { URLS } from "../../utils/assets";
@@ -6,17 +6,12 @@ import { URLS } from "../../utils/assets";
 export const BossDifficulties = ["Standard", "Elite"] as const;
 export type BossDifficulty = typeof BossDifficulties[number];
 
-
 export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, MetaBody>> {
 
-    protected eventType: EventType = EventType.Boss;
+    protected eventType = EventType.Boss;
+    protected url = URLS.Boss;
 
-    protected async getEventData(): Promise<BossBody[]> {
-
-       const data = await getData<NkData<BossBody>>(URLS.Boss.base);
-       return data.body;
-    }
-
+    
     protected getCurrentActiveEvent(events: BossBody[], now: number, firstUse: boolean): BossBody {
 
         let currentEvent: BossBody | undefined;
@@ -31,6 +26,7 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
         return currentEvent;
     }
 
+
     protected async getMetaData(event: BossBody): Promise<Record<BossDifficulty, MetaBody>> {
 
         const entries = await Promise.all(
@@ -43,9 +39,5 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
             })
         )
         return Object.fromEntries(entries) as Record<BossDifficulty, MetaBody>;
-    }
-
-    protected getPreviousEventIds(events: BossBody[]): string[] | null {
-        return events.map((event) => event.id);
     }
 }

@@ -1,16 +1,19 @@
-import type { BaseBody } from "../../utils/types";
+import { getData } from "../../api/wrapper";
+import { EventURLs } from "../../utils/assets";
+import type { NkData, BaseBody } from "../../utils/types";
 
 export enum EventType {
   Boss = "Boss",
   Race = "Race",
   Odyssey = "Odyssey",
   Collection = "Collection",
-  CT = "CT"
+  CT = "CT",
+  Daily = "Daily"
 }
 
 export interface CurrentEventData<T, K> {
   data: T;
-  metaData?: Record<string, K> | null;
+  metaData?: K | null;
 }
 
 export interface EventCacheEntry<T, K> {
@@ -22,12 +25,22 @@ export interface EventCacheEntry<T, K> {
 export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
   public cache: EventCacheEntry<T, K> | null = null;
-  protected eventType!: EventType;
+  protected abstract urls: EventURLs;
+  protected abstract eventType: EventType;
 
-  protected abstract getEventData(): Promise<T[]>;
+  protected async getEventData(): Promise<T[]> {
+
+    const data = await getData<NkData<T>>(this.urls.base);
+    return data.body;
+  }
+
+  protected getPreviousEventIds(events: T[]): string[] | null {
+    return events.map((event) => event.id);
+  }
+
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
-  protected abstract getMetaData(event: T): Promise<K>;
-  protected abstract getPreviousEventIds(events: T[]): string[] | null;
+  protected abstract getMetaData(event: T, now?: number): Promise<K>;
+
 
   async check(firstUse: boolean): Promise<void> {
 

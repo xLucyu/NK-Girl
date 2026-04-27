@@ -25,6 +25,18 @@ export class EventManager {
     };
 
 
+    public getCache(mode: EventType) {
+        
+        switch (mode) {
+            case EventType.Boss: return this.boss.getCache();
+            case EventType.Race: return this.race.getCache();
+            case EventType.CT: return this.ct.getCache();
+            case EventType.Collection: return this.collection.getCache();
+            case EventType.Odyssey: return this.odyssey.getCache();
+        }
+    }
+
+
     public async start(): Promise<void> {
 
         this.job = cron.schedule("0 * * * *", async () => {

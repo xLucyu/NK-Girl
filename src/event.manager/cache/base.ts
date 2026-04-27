@@ -45,6 +45,12 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
     }))
   } 
 
+
+  public getCache(): EventCacheEntry<T, K> | null {
+    return this.cache;
+  }
+  
+
   async check(firstUse: boolean): Promise<void> {
 
     const now = Date.now(); // get date time

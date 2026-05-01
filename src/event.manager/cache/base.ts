@@ -10,7 +10,7 @@ export enum EventType {
   CT = "CT"
 }
 
-export interface CurrentEventData<T, K> {
+interface CurrentEventData<T, K> {
   data: T;
   metaData?: K | null;
 }
@@ -44,11 +44,6 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
       name: event.name
     }))
   } 
-
-
-  public getCache(): EventCacheEntry<T, K> | null {
-    return this.cache;
-  }
   
 
   async check(firstUse: boolean): Promise<void> {

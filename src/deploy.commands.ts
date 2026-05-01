@@ -3,7 +3,7 @@ import { config } from "./config";
 import { commands } from "./commands";
 
 const commandsData = Object.values(commands).map((command) =>
-  command.data.toJSON()
+  command.commandData.toJSON()
 );
 
 const rest = new REST({ version: "10" }).setToken(config.BOT_TOKEN);

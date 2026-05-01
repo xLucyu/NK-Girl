@@ -7,33 +7,29 @@ import {
     CTCache
 } from "./cache";
 
+type EventCaches = {
+    Boss: BossCache;
+    Race: RaceCache;
+    Odyssey: OdysseyCache;
+    Collection: CollectionCache;
+    CT: CTCache;
+}
+
 export class EventManager {
 
     private job: ScheduledTask | null = null;
-    private boss: BossCache;
-    private race: RaceCache;
-    private odyssey: OdysseyCache;
-    private collection: CollectionCache;
-    private ct: CTCache;
 
-    constructor() {
-        this.boss = new BossCache();
-        this.race = new RaceCache();
-        this.odyssey = new OdysseyCache();
-        this.collection = new CollectionCache();
-        this.ct = new CTCache();
+    private cache: EventCaches = {
+        Boss: new BossCache(),
+        Race: new RaceCache(),
+        Odyssey: new OdysseyCache(),
+        Collection: new CollectionCache(),
+        CT: new CTCache()
     };
 
-
-    public getCache(mode: EventType) {
-        
-        switch (mode) {
-            case EventType.Boss: return this.boss.getCache();
-            case EventType.Race: return this.race.getCache();
-            case EventType.CT: return this.ct.getCache();
-            case EventType.Collection: return this.collection.getCache();
-            case EventType.Odyssey: return this.odyssey.getCache();
-        }
+    
+    public getCache<T extends keyof EventCaches>(eventName: T): EventCaches[T]["cache"] {
+        return this.cache[eventName].cache;
     }
 
 
@@ -51,13 +47,11 @@ export class EventManager {
 
         if (!this.job) return;
 
-        const results = await Promise.allSettled([
-            this.boss.check(firstUse),
-            this.race.check(firstUse),
-            this.odyssey.check(firstUse),
-            this.collection.check(firstUse),
-            this.ct.check(firstUse)
-        ]);
+        const results = await Promise.allSettled(
+            Object.values(this.cache).map((cache) => 
+                cache.check(firstUse)
+            ) 
+        );
 
         for (const result of results) {
             if (result.status === "rejected") {
@@ -66,3 +60,5 @@ export class EventManager {
         }
     }
 }
+
+export const eventManager = new EventManager();

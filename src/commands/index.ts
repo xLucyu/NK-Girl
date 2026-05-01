@@ -1,5 +1,5 @@
 import * as boss from "./boss/boss.command";
 
 export const commands = {
-    boss
+    boss: new boss.BossCommand()
 }

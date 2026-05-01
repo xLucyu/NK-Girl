@@ -1,11 +1,16 @@
 import { SlashCommandBuilder } from "discord.js";
-import { eventManager } from "../../event.manager/manager";
-import { EventCacheEntry, EventType } from "../../event.manager/cache/base";
+import type { JSX } from "react";
+import { 
+  eventManager,
+  BossDifficulty,
+  BossDifficulties,
+  EventType,
+  EventCacheEntry
+} from "../../event.manager";
 import { BaseCommand } from "../base.command";
-import { BossDifficulties, BossDifficulty } from "../../event.manager/cache";
-import { BossBody, MetaBody } from "../../utils/types";
+import type { BossBody, MetaBody } from "../../utils/types";
 
-export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody> {
+export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
 
   public commandData = new SlashCommandBuilder()
     .setName("boss")
@@ -23,7 +28,12 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
       )
     );
 
-  protected getProfile() {
+  protected getProfile(): JSX.Element {
     
   }
+
+  protected getEventProps(): EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>> | null {
+    return eventManager.getCache(EventType.Boss)
+  }
+
 }

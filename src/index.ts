@@ -7,12 +7,11 @@ import {
 import { config } from "./config"; 
 import { deployCommands } from "./deploy.commands";
 import { listener } from "./listeners/interaction";
-import { EventManager } from "./event.manager/manager";
+import { eventManager } from "./event.manager/manager";
 
 export class DiscordClient {
 
   private client: Client;
-  public eventManager: EventManager;
 
   constructor() {
     this.client = new Client({
@@ -28,13 +27,12 @@ export class DiscordClient {
       ], 
     });
 
-    this.eventManager = new EventManager();
 
     this.addListeners();
   }
 
   public async startEventManager() {
-    this.eventManager.start();
+    await eventManager.start();
     console.log("EventManager started");
   }
 

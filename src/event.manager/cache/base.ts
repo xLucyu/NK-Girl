@@ -10,7 +10,7 @@ export enum EventType {
   CT = "CT"
 }
 
-interface CurrentEventData<T, K> {
+export interface CurrentEventData<T, K> {
   data: T;
   metaData?: K | null;
 }
@@ -28,9 +28,10 @@ export interface EventCacheEntry<T, K> {
 
 export abstract class BaseEventCache<T extends BaseBody, K = never> {
 
-  public cache: EventCacheEntry<T, K> | null = null;
+  protected cache: EventCacheEntry<T, K> | null = null;
   protected abstract url: EventURLs;
   protected abstract eventType: EventType;
+
 
   protected async getEventData(): Promise<T[]> {
 
@@ -38,13 +39,19 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
     return data.body;
   }
 
+
   protected getPreviousEvents(events: T[]): PreviousEvent[] | null {
     return events.map((event) => ({
       id: event.id,
       name: event.name
     }))
   } 
-  
+
+
+  public getCache(): EventCacheEntry<T,K> | null {
+    return this.cache;
+  }
+
 
   async check(firstUse: boolean): Promise<void> {
 

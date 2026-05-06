@@ -32,8 +32,8 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
     
   }
 
-  protected getEventProps(): EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>> | null {
-    return eventManager.getCache(EventType.Boss)
+  protected getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
+    return eventManager.getEventCache(EventType.Boss).getCache();
   }
 
 }

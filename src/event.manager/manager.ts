@@ -6,32 +6,26 @@ import {
     CollectionCache,
     CTCache
 } from "./cache";
+import { EventType } from "./cache/base";
 
-type EventCaches = {
-    Boss: BossCache;
-    Race: RaceCache;
-    Odyssey: OdysseyCache;
-    Collection: CollectionCache;
-    CT: CTCache;
+interface CacheMap {
+  [EventType.Boss]: BossCache;
+  [EventType.Race]: RaceCache;
+  [EventType.Odyssey]: OdysseyCache;
+  [EventType.Collection]: CollectionCache;
+  [EventType.CT]: CTCache;
 }
 
 export class EventManager {
 
     private job: ScheduledTask | null = null;
-
-    private cache: EventCaches = {
-        Boss: new BossCache(),
-        Race: new RaceCache(),
-        Odyssey: new OdysseyCache(),
-        Collection: new CollectionCache(),
-        CT: new CTCache()
+    private caches: CacheMap = {
+        [EventType.Boss]: new BossCache(),
+        [EventType.Race]: new RaceCache(),
+        [EventType.CT]: new CTCache(),
+        [EventType.Collection]: new CollectionCache(),
+        [EventType.Odyssey]: new OdysseyCache()
     };
-
-    
-    public getCache<T extends keyof EventCaches>(eventName: T): EventCaches[T]["cache"] {
-        return this.cache[eventName].cache;
-    }
-
 
     public async start(): Promise<void> {
 
@@ -42,15 +36,17 @@ export class EventManager {
         await this.runChecks(true);
     }
 
+    public getEventCache<T extends EventType>(mode: T): CacheMap[T] {
+        return this.caches[mode];
+    }
+
 
     private async runChecks(firstUse: boolean = false): Promise<void> {
 
         if (!this.job) return;
 
         const results = await Promise.allSettled(
-            Object.values(this.cache).map((cache) => 
-                cache.check(firstUse)
-            ) 
+            Object.values(this.caches).map((cache) => cache.check(firstUse))
         );
 
         for (const result of results) {

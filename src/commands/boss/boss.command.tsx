@@ -1,35 +1,33 @@
-import { SlashCommandBuilder } from "discord.js";
-import { eventManager } from "../../event.manager/manager";
-import { EventCacheEntry, EventType } from "../../event.manager/cache/base";
-import { BaseCommand } from "../base.command";
-import { BossDifficulties, BossDifficulty } from "../../event.manager/cache";
-import { BossBody, MetaBody } from "../../utils/types";
-import { JSX } from "react";
-import { BossProfile } from "./boss.profile";
+import type { JSX } from "react";
+import { 
+    AttachmentBuilder,
+    ChatInputCommandInteraction,
+    SlashCommandOptionsOnlyBuilder
+} from "discord.js";
+import { EventCacheEntry } from "../event.manager/cache/base";
+import { render } from "../components/render";
 
-export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
+export abstract class BaseCommand<T, K> {
 
-  public commandData = new SlashCommandBuilder()
-    .setName("boss")
-    .setDescription("shows the boss data.")
-    .addStringOption((option) =>
-    option 
-      .setName("difficulty")
-      .setDescription("Choose a difficulty")
-      .setRequired(false)
-      .addChoices(
-        ...BossDifficulties.map((difficulty) => ({
-          name: difficulty,
-          value: difficulty 
-        }))
-      )
-    );
+    public abstract commandData: SlashCommandOptionsOnlyBuilder;
 
-  protected getProfile(): JSX.Element {
-    return BossProfile();
-  }
+    public async execute(interaction: ChatInputCommandInteraction) {
 
-  protected getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
-    return eventManager.getEventCache(EventType.Boss).getCache();
-  }
+        const eventProps = this.getEventProps();
+
+        console.log(eventProps);
+
+        if (!eventProps) throw new Error();
+
+        const profile = this.getProfile();
+        const buffer = await render(profile);
+
+        const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
+        return interaction.reply({
+            files: [attachment], 
+        });
+    }
+
+    protected abstract getEventProps(): EventCacheEntry<T, K> | null;
+    protected abstract getProfile(): JSX.Element;
 }

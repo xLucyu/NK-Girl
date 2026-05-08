@@ -20,4 +20,4 @@ export class GscClient {
     }
 }
 
-const gsc = new GscClient("serviceAccount.json", "btd6api");
+export const gsc = new GscClient("serviceAccount.json", "btd6api");

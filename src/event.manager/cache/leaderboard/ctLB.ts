@@ -4,67 +4,120 @@ import type { Leaderboard } from "../../utils/types";
 
 // clean up ai to your own version
 
+import { getData } from "../../api/wrapper";
+import type { BaseBody } from "../../utils/types";
+import { GoogleStorageService } from "../services/googleStorage";
+
+
+type CTMode = "players" | "teams";
+
 export class CTLeaderboardUploader {
   constructor(
     private readonly storage: GoogleStorageService,
     private readonly baseURL: string,
   ) {}
 
-  public async uploadCurrentCTLeaderboards(currentCT: { id: string; name: string }): Promise<void> {
+  public async uploadCurrentCTLeaderboards(currentCT: CTBody): Promise<void> {
     const [playersPayload, teamsPayload] = await Promise.all([
-      this.buildCTLeaderboard(currentCT, "players"),
-      this.buildCTLeaderboard(currentCT, "teams"),
+      this.buildPlayersLeaderboard(currentCT),
+      this.buildTeamsLeaderboard(currentCT),
     ]);
 
     await Promise.all([
-      this.storage.uploadJson("leaderboards/ct/current/players.json", playersPayload),
-      this.storage.uploadJson("leaderboards/ct/current/teams.json", teamsPayload),
-
-      this.storage.uploadJson(`leaderboards/ct/events/${currentCT.id}/players.json`, playersPayload),
-      this.storage.uploadJson(`leaderboards/ct/events/${currentCT.id}/teams.json`, teamsPayload),
+      this.storage.uploadJson(
+        `leaderboards/ct/${currentCT.id}/players.json`,
+        playersPayload,
+      ),
+      this.storage.uploadJson(
+        `leaderboards/ct/${currentCT.id}/teams.json`,
+        teamsPayload,
+      ),
     ]);
   }
 
-  private async buildCTLeaderboard(
-    currentCT: { id: string; name: string },
-    mode: "players" | "teams",
-  ): Promise<LeaderboardPayload> {
-    const entries = await getAllLeaderboardPages(
-      `${this.baseURL}/${currentCT.id}/leaderboard/${mode}`
+  private async buildPlayersLeaderboard(currentCT: CTBody): Promise<BossLB> {
+    const entries = await this.getAllPages<PlayerLeaderboardEntry>(
+      this.getLeaderboardUrl(currentCT.id, "players"),
     );
 
     return {
       id: currentCT.id,
-      eventType: "CT",
-      mode,
-      name: currentCT.name,
+      boss: currentCT.name,
       totalScores: entries.length,
-      scoringType: "CTPoints", // replace with your real value if needed
+      scoringType: "CTPlayers",
       teams: entries.map((entry, index) => ({
         position: index + 1,
-        members: this.mapMembers(entry, mode),
-        scoreParts: {
-          primary: entry.scoreParts[0]?.score ?? 0,
-          secondary: entry.scoreParts[1]?.score ?? null,
-          tertiary: entry.scoreParts[2]?.score ?? null,
-        },
+        members: [
+          {
+            displayName: entry.displayName,
+            profile: entry.profile,
+          },
+        ],
+        scoreParts: this.mapScoreParts(entry.scoreParts),
       })),
     };
   }
 
-  private mapMembers(entry: any, mode: "players" | "teams"): Member[] {
-    if (mode === "players") {
-      return [
-        {
-          displayName: entry.displayName,
-          profile: entry.profile,
-        },
-      ];
-    }
+  private async buildTeamsLeaderboard(currentCT: CTBody): Promise<BossLB> {
+    const entries = await this.getAllPages<TeamLeaderboardEntry>(
+      this.getLeaderboardUrl(currentCT.id, "teams"),
+    );
 
-    return entry.members.map((member: any) => ({
-      displayName: member.displayName,
-      profile: member.profile,
-    }));
+    return {
+      id: currentCT.id,
+      boss: currentCT.name,
+      totalScores: entries.length,
+      scoringType: "CTTeams",
+      teams: entries.map((entry, index) => ({
+        position: index + 1,
+        members: entry.members.map((member) => ({
+          displayName: member.displayName,
+          profile: member.profile,
+        })),
+        scoreParts: this.mapScoreParts(entry.scoreParts),
+      })),
+    };
+  }
+
+  private getLeaderboardUrl(eventId: string, mode: CTMode): string {
+    /*
+      Adjust these path segments to match the real NK endpoint.
+      Examples depending on API:
+      - /leaderboard/player
+      - /leaderboard/players
+      - /leaderboard/team
+      - /leaderboard/teams
+    */
+    const segment = mode === "players" ? "player" : "team";
+    return `${this.baseURL}/${eventId}/leaderboard/${segment}`;
+  }
+
+  private mapScoreParts(scoreParts: ScorePart[]): BossScoreParts {
+    return {
+      bossTier: scoreParts[0]?.score ?? 0,
+      score: scoreParts[1]?.score ?? 0,
+      secondScore: scoreParts[2]?.score ?? null,
+    };
+  }
+
+  private async getAllPages<T>(baseUrl: string): Promise<T[]> {
+    let page = 1;
+    const allEntries: T[] = [];
+
+    while (true) {
+      try {
+        const data = await getData<NkData<T>>(`${baseUrl}?page=${page}`);
+
+        if (!data?.body || data.body.length === 0) {
+          break;
+        }
+
+        allEntries.push(...data.body);
+        page++;
+      } catch {
+        break;
+      }
+    }
+    return allEntries;
   }
 }

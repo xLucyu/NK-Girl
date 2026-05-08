@@ -1,7 +1,7 @@
-export interface BossScoreParts {
-  bossTier: number;
+export interface ScoreParts {
   score: number;
   secondScore?: number | null;
+  thirdScore?: number | null;
 }
 
 export interface Member {
@@ -9,16 +9,17 @@ export interface Member {
   profile: string;
 }
 
-export interface BossTeam {
+export interface Team {
   position: number;
   members: Member[];
-  scoreParts: BossScoreParts;
+  scoreParts: ScoreParts;
 }
 
-export interface BossLB {
+export interface LeaderboardPayload {
   id: string;
-  boss: string;
+  eventType: "Boss" | "Race" | "CT";
+  name: string;
   totalScores: number;
   scoringType: string;
-  teams: BossTeam[];
+  teams: Team[];
 }

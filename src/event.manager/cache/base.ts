@@ -1,6 +1,7 @@
-import { getData } from "../../api/wrapper";
-import { EventURLs } from "../../utils/assets";
-import type { NkData, BaseBody } from "../../utils/types";
+import { getData } from "../../../api/wrapper";
+import { EventURLs } from "../../../utils/assets";
+import type { NkData, BaseBody } from "../../../utils/types";
+import { GscClient, gsc } from "../../bucket";
 
 export enum EventType {
   Boss = "Boss",
@@ -26,7 +27,7 @@ export interface EventCacheEntry<T, K> {
   previousEvents: PreviousEvent[] | null;
 }
 
-export abstract class BaseEventCache<T extends BaseBody, K = never> {
+export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected cache: EventCacheEntry<T, K> | null = null;
   protected abstract url: EventURLs;
@@ -46,6 +47,13 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
       name: event.name
     }))
   } 
+
+
+  protected async uploadToBucket(): Promise<void> {
+    
+    if (!this.cache) return;
+    await gsc.write(this.getBucketPath(), this.cache);
+  }
 
 
   public getCache(): EventCacheEntry<T,K> | null {
@@ -75,9 +83,12 @@ export abstract class BaseEventCache<T extends BaseBody, K = never> {
       },
       previousEvents
     }
-    console.log(this.cache)
+
+    await this.uploadToBucket();
+    
   }
 
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
   protected abstract getMetaData(event: T, now?: number): Promise<K>;
+  protected abstract getBucketPath(): string;
 }

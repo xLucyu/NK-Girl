@@ -5,8 +5,8 @@ import {
     OdysseyCache,
     CollectionCache,
     CTCache
-} from "./cache";
-import { EventType } from "./cache/base";
+} from "./cache/events";
+import { EventType } from "./cache/events/base";
 
 interface CacheMap {
   [EventType.Boss]: BossCache;
@@ -29,21 +29,29 @@ export class EventManager {
 
     public async start(): Promise<void> {
 
-        this.job = cron.schedule("0 * * * *", async () => {
-            await this.runChecks();
+        this.job = cron.schedule("0, 30 * * * *", async () => {
+            await this.runCycle();
         });
 
-        await this.runChecks(true);
+        await this.runCycle(true);
     }
 
     public getEventCache<T extends EventType>(mode: T): CacheMap[T] {
         return this.caches[mode];
     }
 
+    private async runCycle(firstUse: boolean = false): Promise<void> {
 
-    private async runChecks(firstUse: boolean = false): Promise<void> {
+        try {
+            await this.runEventChecks(firstUse);
+            await this.runLeaderboardChecks();
+        } catch (error) {
+            console.error("Event Cycle failed", error);
+        }
+    }
 
-        if (!this.job) return;
+
+    private async runEventChecks(firstUse: boolean = false): Promise<void> {
 
         const results = await Promise.allSettled(
             Object.values(this.caches).map((cache) => cache.check(firstUse))
@@ -54,6 +62,27 @@ export class EventManager {
                 console.error(result.reason);
             }
         }
+    }
+
+    private async runLeaderboardChecks(): Promise<void> {
+
+        const results = await Promise.allSettled([
+            this.bossLB(),
+            this.raceLB(),
+            this.ctLB()
+        ]);
+    }
+
+    private async bossLB() {
+        const bossCache = this.getEventCache(EventType.Boss).getCache();
+    }
+
+    private async raceLB() {
+        const raceCache = this.getEventCache(EventType.Race).getCache();
+    }
+
+    private async ctLB() {
+        const ctCache = this.getEventCache(EventType.CT).getCache();
     }
 }
 

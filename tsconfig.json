@@ -6,6 +6,13 @@
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@wrapper": ["./src/api/wrapper"],
+      "@utils/*": ["./src/utils/*"],
+      "@manager/*": ["./src/event.manager/*"],
+      "@commands/*": ["./src/commands/*"],
+      "@components/*": ["./src/components/*"]
+    }
   }
 }

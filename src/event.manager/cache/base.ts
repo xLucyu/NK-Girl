@@ -1,7 +1,7 @@
-import { getData } from "../../../api/wrapper";
-import { EventURLs } from "../../../utils/assets";
-import type { NkData, BaseBody } from "../../../utils/types";
-import { gsc } from "../../bucket";
+import { getData } from "@wrapper";
+import { EventURLs } from "@utils/assets";
+import type { NkData, BaseBody } from "@utils/types";
+import { gsc } from "@manager/bucket";
 
 export enum EventType {
   Boss = "Boss",
@@ -51,8 +51,10 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected async uploadToBucket(): Promise<void> {
 
-    if (!this.cache) return;
-    await gsc.write(this.getBucketPath(), this.cache);
+    const bucketPath = `${this.eventType}/${this.cache?.currentEvent?.data?.id}`
+    if (!bucketPath || !this.cache ) return;
+
+    await gsc.write(bucketPath, this.cache.currentEvent);
   }
 
 
@@ -89,5 +91,4 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
   protected abstract getMetaData(event: T, now?: number): Promise<K>;
-  protected abstract getBucketPath(): string;
 }

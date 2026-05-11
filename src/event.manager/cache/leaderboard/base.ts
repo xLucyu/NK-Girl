@@ -1,40 +1,23 @@
-import { getData } from "../../../api/wrapper";
-import { Leaderboard, LeaderboardBody } from "../../../utils/types";
-import { gsc } from "../../bucket/gsc.client";
+import { getData } from "@wrapper"
+import type { Leaderboard, LeaderboardBody } from "@utils/types";
+import { gsc } from "@manager/bucket";
 
-export abstract class BaseLeaderboardUploader {
+export abstract class BaseLeaderboardCache {
 
-    protected abstract baseURL: string;
+    protected abstract baseUrl: string;
 
-    protected async uploadToBucket() {
-        await gsc.write();
+    async check() {
+
+        const allPages = this.getAllPages(this.baseUrl);
+
     }
 
-    public async check() {
-        return;
+    
+    async uploadToBucket(path: string, data: unknown) {
+        await gsc.write(path, data)
     }
 
 
-    protected async getAllPages(baseUrl: string): Promise<LeaderboardBody[]> {
-
-        let page = 1;
-        const allEntries: LeaderboardBody[] = [];
-
-        while (true) {
-            try {
-                const data = await getData<Leaderboard>(`${baseUrl}?page=${page}`);
-                if (!data?.body || data.body.length === 0 || data.success === false) break;
-                
-                allEntries.push(...data.body);
-                page++;
-            } catch {
-                break;
-            }
-        }
-        return allEntries;
-    }
-
-    protected async upload(path: string, data: unknown): Promise<void> {
-        await this.gsc.write(path, data)
-    }
+    protected abstract getAllPages(baseUrl: string): Promise<void>
+    protected abstract formatLeaderboard(data: unknown): Promise<void>
 }

@@ -1,5 +1,4 @@
 import { getData } from "@wrapper";
-import { EventURLs } from "@utils/assets";
 import type { NkData, BaseBody } from "@utils/types";
 import { gsc } from "@manager/bucket";
 
@@ -30,12 +29,12 @@ export interface EventCacheEntry<T, K> {
 export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected cache: EventCacheEntry<T, K> | null = null;
-  protected abstract url: EventURLs;
+  protected abstract url: string;
   protected abstract eventType: EventType;
 
   protected async getEventData(): Promise<T[]> {
 
-    const data = await getData<NkData<T>>(this.url.base);
+    const data = await getData<NkData<T>>(this.url);
     return data.body;
   }
 
@@ -51,10 +50,8 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected async uploadToBucket(): Promise<void> {
 
-    const bucketPath = `${this.eventType}/${this.cache?.currentEvent?.data?.id}`
-    if (!bucketPath || !this.cache ) return;
-
-    await gsc.write(bucketPath, this.cache.currentEvent);
+    if (!this.cache) return;
+    await gsc.write(this.getBucketPath(), this.cache);
   }
 
 
@@ -91,4 +88,5 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
   protected abstract getMetaData(event: T, now?: number): Promise<K>;
+  protected abstract getBucketPath(): string;
 }

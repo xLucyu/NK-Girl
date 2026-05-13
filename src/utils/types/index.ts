@@ -1,4 +1,4 @@
-export * from "./boss.leaderboard";
+export * from "./internal.leaderboard";
 export * from "./ct";
 export * from "./leaderboard";
 export * from "./main";

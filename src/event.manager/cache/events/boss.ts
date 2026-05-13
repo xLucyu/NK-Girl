@@ -1,7 +1,7 @@
-import type { BossBody, MetaData, MetaBody } from "../../utils/types";
+import type { BossBody, MetaBody, MetaData } from "@utils/types";
 import { BaseEventCache, EventType } from "./base";
-import { getData } from "../../api/wrapper";
-import { URLS } from "../../utils/assets";
+import { getData } from "@wrapper";
+import { API_URLS } from "@utils/assets";
 
 export const BossDifficulties = ["Standard", "Elite"] as const;
 export type BossDifficulty = typeof BossDifficulties[number];
@@ -9,7 +9,7 @@ export type BossDifficulty = typeof BossDifficulties[number];
 export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, MetaBody>> {
 
     protected eventType = EventType.Boss;
-    protected url = URLS.Boss;
+    protected url = API_URLS.Boss;
 
     
     protected getCurrentActiveEvent(events: BossBody[], now: number, firstUse: boolean): BossBody {

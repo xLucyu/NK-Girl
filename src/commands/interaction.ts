@@ -1,5 +1,5 @@
 import { Interaction } from "discord.js";
-import { commands } from "../commands";
+import { commands } from ".";
 
 export async function listener(interaction: Interaction) {
 

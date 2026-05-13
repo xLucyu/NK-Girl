@@ -1,17 +1,17 @@
-import { getData } from "../../api/wrapper";
-import { collectionProfile, InstaSchedule } from "../../commands/collection/collection.profile";
-import { URLS } from "../../utils/assets";
-import { EventBody, NkData } from "../../utils/types";
+import { getData } from "@wrapper";
+import { collectionProfile, InstaSchedule } from "@commands/collection/collection.profile";
+import { API_URLS } from "@utils/assets";
+import { EventBody, NkData } from "@utils/types";
 import { BaseEventCache, EventType } from "./base";
 
 export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
 
     protected eventType = EventType.Collection;
-    protected url = URLS.Events; // only place available for collectionevent
+    protected url = API_URLS.Events; // only place available for collection
 
     protected async getEventData(): Promise<EventBody[]> {
         
-        const data = await getData<NkData<EventBody>>(URLS.Events.base);
+        const data = await getData<NkData<EventBody>>(this.url);
         return data.body;
     }
 

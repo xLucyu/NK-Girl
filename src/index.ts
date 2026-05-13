@@ -6,7 +6,7 @@ import {
 } from "discord.js";
 import { config } from "./config"; 
 import { deployCommands } from "./deploy.commands";
-import { listener } from "./listeners/interaction";
+import { listener } from "./commands/interaction";
 import { eventManager } from "./event.manager/manager";
 
 export class DiscordClient {

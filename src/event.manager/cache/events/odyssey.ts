@@ -1,12 +1,12 @@
-import { getData } from "../../api/wrapper";
-import { URLS } from "../../utils/assets";
+import { getData } from "@wrapper";
+import { API_URLS } from "@utils/assets";
 import { 
     MapsData,
     Odyssey, 
     OdysseyBody, 
     OdysseyMetaData
-} from "../../utils/types";
-import { BaseEventCache, EventType } from "./base";
+} from "@utils/types";
+import { BaseEventCache, EventType } from ".././events/base";
 
 const OdysseyDifficulties = ["Easy", "Medium", "Hard"] as const;
 export type OdysseyDifficulty = typeof OdysseyDifficulties[number];
@@ -14,7 +14,7 @@ export type OdysseyDifficulty = typeof OdysseyDifficulties[number];
 export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDifficulty, OdysseyMetaData>> {
 
     protected eventType= EventType.Odyssey;
-    protected url = URLS.Odyssey;
+    protected url = API_URLS.Odyssey;
   
     protected getCurrentActiveEvent(events: OdysseyBody[], now: number, firstUse: boolean): OdysseyBody {
 

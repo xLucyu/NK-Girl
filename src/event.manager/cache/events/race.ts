@@ -1,12 +1,12 @@
-import { getData } from "../../api/wrapper";
-import { URLS } from "../../utils/assets";
-import { MetaBody, MetaData, RaceBody } from "../../utils/types";
+import { getData } from "@wrapper";
+import { API_URLS } from "@utils/assets";
+import { MetaBody, MetaData, RaceBody } from "@utils/types";
 import { BaseEventCache, EventType } from "./base";
 
 export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
 
     protected eventType: EventType = EventType.Race;
-    protected url = URLS.Race;
+    protected url = API_URLS.Race;
 
     protected getCurrentActiveEvent(events: RaceBody[], now: number, firstUse: boolean): RaceBody {
 
@@ -27,5 +27,9 @@ export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
         
         const data = await getData<MetaData>(event.metadata);
         return data.body as MetaBody;
+    }
+
+    protected getBucketPath(): string {
+        return "";
     }
 }

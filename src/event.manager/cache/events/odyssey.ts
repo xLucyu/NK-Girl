@@ -2,6 +2,7 @@ import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets";
 import { 
     MapsData,
+    MetaBody,
     Odyssey, 
     OdysseyBody, 
     OdysseyMetaData
@@ -11,7 +12,7 @@ import { BaseEventCache, EventType } from ".././events/base";
 const OdysseyDifficulties = ["Easy", "Medium", "Hard"] as const;
 export type OdysseyDifficulty = typeof OdysseyDifficulties[number];
 
-export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDifficulty, OdysseyMetaData>> {
+export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>> {
 
     protected eventType= EventType.Odyssey;
     protected url = API_URLS.Odyssey;
@@ -31,7 +32,7 @@ export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDiff
     }
 
 
-    protected async getMetaData(event: OdysseyBody): Promise<Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MapsData }>> {
+    protected async getMetaData(event: OdysseyBody): Promise<Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>> {
 
         const entries = await Promise.all(
             OdysseyDifficulties.map(async (difficulty) => {
@@ -44,11 +45,15 @@ export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDiff
                     difficulty,
                     {
                         ...data.body,
-                        mapsData,
+                        mapsData: mapsData.body,
                     },
                 ] as const;
             })
         )
-        return Object.fromEntries(entries) as Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MapsData }>;
+        return Object.fromEntries(entries) as Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>;
+    }
+
+    protected getBucketPath(event: OdysseyBody): string {
+        return `Event/Odyssey/${event.id}/event.json`;
     }
 }

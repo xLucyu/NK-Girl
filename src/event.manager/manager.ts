@@ -4,8 +4,11 @@ import {
     RaceCache,
     OdysseyCache,
     CollectionCache,
-    CTCache
-} from "./cache/events";
+    CTCache,
+    BossLeaderboardSerivce,
+    RaceLeaderboardService,
+    CTLeaderboardService
+} from "./cache";
 import { EventType } from "./cache/events/base";
 
 interface CacheMap {
@@ -26,6 +29,11 @@ export class EventManager {
         [EventType.Collection]: new CollectionCache(),
         [EventType.Odyssey]: new OdysseyCache()
     };
+    private leaderboards = {
+        [EventType.Boss]: new BossLeaderboardSerivce(),
+        [EventType.Race]: new RaceLeaderboardService(),
+        [EventType.CT]: new CTLeaderboardService()
+    }
 
     public async start(): Promise<void> {
 
@@ -57,32 +65,26 @@ export class EventManager {
             Object.values(this.caches).map((cache) => cache.check(firstUse))
         );
 
-        for (const result of results) {
-            if (result.status === "rejected") {
-                console.error(result.reason);
-            }
-        }
+        this.logError(results);
     }
 
     private async runLeaderboardChecks(): Promise<void> {
 
-        const results = await Promise.allSettled([
-            this.bossLB(),
-            this.raceLB(),
-            this.ctLB()
-        ]);
+        const results = await Promise.allSettled(
+            Object.values(this.leaderboards).map((service) => {
+                const currentEvent = this.caches[service.eventType].getCache()?.currentEvent.data;
+                if (!currentEvent) return;
+                service.check(currentEvent as never);
+        }));
+
+        this.logError(results);
     }
 
-    private async bossLB() {
-        const bossCache = this.getEventCache(EventType.Boss).getCache();
-    }
+    private logError(results: PromiseSettledResult<void>[]): void {
 
-    private async raceLB() {
-        const raceCache = this.getEventCache(EventType.Race).getCache();
-    }
-
-    private async ctLB() {
-        const ctCache = this.getEventCache(EventType.CT).getCache();
+        for (const result of results) {
+            if (result.status === "rejected") console.error(result.reason);
+        }
     }
 }
 

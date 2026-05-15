@@ -24,31 +24,34 @@ export class BossLeaderboardSerivce extends BaseLeaderboardService<BossBody, Lea
   private baseUrl = API_URLS.Boss;
 
   protected async formatLeaderboard(event: BossBody): Promise<Payload<LeaderboardPayload>[]> {
+    
+    const payloads: Payload<LeaderboardPayload>[] = [];
 
-    return Promise.all(
-      BossDifficulties.flatMap((difficulty) => 
-        players.map(async (playerCount) => {
-          const url = `${this.baseUrl}/${event.id}/leaderboard/${difficulty.toLocaleLowerCase()}/${playerCount}`;
-          const currentScoringType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
+    for (const difficulty of BossDifficulties) {
+        for (const playerCount of players) {
+            const url = `${this.baseUrl}/${event.id}/leaderboard/${difficulty.toLocaleLowerCase()}/${playerCount}`;
+            const currentScoringType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 
-          const teamsMap = await this.handleFormatting(url, currentScoringType);
-          const teams = Array.from(teamsMap.values())
+            const teamsMap = await this.handleFormatting(url, currentScoringType);
+            const teams = Array.from(teamsMap.values());
 
-          return {
-            path: `Leaderboard/Boss/${event.id}/${difficulty}/${playerCount}`,
-            data: {
-              id: event.id,
-              eventType: EventType.Boss,
-              name: event.name,
-              totalScores: teams.length,
-              scoringType: currentScoringType,
-              teams: teams
-            },
-          };
-        })
-      )
-    )
-  }
+            payloads.push({
+                path: `Leaderboard/Boss/${event.id}/${difficulty}/${playerCount}/leaderboard.json`,
+                data: {
+                    id: event.id,
+                    eventType: EventType.Boss,
+                    name: event.name,
+                    totalScores: teams.length,
+                    scoringType: currentScoringType,
+                    teams
+                }
+            });
+            await this.sleep(10_000);
+        }
+    }
+
+    return payloads;
+}
 
 
   private async handleFormatting(url: string, currentScoringType: string): Promise<Map<string, Team>> {

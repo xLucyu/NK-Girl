@@ -23,7 +23,7 @@ export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,Lead
 
     return [
       {
-        path: `Leaderboard/Race/${event.id}`,
+        path: `Leaderboard/Race/${event.id}/leaderboard.json`,
         data: {
           id: event.id,
           eventType: EventType.Race,

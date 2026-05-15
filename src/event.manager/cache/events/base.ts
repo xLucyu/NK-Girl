@@ -48,10 +48,11 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   } 
 
 
-  protected async uploadToBucket(): Promise<void> {
+  protected async uploadToBucket(bucketPath: string): Promise<void> {
 
     if (!this.cache) return;
-    await gsc.write(this.getBucketPath(), this.cache);
+    console.log(this.cache,)
+    await gsc.write(bucketPath, this.cache.currentEvent);
   }
 
 
@@ -74,6 +75,8 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const previousEvents = this.getPreviousEvents(events);
 
+    const bucketPath = this.getBucketPath(currentEvent);
+
     this.cache = {
       eventType: this.eventType,
       currentEvent: {
@@ -83,10 +86,10 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
       previousEvents
     }
 
-    await this.uploadToBucket();
+    await this.uploadToBucket(bucketPath);
   }
 
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;
   protected abstract getMetaData(event: T, now?: number): Promise<K>;
-  protected abstract getBucketPath(): string;
+  protected abstract getBucketPath(event: T): string;
 }

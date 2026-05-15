@@ -36,4 +36,8 @@ export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
     protected override getPreviousEvents(): null {
         return null;
     }
+
+    protected getBucketPath(event: EventBody): string {
+        return `Event/Collection/${event.id}/event.json`;
+    }
 }

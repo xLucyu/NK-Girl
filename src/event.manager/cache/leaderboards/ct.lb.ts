@@ -17,25 +17,28 @@ export class CTLeaderboardService extends BaseLeaderboardService<CTBody, Leaderb
     public readonly eventType = EventType.CT;
     private baseUrl = API_URLS.CT;
 
-    protected formatLeaderboard(event: CTBody): Promise<Payload<LeaderboardPayload>[]> {
+    protected async formatLeaderboard(event: CTBody): Promise<Payload<LeaderboardPayload>[]> {
         
-        return Promise.all(
-            modes.map(async (mode) => {
-                const url = `${this.baseUrl}/${event.id}/leaderboard/${mode}`;
-                const teams = await this.handleFormatting(url);
-                return {
-                    path: `Leaderboard/CT/${event.id}/${mode}`,
-                    data: {
-                        id: event.id,
-                        eventType: EventType.CT,
-                        name: event.name,
-                        totalScores: teams.length,
-                        scoringType: "CTPoints",
-                        teams: teams
-                    }
+        const payloads: Payload<LeaderboardPayload>[] = [];
+
+        for (const mode of modes) {
+            const url = `${this.baseUrl}/${event.id}/leaderboard/${mode}`;
+            const teams = await this.handleFormatting(url);
+
+            payloads.push({
+                path: `Leaderboard/CT/${event.id}/${mode}/leaderboard.json`,
+                data: {
+                    id: event.id,
+                    eventType: EventType.CT,
+                    name: event.name,
+                    totalScores: teams.length,
+                    scoringType: "CTPoints",
+                    teams
                 }
-            })
-        )
+            });
+            await this.sleep(5_000);
+        }
+        return payloads;
     }
 
     private async handleFormatting(url: string): Promise<Team[]> {

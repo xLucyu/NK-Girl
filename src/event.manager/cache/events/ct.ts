@@ -36,4 +36,8 @@ export class CTCache extends BaseEventCache<CTBody, Record<string, TileCode>> {
     protected override getPreviousEvents(): null {
         return null;
     }
+
+    protected getBucketPath(event: CTBody): string {
+        return `Event/CT/${event.id}/event.json`;
+    }
 }

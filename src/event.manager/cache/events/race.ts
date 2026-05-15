@@ -13,7 +13,7 @@ export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
         let currentEvent: RaceBody | undefined;
         
         if (firstUse) {
-            currentEvent = events[0];
+            currentEvent = events[1];
         } else {
             currentEvent = events.find((event) => event.end > now);
         }
@@ -29,7 +29,7 @@ export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
         return data.body as MetaBody;
     }
 
-    protected getBucketPath(): string {
-        return "";
+    protected getBucketPath(event: RaceBody): string {
+        return `Event/Race/${event.id}/event.json`;
     }
 }

@@ -17,7 +17,7 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
         let currentEvent: BossBody | undefined;
         
         if (firstUse) {
-            currentEvent = events[0];
+            currentEvent = events[1];
         } else {
             currentEvent = events.find((event) => event.end > now);
         }
@@ -39,5 +39,9 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
             })
         )
         return Object.fromEntries(entries) as Record<BossDifficulty, MetaBody>;
+    }
+
+    protected getBucketPath(event: BossBody): string {
+        return `Event/Boss/${event.id}/event.json`;
     }
 }

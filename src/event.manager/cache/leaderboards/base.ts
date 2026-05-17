@@ -12,7 +12,7 @@ export abstract class BaseLeaderboardService<T, P> {
     public abstract readonly eventType: EventType;
 
     async sleep(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise(resolve => setTimeout(resolve, ms)); // badly needed for leaderboards lol
     }
 
     async check(event: T): Promise<void> {

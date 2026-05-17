@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { ChatInputCommandInteraction, SlashCommandOptionsOnlyBuilder } from "discord.js";
-import { EventCacheEntry } from "../event.manager/cache/base";
+import { EventCacheEntry } from "@manager/cache";
 
 export abstract class BaseCommand<T, K> {
 

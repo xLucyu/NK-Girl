@@ -1,32 +1,39 @@
-import type { JSX } from "react";
+import { JSX } from "react";
+import { SlashCommandBuilder } from "discord.js";
+import { BossProfile } from "./boss.profile";
+import { eventManager } from "@manager/manager";
+import { BaseCommand } from "../base.command";
 import { 
-    AttachmentBuilder,
-    ChatInputCommandInteraction,
-    SlashCommandOptionsOnlyBuilder
-} from "discord.js";
-import { EventCacheEntry } from "@manager/cache";
+    EventCacheEntry,
+    BossDifficulties,
+    BossDifficulty,
+    EventType
+} from "@manager/cache";
+import { BossBody, MetaBody } from "@utils/types";
 
-export abstract class BaseCommand<T, K> {
+export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
 
-    public abstract commandData: SlashCommandOptionsOnlyBuilder;
+  public commandData = new SlashCommandBuilder()
+    .setName("boss")
+    .setDescription("shows the boss data.")
+    .addStringOption((option) =>
+    option 
+      .setName("difficulty")
+      .setDescription("Choose a difficulty")
+      .setRequired(false)
+      .addChoices(
+        ...BossDifficulties.map((difficulty) => ({
+          name: difficulty,
+          value: difficulty 
+        }))
+      )
+    );
 
-    public async execute(interaction: ChatInputCommandInteraction) {
+  protected getProfile(): JSX.Element {
+    return BossProfile();
+  }
 
-        const eventProps = this.getEventProps();
-
-        console.log(eventProps);
-
-        if (!eventProps) throw new Error();
-
-        const profile = this.getProfile();
-        const buffer = await render(profile);
-
-        const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
-        return interaction.reply({
-            files: [attachment], 
-        });
-    }
-
-    protected abstract getEventProps(): EventCacheEntry<T, K> | null;
-    protected abstract getProfile(): JSX.Element;
+  protected getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
+    return eventManager.getEventCache(EventType.Boss).getCache();
+  }
 }

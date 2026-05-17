@@ -52,7 +52,7 @@ export class EventManager {
 
         try {
             await this.runEventChecks(firstUse);
-            await this.runLeaderboardChecks();
+         //   await this.runLeaderboardChecks();
         } catch (error) {
             console.error("Event Cycle failed", error);
         }

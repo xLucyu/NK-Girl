@@ -13,7 +13,7 @@ export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
         let currentEvent: RaceBody | undefined;
         
         if (firstUse) {
-            currentEvent = events[1];
+            currentEvent = events[0];
         } else {
             currentEvent = events.find((event) => event.end > now);
         }

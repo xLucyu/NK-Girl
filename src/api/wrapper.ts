@@ -1,26 +1,48 @@
-export async function getData<T>(url: string, headers?: HeadersInit): Promise<T> {
+type GetDataOptions = {
+  timeoutMs?: number;
+  retries?: number;
+  retryDelayMs?: number;
+};
 
-    const response = await fetch(url, {
-        ...(headers && { headers })
-    });
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-    switch (response.status) {
+export async function getData<T>(url: string, options: GetDataOptions = {}): Promise<T> {
 
-        case 200:
-            return response.json() as T;
+  const { timeoutMs = 10_000, retries = 3, retryDelayMs = 2_000 } = options;
 
-        case 400:
-        case 403: 
-        case 404: 
-            throw new Error();
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-        case 500:
-        case 502: 
-        case 503: 
-        case 504:
-            throw new Error();
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
 
-        default: 
-            throw new Error();
+      if (response.ok) {
+        return await response.json() as T;
+      }
+
+      if (response.status === 429 || response.status >= 500 && attempt < retries) {
+        console.warn(`GET ${url} -> ${response.status}, retry in ${retryDelayMs}ms`);
+        await sleep(retryDelayMs);
+        continue;
+      }
+
+      throw new Error(`GET ${url} failed: ${response.status} ${response.statusText}`);
+    } catch (error: any) {
+      clearTimeout(timeoutId);
+
+      if (error?.name === "AbortError" && attempt < retries) {
+        console.warn(`GET ${url} timed out, retry in ${retryDelayMs}ms`);
+        await sleep(retryDelayMs);
+        continue;
+      }
+
+      throw error;
     }
+  }
+
+  throw new Error(`GET ${url} failed after ${retries + 1} attempts`);
 }

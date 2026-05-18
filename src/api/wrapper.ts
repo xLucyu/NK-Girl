@@ -4,10 +4,6 @@ type GetDataOptions = {
   retryDelayMs?: number;
 };
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export async function getData<T>(url: string, options: GetDataOptions = {}): Promise<T> {
 
   const { timeoutMs = 10_000, retries = 3, retryDelayMs = 2_000 } = options;

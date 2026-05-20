@@ -1,6 +1,6 @@
 import { CTMetaData, MetaBody } from "@utils/types";
 
-interface Modifier {
+export interface Modifier {
   key: string;
   api: number | boolean;
   hasKey: boolean;

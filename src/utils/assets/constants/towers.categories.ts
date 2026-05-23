@@ -56,4 +56,4 @@ export const CATEGORIES = {
     "EngineerMonkey",
     "BeastHandler",
   ],
-} as const;
+};

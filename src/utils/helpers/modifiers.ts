@@ -29,7 +29,6 @@ export function buildModifiers(body: MetaBody): Modifier[] {
   ];
 }
 
-
 export function buildCTModifiers(body: CTMetaData): Modifier[] {
 
   return [

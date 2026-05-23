@@ -7,7 +7,7 @@ import {
 import { config } from "./config"; 
 import { deployCommands } from "./deploy.commands";
 import { listener } from "./commands/interaction";
-import { eventManager } from "./event.manager/manager";
+import { eventManager } from "@manager/manager";
 
 export class DiscordClient {
 

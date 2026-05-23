@@ -10,5 +10,5 @@ if (!BOT_TOKEN || !BOT_ID) {
 
 export const config = {
   BOT_TOKEN,
-  BOT_ID
+  BOT_ID,
 }

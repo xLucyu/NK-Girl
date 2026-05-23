@@ -1,4 +1,4 @@
-import { BossDifficulty } from "@manager/cache";
+import { BossDifficulty } from "../../event-manager/cache";
 import { BossBody, MetaBody } from "@utils/types";
 import { JSX } from "react";
 

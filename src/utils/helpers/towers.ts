@@ -1,4 +1,4 @@
-import { CATEGORIES } from "@utils/assets";
+import { CATEGORIES } from "@utils/assets/constants";
 import type { Tower } from "../types";
 
 function getCrossPaths(tower: Tower): [number, number, number] {

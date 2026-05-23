@@ -4,12 +4,9 @@ import {
     ChatInputCommandInteraction,
     SlashCommandOptionsOnlyBuilder
 } from "discord.js";
-import { EventCacheEntry } from "@manager/cache";
+import { EventCacheEntry } from "../event-manager/cache";
 import { render } from "@components/render";
 
-export interface BaseProfileProps {
-
-}
 
 export abstract class BaseCommand<T, K> {
 

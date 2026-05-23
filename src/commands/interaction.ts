@@ -1,6 +1,6 @@
 import { Interaction } from "discord.js";
 import { commands } from ".";
-import { sendCommandError } from "@utils/error.handler/error.reply";
+import { sendCommandError } from "@utils/error-handler/error.reply";
 
 export async function listener(interaction: Interaction) {
 

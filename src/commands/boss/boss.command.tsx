@@ -1,12 +1,17 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { eventManager } from "@manager/manager";
-import { EventCacheEntry, EventType } from "../../event.manager/cache";
-import { BaseCommand } from "@commands/base.command";
-import { BossDifficulties, BossDifficulty } from "../../event.manager/cache";
-import { BossBody, MetaBody } from "@utils/types";
 import { JSX } from "react";
+import { eventManager } from "@manager/manager";
+import { 
+  EventCacheEntry,
+  EventType,
+  BossDifficulties, 
+  BossDifficulty 
+} from "@manager/cache";
+import { BaseCommand } from "@commands/base.command";
+import { BossBody, MetaBody } from "@utils/types";
 import { BossProfile } from "./boss.profile";
 
+export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
 
 export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
 
@@ -26,11 +31,11 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
       )
     );
 
-  protected getProfile(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>): JSX.Element {
+  protected getProfile(interaction: ChatInputCommandInteraction, eventProps: BossProps): JSX.Element {
 
     const difficulty = interaction.options.getString("difficulty") as BossDifficulty ?? BossDifficulties[0];
     const event = eventProps.currentEvent.data;
-    const metaData = eventProps.currentEvent.metaData?.[difficulty]
+    const metaData = eventProps.currentEvent.metaData[difficulty]
 
     if (!metaData) return <div></div>;
     return BossProfile({

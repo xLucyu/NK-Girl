@@ -7,7 +7,7 @@ import type {
 } from "@utils/types";
 import { BaseLeaderboardService, Payload } from "./base";
 import { API_URLS } from "@utils/assets/constants";
-import { EventType } from "..";
+import { EventType } from "@utils/types";
 import { getData } from "@wrapper";
 
 export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,LeaderboardPayload> {

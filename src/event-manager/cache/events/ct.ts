@@ -1,8 +1,8 @@
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets/constants";
 import { getNumberForEvent } from "@utils/helpers/event.number";
-import { CTBody, TileCode } from "@utils/types";
-import { BaseEventCache, EventType } from "./base";
+import { CTBody, EventType, TileCode } from "@utils/types";
+import { BaseEventCache } from "./base";
 
 export class CTCache extends BaseEventCache<CTBody, Record<string, TileCode>> {
 

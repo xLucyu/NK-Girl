@@ -7,8 +7,10 @@ import type {
 } from "@utils/types";
 import { BaseLeaderboardService, Payload } from "./base";
 import { API_URLS } from "@utils/assets/constants";
-import { EventType, BossDifficulties } from "..";
+import { EventType } from "@utils/types";
 import { getData } from "@wrapper";
+import { sleep } from "@utils/helpers";
+import { BossDifficulties } from "../events";
 
 enum ScoringType {
   GameTime = "GameTime",
@@ -46,7 +48,7 @@ export class BossLeaderboardSerivce extends BaseLeaderboardService<BossBody, Lea
                     teams
                 }
             });
-            await this.sleep(10_000);
+            await sleep(10_000);
         }
     }
 

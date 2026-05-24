@@ -1,8 +1,8 @@
 import { getData } from "@wrapper";
 import { collectionProfile, InstaSchedule } from "@commands/collection/collection.profile";
 import { API_URLS } from "@utils/assets/constants";
-import { EventBody, NkData } from "@utils/types";
-import { BaseEventCache, EventType } from "./base";
+import { EventBody, EventType, NkData } from "@utils/types";
+import { BaseEventCache } from "./base";
 
 export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
 

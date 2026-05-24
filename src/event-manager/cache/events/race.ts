@@ -1,7 +1,7 @@
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets/constants";
-import { MetaBody, MetaData, RaceBody } from "@utils/types";
-import { BaseEventCache, EventType } from "./base";
+import { EventType, MetaBody, MetaData, RaceBody } from "@utils/types";
+import { BaseEventCache } from "./base";
 
 export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {
 

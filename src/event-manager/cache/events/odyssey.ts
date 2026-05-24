@@ -1,13 +1,14 @@
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets/constants";
 import { 
+    EventType,
     MapsData,
     MetaBody,
     Odyssey, 
     OdysseyBody, 
     OdysseyMetaData
 } from "@utils/types";
-import { BaseEventCache, EventType } from "./base";
+import { BaseEventCache } from "./base";
 
 const OdysseyDifficulties = ["Easy", "Medium", "Hard"] as const;
 export type OdysseyDifficulty = typeof OdysseyDifficulties[number];

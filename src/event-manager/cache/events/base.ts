@@ -1,14 +1,7 @@
 import { getData } from "@wrapper";
-import type { NkData, BaseBody } from "@utils/types";
+import type { NkData, BaseBody, EventType } from "@utils/types";
 import { gsc } from "../../bucket";
 
-export enum EventType {
-  Boss = "Boss",
-  Race = "Race",
-  Odyssey = "Odyssey",
-  Collection = "Collection",
-  CT = "CT"
-}
 
 export interface CurrentEventData<T, K> {
   data: T;

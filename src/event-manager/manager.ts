@@ -22,7 +22,7 @@ interface CacheMap {
 export class EventManager {
 
     private job: ScheduledTask | null = null;
-    private caches: CacheMap = {
+    private caches = {
         [EventType.Boss]: new BossCache(),
         [EventType.Race]: new RaceCache(),
         [EventType.CT]: new CTCache(),
@@ -52,7 +52,7 @@ export class EventManager {
 
         try {
             await this.runEventChecks(firstUse);
-            await this.runLeaderboardChecks();
+            if (!firstUse) await this.runLeaderboardChecks();
         } catch (error) {
             console.error("Event Cycle failed", error);
         }

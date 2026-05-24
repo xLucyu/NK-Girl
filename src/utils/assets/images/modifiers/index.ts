@@ -4,20 +4,16 @@ import AllCamoIcon from "./AllCamoIcon.png";
 import AllRegenIcon from "./AllRegenIcon.png";
 import BloonBoostIcon from "./BloonBoostIcon.png";
 import BloonDecreaseHPIcon from "./BloonDecreaseHPIcon.png";
-import BossChallenge from "./BossChallenge.png";
 import BossDecreaseHPIcon from "./BossDecreaseHPIcon.png";
 import BossDecreaseSpeedIcon from "./BossDecreaseSpeedIcon.png";
 import BossIncreaseHPIcon from "./BossIncreaseHPIcon.png";
 import BossIncreaseSpeedIcon from "./BossIncreaseSpeedIcon.png";
-import CashIcon from "./cash.png";
 import CeramicDecreaseHPIcon from "./CeramicDecreaseHPIcon.png";
 import CeramicIncreaseHPIcon from "./CeramicIncreaseHPIcon.png";
-import EventRaceIcon from "./EventRaceIcon.png";
 import FasterBloonsIcon from "./FasterBloonsIcon.png";
 import FasterMoabIcon from "./FasterMoabIcon.png";
 import LeastCashIcon from "./LeastCashIcon.png";
 import LeastTiersIcon from "./LeastTiersIcon.png";
-import LivesIcon from "./Lives.png";
 import MaxTowersIcon from "./MaxTowersIcon.png";
 import MoabBoostIcon from "./MoabBoostIcon.png";
 import MoabDecreaseHPIcon from "./MoabDecreaseHPIcon.png";
@@ -44,20 +40,16 @@ export const ModifierIcons = {
   AllRegen: AllRegenIcon,
   BloonBoost: BloonBoostIcon,
   BloonDecreaseHP: BloonDecreaseHPIcon,
-  BossChallenge,
   BossDecreaseHP: BossDecreaseHPIcon,
   BossDecreaseSpeed: BossDecreaseSpeedIcon,
   BossIncreaseHP: BossIncreaseHPIcon,
   BossIncreaseSpeed: BossIncreaseSpeedIcon,
-  Cash: CashIcon,
   CeramicDecreaseHP: CeramicDecreaseHPIcon,
   CeramicIncreaseHP: CeramicIncreaseHPIcon,
-  EventRace: EventRaceIcon,
   FasterBloons: FasterBloonsIcon,
   FasterMoab: FasterMoabIcon,
   LeastCash: LeastCashIcon,
   LeastTiers: LeastTiersIcon,
-  Lives: LivesIcon,
   MaxTowers: MaxTowersIcon,
   MoabBoost: MoabBoostIcon,
   MoabDecreaseHP: MoabDecreaseHPIcon,

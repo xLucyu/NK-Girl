@@ -6,9 +6,10 @@ import {
     Team 
 } from "@utils/types";
 import { BaseLeaderboardService, Payload } from "./base";
-import { EventType } from "..";
+import { EventType } from "@utils/types";
 import { API_URLS } from "@utils/assets/constants";
 import { getData } from "@wrapper";
+import { sleep } from "@utils/helpers";
 
 const modes = ["player", "team"] as const;
 
@@ -36,7 +37,7 @@ export class CTLeaderboardService extends BaseLeaderboardService<CTBody, Leaderb
                     teams
                 }
             });
-            await this.sleep(5_000);
+            await sleep(5_000);
         }
         return payloads;
     }

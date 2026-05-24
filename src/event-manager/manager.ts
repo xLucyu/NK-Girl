@@ -9,7 +9,7 @@ import {
     RaceLeaderboardService,
     CTLeaderboardService
 } from "./cache";
-import { EventType } from "./cache/events/base";
+import { EventType } from "@utils/types";
 
 interface CacheMap {
   [EventType.Boss]: BossCache;

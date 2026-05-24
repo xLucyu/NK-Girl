@@ -1,5 +1,5 @@
-import type { BossBody, MetaBody, MetaData } from "@utils/types";
-import { BaseEventCache, EventType } from "./base";
+import { EventType, type BossBody, type MetaBody, type MetaData } from "@utils/types";
+import { BaseEventCache } from "./base";
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets/constants";
 

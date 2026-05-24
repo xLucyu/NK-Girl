@@ -2,13 +2,22 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const { BOT_TOKEN, BOT_ID } = process.env;
+function validate(varName: string): string {
 
-if (!BOT_TOKEN || !BOT_ID) {
-  throw new Error("Missing envioronment vars");
+  const value = process.env[varName];
+
+  if (!value) throw new Error(`Missing var: ${varName}`);
+
+  return value;
 }
+
 
 export const config = {
-  BOT_TOKEN,
-  BOT_ID,
-}
+  BOT_TOKEN: validate("BOT_TOKEN"),
+  BOT_ID: validate("BOT_ID"),
+  HOST: validate("HOST"),
+  PORT: validate("PORT"),
+  DATABASE: validate("DATABASE"),
+  USER: validate("USER"),
+  PASSWORD: validate("PASSWORd")
+};

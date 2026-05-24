@@ -3,12 +3,11 @@ import { JSX } from "react";
 import { eventManager } from "@manager/manager";
 import { 
   EventCacheEntry,
-  EventType,
   BossDifficulties, 
   BossDifficulty 
 } from "@manager/cache";
 import { BaseCommand } from "@commands/base.command";
-import { BossBody, MetaBody } from "@utils/types";
+import { BossBody, EventType, MetaBody } from "@utils/types";
 import { BossProfile } from "./boss.profile";
 
 export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>

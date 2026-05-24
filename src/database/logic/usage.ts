@@ -1,29 +1,41 @@
-// src/database/usage.table.ts
-import { db } from "..";
+// src/database/tables/usage.table.ts
+import { withDb } from "../pool";
+
+export type CommandUsage = {
+  command: string;
+  uses: number;
+};
 
 export class UsageTable {
 
-    
+
   public async increaseCommandUsage(command: string): Promise<void> {
 
-    await db.query(
-      `
-      INSERT INTO usage (command, uses)
-      VALUES ($1, 1)
-      ON CONFLICT (command)
-      DO UPDATE SET uses = usage.uses + 1
-      `,
-      [command]
-    );
+    await withDb(async (client) => {
+      await client.query(
+        `
+        INSERT INTO usage (command, uses)
+        VALUES ($1, 1)
+        ON CONFLICT (command)
+        DO UPDATE SET uses = usage.uses + 1
+        `,
+        [command]
+      );
+    });
   }
 
+  public async fetchCommands(): Promise<CommandUsage[]> {
 
-  public async fetchCommands(): Promise<Array<{ command: string; uses: number }>> {
+    return await withDb(async (client) => {
+      const result = await client.query<CommandUsage>(
+        `
+        SELECT command, uses
+        FROM usage
+        ORDER BY uses DESC
+        `
+      );
 
-    const result = await db.query<{ command: string; uses: number }>(
-      `SELECT command, uses FROM usage ORDER BY uses DESC`
-    );
-
-    return result.rows;
+      return result.rows;
+    });
   }
 }

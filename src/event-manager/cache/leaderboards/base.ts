@@ -1,5 +1,5 @@
 import { gsc } from "../../bucket";
-import { EventType } from "..";
+import { EventType } from "@utils/types";
 
 export interface Payload<T> {
     path: string;
@@ -11,9 +11,6 @@ export abstract class BaseLeaderboardService<T, P> {
 
     public abstract readonly eventType: EventType;
 
-    async sleep(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms)); // badly needed for leaderboards lol
-    }
 
     async check(event: T): Promise<void> {
 

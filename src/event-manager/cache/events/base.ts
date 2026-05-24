@@ -86,7 +86,9 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
       previousEvents
     }
 
-    await this.uploadToBucket(bucketPath);
+    if (!firstUse) {
+      await this.uploadToBucket(bucketPath);
+    }
   }
 
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;

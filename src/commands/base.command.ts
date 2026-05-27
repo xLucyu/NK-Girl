@@ -29,8 +29,5 @@ export abstract class BaseCommand<T, K> {
     }
 
     protected abstract getEventProps(): EventCacheEntry<T, K> | null;
-    protected abstract getProfile(
-        interaction: ChatInputCommandInteraction,
-        eventProps: EventCacheEntry<T,K>
-    ): JSX.Element;
+    protected abstract getProfile(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<T,K>): JSX.Element;
 }

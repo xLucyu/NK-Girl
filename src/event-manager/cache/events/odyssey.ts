@@ -48,7 +48,7 @@ export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDiff
                         ...data.body,
                         mapsData: mapsData.body,
                     },
-                ] as const;
+                ];
             })
         )
         return Object.fromEntries(entries) as Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>;

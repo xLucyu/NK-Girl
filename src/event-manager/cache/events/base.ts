@@ -68,8 +68,6 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const previousEvents = this.getPreviousEvents(events);
 
-    const bucketPath = this.getBucketPath(currentEvent);
-
     this.cache = {
       eventType: this.eventType,
       currentEvent: {
@@ -80,6 +78,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     }
 
     if (!firstUse) {
+      const bucketPath = this.getBucketPath(currentEvent);
       await this.uploadToBucket(bucketPath);
     }
   }

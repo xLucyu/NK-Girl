@@ -2,7 +2,7 @@ import { Interaction } from "discord.js";
 import { commands } from ".";
 import { sendCommandError } from "@utils/error-handler/error.reply";
 
-export async function listener(interaction: Interaction) {
+export async function listener(interaction: Interaction): Promise<void> {
 
     if (!interaction.isChatInputCommand()) return;
 
@@ -12,7 +12,6 @@ export async function listener(interaction: Interaction) {
     try {
         await command.execute(interaction);
     } catch (error) {
-        console.error(error);
         await sendCommandError(interaction, error);
     }
 }

@@ -1,4 +1,4 @@
-import { BossDifficulty } from "../../event-manager/cache";
+import { BossDifficulty } from "@manager/cache";
 import { BossBody, MetaBody } from "@utils/types";
 import { JSX } from "react";
 
@@ -8,11 +8,8 @@ export interface BossProfileProps {
     difficulty: BossDifficulty;
 }
 
-export function BossProfile({
-  event,
-  metaData,
-  difficulty,
-}: BossProfileProps): JSX.Element {
+export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
+  
   return (
     <div
       style={{

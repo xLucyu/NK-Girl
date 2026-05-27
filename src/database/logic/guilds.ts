@@ -2,40 +2,12 @@
 import { withDb } from "../pool";
 import { EventType } from "@utils/types";
 
-function channelColumn(event: EventType) {
-  return `${event.toLowerCase()}channelid`;
-}
-
-function idsColumn(event: EventType) {
-  return `${event.toLowerCase()}ids`;
-}
-
-function parseIds(value: unknown): string[] {
-  if (!value) return [];
-
-  if (Array.isArray(value)) {
-    return value.map(String);
-  }
-
-  if (typeof value === "string") {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return [];
-    }
-  }
-
-  return [];
-}
-
-
 export class GuildTable {
-
 
   public async appendChannelPerGuild(guildId: string, channelId: string, event: EventType): Promise<void> {
 
     await withDb(async (client) => {
-      const column = channelColumn(event);
+      const column = `${event.toLowerCase()}channelid`;
 
       await client.query(
         `
@@ -60,7 +32,8 @@ export class GuildTable {
   public async removeChannelFromGuild(guildId: string, event: EventType): Promise<string | null> {
 
     return await withDb(async (client) => {
-      const column = channelColumn(event);
+      
+      const column = `${event.toLowerCase()}channelid`;
 
       const result = await client.query<{ channelid: string | null }>(
         `
@@ -91,9 +64,8 @@ export class GuildTable {
   }
 
   public async fetchAllRegisteredChannels(event: EventType): Promise<string[]> {
-
     return await withDb(async (client) => {
-      const column = channelColumn(event);
+      const column = `${event.toLowerCase()}channelid`;
 
       const result = await client.query<{ channelid: string }>(
         `
@@ -110,7 +82,7 @@ export class GuildTable {
   public async appendEvent(eventId: string, event: EventType, guildId: string): Promise<void> {
 
     await withDb(async (client) => {
-      const column = idsColumn(event);
+      const column = `${event.toLowerCase()}ids`;
 
       await client.query(
         `
@@ -121,7 +93,7 @@ export class GuildTable {
         [guildId]
       );
 
-      const result = await client.query<{ ids: unknown }>(
+      const result = await client.query<{ ids: string[] | null }>(
         `
         SELECT ${column} AS ids
         FROM guilds
@@ -130,13 +102,11 @@ export class GuildTable {
         [guildId]
       );
 
-      const eventIds = parseIds(result.rows[0]?.ids);
+      const eventIds = result.rows[0]?.ids ?? [];
 
       if (eventIds.includes(eventId)) {
         return;
       }
-
-      eventIds.push(eventId);
 
       await client.query(
         `
@@ -144,7 +114,7 @@ export class GuildTable {
         SET ${column} = $1
         WHERE guildid = $2
         `,
-        [JSON.stringify(eventIds), guildId]
+        [[...eventIds, eventId], guildId]
       );
     });
   }
@@ -152,9 +122,9 @@ export class GuildTable {
   public async fetchEventIds(event: EventType, guildId: string): Promise<string[]> {
 
     return await withDb(async (client) => {
-      const column = idsColumn(event);
+      const column = `${event.toLowerCase()}ids`;
 
-      const result = await client.query<{ ids: unknown }>(
+      const result = await client.query<{ ids: string[] | null }>(
         `
         SELECT ${column} AS ids
         FROM guilds
@@ -163,7 +133,7 @@ export class GuildTable {
         [guildId]
       );
 
-      return parseIds(result.rows[0]?.ids);
+      return result.rows[0]?.ids ?? [];
     });
   }
 }

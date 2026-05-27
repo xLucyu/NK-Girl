@@ -33,7 +33,7 @@ import SlowerBloonsIcon from "./SlowerBloonsIcon.png";
 import SlowerMoabIcon from "./SlowerMoabIcon.png";
 import StartRoundIcon from "./StartRoundIcon.png";
 
-export const ModifierIcons = {
+export const ModifierImages = {
   AbilityCooldownReduction: AbilityCooldownReductionIcon,
   AbilityCooldownReductionMultiplier: AbilityCooldownReductionMultiplierIcon,
   AllCamo: AllCamoIcon,

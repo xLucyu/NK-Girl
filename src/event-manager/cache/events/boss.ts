@@ -1,4 +1,4 @@
-import { EventType, type BossBody, type MetaBody, type MetaData } from "@utils/types";
+import { EventType, BossBody, MetaBody, MetaData } from "@utils/types";
 import { BaseEventCache } from "./base";
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets/constants";
@@ -35,7 +35,7 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
                     ? event.metadataStandard
                     : event.metadataElite;
                 const data = await getData<MetaData>(url);
-                return [difficulty, data.body] as const;
+                return [difficulty, data.body];
             })
         )
         return Object.fromEntries(entries) as Record<BossDifficulty, MetaBody>;

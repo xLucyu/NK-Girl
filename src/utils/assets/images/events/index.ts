@@ -9,7 +9,7 @@ import LeastTiersImage from "./leasttiers.png";
 import RaceImage from "./race.png";
 import StartRoundImage from "./StartRoundIcon.png";
 
-export const EventIcons = {
+export const EventImages = {
     BossChallenge: BossChallengeImage,
     Cash: CashImage,
     Collection: CollectionImage,

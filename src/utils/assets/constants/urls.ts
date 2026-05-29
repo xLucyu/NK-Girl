@@ -8,3 +8,7 @@ export const API_URLS = {
   ChallengeDaily: "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
   Events: "https://data.ninjakiwi.com/btd6/events"
 };
+
+export const GOOGLE_API_ULRS = {
+  Boss: "https://storage.googleapis.com/btd6api/Event/Boss/{}/event.json"
+}

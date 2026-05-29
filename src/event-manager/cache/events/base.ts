@@ -8,7 +8,7 @@ export interface CurrentEventData<T, K> {
   metaData: K;
 }
 
-interface PreviousEvent {
+export interface PreviousEvent {
   id: string;
   name: string;
 }
@@ -32,9 +32,12 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   }
 
 
-  protected getPreviousEvents(events: T[]): PreviousEvent[] | null {
+  protected getPreviousEvents(events: T[], currentEvent: T): PreviousEvent[] | null {
 
-    return events.map((event) => ({
+    return events
+      .filter((event) => event.start < currentEvent.start)
+      .sort((left, right) => right.start - left.start)
+      .map((event) => ({
       id: event.id,
       name: event.name
     }))
@@ -53,6 +56,27 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     return this.cache;
   }
 
+  public async getEventById(id: string): Promise<T | null> {
+
+    const events = await this.getEventData();
+    return events.find((event) => event.id === id) ?? null;
+  }
+
+  public async hydrateEvent(event: T): Promise<CurrentEventData<T, K>> {
+    return {
+      data: event,
+      metaData: await this.getMetaData(event)
+    };
+  }
+
+  public async resolveEventById(id: string): Promise<CurrentEventData<T, K> | null> {
+
+    const event = await this.getEventById(id);
+    if (!event) return null;
+
+    return this.hydrateEvent(event);
+  }
+
 
   async check(firstUse: boolean): Promise<void> {
 
@@ -66,7 +90,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const metaData = await this.getMetaData(currentEvent); // get meta data for the event, if present 
 
-    const previousEvents = this.getPreviousEvents(events);
+    const previousEvents = this.getPreviousEvents(events, currentEvent);
 
     this.cache = {
       eventType: this.eventType,

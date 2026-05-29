@@ -1,7 +1,6 @@
-// src/database/tables/usage.table.ts
 import { withDb } from "../pool";
 
-export type CommandUsage = {
+type CommandUsage = {
   command: string;
   uses: number;
 };

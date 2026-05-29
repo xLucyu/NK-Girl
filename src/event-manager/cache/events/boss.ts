@@ -17,7 +17,7 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
         let currentEvent: BossBody | undefined;
         
         if (firstUse) {
-            currentEvent = events[1];
+            currentEvent = events[0];
         } else {
             currentEvent = events.find((event) => event.end > now);
         }

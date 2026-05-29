@@ -24,6 +24,7 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
       <h1>{event.name}</h1>
       <p>Difficulty: {difficulty}</p>
       <p>Starting Cash: {metaData.startingCash}</p>
+      <p>Lives: {metaData.lives}</p>
     </div>
   );
 }

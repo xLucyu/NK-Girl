@@ -4,7 +4,7 @@ import {
     StringSelectMenuInteraction
 } from "discord.js" 
 
-export function buildSelectMenu(args: {
+export function BuildSelectMenu(args: {
     customId: string;
     placeholder: string;
     options: { label: string, value: string, default?: boolean }[];

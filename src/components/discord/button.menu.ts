@@ -4,7 +4,7 @@ import {
     ButtonStyle
 } from "discord.js";
 
-export function buildButtonMenu(args: {
+export function BuildButtonMenu(args: {
     buttons: {
         customId: string;
         label: string;

@@ -1,4 +1,8 @@
-import { ButtonInteraction, ChatInputCommandInteraction, InteractionReplyOptions, SlashCommandBuilder, StringSelectMenuInteraction } from "discord.js";
+import { 
+  ChatInputCommandInteraction,
+  InteractionReplyOptions, 
+  SlashCommandBuilder 
+} from "discord.js";
 import { JSX } from "react";
 import { eventManager } from "@manager/manager";
 import { 
@@ -6,24 +10,19 @@ import {
   BossDifficulties, 
   BossDifficulty 
 } from "@manager/cache";
-import { BaseCommand } from "@commands/base.command";
+import { BaseCommand, MenuState } from "@commands/base.command";
 import { BossBody, EventType, MetaBody } from "@utils/types";
 import { BossProfile } from "./boss.profile";
-import { buildSelectMenu } from "@components/discord/select.menu";
 import { splitBossNumbers } from "@utils/helpers/regex";
 import { GOOGLE_API_ULRS } from "@utils/assets/constants";
 import { getData } from "@wrapper";
-import { buildButtonMenu } from "@components/discord";
+import { BuildButtonMenu, BuildSelectMenu } from "@components/discord";
+import { CreateComponentState } from "@components/discord/state";
 
 export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
 
 const BOSS_SELECT_ID = "boss:event-select";
 const BOSS_DIFFICULTY_ID = "boss:difficulty";
-
-type BossState = {
-  eventId: string;
-  difficulty: BossDifficulty;
-}
 
 export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
 
@@ -43,11 +42,12 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
       )
     );
 
-  protected getProfile(interaction: ChatInputCommandInteraction, eventProps: BossProps): JSX.Element {
+  public getProfile(eventProps: BossProps["currentEvent"], state: MenuState): JSX.Element {
 
-    const difficulty = interaction.options.getString("difficulty") as BossDifficulty ?? BossDifficulties[0];
-    const event = eventProps.currentEvent.data;
-    const metaData = eventProps.currentEvent.metaData[difficulty]
+    const difficulty = state.difficulty as BossDifficulty;
+
+    const event = eventProps.data;
+    const metaData = eventProps.metaData[difficulty];
 
     if (!metaData) throw new Error();
 
@@ -58,92 +58,68 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
     })
   }
 
-  protected getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
+
+  public getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
     return eventManager.getEventCache(EventType.Boss).getCache();
   }
 
-  protected getComponents(
-    eventProps: BossProps,
-    selectedId?: string,
-    selectedDifficulty: BossDifficulty = BossDifficulties[0]
-  ): InteractionReplyOptions["components"] {
 
-    const eventId = selectedId ?? eventProps.currentEvent.data.id;
+  protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: BossProps): MenuState {
+
+    const difficulty = interaction.options.getString("difficulty") as BossDifficulty ?? BossDifficulties[0];
+
+    return CreateComponentState({
+      eventId: eventProps.currentEvent.data.id,
+      difficulty: difficulty,
+      userId: interaction.user.id
+    })
+  }
+
+
+  public getComponents(eventProps: BossProps,state: MenuState): InteractionReplyOptions["components"] {
+
+    const difficulty = state.difficulty as BossDifficulty;
 
     return [
-      buildSelectMenu({
-        customId: `${BOSS_SELECT_ID}:${selectedDifficulty}`,
+      BuildSelectMenu({
+        customId: `${BOSS_SELECT_ID}:${difficulty}:${state.userId}:${state.expiresAt}`,
         placeholder: "Choose a Boss Event",
         options: [
           {
             label: splitBossNumbers(eventProps.currentEvent.data.name),
             value: eventProps.currentEvent.data.id,
-            default: eventId === eventProps.currentEvent.data.id,
+            default: state.eventId === eventProps.currentEvent.data.id,
           },
           ...eventProps.previousEvents!.map((event) => ({
             label: splitBossNumbers(event.name),
             value: event.id,
-            default: eventId === event.id,
+            default: state.eventId === event.id,
           })),
         ].slice(0, 25),
       }),
 
-      buildButtonMenu({
-        buttons: BossDifficulties.map((difficulty) => ({
-          label: difficulty,
-          customId: `${BOSS_DIFFICULTY_ID}:${difficulty}:${eventId}`,
-          disabled: difficulty === selectedDifficulty,
+      BuildButtonMenu({
+        buttons: BossDifficulties.map((buttonDifficulty) => ({
+          label: buttonDifficulty,
+          customId: `${BOSS_DIFFICULTY_ID}:${buttonDifficulty}:${state.eventId}:${state.userId}:${state.expiresAt}`,
+          disabled: buttonDifficulty === difficulty,
         })),
       }),
     ];
   }
 
-    protected async getProfileFromSelect(
-    interaction: StringSelectMenuInteraction
-  ): Promise<JSX.Element> {
-    const selectedEventId = interaction.values[0];
+  protected async fetchOtherEvent(eventId: string): Promise<BossProps["currentEvent"]> {
 
-    const [, , difficultyFromId] = interaction.customId.split(":");
-
-    const difficulty = difficultyFromId as BossDifficulty;
-
-    const eventURL = GOOGLE_API_ULRS.Boss.replace("{}", selectedEventId);
-
-    const fetchingEvent = await getData<BossProps["currentEvent"]>(eventURL);
-
-    const event = fetchingEvent.data;
-    const metaData = fetchingEvent.metaData[difficulty];
-
-    if (!metaData) throw new Error();
-
-    return BossProfile({
-      event,
-      metaData,
-      difficulty,
-    });
+    const eventUrl = GOOGLE_API_ULRS.Boss.replace("{}", eventId);
+    return getData<BossProps["currentEvent"]>(eventUrl);
   }
 
-  protected async getProfileFromButton(
-    interaction: ButtonInteraction
-  ): Promise<JSX.Element> {
-    const [, , difficultyFromId, selectedEventId] =
-      interaction.customId.split(":");
 
-    const difficulty = difficultyFromId as BossDifficulty;
+  public async resolveEvent(eventProps: BossProps, state: MenuState): Promise<BossProps["currentEvent"]> {
+    if (state.eventId === eventProps.currentEvent.data.id) {
+      return eventProps.currentEvent;
+    }
 
-    const eventURL = GOOGLE_API_ULRS.Boss.replace("{}", selectedEventId);
-
-    const fetchingEvent = await getData<BossProps["currentEvent"]>(eventURL);
-
-    const event = fetchingEvent.data;
-    const metaData = fetchingEvent.metaData[difficulty];
-
-    if (!metaData) throw new Error();
-
-    return BossProfile({
-      event,
-      metaData,
-      difficulty,
-    });
+    return this.fetchOtherEvent(state.eventId);
   }
 }

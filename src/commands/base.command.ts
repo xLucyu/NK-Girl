@@ -5,14 +5,12 @@ import {
   InteractionReplyOptions,
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
-
 import {
   CurrentEventData,
   EventCacheEntry,
 } from "../event-manager/cache";
-
 import { render } from "@components/react/render";
-import { scheduleComponentCleanup } from "@components/discord/handler";
+import { scheduleComponentCleanup } from "@components/discord";
 
 export type MenuState = {
   eventId: string;
@@ -22,7 +20,10 @@ export type MenuState = {
 };
 
 export abstract class BaseCommand<T, K> {
+
+
   public abstract commandData: SlashCommandOptionsOnlyBuilder;
+  
 
   public async execute(interaction: ChatInputCommandInteraction) {
 

@@ -3,23 +3,12 @@ import {
   ButtonInteraction,
   StringSelectMenuInteraction,
 } from "discord.js";
-import { commands } from "@commands/index";
+import { commands, eventCommands } from "@commands/index";
 import { MenuState } from "@commands/base.command";
 import { render } from "@components/react/render";
 
-export function scheduleComponentCleanup(args: {
-  editReply: (options: { components: [] }) => Promise<unknown>;
-  expiresAt: number; 
-}) {
-  const delay = Math.max(0, args.expiresAt - Date.now());
 
-  setTimeout(() => {
-    void args.editReply({ components: [] }).catch(() => {});
-  }, delay);
-}
-
-
-export function isComponentExpired(state: MenuState): boolean {
+function isComponentExpired(state: MenuState): boolean {
   return Date.now() > state.expiresAt;
 }
 
@@ -54,20 +43,11 @@ async function validateComponentInteraction(
 ): Promise<boolean> {
 
   if (interaction.user.id !== state.userId) {
-    await interaction.reply({
-      content: "This menu is not for you.",
-      ephemeral: true,
-    });
+    await interaction.reply({ content: "You're not the original user.", ephemeral: true });
     return false;
   }
 
-  if (isComponentExpired(state)) {
-    await interaction.reply({
-      content: "This menu has expired. Please run the command again.",
-      ephemeral: true,
-    });
-    return false;
-  }
+  if (isComponentExpired(state)) return false;
 
   return true;
 }
@@ -75,9 +55,7 @@ async function validateComponentInteraction(
 async function handleComponent(interaction: StringSelectMenuInteraction | ButtonInteraction, state: MenuState) {
 
   const [commandName] = interaction.customId.split(":");
-  const command = commands[commandName as keyof typeof commands];
-
-  if (!command) return;
+  const command = commands[commandName as keyof typeof eventCommands];
 
   const isValid = await validateComponentInteraction(interaction, state);
   if (!isValid) return;
@@ -86,17 +64,14 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
 
   const eventProps = command.getEventProps();
 
-  if (!eventProps) {
-    throw new Error("No event cache found.");
-  }
+  if (!eventProps) throw new Error("No event cache found.");
+  
 
   const selectedEvent = await command.resolveEvent(eventProps, state);
   const profile = command.getProfile(selectedEvent, state);
   const buffer = await render(profile);
 
-  const attachment = new AttachmentBuilder(buffer, {
-    name: "image.png",
-  });
+  const attachment = new AttachmentBuilder(buffer, {name: "image.png" });
 
   const components = command.getComponents(eventProps, state) ?? [];
 

@@ -1,5 +1,7 @@
 import { 
+  ApplicationIntegrationType,
   ChatInputCommandInteraction,
+  InteractionContextType,
   InteractionReplyOptions, 
   SlashCommandBuilder 
 } from "discord.js";
@@ -19,10 +21,12 @@ import { getData } from "@wrapper";
 import { BuildButtonMenu, BuildSelectMenu } from "@components/discord";
 import { CreateComponentState } from "@components/discord/state";
 
+
 export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
 
 const BOSS_SELECT_ID = "boss:event-select";
 const BOSS_DIFFICULTY_ID = "boss:difficulty";
+
 
 export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
 
@@ -40,7 +44,15 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
           value: difficulty 
         }))
       )
-    );
+    )
+    .setIntegrationTypes(
+      ApplicationIntegrationType.GuildInstall,
+      ApplicationIntegrationType.UserInstall,
+    )
+    .setContexts(
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel
+    )
 
   public getProfile(eventProps: BossProps["currentEvent"], state: MenuState): JSX.Element {
 

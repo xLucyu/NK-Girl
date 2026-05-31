@@ -40,6 +40,7 @@ export class DiscordClient {
 
     this.client.once("clientReady", async () => {
       console.log(`Bot is online as ${this.client.user?.tag}`);
+      await deployCommands();
     });
       
     this.client.on("guildCreate", async (guild) => {

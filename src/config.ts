@@ -15,6 +15,7 @@ function validate(varName: string): string {
 export const config = {
   BOT_TOKEN: validate("BOT_TOKEN"),
   BOT_ID: validate("BOT_ID"),
+  OWNER_ID: validate("OWNER_ID"),
   HOST: validate("HOST"),
   PORT: validate("PORT"),
   DATABASE: validate("DATABASE"),

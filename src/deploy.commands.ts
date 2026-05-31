@@ -22,9 +22,7 @@ export async function deployCommands({ guildId }: { guildId?: string } = {}) {
         : "Deploying global commands..."
     );
 
-    await rest.put(route, {
-      body: commandsData,
-    });
+    await rest.put(route, { body: commandsData });
 
     console.log(
       guildId

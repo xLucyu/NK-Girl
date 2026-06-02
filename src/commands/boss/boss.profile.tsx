@@ -1,4 +1,6 @@
+import { loadImage } from "@utils/assets/images/loadImage";
 import { BossDifficulty } from "@manager/cache";
+import { Images } from "@utils/assets/images";
 import { BossBody, MetaBody } from "@utils/types";
 import { JSX } from "react";
 
@@ -25,6 +27,7 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
       <p>Difficulty: {difficulty}</p>
       <p>Starting Cash: {metaData.startingCash}</p>
       <p>Lives: {metaData.lives}</p>
+      <img src={loadImage(Images.Boss.Bloonarius.Banner)} width={300} height={100} />
     </div>
   );
 }

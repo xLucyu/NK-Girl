@@ -1,16 +1,21 @@
-import { MenuState } from "@commands/base.command";
+const TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
-const TIMEOUT = 5 * 60_000;
+export type ComponentState = {
+  eventId: string;
+  difficulty: string;
+  userId: string;
+  expiresAt: number;
+};
+
+export const componentState: Record<string, ComponentState> = {};
 
 export function CreateComponentState(args: {
   eventId: string;
   difficulty: string;
   userId: string;
-}): MenuState {
+}): ComponentState {
   return {
-    eventId: args.eventId,
-    difficulty: args.difficulty,
-    userId: args.userId,
+    ...args,
     expiresAt: Date.now() + TIMEOUT,
   };
 }

@@ -11,11 +11,11 @@ import { TowerImages } from "./towers";
 export const Images = {
     Boss: BossImages,
     Challenge: ChallengeImages,
-    Icons: EventImages,
-    Maps: MapImages,
-    Medals: MedalImages,
-    Modifiers: ModifierImages,
-    Odyssey: OdysseyImages,
-    Relics: RelicImages,
-    Towers: TowerImages
+  //  Icons: EventImages,
+   // Maps: MapImages,
+   // Medals: MedalImages,
+   // Modifiers: ModifierImages,
+   // Odyssey: OdysseyImages,
+   // Relics: RelicImages,
+   // Towers: TowerImages
 };

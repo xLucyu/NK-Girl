@@ -1,93 +1,74 @@
-import {
-  AttachmentBuilder,
-  ButtonInteraction,
-  StringSelectMenuInteraction,
-} from "discord.js";
+import { AttachmentBuilder, ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
+import { ComponentState } from "react";
+import { componentState } from "./state";
 import { commands, eventCommands } from "@commands/index";
-import { MenuState } from "@commands/base.command";
 import { render } from "@components/react/render";
 
-
-function isComponentExpired(state: MenuState): boolean {
+function isComponentExpired(state: ComponentState): boolean {
   return Date.now() > state.expiresAt;
 }
 
 
-function getStateFromSelect(interaction: StringSelectMenuInteraction): MenuState {
-
-  const [, , difficulty, userId, expiresAt] = interaction.customId.split(":");
-
-  return {
-    eventId: interaction.values[0],
-    difficulty,
-    userId,
-    expiresAt: Number(expiresAt),
-  };
+function getStateFromInteraction(interaction: StringSelectMenuInteraction | ButtonInteraction): ComponentState | undefined {
+  return componentState[interaction.message.id];
 }
 
-function getStateFromButton(interaction: ButtonInteraction): MenuState {
-    
-  const [, , difficulty, eventId, userId, expiresAt] = interaction.customId.split(":");
-
-  return {
-    eventId,
-    difficulty,
-    userId,
-    expiresAt: Number(expiresAt),
-  };
-}
 
 async function validateComponentInteraction(
   interaction: StringSelectMenuInteraction | ButtonInteraction,
-  state: MenuState
+  state: ComponentState
 ): Promise<boolean> {
 
   if (interaction.user.id !== state.userId) {
-    await interaction.reply({ content: "You're not the original user.", ephemeral: true });
+    await interaction.reply({content: "You're not the original user.", ephemeral: true });
     return false;
   }
 
-  if (isComponentExpired(state)) return false;
-
+  if (isComponentExpired(state)) {
+    delete componentState[interaction.message.id];
+    return false;
+  }
   return true;
 }
 
-async function handleComponent(interaction: StringSelectMenuInteraction | ButtonInteraction, state: MenuState) {
 
-  const [commandName] = interaction.customId.split(":");
-  const command = commands[commandName as keyof typeof eventCommands];
+async function handleComponent(interaction: StringSelectMenuInteraction | ButtonInteraction) {
+
+  const state = getStateFromInteraction(interaction);
+  if (!state) return;
 
   const isValid = await validateComponentInteraction(interaction, state);
   if (!isValid) return;
 
+  const [commandName, action, value] = interaction.customId.split(":");
+
+  if (action === "event-select" && interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
+  if (action === "event-button" && interaction.isButton()) state.difficulty = value;
+  
+  const command = commands[commandName as keyof typeof eventCommands];
+  if (!command) throw new Error(`Command not found: ${commandName}`);
+  
   await interaction.deferUpdate();
 
   const eventProps = command.getEventProps();
-
   if (!eventProps) throw new Error("No event cache found.");
   
-
   const selectedEvent = await command.resolveEvent(eventProps, state);
   const profile = command.getProfile(selectedEvent, state);
   const buffer = await render(profile);
-
-  const attachment = new AttachmentBuilder(buffer, {name: "image.png" });
-
+  const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
   const components = command.getComponents(eventProps, state) ?? [];
 
-  return interaction.editReply({
+  await interaction.editReply({
     files: [attachment],
     components,
   });
 }
 
 export async function handleSelectMenu(interaction: StringSelectMenuInteraction) {
-
-  const state = getStateFromSelect(interaction);
-  return handleComponent(interaction, state);
+  return handleComponent(interaction);
 }
 
 export async function handleButton(interaction: ButtonInteraction) {
-  const state = getStateFromButton(interaction);
-  return handleComponent(interaction, state);
+  return handleComponent(interaction);
 }

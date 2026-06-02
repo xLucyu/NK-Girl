@@ -19,3 +19,5 @@ export const Images = {
    // Relics: RelicImages,
    // Towers: TowerImages
 };
+
+export { loadImage } from "./loadImage";

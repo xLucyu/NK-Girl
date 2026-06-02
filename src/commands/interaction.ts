@@ -2,6 +2,9 @@ import { Interaction } from "discord.js";
 import { commands } from ".";
 import { sendCommandError } from "@utils/error-handler/error.reply";
 import { handleButton, handleSelectMenu } from "@components/discord/handler";
+import { checkCooldown } from "./cooldown";
+
+const CMDCOOLDOWN = 5000;
 
 export async function listener(interaction: Interaction): Promise<void> {
 
@@ -11,6 +14,7 @@ export async function listener(interaction: Interaction): Promise<void> {
 
         if (!command) return;
         try {
+          checkCooldown(interaction.user.id, interaction.commandName, CMDCOOLDOWN)
             await command.execute(interaction);
         } catch (error) {
             await sendCommandError(interaction, error);

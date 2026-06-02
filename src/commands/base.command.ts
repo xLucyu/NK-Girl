@@ -10,14 +10,8 @@ import {
   EventCacheEntry,
 } from "../event-manager/cache";
 import { render } from "@components/react/render";
-import { scheduleComponentCleanup } from "@components/discord";
+import { componentState, scheduleComponentCleanup, ComponentState } from "@components/discord";
 
-export type MenuState = {
-  eventId: string;
-  difficulty: string;
-  userId: string;
-  expiresAt: number;
-};
 
 export abstract class BaseCommand<T, K> {
 
@@ -28,26 +22,28 @@ export abstract class BaseCommand<T, K> {
   public async execute(interaction: ChatInputCommandInteraction) {
 
     const eventProps = this.getEventProps();
-
     if (!eventProps) throw new Error("no event cache found.");
-    
+  
     const state = this.getInitialState(interaction, eventProps);
-
     const profile = this.getProfile(eventProps.currentEvent, state);
     const buffer = await render(profile);
-
     const attachment = new AttachmentBuilder(buffer, {name: "image.png" });
-
     const components = this.getComponents(eventProps, state) ?? [];
 
     await interaction.reply({
-      files: [attachment],
-      components,
+      files: [attachment], 
+      components: components 
     });
+
+    const message = await interaction.fetchReply();
+    componentState[message.id] = state;
 
     scheduleComponentCleanup({
       editReply: (options) => interaction.editReply(options),
-      expiresAt: state.expiresAt
+      expiresAt: state.expiresAt,
+      onExpire: () => {
+        delete componentState[message.id]
+      },
     });
   }
 
@@ -56,20 +52,20 @@ export abstract class BaseCommand<T, K> {
   protected abstract getInitialState(
     interaction: ChatInputCommandInteraction,
     eventProps: EventCacheEntry<T, K>
-  ): MenuState;
+  ): ComponentState;
 
   public abstract resolveEvent(
     eventProps: EventCacheEntry<T, K>,
-    state: MenuState
+    state: ComponentState
   ): Promise<CurrentEventData<T, K>>;
 
   public abstract getProfile(
     event: CurrentEventData<T, K>,
-    state: MenuState
+    state: ComponentState
   ): JSX.Element;
 
   public abstract getComponents(
     eventProps: EventCacheEntry<T, K>,
-    state: MenuState
+    state: ComponentState
   ): InteractionReplyOptions["components"];
 }

@@ -34,10 +34,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected getPreviousEvents(events: T[], currentEvent: T): PreviousEvent[] | null {
 
-    return events
-      .filter((event) => event.start < currentEvent.start)
-      .sort((left, right) => right.start - left.start)
-      .map((event) => ({
+    return events.map((event) => ({
       id: event.id,
       name: event.name
     }))

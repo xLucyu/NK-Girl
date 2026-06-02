@@ -5,6 +5,15 @@ export class BotError extends Error {
   }
 }
 
+export class CommandOnCooldown extends BotError {
+  constructor(seconds: number) {
+    super(
+      "Command on Cooldown",
+      `You can use this command again in ${seconds} seconds.`
+    )
+  }
+}
+
 export class TileNotFound extends BotError {
   constructor() {
     super(

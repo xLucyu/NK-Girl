@@ -33,7 +33,6 @@ export async function sendCommandError(interaction: ChatInputCommandInteraction,
   }
 
   return interaction.reply({
-    embeds: [embed],
-    ephemeral: true,
+    embeds: [embed]
   });
 }

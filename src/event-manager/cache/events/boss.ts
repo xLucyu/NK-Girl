@@ -1,7 +1,14 @@
-import { EventType, BossBody, MetaBody, MetaData } from "@utils/types";
+import { 
+    EventType, 
+    BossBody, 
+    MetaBody, 
+    MetaData 
+} from "@utils/types";
+import { JSX } from "react";
 import { BaseEventCache } from "./base";
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils/assets/constants";
+import { BossProfile } from "@commands/boss/boss.profile";
 
 export const BossDifficulties = ["Standard", "Elite"] as const;
 export type BossDifficulty = typeof BossDifficulties[number];
@@ -43,5 +50,16 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
 
     protected getBucketPath(event: BossBody): string {
         return `Event/Boss/${event.id}/event.json`;
+    }
+
+    protected getAnnouncementProfile(event: BossBody, metaData: Record<BossDifficulty, MetaBody>): JSX.Element[] {
+
+        return BossDifficulties.map((difficulty) =>
+            BossProfile({
+                event,
+                metaData: metaData[difficulty],
+                difficulty,
+            })
+        );
     }
 }

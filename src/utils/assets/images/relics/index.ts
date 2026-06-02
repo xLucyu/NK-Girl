@@ -1,101 +1,51 @@
-import AbilitizedImage from "./Abilitized.png";
-import AirAndSeaImage from "./AirAndSea.png";
-import AlchemistTouchImage from "./AlchemistTouch.png";
-import BannerImage from "./banner.png";
-import BiggerBloonSabotageImage from "./BiggerBloonSabotage.png";
-import BoxOfChocolatesImage from "./BoxOfChocolates.png";
-import BoxOfMonkeyImage from "./BoxOfMonkey.png";
-import BrokenHeartImage from "./BrokenHeart.png";
-import CamoFlagImage from "./CamoFlagged.png";
-import CamoTrapImage from "./CamoTrap.png";
-import CooqQuickMatchBtnImage from "./CooqQuickMatchBtn.png";
-import DeepHeatImage from "./DeepHeat.png";
-import DurableShotsImage from "./DurableShots.png";
-import EldoradoImage from "./Eldorado.png";
-import ExtraEmpoweredImage from "./ExtraEmpowered.png";
-import FlintTipsImage from "./FlintTips.png";
-import FortifiedImage from "./Fortified.png";
-import GlueTrapImage from "./GlueTrap.png";
-import GoingTheDistanceImage from "./GoingTheDistance.png";
-import HardBakedImage from "./HardBaked.png";
-import HeartlessImage from "./Heartless.png";
-import HeroBoostImage from "./HeroBoost.png";
-import MagicMonkeysImage from "./MagicMonkeys.png";
-import ManaBulwarkImage from "./ManaBulwark.png";
-import MarchingBootsImage from "./MarchingBoots.png";
-import MilitaryMonkeysImage from "./MilitaryMonkeys.png";
-import MoabClashImage from "./MoabClash.png";
-import MoabMineImage from "./MoabMine.png";
-import MonkeyBoostImage from "./MonkeyBoost.png";
-import MonkeyShieldImage from "./MonkeyShield.png";
-import MonkeyShieldMark2Image from "./MonkeyShieldMark2.png";
-import MonkeyShieldMark3Image from "./MonkeyShieldMark3.png";
-import MonkeyTycoonImage from "./MonkeyTycoon.png";
-import OpenSeasonImage from "./OpenSeason.png";
-import PrimaryPrimatesImage from "./PrimaryPrimates.png";
-import PsiVisionImage from "./PsiVision.png";
-import RegenerationImage from "./Regeneration.png";
-import RegularImage from "./regular.png";
-import RelicImage from "./relic.png";
-import RestorationImage from "./Restoration.png";
-import RoadSpikesImage from "./RoadSpikes.png";
-import RoundingUpImage from "./RoundingUp.png";
-import RoyalTreatmentImage from "./RoyalTreatment.png";
-import SharpplosionImage from "./Sharpplosion.png";
-import SmsImage from "./Sms.png";
-import StartingStashImage from "./StartingStash.png";
-import SupportSimiansImage from "./SupportSimians.png";
-import TechbotImage from "./Techbot.png";
-import ThriveImage from "./Thrive.png";
-
 export const RelicImages = {
-  Abilitized: AbilitizedImage,
-  AirAndSea: AirAndSeaImage,
-  AlchemistTouch: AlchemistTouchImage,
-  Banner: BannerImage,
-  BiggerBloonSabotage: BiggerBloonSabotageImage,
-  BoxOfChocolates: BoxOfChocolatesImage,
-  BoxOfMonkey: BoxOfMonkeyImage,
-  BrokenHeart: BrokenHeartImage,
-  CamoFlag: CamoFlagImage,
-  CamoTrap: CamoTrapImage,
-  CooqQuickMatchBtn: CooqQuickMatchBtnImage,
-  DeepHeat: DeepHeatImage,
-  DurableShots: DurableShotsImage,
-  Eldorado: EldoradoImage,
-  ExtraEmpowered: ExtraEmpoweredImage,
-  FlintTips: FlintTipsImage,
-  Fortified: FortifiedImage,
-  GlueTrap: GlueTrapImage,
-  GoingTheDistance: GoingTheDistanceImage,
-  HardBaked: HardBakedImage,
-  Heartless: HeartlessImage,
-  HeroBoost: HeroBoostImage,
-  MagicMonkeys: MagicMonkeysImage,
-  ManaBulwark: ManaBulwarkImage,
-  MarchingBoots: MarchingBootsImage,
-  MilitaryMonkeys: MilitaryMonkeysImage,
-  MoabClash: MoabClashImage,
-  MoabMine: MoabMineImage,
-  MonkeyBoost: MonkeyBoostImage,
-  MonkeyShield: MonkeyShieldImage,
-  MonkeyShieldMark2: MonkeyShieldMark2Image,
-  MonkeyShieldMark3: MonkeyShieldMark3Image,
-  MonkeyTycoon: MonkeyTycoonImage,
-  OpenSeason: OpenSeasonImage,
-  PrimaryPrimates: PrimaryPrimatesImage,
-  PsiVision: PsiVisionImage,
-  Regeneration: RegenerationImage,
-  Regular: RegularImage,
-  Relic: RelicImage,
-  Restoration: RestorationImage,
-  RoadSpikes: RoadSpikesImage,
-  RoundingUp: RoundingUpImage,
-  RoyalTreatment: RoyalTreatmentImage,
-  Sharpplosion: SharpplosionImage,
-  Sms: SmsImage,
-  StartingStash: StartingStashImage,
-  SupportSimians: SupportSimiansImage,
-  Techbot: TechbotImage,
-  Thrive: ThriveImage,
+  Abilitized: "relics/Abilitized.png",
+  AirAndSea: "relics/AirAndSea.png",
+  AlchemistTouch: "relics/AlchemistTouch.png",
+  Banner: "relics/banner.png",
+  BiggerBloonSabotage: "relics/BiggerBloonSabotage.png",
+  BoxOfChocolates: "relics/BoxOfChocolates.png",
+  BoxOfMonkey: "relics/BoxOfMonkey.png",
+  BrokenHeart: "relics/BrokenHeart.png",
+  CamoFlag: "relics/CamoFlagged.png",
+  CamoTrap: "relics/CamoTrap.png",
+  CooqQuickMatchBtn: "relics/CooqQuickMatchBtn.png",
+  DeepHeat: "relics/DeepHeat.png",
+  DurableShots: "relics/DurableShots.png",
+  Eldorado: "relics/Eldorado.png",
+  ExtraEmpowered: "relics/ExtraEmpowered.png",
+  FlintTips: "relics/FlintTips.png",
+  Fortified: "relics/Fortified.png",
+  GlueTrap: "relics/GlueTrap.png",
+  GoingTheDistance: "relics/GoingTheDistance.png",
+  HardBaked: "relics/HardBaked.png",
+  Heartless: "relics/Heartless.png",
+  HeroBoost: "relics/HeroBoost.png",
+  MagicMonkeys: "relics/MagicMonkeys.png",
+  ManaBulwark: "relics/ManaBulwark.png",
+  MarchingBoots: "relics/MarchingBoots.png",
+  MilitaryMonkeys: "relics/MilitaryMonkeys.png",
+  MoabClash: "relics/MoabClash.png",
+  MoabMine: "relics/MoabMine.png",
+  MonkeyBoost: "relics/MonkeyBoost.png",
+  MonkeyShield: "relics/MonkeyShield.png",
+  MonkeyShieldMark2: "relics/MonkeyShieldMark2.png",
+  MonkeyShieldMark3: "relics/MonkeyShieldMark3.png",
+  MonkeyTycoon: "relics/MonkeyTycoon.png",
+  OpenSeason: "relics/OpenSeason.png",
+  PrimaryPrimates: "relics/PrimaryPrimates.png",
+  PsiVision: "relics/PsiVision.png",
+  Regeneration: "relics/Regeneration.png",
+  Regular: "relics/regular.png",
+  Relic: "relics/relic.png",
+  Restoration: "relics/Restoration.png",
+  RoadSpikes: "relics/RoadSpikes.png",
+  RoundingUp: "relics/RoundingUp.png",
+  RoyalTreatment: "relics/RoyalTreatment.png",
+  Sharpplosion: "relics/Sharpplosion.png",
+  Sms: "relics/Sms.png",
+  StartingStash: "relics/StartingStash.png",
+  SupportSimians: "relics/SupportSimians.png",
+  Techbot: "relics/Techbot.png",
+  Thrive: "relics/Thrive.png",
 };

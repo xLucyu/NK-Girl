@@ -13,7 +13,7 @@ export const Images = {
     Challenge: ChallengeImages,
     Icons: EventImages,
     Maps: MapImages,
-   // Medals: MedalImages,
+    Medals: MedalImages,
     Modifiers: ModifierImages,
     Odyssey: OdysseyImages,
     Relics: RelicImages,

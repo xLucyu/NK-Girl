@@ -1,114 +1,65 @@
-import RaceTop75 from "./race/race_event_top_75percent.png";
-import RaceTop50 from "./race/race_event_top_50percent.png";
-import RaceTop25 from "./race/race_event_top_25percent.png";
-import RaceTop10 from "./race/race_event_top_10percent.png";
-import RaceTop1 from "./race/race_event_top_1percent.png";
-import RaceTop50Placement from "./race/race_event_top_50.png";
-import RaceThird from "./race/race_event_3rd.png";
-import RaceSecond from "./race/race_event_2nd.png";
-import RaceFirst from "./race/race_event_1st.png";
-
-import BossTop75 from "./boss/ranked/standard/boss_event_top_75percent.png";
-import BossTop50 from "./boss/ranked/standard/boss_event_top_50percent.png";
-import BossTop25 from "./boss/ranked/standard/boss_event_top_25percent.png";
-import BossTop10 from "./boss/ranked/standard/boss_event_top_10percent.png";
-import BossTop1 from "./boss/ranked/standard/boss_event_top_1percent.png";
-import BossTop50Placement from "./boss/ranked/standard/boss_event_top_50.png";
-import BossThird from "./boss/ranked/standard/boss_event_3rd.png";
-import BossSecond from "./boss/ranked/standard/boss_event_2nd.png";
-import BossFirst from "./boss/ranked/standard/boss_event_1st.png";
-
-import EliteBossTop75 from "./boss/ranked/elite/elite_boss_event_top_75percent.png";
-import EliteBossTop50 from "./boss/ranked/elite/elite_boss_event_top_50percent.png";
-import EliteBossTop25 from "./boss/ranked/elite/elite_boss_event_top_25percent.png";
-import EliteBossTop10 from "./boss/ranked/elite/elite_boss_event_top_10percent.png";
-import EliteBossTop1 from "./boss/ranked/elite/elite_boss_event_top_1percent.png";
-import EliteBossTop50Placement from "./boss/ranked/elite/elite_boss_event_top_50.png";
-import EliteBossThird from "./boss/ranked/elite/elite_boss_event_3rd.png";
-import EliteBossSecond from "./boss/ranked/elite/elite_boss_event_2nd.png";
-import EliteBossFirst from "./boss/ranked/elite/elite_boss_event_1st.png";
-
-import CTGlobalTop75 from ".ct/global_player/ct_global_top_75percent.png";
-import CTGlobalTop50 from ".ct/global_player/ct_global_top_50percent.png";
-import CTGlobalTop25 from ".ct/global_player/ct_global_top_25percent.png";
-import CTGlobalTop10 from ".ct/global_player/ct_global_top_10percent.png";
-import CTGlobalTop1 from ".ct/global_player/ct_global_top_1percent.png";
-import CTGlobalTop100 from ".ct/global_player/ct_global_top_100.png";
-import CTGlobalTop25Placement from ".ct/global_player/ct_global_top_25.png";
-
-import CTGlobalTeamsTop75 from ".ct/global_teams/global_teams_top_75percent.png";
-import CTGlobalTeamsTop25 from ".ct/global_teams/global_teams_top_25percent.png";
-import CTGlobalTeamsTop10 from ".ct/global_teams/global_teams_top_10percent.png";
-import CTGlobalTeamsTop1 from ".ct/global_teams/global_teams_top_1percent.png";
-import CTGlobalTeamsTop100 from ".ct/global_teams/global_teams_top_100.png";
-import CTGlobalTeamsTop25Placement from ".ct/global_teams/global_teams_top_25.png";
-import CTGlobalTeamsThird from ".ct/global_teams/global_teams_3rd.png";
-import CTGlobalTeamsSecond from ".ct/global_teams/global_teams_2nd.png";
-import CTGlobalTeamsFirst from ".ct/global_teams/global_teams_1st.png";
-
 export const MedalImages = {
-  Race: {
-    Top75: RaceTop75,
-    Top50: RaceTop50,
-    Top25: RaceTop25,
-    Top10: RaceTop10,
-    Top1: RaceTop1,
-    Top50Placement: RaceTop50Placement,
-    Third: RaceThird,
-    Second: RaceSecond,
-    First: RaceFirst,
-  },
-
   Boss: {
-    Ranked: {
-      Standard: {
-        Top75: BossTop75,
-        Top50: BossTop50,
-        Top25: BossTop25,
-        Top10: BossTop10,
-        Top1: BossTop1,
-        Top50Placement: BossTop50Placement,
-        Third: BossThird,
-        Second: BossSecond,
-        First: BossFirst,
-      },
+    Elite: {
+      First: "medals/boss/elite/first.png",
+      Second: "medals/boss/elite/second.png",
+      Third: "medals/boss/elite/third.png",
+      Top50: "medals/boss/elite/top50.png",
+      Top100: "medals/boss/elite/top100.png",
+      Top10Percent: "medals/boss/elite/top10_percent.png",
+      Top25Percent: "medals/boss/elite/top25_percent.png",
+      Top50Percent: "medals/boss/elite/top50_percent.png",
+      Top75Percent: "medals/boss/elite/top75_percent.png",
+    },
 
-      Elite: {
-        Top75: EliteBossTop75,
-        Top50: EliteBossTop50,
-        Top25: EliteBossTop25,
-        Top10: EliteBossTop10,
-        Top1: EliteBossTop1,
-        Top50Placement: EliteBossTop50Placement,
-        Third: EliteBossThird,
-        Second: EliteBossSecond,
-        First: EliteBossFirst,
-      },
+    Standard: {
+      First: "medals/boss/standard/first.png",
+      Second: "medals/boss/standard/second.png",
+      Third: "medals/boss/standard/third.png",
+      Top50: "medals/boss/standard/top50.png",
+      Top100: "medals/boss/standard/top100.png",
+      Top10Percent: "medals/boss/standard/top10_percent.png",
+      Top25Percent: "medals/boss/standard/top25_percent.png",
+      Top50Percent: "medals/boss/standard/top50_percent.png",
+      Top75Percent: "medals/boss/standard/top75_percent.png",
     },
   },
 
-  ContestedTerritory: {
-
-    GlobalPlayers: {
-      Top75: CTGlobalTop75,
-      Top50: CTGlobalTop50,
-      Top25: CTGlobalTop25,
-      Top10: CTGlobalTop10,
-      Top1: CTGlobalTop1,
-      Top100: CTGlobalTop100,
-      Top25Placement: CTGlobalTop25Placement,
+  CT: {
+    Player: {
+      Top25: "medals/ct/player/top25.png",
+      Top100: "medals/ct/player/top100.png",
+      Top1Percent: "medals/ct/player/top1_percent.png",
+      Top10Percent: "medals/ct/player/top10_percent.png",
+      Top25Percent: "medals/ct/player/top25_percent.png",
+      Top50Percent: "medals/ct/player/top50_percent.png",
+      Top75Percent: "medals/ct/player/top75_percent.png",
     },
 
-    GlobalTeams: {
-      Top75: CTGlobalTeamsTop75,
-      Top25: CTGlobalTeamsTop25,
-      Top10: CTGlobalTeamsTop10,
-      Top1: CTGlobalTeamsTop1,
-      Top100: CTGlobalTeamsTop100,
-      Top25Placement: CTGlobalTeamsTop25Placement,
-      Third: CTGlobalTeamsThird,
-      Second: CTGlobalTeamsSecond,
-      First: CTGlobalTeamsFirst,
+    Teams: {
+      First: "medals/ct/teams/first.png",
+      Second: "medals/ct/teams/second.png",
+      Third: "medals/ct/teams/third.png",
+      Top25: "medals/ct/teams/top25.png",
+      Top100: "medals/ct/teams/top100.png",
+      Top1Percent: "medals/ct/teams/top1_percent.png",
+      Top10Percent: "medals/ct/teams/top10_percent.png",
+      Top25Percent: "medals/ct/teams/top25_percent.png",
+      Top75Percent: "medals/ct/teams/top75_percent.png"
     },
   },
-} 
+
+  Race: {
+    First: "medals/race/first.png",
+    Second: "medals/race/second.png",
+    Third: "medals/race/third.png",
+    Top50: "medals/race/top50.png",
+    Top100: "medals/race/top100.png",
+    Top10Percent: "medals/race/top10_percent.png",
+    Top25Percent: "medals/race/top25_percent.png",
+    Top50Percent: "medals/race/top50_percent.png",
+    Top75Percent: "medals/race/top75_percent.png",
+  },
+
+  Participation: "medals/participation.png"
+};

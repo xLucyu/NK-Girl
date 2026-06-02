@@ -1,71 +1,132 @@
-import { JSX } from "react";
-import {
-  AttachmentBuilder,
+import { 
+  ApplicationIntegrationType,
   ChatInputCommandInteraction,
-  InteractionReplyOptions,
-  SlashCommandOptionsOnlyBuilder,
+  InteractionContextType,
+  InteractionReplyOptions, 
+  SlashCommandBuilder 
 } from "discord.js";
-import {
-  CurrentEventData,
+import { JSX } from "react";
+import { eventManager } from "@manager/manager";
+import { 
   EventCacheEntry,
+  BossDifficulties, 
+  BossDifficulty 
 } from "@manager/cache";
-import { render } from "@components/react/render";
-import { componentState, scheduleComponentCleanup, ComponentState } from "@components/discord";
+import { BaseCommand } from "@commands/base.command";
+import { BossBody, EventType, MetaBody } from "@utils/types";
+import { BossProfile } from "./boss.profile";
+import { splitBossNumbers } from "@utils/helpers/regex";
+import { GOOGLE_API_ULRS } from "@utils/assets/constants";
+import { getData } from "@wrapper";
+import { BuildButtonMenu, BuildSelectMenu } from "@components/discord";
+import { CreateComponentState, ComponentState } from "@components/discord/state";
 
 
-export abstract class BaseCommand<T, K> {
+export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
+
+const BOSS_SELECT_ID = "boss:event-select";
+const BOSS_DIFFICULTY_ID = "boss:event-button";
 
 
-  public abstract commandData: SlashCommandOptionsOnlyBuilder;
-  
+export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
 
-  public async execute(interaction: ChatInputCommandInteraction) {
+  public commandData = new SlashCommandBuilder()
+    .setName("boss")
+    .setDescription("shows the boss data.")
+    .addStringOption((option) =>
+    option 
+      .setName("difficulty")
+      .setDescription("Choose a difficulty")
+      .setRequired(false)
+      .addChoices(
+        ...BossDifficulties.map((difficulty) => ({
+          name: difficulty,
+          value: difficulty 
+        }))
+      )
+    )
+    .setIntegrationTypes(
+      ApplicationIntegrationType.GuildInstall,
+      ApplicationIntegrationType.UserInstall,
+    )
+    .setContexts(
+      InteractionContextType.Guild,
+      InteractionContextType.PrivateChannel
+    )
 
-    const eventProps = this.getEventProps();
-    if (!eventProps) throw new Error("no event cache found.");
-  
-    const state = this.getInitialState(interaction, eventProps);
-    const profile = this.getProfile(eventProps.currentEvent, state);
-    const buffer = await render(profile);
-    const attachment = new AttachmentBuilder(buffer, {name: "image.png" });
-    const components = this.getComponents(eventProps, state) ?? [];
+  public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {
 
-    await interaction.reply({
-      files: [attachment], 
-      components: components 
-    });
+    const difficulty = state.difficulty as BossDifficulty;
 
-    const message = await interaction.fetchReply();
-    componentState[message.id] = state;
+    const event = eventProps.data;
+    const metaData = eventProps.metaData[difficulty];
 
-    scheduleComponentCleanup({
-      editReply: (options) => interaction.editReply(options),
-      expiresAt: state.expiresAt,
-      onExpire: () => {
-        delete componentState[message.id]
-      },
-    });
+    if (!metaData) throw new Error();
+
+    return BossProfile({
+      event,
+      metaData,
+      difficulty
+    })
   }
 
-  public abstract getEventProps(): EventCacheEntry<T, K> | null;
 
-  protected abstract getInitialState(
-    interaction: ChatInputCommandInteraction,
-    eventProps: EventCacheEntry<T, K>
-  ): ComponentState;
+  public getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
+    return eventManager.getEventCache(EventType.Boss).getCache();
+  }
 
-  public abstract resolveEvent(
-    eventProps: EventCacheEntry<T, K>,
-    state: ComponentState
-  ): Promise<CurrentEventData<T, K>>;
 
-  public abstract getProfile(
-    event: CurrentEventData<T, K>,
-    state: ComponentState
-  ): JSX.Element;
+  protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: BossProps): ComponentState {
 
-  public abstract getComponents(
-    eventProps: EventCacheEntry<T, K>,
-    state: ComponentState
-  ): InteractionReplyOptions["components"];
+    const difficulty = interaction.options.getString("difficulty") as BossDifficulty ?? BossDifficulties[0];
+
+    return CreateComponentState({
+      eventId: eventProps.currentEvent.data.id,
+      difficulty: difficulty,
+      userId: interaction.user.id
+    })
+  }
+
+
+  public getComponents(eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
+
+    const difficulty = state.difficulty as BossDifficulty;
+
+    return [
+      BuildSelectMenu({
+        customId: BOSS_SELECT_ID,
+        placeholder: "Choose a Boss Event",
+        options: [
+          ...eventProps.previousEvents!.map((event) => ({
+            label: splitBossNumbers(event.name),
+            value: event.id,
+            default: state.eventId === event.id,
+          })),
+        ].slice(0, 25),
+      }),
+
+      BuildButtonMenu({
+        buttons: BossDifficulties.map((buttonDifficulty) => ({
+          label: buttonDifficulty,
+          customId: `${BOSS_DIFFICULTY_ID}:${buttonDifficulty}`,
+          disabled: buttonDifficulty === difficulty,
+        })),
+      }),
+    ];
+  }
+
+  protected async fetchOtherEvent(eventId: string): Promise<BossProps["currentEvent"]> {
+
+    const eventUrl = GOOGLE_API_ULRS.Boss.replace("{}", eventId);
+    return getData<BossProps["currentEvent"]>(eventUrl);
+  }
+
+
+  public async resolveEvent(eventProps: BossProps, state: ComponentState): Promise<BossProps["currentEvent"]> {
+    if (state.eventId === eventProps.currentEvent.data.id) {
+      return eventProps.currentEvent;
+    }
+
+    return this.fetchOtherEvent(state.eventId);
+  }
 }

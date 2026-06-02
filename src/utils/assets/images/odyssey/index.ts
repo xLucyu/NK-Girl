@@ -1,9 +1,5 @@
-import EasyImage from "./easy.png";
-import MediumImage from "./medium.png";
-import HardImage from "./hard.png";
-
 export const OdysseyImages = {
-    Easy: EasyImage,
-    Medium: MediumImage,
-    Hard: HardImage
-};
+    Easy: "odyssey/easy.png",
+    Medium: "odyssey/medium.png",
+    Hard: "odyssey/hard.png"
+}

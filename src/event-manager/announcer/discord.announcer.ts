@@ -43,6 +43,7 @@ export class EventAnnouncer {
         const buffers = await Promise.all(profiles.map((profile) => render(profile)));
 
         for (const channelId of channelIds) {
+
             try {
                 const channel = await this.client.channels.fetch(channelId);
 
@@ -53,15 +54,12 @@ export class EventAnnouncer {
                 const announcedIds = await this.guildTable.fetchEventIds(eventType, guildId);
                 if (announcedIds.includes(event.id)) continue;
 
-                const attachments = buffers.map((buffer, i) =>
-                new AttachmentBuilder(buffer, { name: `image_${i + 1}.png` })
-                );
+                const attachments = buffers.map((buffer) =>new AttachmentBuilder(buffer, { name: "image.png" }));
 
-                await channel.send({
-                files: attachments,
-                });
+                await channel.send({files: attachments });
 
                 await this.guildTable.appendEvent(event.id, eventType, guildId);
+                
             } catch (error) {
                 console.error(
                 `Failed to announce ${eventType} in channel ${channelId}`,

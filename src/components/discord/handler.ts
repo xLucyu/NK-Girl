@@ -42,8 +42,8 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
 
   const [commandName, action, value] = interaction.customId.split(":");
 
-  if (action === "event-select" && interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
-  if (action === "event-button" && interaction.isButton()) state.difficulty = value;
+  if (interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
+  if (interaction.isButton()) state.difficulty = value;
   
   const command = commands[commandName as keyof typeof eventCommands];
   if (!command) throw new Error(`Command not found: ${commandName}`);

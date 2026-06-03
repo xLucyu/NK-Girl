@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import { deployCommands } from "../../deploy.commands";
-import { config } from "../../config";
+import { deployCommands } from "@client";
+import { config } from "@config";
 
 
 export class SyncCommand {
@@ -19,7 +19,7 @@ export class SyncCommand {
       )
     );
 
-  async execute(interaction: ChatInputCommandInteraction) {
+  public async execute(interaction: ChatInputCommandInteraction) {
 
     await interaction.deferReply();
 

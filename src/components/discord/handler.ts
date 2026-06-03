@@ -1,8 +1,10 @@
-import { AttachmentBuilder, ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
-import { ComponentState } from "react";
-import { componentState } from "./state";
-import { commands, eventCommands } from "@commands/index";
-import { render } from "@components/react/render";
+import { 
+  AttachmentBuilder, 
+  ButtonInteraction, 
+  StringSelectMenuInteraction 
+} from "discord.js";
+import { componentState, ComponentState, render } from "@components";
+import { commands, eventCommands } from "@commands";
 
 function isComponentExpired(state: ComponentState): boolean {
   return Date.now() > state.expiresAt;

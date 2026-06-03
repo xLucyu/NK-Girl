@@ -6,20 +6,28 @@ import {
   SlashCommandBuilder 
 } from "discord.js";
 import { JSX } from "react";
-import { eventManager } from "@manager/manager";
 import { 
+  eventManager,
   EventCacheEntry,
   BossDifficulties, 
   BossDifficulty 
-} from "@manager/cache";
-import { BaseCommand } from "@commands/base.command";
-import { BossBody, EventType, MetaBody } from "@utils/types";
+} from "@manager";
+import { BaseCommand } from "@commands";
+import { 
+  BossBody, 
+  EventType, 
+  MetaBody,
+  splitBossNumbers,
+  GOOGLE_API_ULRS
+ } from "@utils";
 import { BossProfile } from "./boss.profile";
-import { splitBossNumbers } from "@utils/helpers/regex";
-import { GOOGLE_API_ULRS } from "@utils/assets/constants";
 import { getData } from "@wrapper";
-import { BuildButtonMenu, BuildSelectMenu } from "@components/discord";
-import { CreateComponentState, ComponentState } from "@components/discord/state";
+import { 
+  BuildButtonMenu, 
+  BuildSelectMenu, 
+  CreateComponentState, 
+  ComponentState 
+} from "@components";
 
 
 export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
@@ -123,6 +131,7 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
 
 
   public async resolveEvent(eventProps: BossProps, state: ComponentState): Promise<BossProps["currentEvent"]> {
+
     if (state.eventId === eventProps.currentEvent.data.id) {
       return eventProps.currentEvent;
     }

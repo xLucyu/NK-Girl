@@ -1,8 +1,11 @@
-import { loadImage } from "@utils/assets/images/loadImage";
-import { BossDifficulty } from "@manager/cache";
-import { Images } from "@utils/assets/images";
-import { BossBody, MetaBody } from "@utils/types";
 import { JSX } from "react";
+import { 
+  loadImage, 
+  Images, 
+  BossBody, 
+  MetaBody 
+} from "@utils";
+import type { BossDifficulty } from "@manager";
 
 export interface BossProfileProps {
     event: BossBody;

@@ -1,6 +1,6 @@
-import * as boss from "@commands/boss/boss.command";
-import * as sync from "@commands/sync/sync.command";
-import * as help from "@commands/help/help.command";
+import * as boss from "./boss/boss.command";
+import * as sync from "./sync/sync.command";
+import * as help from "./help/help.command";
 
 export const eventCommands = {
     boss: new boss.BossCommand(),
@@ -15,3 +15,9 @@ export const commands = {
     ...eventCommands,
     ...helperCommands
 }
+
+export * from "./interaction";
+export * from "./base.command";
+export * from "./cooldown";
+
+export { BossProfile } from "./boss/boss.profile";

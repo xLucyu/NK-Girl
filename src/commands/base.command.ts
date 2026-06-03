@@ -9,8 +9,12 @@ import {
   CurrentEventData,
   EventCacheEntry,
 } from "../event-manager/cache";
-import { render } from "@components/react/render";
-import { componentState, scheduleComponentCleanup, ComponentState } from "@components/discord";
+import { 
+  render,
+  componentState,
+  scheduleComponentCleanup,
+  ComponentState
+ } from "@components";
 
 
 export abstract class BaseCommand<T, K> {

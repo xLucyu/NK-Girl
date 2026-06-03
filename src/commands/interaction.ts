@@ -1,7 +1,7 @@
 import { Interaction } from "discord.js";
 import { commands } from ".";
-import { sendCommandError } from "@utils/error-handler/error.reply";
-import { handleButton, handleSelectMenu } from "@components/discord/handler";
+import { sendCommandError } from "@utils";
+import { handleButton, handleSelectMenu } from "@components";
 import { checkCooldown } from "./cooldown";
 
 const CMDCOOLDOWN = 5000;

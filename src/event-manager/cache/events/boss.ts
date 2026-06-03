@@ -1,14 +1,14 @@
+import { JSX } from "react";
 import { 
     EventType, 
     BossBody, 
     MetaBody, 
     MetaData 
-} from "@utils/types";
-import { JSX } from "react";
+} from "@utils";
 import { BaseEventCache } from "./base";
 import { getData } from "@wrapper";
-import { API_URLS } from "@utils/assets/constants";
-import { BossProfile } from "@commands/boss/boss.profile";
+import { API_URLS } from "@utils";
+import { BossProfile } from "@commands";
 
 export const BossDifficulties = ["Standard", "Elite"] as const;
 export type BossDifficulty = typeof BossDifficulties[number];

@@ -7,9 +7,9 @@ import {
   ThreadChannel,
 } from "discord.js";
 import { JSX } from "react";
-import { BaseBody, EventType } from "@utils/types";
-import { GuildTable } from "@database/tables/guild.table";
-import { render } from "@components/react/render";
+import { BaseBody, EventType } from "@utils";
+import { GuildTable } from "@database";
+import { render } from "@components";
 
 type AnnounceableChannel = TextChannel | NewsChannel | ThreadChannel;
 

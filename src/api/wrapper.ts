@@ -1,4 +1,4 @@
-import { sleep } from "@utils/helpers";
+import { sleep } from "@utils";
 
 type GetDataOptions = {
   timeoutMs?: number;

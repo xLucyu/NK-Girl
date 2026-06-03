@@ -1,5 +1,5 @@
 import { getData } from "@wrapper";
-import type { NkData, BaseBody, EventType } from "@utils/types";
+import type { NkData, BaseBody, EventType } from "@utils";
 import { gsc } from "../../bucket";
 
 
@@ -32,7 +32,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   }
 
 
-  protected getPreviousEvents(events: T[], currentEvent: T): PreviousEvent[] | null {
+  protected getPreviousEvents(events: T[]): PreviousEvent[] | null {
 
     return events.map((event) => ({
       id: event.id,
@@ -87,7 +87,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const metaData = await this.getMetaData(currentEvent); // get meta data for the event, if present 
 
-    const previousEvents = this.getPreviousEvents(events, currentEvent);
+    const previousEvents = this.getPreviousEvents(events);
 
     this.cache = {
       eventType: this.eventType,

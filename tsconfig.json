@@ -9,11 +9,13 @@
     "jsx": "react-jsx",
     "paths": {
       "@wrapper": ["./src/api/wrapper"],
-      "@utils/*": ["./src/utils/*"],
-      "@manager/*": ["./src/event-manager/*"],
-      "@commands/*": ["./src/commands/*"],
-      "@components/*": ["./src/components/*"],
-      "@database/*": ["./src/database"]
+      "@utils": ["./src/utils"],
+      "@manager": ["./src/event-manager"],
+      "@commands": ["./src/commands"],
+      "@components": ["./src/components"],
+      "@database": ["./src/database"],
+      "@client": ["./src/client"],
+      "@config": ["./src/config"]
     }
   }
 }

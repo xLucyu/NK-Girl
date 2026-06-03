@@ -1,4 +1,4 @@
-import { CATEGORIES } from "@utils/assets/constants";
+import { CATEGORIES } from "@utils";
 import type { Tower } from "../types";
 
 type TowerCategories = Record<keyof typeof CATEGORIES, Array<Tower & { crossPaths: [number, number, number ]}>>

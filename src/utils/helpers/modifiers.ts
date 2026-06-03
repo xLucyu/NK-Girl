@@ -1,4 +1,4 @@
-import { CTMetaData, MetaBody } from "@utils/types";
+import { CTMetaData, MetaBody } from "@utils";
 
 export interface Modifier {
   key: string;

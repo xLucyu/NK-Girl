@@ -1,6 +1,5 @@
-// src/database/tables/guild.table.ts
 import { withDb } from "../pool";
-import { EventType } from "@utils/types";
+import { EventType } from "@utils";
 
 export class GuildTable {
 
@@ -64,7 +63,9 @@ export class GuildTable {
   }
 
   public async fetchAllRegisteredChannels(event: EventType): Promise<string[]> {
+    
     return await withDb(async (client) => {
+      
       const column = `${event.toLowerCase()}channelid`;
 
       const result = await client.query<{ channelid: string }>(
@@ -76,6 +77,23 @@ export class GuildTable {
       );
 
       return result.rows.map((row) => row.channelid);
+    });
+  }
+
+  public async fetchRegisteredChannel(event: EventType, guildId: string): Promise<string | null> {
+    
+    return await withDb(async (client) => {
+      
+      const column = `${event.toLowerCase()}channelid`;
+      const result = await client.query<{ channelid: string | null }>(
+        `
+        SELECT ${column} AS channelid
+        FROM guilds
+        WHERE guildid = $1
+        `,
+        [guildId]
+      );
+      return result.rows[0]?.channelid ?? null;
     });
   }
 

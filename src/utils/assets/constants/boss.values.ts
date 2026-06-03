@@ -1,4 +1,4 @@
-import { BossDifficulty } from "../../../event-manager/cache";
+import { BossDifficulty } from "@manager";
 
 export enum Boss {
     Bloonarius = "Bloonarius",

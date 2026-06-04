@@ -3,15 +3,16 @@ import {
     Leaderboard, 
     LeaderboardBody, 
     LeaderboardPayload, 
-    Team 
-} from "@utils/types";
-import { BaseLeaderboardService, Payload } from "./base";
-import { EventType } from "@utils/types";
-import { API_URLS } from "@utils/assets/constants";
+    Team,
+    EventType,
+    API_URLS,
+    sleep
+} from "@utils";
+import { BaseLeaderboardService, Payload } from "@manager";
 import { getData } from "@wrapper";
-import { sleep } from "@utils/helpers";
 
 const modes = ["player", "team"] as const;
+
 
 export class CTLeaderboardService extends BaseLeaderboardService<CTBody, LeaderboardPayload> {
     

@@ -8,8 +8,8 @@ import {
     BossLeaderboardSerivce,
     RaceLeaderboardService,
     CTLeaderboardService
-} from "./cache";
-import { EventType } from "@utils/types";
+} from "@manager";
+import { EventType } from "@utils";
 
 interface CacheMap {
   [EventType.Boss]: BossCache;
@@ -18,6 +18,7 @@ interface CacheMap {
   [EventType.Collection]: CollectionCache;
   [EventType.CT]: CTCache;
 }
+
 
 export class EventManager {
 
@@ -72,7 +73,8 @@ export class EventManager {
 
         const results = await Promise.allSettled(
             Object.values(this.leaderboards).map((service) => {
-                const currentEvent = this.caches[service.eventType].getCache()?.currentEvent.data;
+                const currentEvent = this.caches[service.eventType as keyof typeof this.caches]
+                    .getCache()?.currentEvent.data;
                 if (!currentEvent) return;
                 service.check(currentEvent as never);
         }));

@@ -1,5 +1,11 @@
 import { DiscordClient } from "@client";
+import { loadEmojis } from "@utils";
 
-const discordClient = new DiscordClient();
-discordClient.start();
-discordClient.startEventManager();
+async function main() {
+    const discordClient = new DiscordClient();
+    await discordClient.start();
+    await discordClient.startEventManager();
+    await loadEmojis();
+};
+
+main().catch(console.error);

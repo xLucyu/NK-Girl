@@ -1,8 +1,13 @@
 import { getData } from "@wrapper";
-import { collectionProfile, InstaSchedule } from "@commands/collection/collection.profile";
-import { API_URLS } from "@utils/assets/constants";
-import { EventBody, EventType, NkData } from "@utils/types";
-import { BaseEventCache } from "./base";
+import { 
+    getCollectionCycle, 
+    InstaSchedule, 
+    EventBody,
+    EventType,
+    API_URLS,
+    NkData
+} from "@utils";
+import { BaseEventCache } from "@manager";
 
 export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
 
@@ -30,7 +35,7 @@ export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
     }
 
     protected async getMetaData(event: EventBody): Promise<InstaSchedule> {
-        return collectionProfile(event);
+        return getCollectionCycle(event);
     }
 
     protected override getPreviousEvents(): null {

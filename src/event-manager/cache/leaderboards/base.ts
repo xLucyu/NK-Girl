@@ -1,5 +1,5 @@
-import { gsc } from "../../bucket";
-import { EventType } from "@utils/types";
+import { gsc } from "@manager";
+import { EventType } from "@utils";
 
 export interface Payload<T> {
     path: string;

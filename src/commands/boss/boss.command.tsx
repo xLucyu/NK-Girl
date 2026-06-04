@@ -1,5 +1,6 @@
 import { 
   ApplicationIntegrationType,
+  ButtonStyle,
   ChatInputCommandInteraction,
   InteractionContextType,
   InteractionReplyOptions, 
@@ -10,7 +11,8 @@ import {
   eventManager,
   EventCacheEntry,
 } from "@manager";
-import { BaseCommand } from "@commands";
+import { BaseCommand } from "../base.command";
+import { BossProfile } from "./boss.profile";
 import { 
   BossBody, 
   EventType, 
@@ -20,7 +22,6 @@ import {
   BossDifficulties,
   BossDifficulty
  } from "@utils";
-import { BossProfile } from "./boss.profile";
 import { getData } from "@wrapper";
 import { 
   BuildButtonMenu, 
@@ -107,14 +108,17 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
           })),
         ],
       }),
+
       BuildButtonMenu({
-        buttons: BossDifficulties.map((buttonDifficulty) => ({
-          label: buttonDifficulty,
-          customId: `Boss:Button:${buttonDifficulty}`,
+        buttons: BossDifficulties.map((difficulty) => ({
+          label: difficulty,
+          customId: `Boss:${difficulty}`,
+          style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
         })),
       }),
     ];
   }
+
 
   protected async fetchOtherEvent(eventId: string): Promise<BossProps["currentEvent"]> {
 

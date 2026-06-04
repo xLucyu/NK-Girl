@@ -98,26 +98,23 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
 
   public getComponents(eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
 
-    const difficulty = state.difficulty as BossDifficulty;
-
     return [
       BuildSelectMenu({
-        customId: BOSS_SELECT_ID,
+        customId: "Boss:Select",
         placeholder: "Choose a Boss Event",
         options: [
           ...eventProps.previousEvents!.map((event) => ({
             label: splitBossNumbers(event.name),
             value: event.id,
             default: state.eventId === event.id,
+            emoji: { id: "1338550202889404487", name: "BossChallenge" }
           })),
-        ].slice(0, 25),
+        ],
       }),
-
       BuildButtonMenu({
         buttons: BossDifficulties.map((buttonDifficulty) => ({
           label: buttonDifficulty,
-          customId: `${BOSS_DIFFICULTY_ID}:${buttonDifficulty}`,
-          disabled: buttonDifficulty === difficulty,
+          customId: `Boss:Button:${buttonDifficulty}`,
         })),
       }),
     ];
@@ -131,7 +128,6 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
 
 
   public async resolveEvent(eventProps: BossProps, state: ComponentState): Promise<BossProps["currentEvent"]> {
-
     if (state.eventId === eventProps.currentEvent.data.id) {
       return eventProps.currentEvent;
     }

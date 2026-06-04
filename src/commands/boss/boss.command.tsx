@@ -9,8 +9,6 @@ import { JSX } from "react";
 import { 
   eventManager,
   EventCacheEntry,
-  BossDifficulties, 
-  BossDifficulty 
 } from "@manager";
 import { BaseCommand } from "@commands";
 import { 
@@ -18,7 +16,9 @@ import {
   EventType, 
   MetaBody,
   splitBossNumbers,
-  GOOGLE_API_ULRS
+  GOOGLE_API_ULRS,
+  BossDifficulties,
+  BossDifficulty
  } from "@utils";
 import { BossProfile } from "./boss.profile";
 import { getData } from "@wrapper";
@@ -29,11 +29,7 @@ import {
   ComponentState 
 } from "@components";
 
-
 export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
-
-const BOSS_SELECT_ID = "boss:event-select";
-const BOSS_DIFFICULTY_ID = "boss:event-button";
 
 
 export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {

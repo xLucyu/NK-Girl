@@ -1,136 +1,165 @@
-// src/components/react/towers/tower-grid.tsx
-import { JSX } from "react";
-import { loadImage, Images, CATEGORIES, Tower, getTowers } from "@utils";
+import { Images } from "@utils";
+import { getTowers } from "@utils";
+import { loadImage } from "@utils";
+import type { Tower } from "@utils";
 
-type CategoryName = keyof typeof CATEGORIES;
+type TowerCategories = ReturnType<typeof getTowers>;
+type CategoryName = keyof TowerCategories;
 
-const CATEGORY_COLORS: Record<CategoryName, string> = {
-  Heroes: "#e6c832",
-  Primary: "#d45a5a",
-  Military: "#4a8c3f",
-  Magic: "#8b5ec0",
-  Support: "#c27830",
-};
-
-interface TowerGridProps {
+interface TowerAvailabilityProps {
   towers: Tower[];
-  gap?: number;
-  columns?: number;
-  categoryGap?: number;
 }
 
-function TowerIcon({ tower, crossPaths, color, isHero }: {
-  tower: Tower;
-  crossPaths: [number, number, number];
-  color: string;
-  isHero: boolean;
-}): JSX.Element {
-  const imagePath = Images.Towers[tower.tower as keyof typeof Images.Towers];
-  if (!imagePath) return <div style={{ width: 64, height: 64 }} />;
+const CATEGORY_COLORS: Record<CategoryName, string> = {
+  Heroes: "#ffd91a",
+  Primary: "#6fd6ff",
+  Military: "#72de57",
+  Magic: "#9d63ff",
+  Support: "#f0b06a",
+};
+
+export function TowerAvailability({ towers }: TowerAvailabilityProps) {
+  const categories = getTowers(towers);
 
   return (
     <div
       style={{
         display: "flex",
-        position: "relative",
-        width: 64,
-        height: 64,
-        backgroundColor: color,
-        borderRadius: 8,
+        flexDirection: "column",
+        width: "100%",
+        backgroundColor: "#36476b",
+        padding: 16,
+        gap: 14,
+        boxSizing: "border-box",
       }}
     >
-      <img
-        src={loadImage(imagePath)}
-        width={56}
-        height={56}
-        style={{
-          position: "absolute",
-          top: 4,
-          left: 4,
-          borderRadius: 4,
-        }}
-      />
-
-      {/* Max count — hide for unlimited (-1) */}
-      {tower.max > 0 && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            top: -4,
-            left: -4,
-            width: 20,
-            height: 20,
-            backgroundColor: "#4a90d9",
-            borderRadius: "50%",
-            fontSize: 12,
-            fontWeight: 700,
-            color: "white",
-          }}
-        >
-          {tower.max}
-        </div>
-      )}
-
-      {/* Crosspath text */}
-      {!isHero && (
-        <div
-          style={{
-            display: "flex",
-            position: "absolute",
-            bottom: 2,
-            left: 0,
-            width: 64,
-            justifyContent: "center",
-            fontSize: 11,
-            fontWeight: 700,
-            color: "white",
-            textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-          }}
-        >
-          {crossPaths[0]}-{crossPaths[1]}-{crossPaths[2]}
-        </div>
+      {(Object.entries(categories) as [CategoryName, TowerCategories[CategoryName]][]).map(
+        ([category, categoryTowers]) =>
+          categoryTowers.length > 0 ? (
+            <TowerCategorySection
+              key={category}
+              title={`${category.toUpperCase()} AVAILABLE:`}
+              category={category}
+              towers={categoryTowers}
+            />
+          ) : null
       )}
     </div>
   );
 }
 
-export function TowerGrid({
-  towers,
-  gap = 6,
-  columns = 7,
-  categoryGap = 14,
-}: TowerGridProps): JSX.Element {
+interface TowerCategorySectionProps {
+  title: string;
+  category: CategoryName;
+  towers: TowerCategories[CategoryName];
+}
 
-  const grouped = getTowers(towers);
+function TowerCategorySection({
+  title,
+  category,
+  towers,
+}: TowerCategorySectionProps) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          color: "#ffffff",
+          fontSize: 28,
+          fontWeight: 900,
+          textTransform: "uppercase",
+          WebkitTextStroke: "2px #162033",
+          textShadow: "0 3px 0 rgba(0,0,0,0.35)",
+        }}
+      >
+        {title}
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 12,
+          paddingBottom: 8,
+          borderBottom: "6px solid rgba(255,255,255,0.05)",
+        }}
+      >
+        {towers.map((tower) => (
+          <TowerTile
+            key={tower.tower}
+            towerName={tower.tower}
+            category={category}
+            crossPaths={tower.crossPaths}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface TowerTileProps {
+  towerName: string;
+  category: CategoryName;
+  crossPaths: [number, number, number];
+}
+
+function TowerTile({ towerName, category, crossPaths }: TowerTileProps) {
+  const imagePath = Images.Towers[towerName as keyof typeof Images.Towers];
+  if (!imagePath) return <div style={{ width: 64, height: 64 }} />;
+  const imageSrc = loadImage(imagePath);
+  const showCrossPaths = category !== "Heroes";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: categoryGap }}>
-      {(Object.entries(grouped) as [CategoryName, ReturnType<typeof getTowers>[CategoryName]][])
-        .filter(([_, t]) => t.length > 0)
-        .map(([category, categoryTowers]) => (
-          <div
-            key={category}
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              gap,
-              maxWidth: columns * (64 + gap),
-            }}
-          >
-            {categoryTowers.map((t) => (
-              <TowerIcon
-                key={t.tower}
-                tower={t}
-                crossPaths={t.crossPaths}
-                color={CATEGORY_COLORS[category]}
-                isHero={category === "Heroes"}
-              />
-            ))}
-          </div>
-        ))}
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        width: 84,
+        height: 84,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: CATEGORY_COLORS[category],
+        borderRadius: 6,
+        overflow: "hidden",
+        border: "3px solid rgba(255,255,255,0.22)",
+        boxShadow: "inset 0 2px 0 rgba(255,255,255,0.18)",
+      }}
+    >
+      <img
+        src={imageSrc}
+        width={72}
+        height={72}
+        style={{
+          objectFit: "contain",
+        }}
+      />
+
+      {showCrossPaths && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 2,
+            left: 0,
+            right: 0,
+            display: "flex",
+            justifyContent: "center",
+            color: "#ff2a2a",
+            fontSize: 20,
+            fontWeight: 900,
+            WebkitTextStroke: "1.5px #111111",
+            textShadow: "0 1px 0 #111111",
+          }}
+        >
+          {crossPaths.join("-")}
+        </div>
+      )}
     </div>
   );
 }

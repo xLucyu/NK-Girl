@@ -1,17 +1,17 @@
 import { getData } from "@wrapper";
-import { API_URLS } from "@utils/assets/constants";
 import { 
+    API_URLS,
     EventType,
     MapsData,
     MetaBody,
     Odyssey, 
     OdysseyBody, 
-    OdysseyMetaData
-} from "@utils/types";
-import { BaseEventCache } from "./base";
+    OdysseyMetaData,
+    OdysseyDifficulty,
+    OdysseyDifficulties
+} from "@utils";
+import { BaseEventCache } from "@manager";
 
-const OdysseyDifficulties = ["Easy", "Medium", "Hard"] as const;
-export type OdysseyDifficulty = typeof OdysseyDifficulties[number];
 
 export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>> {
 

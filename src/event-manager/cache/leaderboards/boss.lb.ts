@@ -1,18 +1,19 @@
-import type { 
-    BossBody, 
-    Leaderboard, 
+import { 
+    BossBody,
+    Boss
+    BossDifficulties
     LeaderboardBody, 
     LeaderboardPayload, 
-    Team 
-} from "@utils/types";
-import { BaseLeaderboardService, Payload } from "./base";
-import { API_URLS } from "@utils/assets/constants";
-import { EventType } from "@utils/types";
+    Team,
+    EventType,
+    API_URLS,
+    sleep,
+} from "@utils";
+import { BaseLeaderboardService, Payload } from "@manager";
 import { getData } from "@wrapper";
-import { sleep } from "@utils/helpers";
-import { BossDifficulties } from "../events";
 
-enum ScoringType {
+
+export enum ScoringType {
   GameTime = "GameTime",
   LeastCash = "LeastCash",
   LeastTiers = "LeastTiers"

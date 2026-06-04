@@ -1,6 +1,6 @@
 import { getData } from "@wrapper";
 import type { NkData, BaseBody, EventType } from "@utils";
-import { gsc } from "../../bucket";
+import { gsc } from "@manager";
 
 
 export interface CurrentEventData<T, K> {
@@ -53,25 +53,11 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     return this.cache;
   }
 
+  
   public async getEventById(id: string): Promise<T | null> {
 
     const events = await this.getEventData();
     return events.find((event) => event.id === id) ?? null;
-  }
-
-  public async hydrateEvent(event: T): Promise<CurrentEventData<T, K>> {
-    return {
-      data: event,
-      metaData: await this.getMetaData(event)
-    };
-  }
-
-  public async resolveEventById(id: string): Promise<CurrentEventData<T, K> | null> {
-
-    const event = await this.getEventById(id);
-    if (!event) return null;
-
-    return this.hydrateEvent(event);
   }
 
 
@@ -85,7 +71,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     if (this.cache && this.cache.currentEvent.data.id === currentEvent.id) return;
 
-    const metaData = await this.getMetaData(currentEvent); // get meta data for the event, if present 
+    const metaData = await this.getMetaData(currentEvent); // get meta data for the event
 
     const previousEvents = this.getPreviousEvents(events);
 

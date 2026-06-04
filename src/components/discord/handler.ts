@@ -6,6 +6,7 @@ import {
 import { componentState, ComponentState, render } from "@components";
 import { commands, eventCommands } from "@commands";
 
+
 function isComponentExpired(state: ComponentState): boolean {
   return Date.now() > state.expiresAt;
 }
@@ -42,7 +43,7 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   const isValid = await validateComponentInteraction(interaction, state);
   if (!isValid) return;
 
-  const [commandName, action, value] = interaction.customId.split(":");
+  const [commandName, value] = interaction.customId.split(":");
 
   if (interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
   if (interaction.isButton()) state.difficulty = value;
@@ -70,7 +71,6 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
 export async function handleSelectMenu(interaction: StringSelectMenuInteraction) {
   return handleComponent(interaction);
 }
-
 export async function handleButton(interaction: ButtonInteraction) {
   return handleComponent(interaction);
 }

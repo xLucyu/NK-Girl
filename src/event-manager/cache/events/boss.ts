@@ -3,15 +3,14 @@ import {
     EventType, 
     BossBody, 
     MetaBody, 
-    MetaData 
+    MetaData,
+    BossDifficulty,
+    BossDifficulties
 } from "@utils";
 import { BaseEventCache } from "./base";
 import { getData } from "@wrapper";
 import { API_URLS } from "@utils";
 import { BossProfile } from "@commands";
-
-export const BossDifficulties = ["Standard", "Elite"] as const;
-export type BossDifficulty = typeof BossDifficulties[number];
 
 export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, MetaBody>> {
 
@@ -52,7 +51,7 @@ export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, M
         return `Event/Boss/${event.id}/event.json`;
     }
 
-    protected getAnnouncementProfile(event: BossBody, metaData: Record<BossDifficulty, MetaBody>): JSX.Element[] {
+    protected getProfile(event: BossBody, metaData: Record<BossDifficulty, MetaBody>): JSX.Element[] {
 
         return BossDifficulties.map((difficulty) =>
             BossProfile({

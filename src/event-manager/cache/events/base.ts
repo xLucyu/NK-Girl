@@ -83,6 +83,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
       },
       previousEvents
     }
+    console.log(this.cache);
 
     if (!firstUse) {
       const bucketPath = this.getBucketPath(currentEvent);

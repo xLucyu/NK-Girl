@@ -158,7 +158,7 @@ function timeStampToUTCTimeFormat(timestamp: number): string {
   return new Date(timestamp).toISOString();
 }
 
-export function collectionProfile(eventData: EventData): InstaSchedule {
+export function getCollectionCycle(eventData: EventData): InstaSchedule {
     
   const seed = getSeedLong(eventData.id);
   const secondsPerRotation = 28800; // 8 hours

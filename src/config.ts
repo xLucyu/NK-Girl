@@ -20,5 +20,5 @@ export const config = {
   PORT: validate("PORT"),
   DATABASE: validate("DATABASE"),
   USER: validate("USER"),
-  PASSWORD: validate("PASSWORd")
+  PASSWORD: validate("PASSWORD")
 };

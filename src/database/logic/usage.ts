@@ -38,3 +38,5 @@ export class UsageTable {
     });
   }
 }
+
+export const usageTable = new UsageTable();

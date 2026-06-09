@@ -1,7 +1,7 @@
 import { 
     BossBody,
-    Boss
-    BossDifficulties
+    Leaderboard,
+    BossDifficulties,
     LeaderboardBody, 
     LeaderboardPayload, 
     Team,
@@ -9,7 +9,7 @@ import {
     API_URLS,
     sleep,
 } from "@utils";
-import { BaseLeaderboardService, Payload } from "@manager";
+import { BaseLeaderboardService, Payload } from "./base";
 import { getData } from "@wrapper";
 
 

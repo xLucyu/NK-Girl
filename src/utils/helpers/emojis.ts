@@ -2,22 +2,36 @@ import { config } from "@config";
 import { getData } from "@wrapper";
 import { API_URLS } from "../assets";
 
-interface Emoji {
+interface EmojiData {
+    id: string;
+    name: string;
+    user: Object;
+    roles: [];
+    required_colons: boolean;
+    managed: boolean;
+    animated: boolean;
+    available: boolean;
+}
+
+interface EmojiResponse {
+    items: EmojiData[];
+}
+
+interface FormattedEmojiData {
     id: string;
     name: string;
 }
 
-const EmojiCache = new Map<string, Emoji>();
+const EmojiCache = new Map<string, FormattedEmojiData>();
 
 export async function loadEmojis(): Promise<void> {
 
     try {
-        const data = await getData<any>(
-            API_URLS.Emoji.replace("{}", config.BOT_ID),
+        const data = await getData<EmojiResponse>(
+            API_URLS.Emojis.replace("{}", config.BOT_ID),
             {
-                headers: {
-                    Authorization: `Bot ${config.BOT_TOKEN}`
-                }
+                Authorisation: `Bot ${config.BOT_TOKEN}`,
+                "Content-Type": "application/json"
             }
         )
 
@@ -30,7 +44,7 @@ export async function loadEmojis(): Promise<void> {
     }
 }
 
-export function getEmoji(name: string): Emoji {
+export function getEmoji(name: string): FormattedEmojiData {
 
     const emoji = EmojiCache.get(name);
     if (!emoji) throw new Error();

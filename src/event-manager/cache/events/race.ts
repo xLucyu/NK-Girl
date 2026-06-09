@@ -6,7 +6,7 @@ import {
     API_URLS 
 } from "@utils";
 import { getData } from "@wrapper";
-import { BaseEventCache } from "@manager";
+import { BaseEventCache } from "./base";
 
 
 export class RaceCache extends BaseEventCache<RaceBody, MetaBody> {

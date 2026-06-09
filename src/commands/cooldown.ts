@@ -1,4 +1,4 @@
-import { CommandOnCooldown } from "@utils/error-handler/error.codes";
+import { CommandOnCooldown } from "@utils";
 
 const cooldowns = new Map<string, number>();
 

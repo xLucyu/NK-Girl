@@ -3,6 +3,7 @@ import { EventType } from "@utils";
 
 export class GuildTable {
 
+  
   public async appendChannelPerGuild(guildId: string, channelId: string, event: EventType): Promise<void> {
 
     await withDb(async (client) => {
@@ -31,7 +32,6 @@ export class GuildTable {
   public async removeChannelFromGuild(guildId: string, event: EventType): Promise<string | null> {
 
     return await withDb(async (client) => {
-      
       const column = `${event.toLowerCase()}channelid`;
 
       const result = await client.query<{ channelid: string | null }>(
@@ -45,9 +45,7 @@ export class GuildTable {
 
       const oldChannelId = result.rows[0]?.channelid ?? null;
 
-      if (!oldChannelId) {
-        return null;
-      }
+      if (!oldChannelId) return null;
 
       await client.query(
         `
@@ -63,9 +61,8 @@ export class GuildTable {
   }
 
   public async fetchAllRegisteredChannels(event: EventType): Promise<string[]> {
-    
+
     return await withDb(async (client) => {
-      
       const column = `${event.toLowerCase()}channelid`;
 
       const result = await client.query<{ channelid: string }>(
@@ -81,10 +78,10 @@ export class GuildTable {
   }
 
   public async fetchRegisteredChannel(event: EventType, guildId: string): Promise<string | null> {
-    
+
     return await withDb(async (client) => {
-      
       const column = `${event.toLowerCase()}channelid`;
+
       const result = await client.query<{ channelid: string | null }>(
         `
         SELECT ${column} AS channelid
@@ -93,6 +90,7 @@ export class GuildTable {
         `,
         [guildId]
       );
+
       return result.rows[0]?.channelid ?? null;
     });
   }
@@ -122,9 +120,7 @@ export class GuildTable {
 
       const eventIds = result.rows[0]?.ids ?? [];
 
-      if (eventIds.includes(eventId)) {
-        return;
-      }
+      if (eventIds.includes(eventId)) return;
 
       await client.query(
         `
@@ -154,4 +150,11 @@ export class GuildTable {
       return result.rows[0]?.ids ?? [];
     });
   }
+
+  public async hasEvent(eventId: string, event: EventType, guildId: string): Promise<boolean> {
+    const ids = await this.fetchEventIds(event, guildId);
+    return ids.includes(eventId);
+  }
 }
+
+export const guildTable = new GuildTable();

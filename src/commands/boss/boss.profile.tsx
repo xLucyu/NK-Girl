@@ -5,7 +5,7 @@ import {
   BossBody, 
   MetaBody 
 } from "@utils";
-import type { BossDifficulty } from "@manager";
+import type { BossDifficulty } from "@utils";
 
 export interface BossProfileProps {
     event: BossBody;

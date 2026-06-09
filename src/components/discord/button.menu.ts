@@ -8,6 +8,7 @@ export function BuildButtonMenu(args: {
     buttons: {
         customId: string;
         label: string;
+        style: ButtonStyle;
         disabled?: boolean;
     }[];
 }) {
@@ -16,7 +17,7 @@ export function BuildButtonMenu(args: {
         new ButtonBuilder()
             .setCustomId(button.customId)
             .setLabel(button.label)
-            .setStyle(button.disabled ? ButtonStyle.Secondary : ButtonStyle.Primary)
+            .setStyle(button.style)
             .setDisabled(button.disabled ?? false)   
         )
     )

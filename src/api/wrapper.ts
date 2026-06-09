@@ -6,7 +6,7 @@ import {
 
 const RETRIES = 3;
 const RETRY_DELAY = 2_000;
-const TIMEOUT = 10_000
+const TIMEOUT = 10_000;
 
 export async function getData<T>(url: string, headers?: HeadersInit): Promise<T> {
 
@@ -16,45 +16,51 @@ export async function getData<T>(url: string, headers?: HeadersInit): Promise<T>
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
 
     try {
+
       const response = await fetch(url, {
         headers,
-        signal: controller.signal 
+        signal: controller.signal,
       });
-      clearTimeout(timeoutId);
 
+      if (response.ok) return await response.json() as T;
+      
       switch (response.status) {
 
-        case 200:
-          return await response.json() as T;
-        
         case 400:
         case 403:
         case 404:
-          throw new RequestNoSuccess()
+          throw new RequestNoSuccess();
 
         case 429:
-          if (attempt < RETRIES) {
-            await sleep(RETRY_DELAY);
-            continue;
-          }
-          throw new ServerDown();
-
         case 500:
         case 502:
-        case 503: 
+        case 503:
         case 504:
           if (attempt < RETRIES) {
             await sleep(RETRY_DELAY);
             continue;
           }
+
           throw new ServerDown();
-        
+
         default:
           throw new RequestNoSuccess();
-      } 
+      }
     } catch (error) {
-        clearTimeout(timeoutId);
-        throw new Error();
+
+      if (error instanceof RequestNoSuccess || error instanceof ServerDown) {
+        throw error;
+      }
+
+      if (attempt < RETRIES) {
+        await sleep(RETRY_DELAY);
+        continue;
+      }
+
+      throw new ServerDown();
+    } finally {
+
+      clearTimeout(timeoutId);
     }
   }
   throw new ServerDown();

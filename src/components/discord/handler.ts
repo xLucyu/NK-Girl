@@ -48,7 +48,7 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   if (interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
   if (interaction.isButton()) state.difficulty = value;
   
-  const command = commands[commandName as keyof typeof eventCommands];
+  const command = commands[commandName.toLowerCase() as keyof typeof eventCommands];
   if (!command) throw new Error(`Command not found: ${commandName}`);
   
   await interaction.deferUpdate();

@@ -7,7 +7,7 @@ import {
   API_URLS,
   EventType
 } from "@utils";
-import { BaseLeaderboardService, Payload } from "@manager";
+import { BaseLeaderboardService, Payload } from "./base";
 import { getData } from "@wrapper";
 
 

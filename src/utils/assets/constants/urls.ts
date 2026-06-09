@@ -6,7 +6,8 @@ export const API_URLS = {
   Tile: "https://storage.googleapis.com/btd6-ct-map/events/{}/tiles.json",
   Challenge: "https://data.ninjakiwi.com/btd6/challenges/challenge",
   ChallengeDaily: "https://data.ninjakiwi.com/btd6/challenges/filter/daily",
-  Events: "https://data.ninjakiwi.com/btd6/events"
+  Events: "https://data.ninjakiwi.com/btd6/events",
+  Emojis: "https://discord.com/api/v10/applications/{}/emojis"
 };
 
 export const GOOGLE_API_ULRS = {

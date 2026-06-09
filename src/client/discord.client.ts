@@ -12,9 +12,7 @@ import { GuildTable, UsageTable } from "@database";
 
 export class DiscordClient {
 
-  private client: Client;
-  private guildTable: GuildTable;
-  private usageTable: UsageTable;
+  public client: Client;
 
   constructor() {
     this.client = new Client({
@@ -30,8 +28,6 @@ export class DiscordClient {
       ], 
     });
 
-    this.guildTable = new GuildTable();
-    this.usageTable = new UsageTable();
     this.addListeners();
   }
 
@@ -62,3 +58,5 @@ export class DiscordClient {
     console.log("client logged in");
   }
 }
+
+export const discordClient = new DiscordClient();

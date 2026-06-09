@@ -14,6 +14,15 @@ export class CommandOnCooldown extends BotError {
   }
 }
 
+export class MissingPermission extends BotError {
+  constructor() {
+    super(
+      "Missing Permissions",
+      "You don't have the required permissions to run this command."
+    )
+  }
+}
+
 export class TileNotFound extends BotError {
   constructor() {
     super(

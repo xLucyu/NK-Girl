@@ -1,46 +1,61 @@
-import { sleep } from "@utils";
+import { 
+  RequestNoSuccess, 
+  ServerDown, 
+  sleep 
+} from "@utils";
 
-type GetDataOptions = {
-  timeoutMs?: number;
-  retries?: number;
-  retryDelayMs?: number;
-};
+const RETRIES = 3;
+const RETRY_DELAY = 2_000;
+const TIMEOUT = 10_000
 
-export async function getData<T>(url: string, options: GetDataOptions = {}): Promise<T> {
+export async function getData<T>(url: string, headers?: HeadersInit): Promise<T> {
 
-  const { timeoutMs = 10_000, retries = 3, retryDelayMs = 2_000 } = options;
+  for (let attempt = 0; attempt <= RETRIES; attempt++) {
 
-  for (let attempt = 0; attempt <= retries; attempt++) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT);
 
     try {
-      const response = await fetch(url, { signal: controller.signal });
+      const response = await fetch(url, {
+        headers,
+        signal: controller.signal 
+      });
       clearTimeout(timeoutId);
 
-      if (response.ok) {
-        return await response.json() as T;
-      }
+      switch (response.status) {
 
-      if (response.status === 429 || response.status >= 500 && attempt < retries) {
-        console.warn(`GET ${url} -> ${response.status}, retry in ${retryDelayMs}ms`);
-        await sleep(retryDelayMs);
-        continue;
-      }
+        case 200:
+          return await response.json() as T;
+        
+        case 400:
+        case 403:
+        case 404:
+          throw new RequestNoSuccess()
 
-      throw new Error(`GET ${url} failed: ${response.status} ${response.statusText}`);
-    } catch (error: any) {
-      clearTimeout(timeoutId);
+        case 429:
+          if (attempt < RETRIES) {
+            await sleep(RETRY_DELAY);
+            continue;
+          }
+          throw new ServerDown();
 
-      if (error?.name === "AbortError" && attempt < retries) {
-        console.warn(`GET ${url} timed out, retry in ${retryDelayMs}ms`);
-        await sleep(retryDelayMs);
-        continue;
-      }
-
-      throw error;
+        case 500:
+        case 502:
+        case 503: 
+        case 504:
+          if (attempt < RETRIES) {
+            await sleep(RETRY_DELAY);
+            continue;
+          }
+          throw new ServerDown();
+        
+        default:
+          throw new RequestNoSuccess();
+      } 
+    } catch (error) {
+        clearTimeout(timeoutId);
+        throw new Error();
     }
   }
-
-  throw new Error(`GET ${url} failed after ${retries + 1} attempts`);
+  throw new ServerDown();
 }

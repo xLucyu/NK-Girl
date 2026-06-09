@@ -6,7 +6,7 @@ import {
     EventType,
     TileCode
 } from "@utils";
-import { BaseEventCache } from "@manager";
+import { BaseEventCache } from "./base";
 
 
 export class CTCache extends BaseEventCache<CTBody, Record<string, TileCode>> {

@@ -10,7 +10,7 @@ import {
     OdysseyDifficulty,
     OdysseyDifficulties
 } from "@utils";
-import { BaseEventCache } from "@manager";
+import { BaseEventCache } from "./base";
 
 
 export class OdysseyCache extends BaseEventCache<OdysseyBody, Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>> {

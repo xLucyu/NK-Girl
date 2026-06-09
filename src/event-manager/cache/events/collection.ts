@@ -1,13 +1,13 @@
 import { getData } from "@wrapper";
 import { 
-    getCollectionCycle, 
+    getCollectionCycle,
     InstaSchedule, 
     EventBody,
     EventType,
     API_URLS,
     NkData
 } from "@utils";
-import { BaseEventCache } from "@manager";
+import { BaseEventCache } from "./base";
 
 export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
 

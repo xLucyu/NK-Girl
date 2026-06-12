@@ -1,11 +1,13 @@
-import { JSX } from "react";
+import { JSX, ReactNode } from "react";
 import { 
   loadImage, 
   Images, 
   BossBody, 
-  MetaBody 
+  MetaBody,
+  splitUppercase,
+  BossDifficulty
 } from "@utils";
-import type { BossDifficulty } from "@utils";
+import { Container, Header } from "@components";
 
 export interface BossProfileProps {
     event: BossBody;
@@ -13,24 +15,27 @@ export interface BossProfileProps {
     difficulty: BossDifficulty;
 }
 
-export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
-  
+export function BossProfile({
+  event,
+  metaData,
+  difficulty,
+}: BossProfileProps): JSX.Element {
+
+  const mapPath = Images.Maps[metaData.map as keyof typeof Images.Maps];
+  const mapImage = mapPath ? loadImage(mapPath) : undefined;
+
+  const infoItems = [
+    { label: "Difficulty", value: String(metaData.difficulty) },
+    { label: "Mode", value: String(metaData.mode) },
+    { label: "Starting Cash", value: String(metaData.startingCash) },
+    { label: "Starting Lives", value: String(metaData.lives) },
+    { label: "Start Round", value: String((metaData as any).startRound ?? "-") },
+    { label: "End Round", value: String((metaData as any).endRound ?? "-") },
+  ];
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: "100%",
-        padding: 40,
-        backgroundColor: "white",
-      }}
-    >
-      <h1>{event.name}</h1>
-      <p>Difficulty: {difficulty}</p>
-      <p>Starting Cash: {metaData.startingCash}</p>
-      <p>Lives: {metaData.lives}</p>
-      <img src={loadImage(Images.Boss.Bloonarius.Banner)} width={300} height={100} />
-    </div>
+    <Container background="#0e3f78">
+      <Header mode="Boss" name={event.name} badge={difficulty} />
+    </Container>
   );
 }

@@ -29,8 +29,8 @@ export function BossProfile({
     { label: "Mode", value: String(metaData.mode) },
     { label: "Starting Cash", value: String(metaData.startingCash) },
     { label: "Starting Lives", value: String(metaData.lives) },
-    { label: "Start Round", value: String((metaData as any).startRound ?? "-") },
-    { label: "End Round", value: String((metaData as any).endRound ?? "-") },
+    { label: "Start Round", value: String(metaData.startRound) },
+    { label: "End Round", value: String(metaData.endRound) },
   ];
 
   return (

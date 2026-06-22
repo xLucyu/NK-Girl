@@ -28,7 +28,7 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
         InteractionContextType.PrivateChannel
         )
 
-    public getProfile(event: CurrentEventData<EventBody, InstaSchedule>, state: ComponentState): JSX.Element {
+    public getProfile(event: CurrentEventData<EventBody, InstaSchedule>): JSX.Element {
 
         return CollectionProfile({
             event: event.data,
@@ -36,11 +36,11 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
         });
     }
 
-    public getEventProps(): EventCacheEntry<EventBody, InstaSchedule> | null {
+    public getEventProps(): CollectionProps | null {
         return eventManager.getEventCache(EventType.Collection).getCache();
     }
 
-    protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<EventBody, InstaSchedule>): ComponentState {
+    protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: CollectionProps): ComponentState {
 
         return CreateComponentState({
             eventId: eventProps.currentEvent.data.id,

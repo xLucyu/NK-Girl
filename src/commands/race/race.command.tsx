@@ -6,7 +6,13 @@ import {
     SlashCommandBuilder 
 } from "discord.js";
 import { JSX } from "react";
-import { EventType, GOOGLE_API_ULRS, MetaBody, RaceBody, splitUppercase } from "@utils";
+import { 
+    EventType, 
+    GOOGLE_API_ULRS, 
+    MetaBody, 
+    RaceBody, 
+    splitUppercase 
+} from "@utils";
 import { BaseCommand } from "../base.command";
 import { BuildSelectMenu, ComponentState, CreateComponentState } from "@components";
 import { EventCacheEntry, eventManager } from "@manager";
@@ -31,7 +37,7 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
         )
   
 
-    public getProfile(event: RaceProps["currentEvent"], state: ComponentState): JSX.Element {
+    public getProfile(event: RaceProps["currentEvent"]): JSX.Element {
 
         return RaceProfile({
             event: event.data,

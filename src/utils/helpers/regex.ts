@@ -8,7 +8,7 @@ export function splitUppercase(value: string): string {
 
     if (value in specialCases) return specialCases[value];
 
-    const split = value.match("/[A-Z][a-z]*/g") ?? [];
+    const split = value.match(/[A-Z][a-z]*/g) ?? [];
     return split.join(" ");
 }
 

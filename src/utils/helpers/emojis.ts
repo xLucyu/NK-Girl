@@ -30,7 +30,7 @@ export async function loadEmojis(): Promise<void> {
         const data = await getData<EmojiResponse>(
             API_URLS.Emojis.replace("{}", config.BOT_ID),
             {
-                Authorisation: `Bot ${config.BOT_TOKEN}`,
+                Authorization: `Bot ${config.BOT_TOKEN}`,
                 "Content-Type": "application/json"
             }
         )

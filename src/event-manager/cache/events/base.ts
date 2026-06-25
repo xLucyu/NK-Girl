@@ -32,7 +32,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   }
 
 
-  protected getPreviousEvents(events: T[]): PreviousEvent[] | null {
+  protected getPreviousEvents(events: T[]): PreviousEvent[] {
 
     return events.map((event) => ({
       id: event.id,
@@ -44,7 +44,6 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   protected async uploadToBucket(bucketPath: string): Promise<void> {
 
     if (!this.cache) return;
-    console.log(this.cache,)
     await gsc.write(bucketPath, this.cache.currentEvent);
   }
 

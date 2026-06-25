@@ -35,7 +35,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, MetaData> {
             )
         .addStringOption((option) =>
             option 
-              .setName("difficulty")
+              .setName("boss")
               .setDescription("Choose a difficulty")
               .setRequired(false)
               .addChoices(

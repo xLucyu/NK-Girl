@@ -10,11 +10,11 @@ export async function listener(interaction: Interaction): Promise<void> {
 
     if (interaction.isChatInputCommand()) {
 
-        const command = commands[interaction.commandName as keyof typeof commands]
+        const command = commands[interaction.commandName as keyof typeof commands];
 
         if (!command) return;
         try {
-          checkCooldown(interaction.user.id, interaction.commandName, CMDCOOLDOWN)
+          checkCooldown(interaction.user.id, interaction.commandName, CMDCOOLDOWN);
             await command.execute(interaction);
         } catch (error) {
             await sendCommandError(interaction, error);
@@ -26,6 +26,7 @@ export async function listener(interaction: Interaction): Promise<void> {
     try {
       await handleSelectMenu(interaction);
     } catch (error) {
+      return;
     }
 
     return;
@@ -34,8 +35,9 @@ export async function listener(interaction: Interaction): Promise<void> {
   if (interaction.isButton()) {
     try {
       await handleButton(interaction);
-    } catch (error) {}
-
+    } catch (error) {
+      return;
+    }
     return;
   }
 }

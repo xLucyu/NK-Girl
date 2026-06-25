@@ -23,6 +23,7 @@ interface CacheMap {
 export class EventManager {
 
     private job: ScheduledTask | null = null;
+
     private caches = {
         [EventType.Boss]: new BossCache(),
         [EventType.Race]: new RaceCache(),
@@ -38,7 +39,7 @@ export class EventManager {
 
     public async start(): Promise<void> {
 
-        this.job = cron.schedule("0, 30 * * * *", async () => {
+        this.job = cron.schedule("0,30 * * * *", async () => {
             await this.runCycle();
         });
 

@@ -13,7 +13,7 @@ function isComponentExpired(state: ComponentState): boolean {
 
 
 function getStateFromInteraction(interaction: StringSelectMenuInteraction | ButtonInteraction): ComponentState | undefined {
-  return componentState[interaction.message.id];
+  return componentState.get(interaction.message.id);
 }
 
 
@@ -28,7 +28,7 @@ async function validateComponentInteraction(
   }
 
   if (isComponentExpired(state)) {
-    delete componentState[interaction.message.id];
+    componentState.delete(interaction.message.id);
     return false;
   }
   return true;
@@ -71,6 +71,7 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
 export async function handleSelectMenu(interaction: StringSelectMenuInteraction) {
   return handleComponent(interaction);
 }
+
 export async function handleButton(interaction: ButtonInteraction) {
   return handleComponent(interaction);
 }

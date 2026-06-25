@@ -5,17 +5,18 @@ export type ComponentState = {
   difficulty: string;
   userId: string;
   expiresAt: number;
+  [key: string]: unknown;
 };
 
-export const componentState: Record<string, ComponentState> = {};
+export const componentState = new Map<string, ComponentState>();
 
-export function CreateComponentState(args: {
+export function CreateComponentState(paramters: {
   eventId: string;
   difficulty: string;
   userId: string;
 }): ComponentState {
   return {
-    ...args,
+    ...paramters,
     expiresAt: Date.now() + TIMEOUT,
   };
 }

@@ -6,6 +6,7 @@ interface ContainerProps {
 }
 
 export function Container({ background, children }: ContainerProps): JSX.Element {
+  
   return (
     <div
       style={{

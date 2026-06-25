@@ -57,6 +57,12 @@ export class DiscordClient {
     await this.client.login(config.BOT_TOKEN);
     console.log("client logged in");
   }
+
+  public async destroy() {
+    this.client.removeAllListeners();
+    this.client.destroy();
+    console.log("Discord client shutdown");
+  }
 }
 
 export const discordClient = new DiscordClient();

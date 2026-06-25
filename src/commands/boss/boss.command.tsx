@@ -59,23 +59,6 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
       InteractionContextType.PrivateChannel
     )
 
-  public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {
-
-    const difficulty = state.difficulty as BossDifficulty;
-
-    const event = eventProps.data;
-    const metaData = eventProps.metaData[difficulty];
-
-    if (!metaData) throw new Error();
-
-    return BossProfile({
-      event,
-      metaData,
-      difficulty
-    })
-  }
-
-
   public getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
     return eventManager.getEventCache(EventType.Boss).getCache();
   }
@@ -89,6 +72,23 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
       eventId: eventProps.currentEvent.data.id,
       difficulty: difficulty,
       userId: interaction.user.id
+    })
+  }
+
+  
+  public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {
+
+    const difficulty = state.difficulty as BossDifficulty;
+
+    const event = eventProps.data;
+    const metaData = eventProps.metaData[difficulty];
+
+    if (!metaData) throw new Error();
+
+    return BossProfile({
+      event,
+      metaData,
+      difficulty
     })
   }
 

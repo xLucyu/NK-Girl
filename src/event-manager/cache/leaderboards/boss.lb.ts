@@ -10,7 +10,7 @@ import {
     sleep,
 } from "@utils";
 import { BaseLeaderboardService, Payload } from "./base";
-import { getData } from "@wrapper";
+import { getData } from "../../../api/api-client";
 
 
 export enum ScoringType {

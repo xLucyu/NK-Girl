@@ -17,10 +17,8 @@ export function scheduleComponentCleanup(paramters: {
   setTimeout(async () => {
     try {
       await paramters.editReply({ components: [] });
-    } catch {
-
-    }
-    componentState.delete(paramters.messageId);
+    } catch {}
+    
     paramters.onExpire();
   }, delay);
 }

@@ -17,7 +17,7 @@ import { BaseCommand } from "../base.command";
 import { BuildSelectMenu, ComponentState, CreateComponentState } from "@components";
 import { EventCacheEntry, eventManager } from "@manager";
 import { RaceProfile } from "./race.profile";
-import { getData } from "@wrapper";
+import { getData } from "../../api/api-client";
 
 export type RaceProps = EventCacheEntry<RaceBody, MetaBody>;
 

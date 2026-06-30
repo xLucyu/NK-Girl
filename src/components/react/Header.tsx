@@ -1,20 +1,13 @@
-import { JSX } from "react";
-
-interface GameHeaderProps {
-  mode: string;
-  name?: string;
-  variant?: string;
-  badge?: string;
+interface HeaderProps {
+  eventType: string;
+  eventName: string;
+  difficulty?: string;
 }
 
-export function Header({
-  mode,
-  name,
-  variant,
-  badge,
-}: GameHeaderProps): JSX.Element {
+export function Header({ eventType, eventName, difficulty }: HeaderProps) {
 
-  const title = [mode, name, variant].filter(Boolean).join(" - ");
+  const parts = [eventType, eventName];
+  if (difficulty) parts.push(difficulty);
 
   return (
     <div
@@ -22,62 +15,26 @@ export function Header({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        position: "relative",
         width: "100%",
-        minHeight: 88,
+        backgroundColor: "rgba(0, 0, 0, 0.45)",
+        borderRadius: 14,
+        padding: "13px 21px",
+        border: "1.5px solid rgba(255, 255, 255, 0.1)",
       }}
     >
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minWidth: 420,
-          maxWidth: "70%",
-          padding: "16px 32px",
-          borderRadius: 24,
-          background: "linear-gradient(180deg, #bfc9d4 0%, #9eabb8 100%)",
-          border: "3px solid #7e8a97",
-          boxShadow: "inset 0 2px 0 rgba(255,255,255,0.28), 0 8px 18px rgba(0,0,0,0.18)",
-          color: "#ffffff",
-          fontSize: 34,
-          fontWeight: 900,
-          textAlign: "center",
+          color: "white",
+          fontSize: 28,
+          fontWeight: "bold",
           textTransform: "uppercase",
-          letterSpacing: 0.5,
-          WebkitTextStroke: "2px #111111",
-          boxSizing: "border-box",
+          textAlign: "center",
+          letterSpacing: 3,
+          lineHeight: 1,
         }}
       >
-        {title}
+        {parts.join("   -   ")}
       </div>
-
-      {badge && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "absolute",
-            right: 0,
-            top: 6,
-            minWidth: 150,
-            padding: "12px 24px",
-            borderRadius: 20,
-            background: "linear-gradient(180deg, #ff7b1f 0%, #e54d00 100%)",
-            border: "3px solid rgba(255,255,255,0.4)",
-            boxShadow: "inset 0 2px 0 rgba(255,255,255,0.25), 0 6px 14px rgba(0,0,0,0.18)",
-            color: "#ffffff",
-            fontSize: 24,
-            fontWeight: 900,
-            textTransform: "uppercase",
-            WebkitTextStroke: "1.5px #111111",
-            boxSizing: "border-box",
-          }}
-        >
-          {badge}
-        </div>
-      )}
     </div>
   );
 }

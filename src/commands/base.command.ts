@@ -40,13 +40,14 @@ export abstract class BaseCommand<T, K> {
     });
 
     const message = await interaction.fetchReply();
-    componentState[message.id] = state;
+    componentState.set(message.id, state);
 
     scheduleComponentCleanup({
+      messageId: message.id,
       editReply: (options) => interaction.editReply(options),
       expiresAt: state.expiresAt,
       onExpire: () => {
-        delete componentState[message.id]
+        componentState.delete(message.id);
       },
     });
   }

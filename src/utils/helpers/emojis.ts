@@ -1,5 +1,5 @@
 import { config } from "@config";
-import { getData } from "@wrapper";
+import { getData } from "../../api/api-client";
 import { API_URLS } from "../assets";
 
 interface EmojiData {

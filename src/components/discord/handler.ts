@@ -45,6 +45,8 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
 
   const [commandName, value] = interaction.customId.split(":");
 
+  console.log(commandName, value)
+
   if (interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
   if (interaction.isButton()) state.difficulty = value;
   

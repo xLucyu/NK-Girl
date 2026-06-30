@@ -34,8 +34,6 @@ export function BossProfile({
   ];
 
   return (
-    <Container background="#0e3f78">
-      <Header mode="Boss" name={event.name} badge={difficulty} />
-    </Container>
+    <div/>
   );
 }

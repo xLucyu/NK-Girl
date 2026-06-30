@@ -26,17 +26,15 @@ export async function listener(interaction: Interaction): Promise<void> {
     try {
       await handleSelectMenu(interaction);
     } catch (error) {
-      return;
+      throw new Error();
     }
-
-    return;
   }
 
   if (interaction.isButton()) {
     try {
       await handleButton(interaction);
     } catch (error) {
-      return;
+      throw new Error();
     }
     return;
   }

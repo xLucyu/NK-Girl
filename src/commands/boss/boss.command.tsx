@@ -22,7 +22,7 @@ import {
   BossDifficulties,
   BossDifficulty
  } from "@utils";
-import { getData } from "@wrapper";
+import { getData } from "../../api/api-client";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
@@ -128,6 +128,7 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
 
 
   public async resolveEvent(eventProps: BossProps, state: ComponentState): Promise<BossProps["currentEvent"]> {
+    
     if (state.eventId === eventProps.currentEvent.data.id) {
       return eventProps.currentEvent;
     }

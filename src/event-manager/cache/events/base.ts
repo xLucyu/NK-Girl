@@ -1,4 +1,4 @@
-import { getData } from "@wrapper";
+import { getData } from "../../../api/api-client";
 import type { NkData, BaseBody, EventType } from "@utils";
 import { gsc } from "@manager";
 

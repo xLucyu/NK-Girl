@@ -3,18 +3,20 @@ import { Box } from "./Box";
 interface MapSectionProps {
   mapImage: string;
   icon?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
-export function MapSection({ mapImage, icon }: MapSectionProps) {
+export function MapSection({ mapImage, icon, width, height }: MapSectionProps) {
   return (
-    <Box style={{ position: "relative" }}>
+    <Box style={{ position: "relative", width: "auto" }}>
       <img
         src={mapImage}
-        width={540}
-        height={300}
         style={{
           borderRadius: 7,
           objectFit: "cover",
+          ...(width ? { width } : {}),
+          ...(height ? { height } : {}),
         }}
       />
       {icon ? (

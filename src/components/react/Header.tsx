@@ -1,3 +1,5 @@
+import { Box } from "./Box";
+
 interface HeaderProps {
   eventType: string;
   eventName: string;
@@ -10,18 +12,7 @@ export function Header({ eventType, eventName, difficulty }: HeaderProps) {
   if (difficulty) parts.push(difficulty);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        backgroundColor: "rgba(0, 0, 0, 0.45)",
-        borderRadius: 14,
-        padding: "13px 21px",
-        border: "1.5px solid rgba(255, 255, 255, 0.1)",
-      }}
-    >
+    <Box style={{ alignItems: "center", width: "100%", justifyContent: "center" }}>
       <div
         style={{
           color: "white",
@@ -35,6 +26,6 @@ export function Header({ eventType, eventName, difficulty }: HeaderProps) {
       >
         {parts.join("   -   ")}
       </div>
-    </div>
+    </Box>
   );
 }

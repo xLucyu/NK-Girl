@@ -1,39 +1,58 @@
-import { JSX, ReactNode } from "react";
 import { 
-  loadImage, 
-  Images, 
   BossBody, 
   MetaBody,
-  splitUppercase,
-  BossDifficulty
+  BossDifficulty,
+  BossImages,
+  EventType,
+  splitBossNumbers,
+  splitUppercase
 } from "@utils";
-import { Container, Header } from "@components";
+import { Layout, Event } from "@components";
 
-export interface BossProfileProps {
+interface BossProfileProps {
     event: BossBody;
     metaData: MetaBody;
     difficulty: BossDifficulty;
 }
 
-export function BossProfile({
-  event,
-  metaData,
-  difficulty,
-}: BossProfileProps): JSX.Element {
+const capitilize = (value: string) => {
+  return value[0].toUpperCase() + value.slice(1);
+}
 
-  const mapPath = Images.Maps[metaData.map as keyof typeof Images.Maps];
-  const mapImage = mapPath ? loadImage(mapPath) : undefined;
+export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
+
+  const bossIcon = BossImages[capitilize(event.bossType) as keyof typeof BossImages][difficulty];
+  const scoreType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 
   const infoItems = [
-    { label: "Difficulty", value: String(metaData.difficulty) },
-    { label: "Mode", value: String(metaData.mode) },
-    { label: "Starting Cash", value: String(metaData.startingCash) },
-    { label: "Starting Lives", value: String(metaData.lives) },
-    { label: "Start Round", value: String(metaData.startRound) },
-    { label: "End Round", value: String(metaData.endRound) },
+    { label: "Difficulty", value: metaData.difficulty },
+    { label: "Mode", value: metaData.mode },
+    { label: "Starting Cash", value: metaData.startingCash },
+    { label: "Starting Lives", value: metaData.lives },
+    { label: "Start Round", value: metaData.startRound },
+    { label: "End Round", value: metaData.endRound },
+    { label: "Scoring Type", value: splitUppercase(scoreType) }
   ];
 
   return (
-    <div/>
+    <Layout.Container>
+      <Event.Header 
+        eventType={EventType.Boss}
+        eventName={splitBossNumbers(event.name)}
+        difficulty={difficulty}
+        />
+      <Layout.Row>
+        <Event.Map
+          map={metaData.map}
+          iconPath={bossIcon}
+          width={540}
+          height={300}
+        />
+        <Layout.Column>
+          <Event.Info items={infoItems}/>
+          <Event.Bar start={event.start} end={event.end}/>
+        </Layout.Column>
+      </Layout.Row>
+    </Layout.Container>
   );
 }

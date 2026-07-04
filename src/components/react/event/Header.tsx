@@ -1,4 +1,4 @@
-import { Box } from "./Box";
+import { Box } from "../layout/Box";
 
 interface HeaderProps {
   eventType: string;

@@ -1,13 +1,19 @@
-import { Box } from "./Box";
+import { MapImages, loadImage } from "@utils";
+import { Box } from "../layout/Box";
+
 
 interface MapSectionProps {
-  mapImage: string;
-  icon?: string;
+  map: string;
+  iconPath?: string;
   width?: number | string;
   height?: number | string;
 }
 
-export function MapSection({ mapImage, icon, width, height }: MapSectionProps) {
+export function MapSection({ map, iconPath, width, height }: MapSectionProps) {
+
+  const mapImage = loadImage(MapImages[map as keyof typeof MapImages]);
+  const iconImage = iconPath ? loadImage(iconPath) : undefined; 
+
   return (
     <Box style={{ position: "relative", width: "auto" }}>
       <img
@@ -19,9 +25,9 @@ export function MapSection({ mapImage, icon, width, height }: MapSectionProps) {
           ...(height ? { height } : {}),
         }}
       />
-      {icon ? (
+      {iconImage ? (
         <img
-          src={icon}
+          src={iconImage}
           width={133}
           height={133}
           style={{

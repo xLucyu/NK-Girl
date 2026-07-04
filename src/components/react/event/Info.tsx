@@ -1,17 +1,18 @@
-import { Box } from "./Box";
+import { Box } from "../layout/Box";
 
 interface InfoItem {
   label: string;
-  value: string;
+  value: string | number | boolean;
 }
 
-interface InfoSectionProps {
+interface InfoProps {
   items: InfoItem[];
 }
 
-export function InfoSection({ items }: InfoSectionProps) {
+export function Info({ items }: InfoProps) {
   
   const rows: InfoItem[][] = [];
+
   for (let i = 0; i < items.length; i += 2) {
     rows.push(items.slice(i, i + 2));
   }
@@ -48,6 +49,7 @@ export function InfoSection({ items }: InfoSectionProps) {
               >
                 {item.label}
               </span>
+
               <span
                 style={{
                   color: "white",
@@ -55,7 +57,7 @@ export function InfoSection({ items }: InfoSectionProps) {
                   fontWeight: "bold",
                 }}
               >
-                {item.value}
+                {String(item.value)}
               </span>
             </div>
           ))}

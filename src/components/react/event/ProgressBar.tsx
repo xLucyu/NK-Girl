@@ -1,11 +1,11 @@
-import { Box } from "./Box";
+import { Box } from "../layout/Box";
 
-interface TimeBarProps {
+interface ProgressBarProps {
   start: number; // Unix timestamp ms
   end: number;   // Unix timestamp ms
 }
 
-export function TimeBar({ start, end }: TimeBarProps) {
+export function ProgressBar({ start, end }: ProgressBarProps) {
 
   const now = Date.now();
   const total = end - start;

@@ -2,11 +2,16 @@ import { Header } from "./Header"
 import { Info } from "./Info"
 import { MapSection} from "./Map"
 import { ProgressBar } from "./ProgressBar"
+import { Modifiers } from "./Modifiers";
+import { Towers } from "./Towers";
+
 
 
 export const Event = {
     Header: Header,
     Info: Info,
     Map: MapSection,
-    Bar: ProgressBar
+    Bar: ProgressBar,
+    Modifiers: Modifiers,
+    Towers: Towers
 }

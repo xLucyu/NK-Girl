@@ -36,11 +36,12 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
 
   return (
     <Layout.Container>
-      <Event.Header 
-        eventType={EventType.Boss}
-        eventName={splitBossNumbers(event.name)}
+      <Event.Header
+        eventType="Boss"
+        eventName={splitUppercase(event.name)}
         difficulty={difficulty}
-        />
+      />
+
       <Layout.Row>
         <Event.Map
           map={metaData.map}
@@ -48,9 +49,19 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
           width={540}
           height={300}
         />
+
         <Layout.Column>
-          <Event.Info items={infoItems}/>
-          <Event.Bar start={event.start} end={event.end}/>
+          <Event.Info items={infoItems} />
+          <Event.Bar start={event.start} end={event.end} />
+        </Layout.Column>
+      </Layout.Row>
+
+      <Layout.Row>
+        <Layout.Column>
+          <Event.Modifiers metaData={metaData} />
+        </Layout.Column>
+        <Layout.Column>
+          <Event.Towers towers={metaData._towers ?? [] } />
         </Layout.Column>
       </Layout.Row>
     </Layout.Container>

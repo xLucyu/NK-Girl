@@ -6,6 +6,6 @@ export { MedalImages } from "./medals";
 export { ModifierImages } from "./modifiers";
 export { OdysseyImages } from "./odyssey";
 export { RelicImages } from "./relics";
-export { TowerImages } from "./towers";
+export { TowerImages, TowerContainers } from "./towers";
 
 export { loadImage } from "./loadImage";

@@ -1,9 +1,15 @@
 import { Box } from "../layout/Box";
 
 interface ProgressBarProps {
-  start: number; // Unix timestamp ms
-  end: number;   // Unix timestamp ms
+  start: number;
+  end: number;   
 }
+
+const formatDate = (ts: number) => {
+  const d = new Date(ts);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
+  };
 
 export function ProgressBar({ start, end }: ProgressBarProps) {
 
@@ -20,12 +26,6 @@ export function ProgressBar({ start, end }: ProgressBarProps) {
   const remaining = days > 0
     ? `${days}d ${hours}h ${minutes}m remaining`
     : `${hours}h ${minutes}m remaining`;
-
-  const formatDate = (ts: number) => {
-    const d = new Date(ts);
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return `${d.getUTCDate()} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${String(d.getUTCHours()).padStart(2, "0")}:${String(d.getUTCMinutes()).padStart(2, "0")}`;
-  };
 
   return (
     <Box style={{ flexDirection: "column", padding: 20, gap: 6 }}>

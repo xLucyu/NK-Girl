@@ -40,3 +40,11 @@ export const TowerImages = {
   TackShooter: "towers/TackShooter.png",
   WizardMonkey: "towers/WizardMonkey.png",
 };
+
+export const TowerContainers = {
+  Heroes: "towers/TowerContainerHero.png",
+  Primary: "towers/TowerContainerPrimary.png",
+  Military: "towers/TowerContainerMilitary.png",
+  Magic: "towers/TowerContainerMagic.png",
+  Support: "towers/TowerContainerSupport.png",
+};

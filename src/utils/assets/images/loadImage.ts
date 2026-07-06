@@ -1,9 +1,23 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
-const root = "src/utils/assets/images";
+const ASSET_ROOT = resolve(__dirname, "../assets/images");
+const cache = new Map<string, string>();
 
 export function loadImage(path: string): string {
-  const file = readFileSync(join(process.cwd(), root, path));
-  return `data:image/png;base64,${file.toString("base64")}`;
+
+  if (!path) return "";
+
+  const cached = cache.get(path);
+  if (cached) return cached;
+
+  try {
+    const file = readFileSync(join(ASSET_ROOT, path));
+    const encoded = `data:image/png;base64,${file.toString("base64")}`;
+    cache.set(path, encoded);
+    return encoded;
+  } catch (error) {
+    console.warn(`[loadImage] missing asset: ${path}`, error);
+    return "";
+  }
 }

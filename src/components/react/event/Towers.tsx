@@ -18,62 +18,88 @@ type TowerWithCategory = Tower & {
   crossPaths: [number, number, number];
 };
 
+type TowerSize = {
+  width: number;
+  height: number;
+  imageSize: number;
+};
+
+function getTowerSize(count: number): TowerSize {
+  if (count <= 8) return { width: 76, height: 96, imageSize: 74 };
+  if (count <= 14) return { width: 64, height: 80, imageSize: 62 };
+  if (count <= 20) return { width: 56, height: 70, imageSize: 54 };
+  if (count <= 26) return { width: 50, height: 62, imageSize: 48 };
+  return { width: 44, height: 56, imageSize: 42 };
+}
+
+
+
 function getTowerMax(tower: TowerWithCategory): string | null {
   if (tower.category === "Heroes") return null;
-  if (tower.max === -1 || tower.max === 9999 || tower.max === 0) return null;
-
+  if (tower.max === -1 || tower.max === 9999) return null;
   return String(tower.max);
 }
 
 function getTowerCrossPaths(tower: TowerWithCategory): string | null {
   if (tower.category === "Heroes") return null;
-
-  if (tower.crossPaths.every((value) => value === 5)) {
-    return null;
-  }
-
+  if (tower.crossPaths.every((v) => v === 5)) return null;
   return tower.crossPaths.join("-");
 }
 
 function toTowerItems(towers: Tower[]): TowerWithCategory[] {
-  const grouped = getTowers(towers);
+  let grouped;
+  try {
+    grouped = getTowers(towers);
+  } catch (error) {
+    console.warn("[Towers] getTowers threw, rendering empty tower list:", error);
+    return [];
+  }
 
-  return Object.entries(grouped).flatMap(([category, towers]) =>
-    towers.map((tower) => ({
+  return Object.entries(grouped).flatMap(([category, towers]) => {
+    if (!(category in TowerContainers)) {
+      console.warn(`[Towers] unknown category "${category}", skipping`);
+      return [];
+    }
+    return towers.map((tower) => ({
       ...tower,
       category: category as TowerCategory,
-    }))
-  );
+    }));
+  });
 }
 
-function TowerIcon({ tower }: { tower: TowerWithCategory }) {
+function TowerIcon({
+  tower,
+  size,
+}: {
+  tower: TowerWithCategory;
+  size: TowerSize;
+}) {
   const towerPath = TowerImages[tower.tower as keyof typeof TowerImages];
   const backgroundPath = TowerContainers[tower.category];
-
   if (!towerPath || !backgroundPath) return null;
-
-  const towerImage = loadImage(towerPath);
-  const backgroundImage = loadImage(backgroundPath);
 
   const max = getTowerMax(tower);
   const crossPaths = getTowerCrossPaths(tower);
+
+  const maxFontSize = Math.max(9, Math.round(size.width * 0.2));
+  const crossPathFontSize = Math.max(8, Math.round(size.width * 0.18));
 
   return (
     <div
       style={{
         display: "flex",
         position: "relative",
-        width: 42,
-        height: 54,
+        width: size.width,
+        height: size.height,
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
       }}
     >
       <img
-        src={backgroundImage}
-        width={42}
-        height={54}
+        src={loadImage(backgroundPath)}
+        width={size.width}
+        height={size.height}
         style={{
           position: "absolute",
           left: 0,
@@ -81,14 +107,13 @@ function TowerIcon({ tower }: { tower: TowerWithCategory }) {
           objectFit: "fill",
         }}
       />
-
       <img
-        src={towerImage}
-        width={33}
-        height={33}
+        src={loadImage(towerPath)}
+        width={size.imageSize}
+        height={size.imageSize}
         style={{
           objectFit: "contain",
-          marginTop: -4,
+          marginTop: -Math.round(size.height * 0.04),
         }}
       />
 
@@ -96,11 +121,10 @@ function TowerIcon({ tower }: { tower: TowerWithCategory }) {
         <span
           style={{
             position: "absolute",
-            right: 3,
-            top: 2,
+            right: 4,
+            top: 3,
             color: "white",
-            fontSize: 9,
-            fontWeight: "bold",
+            fontSize: maxFontSize,
             textShadow: "0 1px 2px black",
           }}
         >
@@ -112,12 +136,11 @@ function TowerIcon({ tower }: { tower: TowerWithCategory }) {
         <span
           style={{
             position: "absolute",
-            bottom: 3,
+            bottom: 4,
             left: 0,
             right: 0,
             color: "white",
-            fontSize: 8,
-            fontWeight: "bold",
+            fontSize: crossPathFontSize,
             textAlign: "center",
             textShadow: "0 1px 2px black",
           }}
@@ -132,9 +155,11 @@ function TowerIcon({ tower }: { tower: TowerWithCategory }) {
 function TowerGroup({
   title,
   towers,
+  size,
 }: {
   title: string;
   towers: TowerWithCategory[];
+  size: TowerSize;
 }) {
   if (towers.length === 0) return null;
 
@@ -150,8 +175,7 @@ function TowerGroup({
       <span
         style={{
           color: "#90caf9",
-          fontSize: 12,
-          fontWeight: "bold",
+          fontSize: 14,
           textTransform: "uppercase",
           opacity: 0.8,
         }}
@@ -164,15 +188,14 @@ function TowerGroup({
           display: "flex",
           flexDirection: "row",
           flexWrap: "wrap",
-          justifyContent: "flex-start",
           alignItems: "flex-start",
           alignContent: "flex-start",
-          gap: 6,
+          gap: 8,
           width: "100%",
         }}
       >
         {towers.map((tower) => (
-          <TowerIcon key={tower.tower} tower={tower} />
+          <TowerIcon key={tower.tower} tower={tower} size={size} />
         ))}
       </div>
     </div>
@@ -180,12 +203,13 @@ function TowerGroup({
 }
 
 export function Towers({ towers }: TowerPanelProps) {
-  const towerItems = toTowerItems(towers);
+  const items = toTowerItems(towers);
+  if (items.length === 0) return null;
 
-  const heroes = towerItems.filter((tower) => tower.category === "Heroes");
-  const normalTowers = towerItems.filter((tower) => tower.category !== "Heroes");
+  const heroes = items.filter((t) => t.category === "Heroes");
+  const rest = items.filter((t) => t.category !== "Heroes");
 
-  if (towerItems.length === 0) return null;
+  const size = getTowerSize(Math.max(heroes.length, rest.length));
 
   return (
     <Box
@@ -195,12 +219,11 @@ export function Towers({ towers }: TowerPanelProps) {
         alignSelf: "flex-start",
         gap: 8,
         padding: 10,
-        maxWidth: "100%",
-        boxSizing: "border-box",
+        width: "100%",
       }}
     >
-      <TowerGroup title="Heroes" towers={heroes} />
-      <TowerGroup title="Towers" towers={normalTowers} />
+      <TowerGroup title="Heroes" towers={heroes} size={size} />
+      <TowerGroup title="Towers" towers={rest} size={size} />
     </Box>
   );
 }

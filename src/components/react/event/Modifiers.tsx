@@ -1,10 +1,11 @@
-import { 
-    loadImage,
-    buildModifiers,
-    filterModifiers, 
-    MetaBody, 
-    Modifier, 
-    ModifierImages
+import {
+  loadImage,
+  buildModifiers,
+  filterModifiers,
+  MetaBody,
+  Modifier,
+  ModifierImages,
+  splitUppercase,
 } from "@utils";
 import { Box } from "../layout/Box";
 
@@ -12,101 +13,98 @@ interface ModifiersProps {
   metaData: MetaBody;
 }
 
-function formatModifierValue(modifier: Modifier): string | null {
-
+function formatModifierLabel(modifier: Modifier): string {
   const value = modifier.api;
+  const name = splitUppercase(modifier.key);
 
-  if (typeof value === "boolean") return null;
-
-  if (modifier.hasKey) {
-    return `${value}x`;
-  }
-
-  return String(value);
+  if (typeof value === "boolean") return name;
+  if (modifier.hasKey) return `${value}x ${name}`;
+  return `${value} ${name}`;
 }
 
-function getModifierSize(count: number) {
-  if (count <= 6) return 58;
-  if (count <= 9) return 52;
-  return 46;
+function getModifierSizing(count: number): {
+  iconSize: number;
+  fontSize: number;
+  gap: number;
+  padding: number;
+} {
+  if (count <= 4) return { iconSize: 36, fontSize: 16, gap: 8, padding: 12 };
+  if (count <= 7) return { iconSize: 30, fontSize: 14, gap: 6, padding: 10 };
+  return { iconSize: 26, fontSize: 12, gap: 4, padding: 8 };
 }
 
 export function Modifiers({ metaData }: ModifiersProps) {
-
   const modifiers = filterModifiers(buildModifiers(metaData));
-
   if (modifiers.length === 0) return null;
 
-  const size = getModifierSize(modifiers.length);
-  const imageSize = size - 12;
+  const sizing = getModifierSizing(modifiers.length);
 
   return (
     <Box
       style={{
-        width: "100%",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 10,
-        padding: 12,
+        flexDirection: "column",
+        alignSelf: "flex-start",
+        gap: sizing.gap,
+        padding: sizing.padding,
+        minWidth: 240,
       }}
     >
       {modifiers.map((modifier) => {
-
         const imageKey = modifier.imageKey(modifier.api);
-
         if (!imageKey) return null;
 
-        const imagePath =
-          ModifierImages[imageKey as keyof typeof ModifierImages];
-
+        const imagePath = ModifierImages[imageKey as keyof typeof ModifierImages];
         if (!imagePath) return null;
 
-        const image = loadImage(imagePath);
-        const value = formatModifierValue(modifier);
-
         return (
-          <div
+          <ModifierRow
             key={modifier.key}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: size,
-              height: size,
-              position: "relative",
-              borderRadius: 10,
-              backgroundColor: "rgba(255, 255, 255, 0.08)",
-            }}
-          >
-            <img
-              src={image}
-              width={imageSize}
-              height={imageSize}
-              style={{
-                objectFit: "contain",
-              }}
-            />
-
-            {value ? (
-              <span
-                style={{
-                  position: "absolute",
-                  right: 3,
-                  bottom: 2,
-                  color: "white",
-                  fontSize: 11,
-                  fontWeight: "bold",
-                  textShadow: "0 1px 2px black",
-                }}
-              >
-                {value}
-              </span>
-            ) : null}
-          </div>
+            imagePath={imagePath}
+            label={formatModifierLabel(modifier)}
+            iconSize={sizing.iconSize}
+            fontSize={sizing.fontSize}
+          />
         );
       })}
     </Box>
+  );
+}
+
+function ModifierRow({
+  imagePath,
+  label,
+  iconSize,
+  fontSize,
+}: {
+  imagePath: string;
+  label: string;
+  iconSize: number;
+  fontSize: number;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+      }}
+    >
+      <img
+        src={loadImage(imagePath)}
+        width={iconSize}
+        height={iconSize}
+        style={{ objectFit: "contain", flexShrink: 0 }}
+      />
+      <span
+        style={{
+          color: "white",
+          fontSize,
+          lineHeight: 1.1,
+        }}
+      >
+        {label}
+      </span>
+    </div>
   );
 }

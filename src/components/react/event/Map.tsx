@@ -1,7 +1,6 @@
 import { MapImages, loadImage } from "@utils";
 import { Box } from "../layout/Box";
 
-
 interface MapSectionProps {
   map: string;
   iconPath?: string;
@@ -10,9 +9,9 @@ interface MapSectionProps {
 }
 
 export function MapSection({ map, iconPath, width, height }: MapSectionProps) {
-
+  
   const mapImage = loadImage(MapImages[map as keyof typeof MapImages]);
-  const iconImage = iconPath ? loadImage(iconPath) : undefined; 
+  const iconImage = iconPath ? loadImage(iconPath) : undefined;
 
   return (
     <Box style={{ position: "relative", width: "auto" }}>

@@ -51,6 +51,8 @@ export class DiscordClient {
     this.client.on("interactionCreate", async (interaction: Interaction) => {
       await listener(interaction);
     })
+
+    this.client.on("error", (error) => console.error("client error", error));
   }
 
   public async start() {

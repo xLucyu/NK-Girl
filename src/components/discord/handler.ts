@@ -1,73 +1,68 @@
-import { 
-  AttachmentBuilder, 
-  ButtonInteraction, 
-  StringSelectMenuInteraction 
+import {
+  AttachmentBuilder,
+  ButtonInteraction,
+  MessageFlags,
+  StringSelectMenuInteraction,
 } from "discord.js";
-import { componentState, ComponentState, render } from "@components";
+import { componentState, render } from "@components";
 import { commands, eventCommands } from "@commands";
 
-
-function isComponentExpired(state: ComponentState): boolean {
-  return Date.now() > state.expiresAt;
-}
-
-
-function getStateFromInteraction(interaction: StringSelectMenuInteraction | ButtonInteraction): ComponentState | undefined {
-  return componentState.get(interaction.message.id);
-}
-
-
-async function validateComponentInteraction(
-  interaction: StringSelectMenuInteraction | ButtonInteraction,
-  state: ComponentState
-): Promise<boolean> {
-
-  if (interaction.user.id !== state.userId) {
-    await interaction.reply({content: "You're not the original user.", ephemeral: true });
-    return false;
-  }
-
-  if (isComponentExpired(state)) {
-    componentState.delete(interaction.message.id);
-    return false;
-  }
-  return true;
-}
-
+const TIMEOUT = 3 * 60 * 1000;
 
 async function handleComponent(interaction: StringSelectMenuInteraction | ButtonInteraction) {
 
-  const state = getStateFromInteraction(interaction);
+  const state = componentState.get(interaction.message.id);
   if (!state) return;
 
-  const isValid = await validateComponentInteraction(interaction, state);
-  if (!isValid) return;
+  if (interaction.user.id !== state.userId) {
+    await interaction.reply({
+      content: "You're not the original user.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  if (Date.now() > state.expiresAt) {
+    componentState.delete(interaction.message.id);
+    await interaction.reply({
+      content: "This menu has expired. Run the command again.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
 
   const [commandName, value] = interaction.customId.split(":");
+  const command = commands[commandName.toLowerCase() as keyof typeof eventCommands];
 
-  console.log(commandName, value)
+  if (!command || typeof command.resolveEvent !== "function") {
+    await interaction.reply({
+      content: "This control is no longer active.",
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  await interaction.deferUpdate();
 
   if (interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
   if (interaction.isButton()) state.difficulty = value;
-  
-  const command = commands[commandName.toLowerCase() as keyof typeof eventCommands];
-  if (!command) throw new Error(`Command not found: ${commandName}`);
-  
-  await interaction.deferUpdate();
 
-  const eventProps = command.getEventProps();
-  if (!eventProps) throw new Error("No event cache found.");
-  
-  const selectedEvent = await command.resolveEvent(eventProps, state);
-  const profile = command.getProfile(selectedEvent, state);
-  const buffer = await render(profile);
-  const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
-  const components = command.getComponents(eventProps, state) ?? [];
+  state.expiresAt = Date.now() + TIMEOUT;
 
-  await interaction.editReply({
-    files: [attachment],
-    components,
-  });
+  try {
+    const eventProps = command.getEventProps();
+    if (!eventProps) throw new Error("No event cache found.");
+
+    const selectedEvent = await command.resolveEvent(eventProps, state);
+    const profile = command.getProfile(selectedEvent, state);
+    const buffer = await render(profile);
+    const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
+    const components = command.getComponents(eventProps, state) ?? [];
+
+    await interaction.editReply({ files: [attachment], components });
+  } catch (error) {
+    console.error(`[handleComponent] ${commandName}:${value} failed:`, error);
+  }
 }
 
 export async function handleSelectMenu(interaction: StringSelectMenuInteraction) {

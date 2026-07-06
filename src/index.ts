@@ -17,6 +17,7 @@ async function main() {
 
     process.on("SIGINT", () => shutdown("SIGINT"));
     process.on("SIGTERM", () => shutdown("SIGTERM"));
+    process.on("unhandledRejection", (reason) => console.error("Unhandled Rejection", reason));
 };
 
 main().catch(console.error);

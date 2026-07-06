@@ -1,28 +1,33 @@
-import { 
-  BossBody, 
+import {
+  BossBody,
   MetaBody,
   BossDifficulty,
   BossImages,
-  EventType,
-  splitBossNumbers,
-  splitUppercase
+  splitUppercase,
 } from "@utils";
 import { Layout, Event } from "@components";
 
 interface BossProfileProps {
-    event: BossBody;
-    metaData: MetaBody;
-    difficulty: BossDifficulty;
+  event: BossBody;
+  metaData: MetaBody;
+  difficulty: BossDifficulty;
 }
 
-const capitilize = (value: string) => {
+const capitalize = (value: string): string => {
+  if (!value) return "";
   return value[0].toUpperCase() + value.slice(1);
-}
+};
 
-export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
+export function BossProfile({
+  event,
+  metaData,
+  difficulty,
+}: BossProfileProps): JSX.Element {
+  const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
+  const bossIcon = BossImages[bossTypeKey]?.[difficulty];
 
-  const bossIcon = BossImages[capitilize(event.bossType) as keyof typeof BossImages][difficulty];
-  const scoreType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
+  const scoreType =
+    difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 
   const infoItems = [
     { label: "Difficulty", value: metaData.difficulty },
@@ -31,7 +36,7 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
     { label: "Starting Lives", value: metaData.lives },
     { label: "Start Round", value: metaData.startRound },
     { label: "End Round", value: metaData.endRound },
-    { label: "Scoring Type", value: splitUppercase(scoreType) }
+    { label: "Scoring Type", value: splitUppercase(scoreType) },
   ];
 
   return (
@@ -46,8 +51,8 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
         <Event.Map
           map={metaData.map}
           iconPath={bossIcon}
-          width={540}
-          height={300}
+          width={480}
+          height={302}
         />
 
         <Layout.Column>
@@ -57,11 +62,9 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
       </Layout.Row>
 
       <Layout.Row>
+        <Event.Modifiers metaData={metaData} />
         <Layout.Column>
-          <Event.Modifiers metaData={metaData} />
-        </Layout.Column>
-        <Layout.Column>
-          <Event.Towers towers={metaData._towers ?? [] } />
+          <Event.Towers towers={metaData._towers ?? []} />
         </Layout.Column>
       </Layout.Row>
     </Layout.Container>

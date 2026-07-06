@@ -2,23 +2,33 @@ import { Box } from "../layout/Box";
 
 interface InfoItem {
   label: string;
-  value: string | number | boolean;
+  value: string | number;
 }
 
 interface InfoProps {
   items: InfoItem[];
 }
 
-export function Info({ items }: InfoProps) {
-  
-  const rows: InfoItem[][] = [];
-
-  for (let i = 0; i < items.length; i += 2) {
-    rows.push(items.slice(i, i + 2));
+function chunk<T>(arr: T[], size: number): T[][] {
+  const rows: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    rows.push(arr.slice(i, i + size));
   }
+  return rows;
+}
+
+export function Info({ items }: InfoProps) {
+  const rows = chunk(items, 2);
 
   return (
-    <Box style={{ flexDirection: "column", width: "100%", padding: 8 }}>
+    <Box
+      style={{
+        flexDirection: "column",
+        width: "100%",
+        padding: 12,
+        gap: 8,
+      }}
+    >
       {rows.map((row, i) => (
         <div
           key={i}
@@ -34,15 +44,15 @@ export function Info({ items }: InfoProps) {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
-                width: "50%",
-                padding: "6px 12px",
+                width: row.length === 1 ? "100%" : "50%",
+                padding: "0 12px",
+                gap: 2,
               }}
             >
               <span
                 style={{
                   color: "#90caf9",
-                  fontSize: 16,
-                  fontWeight: "bold",
+                  fontSize: 15,
                   textTransform: "uppercase",
                   opacity: 0.7,
                 }}
@@ -54,7 +64,7 @@ export function Info({ items }: InfoProps) {
                 style={{
                   color: "white",
                   fontSize: 22,
-                  fontWeight: "bold",
+                  lineHeight: 1,
                 }}
               >
                 {String(item.value)}

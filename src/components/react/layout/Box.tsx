@@ -14,6 +14,7 @@ export function Box({ children, style }: BoxProps) {
                 borderRadius: 16,
                 padding: 12,
                 border: "1px solid rgba(255, 255, 255, 0.1)",
+                boxSizing: "border-box",
                 ...style 
             }}>
             {children}

@@ -7,21 +7,23 @@ interface HeaderProps {
 }
 
 export function Header({ eventType, eventName, difficulty }: HeaderProps) {
-
-  const parts = [eventType, eventName];
-  if (difficulty) parts.push(difficulty);
+  const parts = difficulty
+    ? [eventType, eventName, difficulty]
+    : [eventType, eventName];
 
   return (
-    <Box style={{ alignItems: "center", width: "100%", justifyContent: "center" }}>
+    <Box style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
       <div
         style={{
+          display: "flex",
           color: "white",
           fontSize: 28,
-          fontWeight: "bold",
           textTransform: "uppercase",
           textAlign: "center",
           letterSpacing: 3,
           lineHeight: 1,
+          maxWidth: "100%",
+          overflow: "hidden",
         }}
       >
         {parts.join("   -   ")}

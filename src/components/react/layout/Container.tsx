@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 interface ContainerProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function Container({ children }: ContainerProps) {
@@ -7,13 +9,12 @@ export function Container({ children }: ContainerProps) {
     <div
       style={{
         display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        alignItems: "flex-start",
+        flexDirection: "column",
         width: "100%",
         height: "100%",
         padding: "2% 5%",
         gap: 10,
+        boxSizing: "border-box",
         background: "radial-gradient(ellipse at center, #1565a8 0%, #0a1e3d 100%)",
       }}
     >

@@ -15,10 +15,17 @@ interface ModifiersProps {
 
 function formatModifierLabel(modifier: Modifier): string {
   const value = modifier.api;
-  const name = splitUppercase(modifier.key);
+  const name = splitUppercase(modifier.label);
 
   if (typeof value === "boolean") return name;
-  if (modifier.hasKey) return `${value}x ${name}`;
+
+  if (modifier.hasKey) {
+    // Multiplier — treat as percentage (2 → 200%, 1.5 → 150%)
+    const pct = Math.round(Number(value) * 100);
+    return `${pct}% ${name}`;
+  }
+
+  // Absolute value — leave as-is (30 Cash, 1 Paragon Limit)
   return `${value} ${name}`;
 }
 
@@ -49,6 +56,18 @@ export function Modifiers({ metaData }: ModifiersProps) {
         minWidth: 240,
       }}
     >
+      <span
+        style={{
+          color: "#90caf9",
+          fontSize: 16,
+          textTransform: "uppercase",
+          opacity: 0.8,
+          marginBottom: 4,
+        }}
+      >
+        Modifiers
+      </span>
+
       {modifiers.map((modifier) => {
         const imageKey = modifier.imageKey(modifier.api);
         if (!imageKey) return null;
@@ -58,7 +77,7 @@ export function Modifiers({ metaData }: ModifiersProps) {
 
         return (
           <ModifierRow
-            key={modifier.key}
+            key={modifier.label}
             imagePath={imagePath}
             label={formatModifierLabel(modifier)}
             iconSize={sizing.iconSize}

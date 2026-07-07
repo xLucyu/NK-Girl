@@ -1,16 +1,15 @@
 import { CTMetaData, MetaBody } from "@utils";
 
 export interface Modifier {
-  key: string;
+  label: string;
   api: number | boolean;
   hasKey: boolean;
   imageKey: (value: number | boolean) => string | null;
 }
 
-function increaseDecrease(
-  increaseImage: string,
-  decreaseImage: string
-) {
+
+function increaseDecrease(increaseImage: string, decreaseImage: string) {
+
   return (value: number | boolean): string | null => {
     if (typeof value !== "number") return null;
     if (value === 1) return null;
@@ -20,111 +19,113 @@ function increaseDecrease(
 }
 
 export function buildModifiers(body: MetaBody): Modifier[] {
+
   return [
     {
-      key: "speedMultiplier",
+      label: "Bloon Speed",
       api: body._bloonModifiers.speedMultiplier,
       hasKey: true,
       imageKey: increaseDecrease("FasterBloons", "SlowerBloons"),
     },
     {
-      key: "moabSpeedMultiplier",
+      label: "MOAB Speed",
       api: body._bloonModifiers.moabSpeedMultiplier,
       hasKey: true,
       imageKey: increaseDecrease("FasterMoab", "SlowerMoab"),
     },
     {
-      key: "bossSpeedMultiplier",
+      label: "Boss Speed",
       api: body._bloonModifiers.bossSpeedMultiplier,
       hasKey: true,
       imageKey: increaseDecrease("BossIncreaseSpeed", "BossDecreaseSpeed"),
     },
     {
-      key: "regrowRateMultiplier",
+      label: "Regrow Rate",
       api: body._bloonModifiers.regrowRateMultiplier,
       hasKey: true,
       imageKey: increaseDecrease("RegrowRateIncrease", "RegrowRateDecrease"),
     },
     {
-      key: "bloons",
+      label: "Bloon Health",
       api: body._bloonModifiers.healthMultipliers.bloons,
       hasKey: true,
       imageKey: increaseDecrease("BloonBoost", "BloonDecreaseHP"),
     },
     {
-      key: "moabs",
+      label: "MOAB Health",
       api: body._bloonModifiers.healthMultipliers.moabs,
       hasKey: true,
       imageKey: increaseDecrease("MoabBoost", "MoabDecreaseHP"),
     },
     {
-      key: "boss",
+      label: "Boss Health",
       api: body._bloonModifiers.healthMultipliers.boss,
       hasKey: true,
       imageKey: increaseDecrease("BossIncreaseHP", "BossDecreaseHP"),
     },
     {
-      key: "disableMK",
+      label: "Monkey Knowledge Disabled",
       api: body.disableMK,
       hasKey: false,
       imageKey: () => "NoKnowledge",
     },
     {
-      key: "disableSelling",
+      label: "Selling Disabled",
       api: body.disableSelling,
       hasKey: false,
       imageKey: () => "SellingDisabled",
     },
     {
-      key: "abilityCooldownReductionMultiplier",
+      label: "Ability Cooldown",
       api: body.abilityCooldownReductionMultiplier,
       hasKey: true,
-      imageKey: () => "AbilityCooldownReductionMultiplier",
+      imageKey: increaseDecrease("AbilityCooldownReductionIncreaseIcon", "AbilityCooldownReductionDecreaseIcon"),
     },
     {
-      key: "noContinues",
+      label: "No Continues",
       api: body.noContinues,
       hasKey: false,
       imageKey: () => "NoContinues",
     },
     {
-      key: "maxTowers",
+      label: "Tower Limit",
       api: body.maxTowers,
       hasKey: false,
       imageKey: () => "MaxTowers",
     },
     {
-      key: "maxParagons",
+      label: "Paragon Limit",
       api: body.maxParagons,
       hasKey: false,
       imageKey: () => "Paragon",
     },
     {
-      key: "leastCashUsed",
+      label: "Cash Limit",
       api: body.leastCashUsed,
       hasKey: false,
       imageKey: () => "LeastCash",
     },
     {
-      key: "leastTiersUsed",
+      label: "Tier Limit",
       api: body.leastTiersUsed,
       hasKey: false,
       imageKey: () => "LeastTiers",
     },
     {
-      key: "disablePowers",
+      label: "Powers Disabled",
       api: body.disablePowers,
       hasKey: false,
       imageKey: () => "PowersDisabled",
     },
     {
-      key: "removeableCostMultiplier",
+      label: "Removable Cost",
       api: body.removeableCostMultiplier,
       hasKey: true,
       imageKey: increaseDecrease("RemovableCostIncrease", "RemovableCostDecrease"),
     },
   ];
 }
+
 
 /*
 export function buildCTModifiers(body: CTMetaData): Modifier[] {
@@ -149,8 +150,8 @@ export function filterModifiers(modifiers: Modifier[]) {
 
         if (typeof value === "boolean") return value === true;
         if (modifier.hasKey) return value !== 1 && value !== -1 && value !== 9999;
-        if (modifier.key === "maxParagons" && value === 10) return false;
-        if (modifier.key === "maxTowers" && value === 0) return false;
+        if (modifier.label === "Paragon Limit" && value === 10) return false;
+        if (modifier.label === "Tower Limit" && value === 0) return false;
 
         return value !== -1 && value !== 9999 && value !== 0;
     });

@@ -1,24 +1,30 @@
 import { CATEGORIES } from "@utils";
 import type { Tower } from "../types";
 
-type TowerCategories = Record<keyof typeof CATEGORIES, Array<Tower & { crossPaths: [number, number, number ]}>>
+export type TowerEntry = {
+  name: string;
+  max: number;
+  crossPaths: [number, number, number];
+};
+
+export type TowerCategories = Record<keyof typeof CATEGORIES, TowerEntry[]>;
 
 function getCrossPaths(tower: Tower): [number, number, number] {
-    return [
-        Math.max(0, 5 - (tower.path1NumBlockedTiers !== -1 ? tower.path1NumBlockedTiers : 5)),
-        Math.max(0, 5 - (tower.path2NumBlockedTiers !== -1 ? tower.path2NumBlockedTiers : 5)),
-        Math.max(0, 5 - (tower.path3NumBlockedTiers !== -1 ? tower.path3NumBlockedTiers : 5))
-    ]
-}
-
-function getTowerCategory(towerName: string): keyof typeof CATEGORIES {
-    return Object.entries(CATEGORIES).find(([_, towers]) => 
-        towers.includes(towerName))?.[0] as keyof typeof CATEGORIES;
+  return [
+    Math.max(0, 5 - (tower.path1NumBlockedTiers !== -1 ? tower.path1NumBlockedTiers : 5)),
+    Math.max(0, 5 - (tower.path2NumBlockedTiers !== -1 ? tower.path2NumBlockedTiers : 5)),
+    Math.max(0, 5 - (tower.path3NumBlockedTiers !== -1 ? tower.path3NumBlockedTiers : 5)),
+  ];
 }
 
 export function getTowers(towers: Tower[]): TowerCategories {
+  const incoming = new Map<string, Tower>();
+  for (const tower of towers) {
+    if (tower.max === 0) continue;
+    incoming.set(tower.tower, tower);
+  }
 
-  const towerCategories = {
+  const result = {
     Heroes: [],
     Primary: [],
     Military: [],
@@ -26,17 +32,20 @@ export function getTowers(towers: Tower[]): TowerCategories {
     Support: [],
   } as TowerCategories;
 
-  for (const tower of towers) {
+  for (const [category, canonicalOrder] of Object.entries(CATEGORIES) as [
+    keyof typeof CATEGORIES,
+    string[]
+  ][]) {
+    for (const towerName of canonicalOrder) {
+      const tower = incoming.get(towerName);
+      if (!tower) continue;
 
-    if (tower.max === 0) continue;
-
-    const category = getTowerCategory(tower.tower);
-
-    towerCategories[category].push({
-        ...tower,
-        crossPaths: getCrossPaths(tower)
-    });
+      result[category].push({
+        name: tower.tower,
+        max: tower.max,
+        crossPaths: getCrossPaths(tower),
+      });
+    }
   }
-
-  return towerCategories;
+  return result;
 }

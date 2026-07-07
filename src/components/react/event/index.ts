@@ -3,8 +3,7 @@ import { Info } from "./Info"
 import { MapSection} from "./Map"
 import { ProgressBar } from "./ProgressBar"
 import { Modifiers } from "./Modifiers";
-import { Towers } from "./Towers";
-
+import { Towers, Rotations } from "./towers";
 
 
 export const Event = {
@@ -13,5 +12,6 @@ export const Event = {
     Map: MapSection,
     Bar: ProgressBar,
     Modifiers: Modifiers,
-    Towers: Towers
+    Towers: Towers,
+    Rotations: Rotations
 }

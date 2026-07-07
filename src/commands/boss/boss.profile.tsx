@@ -26,8 +26,7 @@ export function BossProfile({
   const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
   const bossIcon = BossImages[bossTypeKey]?.[difficulty];
 
-  const scoreType =
-    difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
+  const scoreType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 
   const infoItems = [
     { label: "Difficulty", value: metaData.difficulty },

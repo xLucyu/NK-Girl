@@ -43,7 +43,7 @@ export function sortByCategory<T>(
   });
 }
 
-export function getBossTowerSize(count: number): TowerIconSize {
+export function getTowerSize(count: number): TowerIconSize {
   if (count <= 8) return { width: 92, height: 92, imageSize: 92 };
   if (count <= 14) return { width: 78, height: 78, imageSize: 78 };
   if (count <= 20) return { width: 64, height: 64, imageSize: 64 };

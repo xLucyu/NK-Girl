@@ -1,6 +1,6 @@
 import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import { getRotationTowerSize, TowerIconSize } from "./tower.sizes";
+import { getRotationTowerSize } from "./tower.sizes";
 
 export interface Rotation {
   instas: string[];
@@ -9,6 +9,12 @@ export interface Rotation {
 
 interface RotationsProps {
   rotations: Rotation[];
+}
+
+interface RotationRow {
+  rotation: Rotation;
+  size: number;
+  current: boolean;
 }
 
 const MONTHS = [
@@ -45,15 +51,7 @@ export function Rotations({ rotations }: RotationsProps) {
   );
 }
 
-function RotationRow({
-  rotation,
-  size,
-  current,
-}: {
-  rotation: Rotation;
-  size: TowerIconSize;
-  current: boolean;
-}) {
+function RotationRow({ rotation, size, current }: RotationRow) {
   return (
     <div
       style={{
@@ -102,7 +100,7 @@ function formatTimestamp(iso: string): string {
 }
 
 function isCurrentRotation(rotations: Rotation[], index: number): boolean {
-  
+
   const now = Date.now();
   const start = new Date(rotations[index].timeStamp).getTime();
   const end =

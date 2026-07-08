@@ -29,10 +29,6 @@ const capitalize = (value: string): string => {
   return value[0].toUpperCase() + value.slice(1);
 };
 
-const getScoreTypeImage = (scoreType: ScoringType) => {
-  return scoreTypeImage[scoreType];
-}
-
 export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
   
   const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
@@ -49,7 +45,7 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
     { label: "Starting Lives", value: metaData.lives, image: EventImages.Lives },
     { label: "Start Round", value: metaData.startRound, image: EventImages.StartRound },
     { label: "End Round", value: metaData.endRound, image: EventImages.StartRound },
-    { label: "Scoring Type", value: splitUppercase(scoreType), image: getScoreTypeImage(scoreType) },
+    { label: "Scoring Type", value: splitUppercase(scoreType), image: scoreTypeImage[scoreType] },
   ];
 
   return (

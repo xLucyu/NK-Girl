@@ -1,63 +1,72 @@
-import { TowerContainers, getTowers } from "@utils";
-import type { TowerEntry } from "@utils";
+import type { TowerCategories, TowerEntry } from "@utils";
 import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import {
-  TowerCategory,
-  TowerIconSize,
-  getBossTowerSize,
-} from "./shared";
+import type { TowerCategory, TowerIconSize, getTowerSize } from "./shared";
 
-interface TowerPanelProps {
-  towers: /* whatever type your API sends — the raw Tower[] */ any[];
+interface TowersProps {
+  towers: TowerCategories;
 }
 
-type TowerWithCategory = TowerEntry & { category: TowerCategory };
+const NON_HERO_CATEGORIES: TowerCategory[] = ["Primary", "Military", "Magic", "Support"];
 
-function getTowerMax(tower: TowerWithCategory): string | null {
-  if (tower.category === "Heroes") return null;
-  if (tower.max === -1 || tower.max === 9999) return null;
-  return String(tower.max);
+export function Towers({ towers }: TowersProps) {
+
+  const heroCount = towers.Heroes.length;
+  const towerCount = NON_HERO_CATEGORIES.reduce((sum, c) => sum + towers[c].length, 0);
+
+  if (heroCount === 0 && towerCount === 0) return null;
+
+  const size = getTowerSize(Math.max(heroCount, towerCount));
+
+  return (
+    <Box
+      style={{
+        flexDirection: "column",
+        alignItems: "flex-start",
+        alignSelf: "flex-start",
+        gap: 10,
+        padding: 12,
+        width: "100%",
+      }}
+    >
+      {heroCount > 0 && (
+        <TowerGroup title="Heroes" size={size}>
+          {towers.Heroes.map((tower) => (
+            <TowerIcon
+              key={tower.name}
+              towerName={tower.name}
+              category="Heroes"
+              size={size}
+            />
+          ))}
+        </TowerGroup>
+      )}
+
+      {towerCount > 0 && (
+        <TowerGroup title="Towers" size={size}>
+          {NON_HERO_CATEGORIES.flatMap((category) =>
+            towers[category].map((tower) => (
+              <TowerIcon
+                key={tower.name}
+                towerName={tower.name}
+                category={category}
+                size={size}
+                max={formatMax(tower)}
+                crossPaths={formatCrossPaths(tower)}
+              />
+            ))
+          )}
+        </TowerGroup>
+      )}
+    </Box>
+  );
 }
 
-function getTowerCrossPaths(tower: TowerWithCategory): string | null {
-  if (tower.category === "Heroes") return null;
-  if (tower.crossPaths.every((v) => v === 5)) return null;
-  return tower.crossPaths.join("-");
-}
-
-function toTowerItems(towers: any[]): TowerWithCategory[] {
-  let grouped;
-  try {
-    grouped = getTowers(towers);
-  } catch (error) {
-    console.warn("[Towers] getTowers threw, rendering empty tower list:", error);
-    return [];
-  }
-
-  return Object.entries(grouped).flatMap(([category, towers]) => {
-    if (!(category in TowerContainers)) {
-      console.warn(`[Towers] unknown category "${category}", skipping`);
-      return [];
-    }
-    return towers.map((tower) => ({
-      ...tower,
-      category: category as TowerCategory,
-    }));
-  });
-}
-
-function TowerGroup({
-  title,
-  towers,
-  size,
-}: {
+function TowerGroup({ title, children }: {
   title: string;
-  towers: TowerWithCategory[];
   size: TowerIconSize;
+  children: React.ReactNode;
 }) {
-  if (towers.length === 0) return null;
-
   return (
     <div
       style={{
@@ -77,7 +86,6 @@ function TowerGroup({
       >
         {title}
       </span>
-
       <div
         style={{
           display: "flex",
@@ -89,43 +97,19 @@ function TowerGroup({
           width: "100%",
         }}
       >
-        {towers.map((tower) => (
-          <TowerIcon
-            key={tower.name}
-            towerName={tower.name}
-            category={tower.category}
-            size={size}
-            max={getTowerMax(tower)}
-            crossPaths={getTowerCrossPaths(tower)}
-          />
-        ))}
+        {children}
       </div>
     </div>
   );
 }
 
-export function Towers({ towers }: TowerPanelProps) {
-  const items = toTowerItems(towers);
-  if (items.length === 0) return null;
+function formatMax(tower: TowerEntry): string | null {
+  if (tower.max === -1 || tower.max === 9999) return null;
+  return String(tower.max);
+}
 
-  const heroes = items.filter((t) => t.category === "Heroes");
-  const rest = items.filter((t) => t.category !== "Heroes");
-
-  const size = getBossTowerSize(Math.max(heroes.length, rest.length));
-
-  return (
-    <Box
-      style={{
-        flexDirection: "column",
-        alignItems: "flex-start",
-        alignSelf: "flex-start",
-        gap: 10,
-        padding: 12,
-        width: "100%",
-      }}
-    >
-      <TowerGroup title="Heroes" towers={heroes} size={size} />
-      <TowerGroup title="Towers" towers={rest} size={size} />
-    </Box>
-  );
+function formatCrossPaths(tower: TowerEntry): string | null {
+  if (!tower.crossPaths) return null;
+  if (tower.crossPaths.every((v) => v === 5)) return null;
+  return tower.crossPaths.join("-");
 }

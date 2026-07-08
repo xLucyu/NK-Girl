@@ -1,11 +1,6 @@
 import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import {
-  TowerIconSize,
-  getTowerCategory,
-  sortByCategory,
-  getRotationTowerSize,
-} from "./shared";
+import { getRotationTowerSize, TowerIconSize } from "./tower.sizes";
 
 export interface Rotation {
   instas: string[];
@@ -14,30 +9,15 @@ export interface Rotation {
 
 interface RotationsProps {
   rotations: Rotation[];
-  sorted?: boolean;
 }
 
-function formatTimestamp(iso: string): string {
-  const d = new Date(iso);
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const day = d.getUTCDate();
-  const month = months[d.getUTCMonth()];
-  const hh = String(d.getUTCHours()).padStart(2, "0");
-  const mm = String(d.getUTCMinutes()).padStart(2, "0");
-  return `${day} ${month}, ${hh}:${mm} UTC`;
-}
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
 
-function isCurrentRotation(rotations: Rotation[], index: number): boolean {
-  const now = Date.now();
-  const start = new Date(rotations[index].timeStamp).getTime();
-  const end =
-    index + 1 < rotations.length
-      ? new Date(rotations[index + 1].timeStamp).getTime()
-      : Infinity;
-  return now >= start && now < end;
-}
+export function Rotations({ rotations }: RotationsProps) {
 
-export function Rotations({ rotations, sorted = true }: RotationsProps) {
   if (rotations.length === 0) return null;
 
   const size = getRotationTowerSize(rotations.length);
@@ -59,7 +39,6 @@ export function Rotations({ rotations, sorted = true }: RotationsProps) {
           rotation={rotation}
           size={size}
           current={isCurrentRotation(rotations, index)}
-          sorted={sorted}
         />
       ))}
     </Box>
@@ -70,17 +49,11 @@ function RotationRow({
   rotation,
   size,
   current,
-  sorted,
 }: {
   rotation: Rotation;
   size: TowerIconSize;
   current: boolean;
-  sorted: boolean;
 }) {
-  const towers = sorted
-    ? sortByCategory(rotation.instas, (name) => name)
-    : rotation.instas;
-
   return (
     <div
       style={{
@@ -109,29 +82,32 @@ function RotationRow({
         {current ? "NOW" : formatTimestamp(rotation.timeStamp)}
       </span>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 8,
-        }}
-      >
-        {towers.map((towerName) => {
-          const category = getTowerCategory(towerName);
-          if (!category) {
-            console.warn(`[Rotations] unknown tower "${towerName}"`);
-            return null;
-          }
-          return (
-            <TowerIcon
-              key={towerName}
-              towerName={towerName}
-              category={category}
-              size={size}
-            />
-          );
-        })}
+      <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+        {rotation.instas.map((towerName) => (
+          <TowerIcon key={towerName} towerName={towerName} size={size} />
+        ))}
       </div>
     </div>
   );
+}
+
+function formatTimestamp(iso: string): string {
+
+  const d = new Date(iso);
+  const day = d.getUTCDate();
+  const month = MONTHS[d.getUTCMonth()];
+  const hh = String(d.getUTCHours()).padStart(2, "0");
+  const mm = String(d.getUTCMinutes()).padStart(2, "0");
+  return `${day} ${month}, ${hh}:${mm} UTC`;
+}
+
+function isCurrentRotation(rotations: Rotation[], index: number): boolean {
+  
+  const now = Date.now();
+  const start = new Date(rotations[index].timeStamp).getTime();
+  const end =
+    index + 1 < rotations.length
+      ? new Date(rotations[index + 1].timeStamp).getTime()
+      : Infinity;
+  return now >= start && now < end;
 }

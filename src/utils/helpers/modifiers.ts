@@ -12,7 +12,7 @@ function increaseDecrease(increaseImage: string, decreaseImage: string) {
 
   return (value: number | boolean): string | null => {
     if (typeof value !== "number") return null;
-    if (value === 1) return null;
+    if (value === 1) return increaseImage;
 
     return value > 1 ? increaseImage : decreaseImage;
   };
@@ -127,20 +127,54 @@ export function buildModifiers(body: MetaBody): Modifier[] {
 }
 
 
-/*
+
 export function buildCTModifiers(body: CTMetaData): Modifier[] {
 
   return [
-    { key: "bloons", api: body.dcModel.bloonModifiers.healthMultipliers.bloons, hasKey: true },
-    { key: "moabs", api: body.dcModel.bloonModifiers.healthMultipliers.moabs, hasKey: true },
-    { key: "regrowRateMultiplier", api: body.dcModel.bloonModifiers.regrowRateMultiplier, hasKey: true },
-    { key: "speedMultiplier", api: body.dcModel.bloonModifiers.speedMultiplier, hasKey: true },
-    { key: "disableMK", api: body.dcModel.disableMK, hasKey: false },
-    { key: "disableSelling", api: body.dcModel.disableSelling, hasKey: false },
-    { key: "maxTowers", api: body.dcModel.maxTowers, hasKey: false },
+    { 
+      label: "Ceramic Health", 
+      api: body.dcModel.bloonModifiers.healthMultipliers.bloons, 
+      hasKey: true,
+      imageKey: increaseDecrease("FasterBloons", "SlowerBloons"),
+    },
+    { 
+      label: "Moab Health", 
+      api: body.dcModel.bloonModifiers.healthMultipliers.moabs, 
+      hasKey: true,
+      imageKey: increaseDecrease("FasterMoab", "SlowerMoab"),
+    },
+    {
+      label: "Regrow Rate",
+      api: body.dcModel.bloonModifiers.regrowRateMultiplier,
+      hasKey: true,
+      imageKey: increaseDecrease("RegrowRateIncrease", "RegrowRateDecrease"),
+    },
+    {
+      label: "Bloon Speed",
+      api: body.dcModel.bloonModifiers.speedMultiplier,
+      hasKey: true,
+      imageKey: increaseDecrease("FasterBloons", "SlowerBloons"),
+    },
+    {
+      label: "Monkey Knowledge Disabled",
+      api: body.dcModel.disableMK,
+      hasKey: false,
+      imageKey: () => "NoKnowledge",
+    },
+    {
+      label: "Selling Disabled",
+      api: body.dcModel.disableSelling,
+      hasKey: false,
+      imageKey: () => "SellingDisabled",
+    },
+    {
+      label: "Tower Limit",
+      api: body.dcModel.maxTowers,
+      hasKey: false,
+      imageKey: () => "MaxTowers",
+    },
   ];
 }
-*/
 
 export function filterModifiers(modifiers: Modifier[]) {
     

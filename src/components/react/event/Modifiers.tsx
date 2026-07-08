@@ -1,57 +1,31 @@
-import {
-  loadImage,
-  buildModifiers,
-  filterModifiers,
-  MetaBody,
-  Modifier,
-  ModifierImages,
-  splitUppercase,
-} from "@utils";
+import { loadImage, Modifier, ModifierImages } from "@utils";
 import { Box } from "../layout/Box";
 
 interface ModifiersProps {
-  metaData: MetaBody;
+  modifiers: Modifier[];
 }
 
-function formatModifierLabel(modifier: Modifier): string {
-  const value = modifier.api;
-  const name = splitUppercase(modifier.label);
-
-  if (typeof value === "boolean") return name;
-
-  if (modifier.hasKey) {
-    // Multiplier — treat as percentage (2 → 200%, 1.5 → 150%)
-    const pct = Math.round(Number(value) * 100);
-    return `${pct}% ${name}`;
-  }
-
-  // Absolute value — leave as-is (30 Cash, 1 Paragon Limit)
-  return `${value} ${name}`;
-}
-
-function getModifierSizing(count: number): {
+interface ModifierSizing {
   iconSize: number;
   fontSize: number;
   gap: number;
   padding: number;
-} {
-  if (count <= 4) return { iconSize: 36, fontSize: 16, gap: 8, padding: 12 };
-  if (count <= 7) return { iconSize: 30, fontSize: 14, gap: 6, padding: 10 };
-  return { iconSize: 26, fontSize: 12, gap: 4, padding: 8 };
 }
 
-export function Modifiers({ metaData }: ModifiersProps) {
-  const modifiers = filterModifiers(buildModifiers(metaData));
+const COLUMN_GAP = 20;
+
+export function Modifiers({ modifiers }: ModifiersProps) {
   if (modifiers.length === 0) return null;
 
-  const sizing = getModifierSizing(modifiers.length);
+  const sizing = getSizing(modifiers.length);
+  const columns = splitIntoColumns(modifiers, getColumnCount(modifiers.length));
 
   return (
     <Box
       style={{
         flexDirection: "column",
         alignSelf: "flex-start",
-        gap: sizing.gap,
+        gap: 8,
         padding: sizing.padding,
         minWidth: 240,
       }}
@@ -68,38 +42,37 @@ export function Modifiers({ metaData }: ModifiersProps) {
         Modifiers
       </span>
 
-      {modifiers.map((modifier) => {
-        const imageKey = modifier.imageKey(modifier.api);
-        if (!imageKey) return null;
-
-        const imagePath = ModifierImages[imageKey as keyof typeof ModifierImages];
-        if (!imagePath) return null;
-
-        return (
-          <ModifierRow
-            key={modifier.label}
-            imagePath={imagePath}
-            label={formatModifierLabel(modifier)}
-            iconSize={sizing.iconSize}
-            fontSize={sizing.fontSize}
-          />
-        );
-      })}
+      <div style={{ display: "flex", flexDirection: "row", gap: COLUMN_GAP }}>
+        {columns.map((column, i) => (
+          <div
+            key={i}
+            style={{ display: "flex", flexDirection: "column", gap: sizing.gap }}
+          >
+            {column.map((modifier) => (
+              <ModifierRow
+                key={modifier.label}
+                modifier={modifier}
+                sizing={sizing}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </Box>
   );
 }
 
-function ModifierRow({
-  imagePath,
-  label,
-  iconSize,
-  fontSize,
-}: {
-  imagePath: string;
-  label: string;
-  iconSize: number;
-  fontSize: number;
+function ModifierRow({ modifier, sizing }: {
+  modifier: Modifier;
+  sizing: ModifierSizing;
 }) {
+
+  const imageKey = modifier.imageKey(modifier.api);
+  if (!imageKey) return null;
+
+  const imagePath = ModifierImages[imageKey as keyof typeof ModifierImages];
+  if (!imagePath) return null;
+
   return (
     <div
       style={{
@@ -111,19 +84,43 @@ function ModifierRow({
     >
       <img
         src={loadImage(imagePath)}
-        width={iconSize}
-        height={iconSize}
+        width={sizing.iconSize}
+        height={sizing.iconSize}
         style={{ objectFit: "contain", flexShrink: 0 }}
       />
       <span
-        style={{
-          color: "white",
-          fontSize,
-          lineHeight: 1.1,
-        }}
+        style={{ color: "white", fontSize: sizing.fontSize, lineHeight: 1.1 }}
       >
-        {label}
+        {formatLabel(modifier)}
       </span>
     </div>
+  );
+}
+
+
+function formatLabel(modifier: Modifier): string {
+  const { api: value, label, hasKey } = modifier;
+
+  if (typeof value === "boolean") return label;
+  if (hasKey) return `${Math.round(Number(value) * 100)}% ${label}`;
+  return `${value} ${label}`;
+}
+
+function getSizing(count: number): ModifierSizing {
+  if (count <= 6) return { iconSize: 36, fontSize: 16, gap: 8, padding: 12 };
+  if (count <= 12) return { iconSize: 32, fontSize: 14, gap: 6, padding: 10 };
+  return { iconSize: 28, fontSize: 12, gap: 5, padding: 8 };
+}
+
+function getColumnCount(count: number): number {
+  if (count <= 6) return 1;
+  if (count <= 12) return 2;
+  return 3;
+}
+
+function splitIntoColumns<T>(items: T[], columns: number): T[][] {
+  const perColumn = Math.ceil(items.length / columns);
+  return Array.from({ length: columns }, (_, i) =>
+    items.slice(i * perColumn, (i + 1) * perColumn)
   );
 }

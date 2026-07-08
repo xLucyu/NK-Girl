@@ -1,7 +1,7 @@
 import type { TowerCategories, TowerEntry } from "@utils";
 import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import type { TowerCategory, TowerIconSize, getTowerSize } from "./shared";
+import { TowerCategory, getTowerSize } from "./tower.sizes";
 
 interface TowersProps {
   towers: TowerCategories;
@@ -10,7 +10,6 @@ interface TowersProps {
 const NON_HERO_CATEGORIES: TowerCategory[] = ["Primary", "Military", "Magic", "Support"];
 
 export function Towers({ towers }: TowersProps) {
-
   const heroCount = towers.Heroes.length;
   const towerCount = NON_HERO_CATEGORIES.reduce((sum, c) => sum + towers[c].length, 0);
 
@@ -30,26 +29,20 @@ export function Towers({ towers }: TowersProps) {
       }}
     >
       {heroCount > 0 && (
-        <TowerGroup title="Heroes" size={size}>
+        <TowerGroup title="Heroes">
           {towers.Heroes.map((tower) => (
-            <TowerIcon
-              key={tower.name}
-              towerName={tower.name}
-              category="Heroes"
-              size={size}
-            />
+            <TowerIcon key={tower.name} towerName={tower.name} size={size} />
           ))}
         </TowerGroup>
       )}
 
       {towerCount > 0 && (
-        <TowerGroup title="Towers" size={size}>
+        <TowerGroup title="Towers">
           {NON_HERO_CATEGORIES.flatMap((category) =>
             towers[category].map((tower) => (
               <TowerIcon
                 key={tower.name}
                 towerName={tower.name}
-                category={category}
                 size={size}
                 max={formatMax(tower)}
                 crossPaths={formatCrossPaths(tower)}
@@ -62,9 +55,11 @@ export function Towers({ towers }: TowersProps) {
   );
 }
 
-function TowerGroup({ title, children }: {
+function TowerGroup({
+  title,
+  children,
+}: {
   title: string;
-  size: TowerIconSize;
   children: React.ReactNode;
 }) {
   return (

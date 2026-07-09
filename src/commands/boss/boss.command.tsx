@@ -30,10 +30,11 @@ import {
   ComponentState 
 } from "@components";
 
-export type BossProps = EventCacheEntry<BossBody, Record<"Standard" | "Elite", MetaBody>>
+export type BossCache = Record<BossDifficulty, MetaBody>;
+export type BossProps = EventCacheEntry<BossBody, BossCache>;
 
 
-export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, MetaBody>> {
+export class BossCommand extends BaseCommand<BossBody, BossCache> {
 
   public commandData = new SlashCommandBuilder()
     .setName("boss")
@@ -59,10 +60,9 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
       InteractionContextType.PrivateChannel
     )
 
-  public getEventProps(): EventCacheEntry<BossBody, Record<BossDifficulty, MetaBody>> | null {
+  public getEventProps(): BossProps | null {
     return eventManager.getEventCache(EventType.Boss).getCache();
   }
-
 
   protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: BossProps): ComponentState {
 
@@ -75,7 +75,6 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
     })
   }
 
-  
   public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {
 
     const difficulty = state.difficulty as BossDifficulty;
@@ -92,10 +91,18 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
     })
   }
 
-
   public getComponents(eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
 
     return [
+
+      BuildButtonMenu({
+        buttons: BossDifficulties.map((difficulty) => ({
+          label: difficulty,
+          customId: `Boss:${difficulty}`,
+          style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
+        })),
+      }),
+      
       BuildSelectMenu({
         customId: "Boss:Select",
         placeholder: "Choose a Boss Event",
@@ -108,24 +115,14 @@ export class BossCommand extends BaseCommand<BossBody, Record<BossDifficulty, Me
           })),
         ],
       }),
-
-      BuildButtonMenu({
-        buttons: BossDifficulties.map((difficulty) => ({
-          label: difficulty,
-          customId: `Boss:${difficulty}`,
-          style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
-        })),
-      }),
     ];
   }
-
 
   protected async fetchOtherEvent(eventId: string): Promise<BossProps["currentEvent"]> {
 
     const eventUrl = GOOGLE_API_ULRS.Boss.replace("{}", eventId);
     return getData<BossProps["currentEvent"]>(eventUrl);
   }
-
 
   public async resolveEvent(eventProps: BossProps, state: ComponentState): Promise<BossProps["currentEvent"]> {
     

@@ -5,7 +5,6 @@ import {
     InteractionReplyOptions, 
     SlashCommandBuilder 
 } from "discord.js";
-import { JSX } from "react";
 import { 
     EventType, 
     GOOGLE_API_ULRS, 
@@ -17,7 +16,7 @@ import { BaseCommand } from "../base.command";
 import { BuildSelectMenu, ComponentState, CreateComponentState } from "@components";
 import { EventCacheEntry, eventManager } from "@manager";
 import { RaceProfile } from "./race.profile";
-import { getData } from "../../api/api-client";
+import { getData } from "@api";
 
 export type RaceProps = EventCacheEntry<RaceBody, MetaBody>;
 
@@ -55,7 +54,7 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 
         return CreateComponentState({
             eventId: eventProps.currentEvent.data.id,
-            difficulty: null,
+            difficulty: "",
             userId : interaction.user.id
         })
     }
@@ -72,13 +71,12 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
                     label: splitUppercase(event.name),
                     value: event.id,
                     default: state.eventId === event.id,
-                    emoji: { id: "1338550202889404487", name: "BossChallenge" }
+                    emoji: { id: "1338550190390382694", name: "EventRace" }
                     }))
                 ]
             })
         ]
     }
-
     
     protected async fetchOtherEvent(eventId: string): Promise<RaceProps["currentEvent"]> {
     

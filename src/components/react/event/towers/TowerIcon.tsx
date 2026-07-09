@@ -1,9 +1,14 @@
-import { CATEGORIES, TowerImages, TowerContainers, loadImage } from "@utils";
-import type { TowerCategory, TowerIconSize } from "./tower.sizes";
+import { 
+  CATEGORIES, 
+  TowerImages, 
+  TowerContainers, 
+  loadImage 
+} from "@utils";
+import { TowerCategory } from "./tower.sizes";
 
 interface TowerIconProps {
   towerName: string;
-  size: TowerIconSize;
+  size: number;
   max?: string | null;
   crossPaths?: string | null;
 }
@@ -24,13 +29,17 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
   const backgroundPath = TowerContainers[category];
   if (!towerPath || !backgroundPath) return null;
 
+  const badgeSize = Math.max(22, Math.round(size * 0.36));
+  const badgeFontSize = Math.max(11, Math.round(size * 0.2));
+
+
   return (
     <div
       style={{
         display: "flex",
         position: "relative",
-        width: size.width,
-        height: size.height,
+        width: size,
+        height: size,
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
@@ -38,8 +47,8 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
     >
       <img
         src={loadImage(backgroundPath)}
-        width={size.width}
-        height={size.height}
+        width={size}
+        height={size}
         style={{
           position: "absolute",
           left: 0,
@@ -50,24 +59,47 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
       />
       <img
         src={loadImage(towerPath)}
-        width={size.imageSize}
-        height={size.imageSize}
+        width={size}
+        height={size}
         style={{ objectFit: "contain", borderRadius: 10 }}
       />
 
       {max && (
-        <span
+        <div
           style={{
+            display: "flex",
             position: "absolute",
-            right: 4,
-            top: 3,
-            color: "white",
-            fontSize: Math.max(10, Math.round(size.width * 0.18)),
-            textShadow: "-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000",
+            left: -4,
+            top: -4,
+            width: badgeSize,
+            height: badgeSize,
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {max}
-        </span>
+          <img
+            src={loadImage(TowerContainers.Max)}
+            width={badgeSize}
+            height={badgeSize}
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              objectFit: "contain",
+            }}
+          />
+          <span
+            style={{
+              color: "white",
+              fontSize: badgeFontSize,
+              fontWeight: 700,
+              lineHeight: 1,
+              marginTop: 6, // optical centering — badge art has more space at the bottom
+            }}
+          >
+            {max}
+          </span>
+        </div>
       )}
 
       {crossPaths && (
@@ -84,7 +116,7 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
           <span
             style={{
               color: "#ff3838",
-              fontSize: Math.max(11, Math.round(size.width * 0.22)),
+              fontSize: Math.max(11, Math.round(size * 0.22)),
               letterSpacing: 1,
               textShadow: "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000",
             }}

@@ -47,4 +47,5 @@ export const TowerContainers = {
   Military: "towers/TowerContainerMilitary.png",
   Magic: "towers/TowerContainerMagic.png",
   Support: "towers/TowerContainerSupport.png",
+  Max: "towers/TowerMax.png"
 };

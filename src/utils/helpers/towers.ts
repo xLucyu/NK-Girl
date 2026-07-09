@@ -18,6 +18,7 @@ function getCrossPaths(tower: Tower): [number, number, number] {
 }
 
 export function getTowers(towers: Tower[]): TowerCategories {
+  
   const incoming = new Map<string, Tower>();
   for (const tower of towers) {
     if (tower.max === 0) continue;
@@ -32,11 +33,10 @@ export function getTowers(towers: Tower[]): TowerCategories {
     Support: [],
   } as TowerCategories;
 
-  for (const [category, canonicalOrder] of Object.entries(CATEGORIES) as [
-    keyof typeof CATEGORIES,
-    string[]
-  ][]) {
+  for (const [category, canonicalOrder] of Object.entries(CATEGORIES) as [keyof typeof CATEGORIES, string[]][]) {
+
     for (const towerName of canonicalOrder) {
+
       const tower = incoming.get(towerName);
       if (!tower) continue;
 
@@ -47,5 +47,6 @@ export function getTowers(towers: Tower[]): TowerCategories {
       });
     }
   }
+
   return result;
 }

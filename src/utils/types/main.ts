@@ -1,3 +1,5 @@
+import { ScoringType } from "@manager";
+
 export interface BaseBody {
   id: string;
   name: string;
@@ -13,8 +15,8 @@ export interface BossBody extends BaseBody {
   leaderboard_standard_players_1: string;
   leaderboard_elite_players_1: string;
   scoringType: string;
-  normalScoringType: string;
-  eliteScoringType: string;
+  normalScoringType: ScoringType;
+  eliteScoringType: ScoringType;
   bossType: string;
 }
 

@@ -4,7 +4,7 @@ import {
   TowerContainers, 
   loadImage 
 } from "@utils";
-import { TowerCategory } from "./tower.sizes";
+import { TowerCategory } from "./sizes";
 
 interface TowerIconProps {
   towerName: string;

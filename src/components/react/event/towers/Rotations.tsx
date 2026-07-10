@@ -1,6 +1,6 @@
 import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import { getRotationTowerSize } from "./tower.sizes";
+import { getRotationTowerSize } from "./sizes";
 
 export interface Rotation {
   instas: string[];

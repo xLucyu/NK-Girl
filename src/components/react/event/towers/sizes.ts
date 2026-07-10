@@ -1,6 +1,6 @@
-import { TowerContainers } from "@utils";
+import { TowerCategories } from "@utils";
 
-export type TowerCategory = keyof typeof TowerContainers;
+export type TowerCategory = keyof TowerCategories;
 
 export function getTowerSize(count: number): number {
   if (count <= 8) return 92;

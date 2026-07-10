@@ -9,6 +9,7 @@ import {
   filterModifiers,
   buildModifiers,
   EventImages,
+  ModifierImages,
 } from "@utils";
 import { Layout, Event } from "@components";
 import { ScoringType } from "@manager";
@@ -21,8 +22,8 @@ interface BossProfileProps {
 
 const scoreTypeImage: Record<ScoringType, string> = {
   [ScoringType.GameTime]: EventImages.Race,
-  [ScoringType.LeastCash]: EventImages.LeastCash,
-  [ScoringType.LeastTiers]: EventImages.LeastTiers
+  [ScoringType.LeastCash]: ModifierImages.LeastCash,
+  [ScoringType.LeastTiers]: ModifierImages.LeastTiers
 }
 
 const capitalize = (value: string): string => {

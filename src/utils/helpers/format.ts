@@ -20,3 +20,8 @@ export function splitBossNumbers(value: string): string {
     const [, name, number] = match;
     return `${name} #${number}`;
 }
+
+
+export const convertCash = (value: number): string => {
+    return `$ ${value.toLocaleString("en-US")}`;
+}

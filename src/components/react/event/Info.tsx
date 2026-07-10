@@ -1,8 +1,10 @@
+import { loadImage } from "@utils";
 import { Box } from "../layout/Box";
 
 interface InfoItem {
   label: string;
   value: string | number;
+  image?: string;
 }
 
 interface InfoProps {
@@ -10,15 +12,14 @@ interface InfoProps {
 }
 
 interface InfoCellProps {
-  item: InfoItem; 
+  item: InfoItem;
   fullWidth: boolean;
 }
 
 const ITEMS_PER_ROW = 2;
 
-
 export function Info({ items }: InfoProps) {
-  
+
   const rows = chunk(items, ITEMS_PER_ROW);
 
   return (
@@ -49,8 +50,8 @@ export function Info({ items }: InfoProps) {
   );
 }
 
-
-function InfoCell({ item, fullWidth }: InfoCellProps ) {
+function InfoCell({ item, fullWidth }: InfoCellProps) {
+  const src = item.image ? loadImage(item.image) : "";
 
   return (
     <div
@@ -73,9 +74,32 @@ function InfoCell({ item, fullWidth }: InfoCellProps ) {
       >
         {item.label}
       </span>
-      <span style={{ color: "white", fontSize: 22, lineHeight: 1 }}>
-        {String(item.value)}
-      </span>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        {src ? (
+          <img
+            src={src}
+            width={26}
+            height={26}
+            style={{ objectFit: "contain", flexShrink: 0 }}
+          />
+        ) : null}
+        <span style={{ 
+          color: "white", 
+          fontSize: 22, 
+          lineHeight: 1,
+          marginTop: 4
+          }}>
+          {String(item.value)}
+        </span>
+      </div>
     </div>
   );
 }

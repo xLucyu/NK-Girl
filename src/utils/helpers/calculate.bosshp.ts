@@ -1,3 +1,5 @@
+import { bossHpValues,  } from "../assets";
+
 const playerMultiplier: Record<number, number> = {
     1: 1,
     2: 1.2,
@@ -18,7 +20,7 @@ export function calcBossHp(
     difficulty: string
 ): BossTier[] {
 
-    const currentBoss = bossHpValues.Elite.Dreadbloon
+    const currentBoss = bossHpValues[difficulty][boss];
     const shieldMultiplier = currentBoss.Shield ?? 0;
     const skullCount = currentBoss.Skulls;
 

@@ -1,7 +1,7 @@
 import type { TowerCategories, TowerEntry } from "@utils";
 import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import { TowerCategory, getTowerSize } from "./tower.sizes";
+import { TowerCategory, getTowerSize } from "./sizes";
 
 interface TowersProps {
   towers: TowerCategories;

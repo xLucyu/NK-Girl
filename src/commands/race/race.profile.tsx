@@ -2,7 +2,9 @@ import {
   buildModifiers, 
   convertCash, 
   EventImages, 
+  EventType, 
   filterModifiers, 
+  getNumberForEvent, 
   getTowers, 
   MetaBody, 
   RaceBody, 
@@ -20,6 +22,8 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
   const raceIcon = EventImages.Race;
   const modifiers = filterModifiers(buildModifiers(metaData));
 
+  const raceNumber = getNumberForEvent(event.start, EventType.Race)
+
   const infoItems = [
     { label: "Difficulty", value: metaData.difficulty },
     { label: "Mode", value: metaData.mode },
@@ -32,7 +36,7 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
   return (
     <Layout.Container>
       <Event.Header
-        eventType="Race"
+        eventType={`${EventType.Race} #${raceNumber}`}
         eventName={splitUppercase(event.name)}
       />
       <Layout.Row>

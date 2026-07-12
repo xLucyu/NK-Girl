@@ -1,5 +1,6 @@
 import { 
     EventImages,
+    EventType,
     getNumberForEvent,
     getTowers,
     MetaBody, 
@@ -26,23 +27,23 @@ function getMapSize(mapCount: number): number {
 
 const reward = (metaData: OdysseyMetaData & { mapsData: MetaBody[] }): string => {
 
-    const importantReward = metaData._rewards[metaData._rewards.length - 1];
-    const [rewardType, rewardValue] = importantReward.split(":");
+  const importantReward = metaData._rewards[metaData._rewards.length - 1];
+  const [rewardType, rewardValue] = importantReward.split(":");
 
-    if (rewardType === "InstaMonkey") {
-        const [name, tier] = rewardValue.split(",");
-        return `${splitUppercase(name)} (${tier})`;
-    }
+  if (rewardType === "InstaMonkey") {
+    const [name, tier] = rewardValue.split(",");
+    return `${splitUppercase(name)} (${tier})`;
+  }
 
-    if (rewardType === "CollectionEvent") {
-        return `${rewardValue} Totems`;
-    }
+  if (rewardType === "CollectionEvent") {
+    return `${rewardValue} Totems`;
+  }
 
-    return splitUppercase(rewardValue);
+  return splitUppercase(rewardValue);
 }
 
 const formatDifficulty = (isExtreme: boolean, difficulty: OdysseyDifficulty): string => {
-    return `${difficulty}${isExtreme ? ", Extreme" : ""}`
+  return `${difficulty}${isExtreme ? ", Extreme" : ""}`
 }
 
 function mapInfoItems(map: MetaBody) {
@@ -54,44 +55,44 @@ function mapInfoItems(map: MetaBody) {
 
 export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfileProps): JSX.Element {
 
-    const odysseyImage = OdysseyImages[difficulty];
-    const odysseyEventNumber = getNumberForEvent(event.start, "Odyssey");
-    const mapSize = getMapSize(metaData.mapsData.length);
+  const odysseyImage = OdysseyImages[difficulty];
+  const odysseyEventNumber = getNumberForEvent(event.start, EventType.Odyssey);
+  const mapSize = getMapSize(metaData.mapsData.length);
 
-    const infoItems = [
-      { label: "Difficulty", value: formatDifficulty(metaData.isExtreme, difficulty), image: odysseyImage },
-      { label: "Lives", value: metaData.startingHealth, image: EventImages.Lives },
-      { label: "Max Seats", value: metaData.maxMonkeySeats },
-      { label: "Max Monkeys", value: metaData.maxMonkeysOnBoat, image: ModifierImages.MaxTowers },
-      { label: "Reward", value: reward(metaData) }
-    ];
+  const infoItems = [
+    { label: "Difficulty", value: formatDifficulty(metaData.isExtreme, difficulty), image: odysseyImage },
+    { label: "Lives", value: metaData.startingHealth, image: EventImages.Lives },
+    { label: "Max Seats", value: metaData.maxMonkeySeats },
+    { label: "Max Monkeys", value: metaData.maxMonkeysOnBoat, image: ModifierImages.MaxTowers },
+    { label: "Reward", value: reward(metaData) }
+  ];
 
-    return (
-      <Layout.Container>
-        <Event.Header
-          eventType={`Odyssey ${odysseyEventNumber}`}
-          eventName={splitUppercase(event.name)}
-          difficulty={difficulty}
-        />
-        <Layout.Row>
-          <Event.Info items={infoItems} />
-          <Event.Bar start={event.start} end={event.end} />
-        </Layout.Row>
-        <Layout.Row>
-          <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} />
-        </Layout.Row>
-        <Layout.Row>
-          {metaData.mapsData.map((map, i) => (
-            <Layout.Column key={i}>
-              <Event.Map
-                map={map.map}
-                width={mapSize}
-                height={Math.round(mapSize * 0.63)}
-              />
-              <Event.Info items={mapInfoItems(map)} />
-            </Layout.Column>
-          ))}
-        </Layout.Row>
-      </Layout.Container>
-    );
+  return (
+    <Layout.Container>
+      <Event.Header
+        eventType={`${EventType.Odyssey} #${odysseyEventNumber}`}
+        eventName={splitUppercase(event.name)}
+        difficulty={difficulty}
+      />
+      <Layout.Row>
+        <Event.Info items={infoItems} />
+        <Event.Bar start={event.start} end={event.end} />
+      </Layout.Row>
+      <Layout.Row>
+        <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} />
+      </Layout.Row>
+      <Layout.Row>
+        {metaData.mapsData.map((map, i) => (
+          <Layout.Column key={i}>
+            <Event.Map
+              map={map.map}
+              width={mapSize}
+              height={Math.round(mapSize * 0.63)}
+            />
+            <Event.Info items={mapInfoItems(map)} />
+          </Layout.Column>
+        ))}
+      </Layout.Row>
+    </Layout.Container>
+  );
 }

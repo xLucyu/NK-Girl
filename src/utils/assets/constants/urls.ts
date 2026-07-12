@@ -11,5 +11,7 @@ export const API_URLS = {
 };
 
 export const GOOGLE_API_ULRS = {
-  Boss: "https://storage.googleapis.com/btd6api/Event/Boss/{}/event.json"
+  Boss: "https://storage.googleapis.com/btd6api/Event/Boss/{}/event.json",
+  Race: "https://storage.googleapis.com/btd6api/Event/Race/{}/event.json",
+  Odyssey: "https://storage.googleapis.com/btd6api/Event/Odyssey/{}/event.json"
 }

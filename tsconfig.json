@@ -8,7 +8,7 @@
     "strict": true,
     "jsx": "react-jsx",
     "paths": {
-      "@wrapper": ["./src/api/wrapper"],
+      "@api": ["./src/api"],
       "@utils": ["./src/utils"],
       "@manager": ["./src/event-manager"],
       "@commands": ["./src/commands"],

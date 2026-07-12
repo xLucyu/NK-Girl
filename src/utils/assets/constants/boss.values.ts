@@ -1,4 +1,4 @@
-import { BossDifficulty } from "@manager";
+import { BossDifficulty } from "../../types";
 
 export enum Boss {
     Bloonarius = "Bloonarius",

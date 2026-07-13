@@ -15,42 +15,68 @@ import {
 } from "@utils";
 import { Event, Layout } from "@components";
 
-const MapDisplay = ({ map }: { map: MetaBody }) => {
-
+const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
   const modifiers = filterModifiers(buildModifiers(map));
+  const isSmall = size <= 170;
+  const nameFontSize = isSmall ? 18 : 24;
+  const metaFontSize = isSmall ? 13 : 16;
 
   return (
-    <Layout.Box>
-    <Layout.Column>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-        >
-          <Event.Map map={map.map} />
-          <span style={{ fontSize: 24, color: "white" }}>{splitUppercase(map.map)}</span>
-          <span style={{ fontSize: 16, color: "white" }}>{map.difficulty}</span>
-          <span style={{ fontSize: 16, color: "white" }}>{splitUppercase(map.mode)}</span>
-        </div>
-        {modifiers.length > 0 && <Event.Modifiers modifiers={modifiers} compact /> }
-    </Layout.Column>
+    <Layout.Box
+      style={{
+        width: "100%",
+        border: "none",
+        flexDirection: "column",
+        padding: 0,
+        gap: 6,
+        alignItems: "center",
+      }}
+    >
+      <Event.Map
+        map={map.map}
+        height={size}
+        overlay={
+          modifiers.length > 0 ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                width: "100%",
+                height: "100%",
+                padding: 8,
+              }}
+            >
+              <Event.Modifiers modifiers={modifiers} compact />
+            </div>
+          ) : null
+        }
+      />
+      <span style={{ fontSize: nameFontSize, color: "white" }}>
+        {splitUppercase(map.map)}
+      </span>
+      <span style={{ fontSize: metaFontSize, color: "white" }}>
+        {map.difficulty}
+      </span>
+      <span style={{ fontSize: metaFontSize, color: "white" }}>
+        {splitUppercase(map.mode)}
+      </span>
     </Layout.Box>
-  )
-}
+  );
+};
 
-
-export interface OdysseyProfileProps {
-    event: OdysseyBody;
-    metaData: OdysseyMetaData & { mapsData: MetaBody[] };
-    difficulty: OdysseyDifficulty;
-}
 
 function getMapSize(mapCount: number): number {
   if (mapCount <= 3) return 220;
   if (mapCount === 4) return 170;
   return 140;
+}
+
+
+export interface OdysseyProfileProps {
+  event: OdysseyBody;
+  metaData: OdysseyMetaData & { mapsData: MetaBody[] };
+  difficulty: OdysseyDifficulty;
 }
 
 const reward = (metaData: OdysseyMetaData & { mapsData: MetaBody[] }): string => {
@@ -103,11 +129,16 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
           <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} />
        </Layout.Column>
       </Layout.Row>
-      <Layout.Row>
-        {metaData.mapsData.map((map, index) => (
-          <MapDisplay key={index} map={map} />
-        ))}
-      </Layout.Row>
+<Layout.Row style={{ flex: 1, width: "100%" }}>
+  {metaData.mapsData.map((map, index) => (
+    <div
+      key={index}
+      style={{ display: "flex", flex: 1, minWidth: 0 }}
+    >
+      <MapDisplay map={map} size={getMapSize(metaData.mapsData.length)} />
+    </div>
+  ))}
+</Layout.Row>
     </Layout.Container>
   );
 }

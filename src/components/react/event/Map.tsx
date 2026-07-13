@@ -1,26 +1,37 @@
 import { MapImages, loadImage } from "@utils";
-import { Box } from "../layout/Box";
 
 interface MapSectionProps {
   map: string;
-  iconPath?: string;
   width?: number | string;
   height?: number | string;
+  iconPath?: string;
 }
 
-export function MapSection({ map, iconPath, width, height }: MapSectionProps) {
-  
+export function MapSection({
+  map,
+  width,
+  height,
+  iconPath,
+}: MapSectionProps) {
+
   const mapImage = loadImage(MapImages[map as keyof typeof MapImages]);
   const iconImage = iconPath ? loadImage(iconPath) : undefined;
 
   return (
-    <Box style={{ position: "relative", width: "auto" }}>
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        width: "100%",
+        ...(width ? { width } : {}),
+      }}
+    >
       <img
         src={mapImage}
         style={{
           borderRadius: 7,
           objectFit: "cover",
-          ...(width ? { width } : {}),
+          width: "100%",
           ...(height ? { height } : {}),
         }}
       />
@@ -36,6 +47,6 @@ export function MapSection({ map, iconPath, width, height }: MapSectionProps) {
           }}
         />
       ) : null}
-    </Box>
+    </div>
   );
 }

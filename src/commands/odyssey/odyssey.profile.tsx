@@ -24,46 +24,53 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
   return (
     <Layout.Box
       style={{
-        width: "100%",
-        border: "none",
+        display: "flex",
         flexDirection: "column",
-        padding: 0,
-        gap: 6,
         alignItems: "center",
+        gap: 8,
+        padding: 12,
+        width: "100%",
       }}
     >
-      <Event.Map
-        map={map.map}
-        height={size}
-        overlay={
-          modifiers.length > 0 ? (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-                width: "100%",
-                height: "100%",
-                padding: 8,
-              }}
-            >
-              <Event.Modifiers modifiers={modifiers} compact />
-            </div>
-          ) : null
-        }
-      />
-      <span style={{ fontSize: nameFontSize, color: "white" }}>
-        {splitUppercase(map.map)}
-      </span>
-      <span style={{ fontSize: metaFontSize, color: "white" }}>
-        {map.difficulty}
-      </span>
-      <span style={{ fontSize: metaFontSize, color: "white" }}>
-        {splitUppercase(map.mode)}
-      </span>
+      {/* Map-Bild */}
+      <Event.Map map={map.map} height={size} />
+
+      {/* Text zentriert */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 2,
+        }}
+      >
+        <span style={{ fontSize: nameFontSize, color: "white" }}>
+          {splitUppercase(map.map)}
+        </span>
+        <span style={{ fontSize: metaFontSize, color: "white" }}>
+          {map.difficulty}
+        </span>
+        <span style={{ fontSize: metaFontSize, color: "white" }}>
+          {splitUppercase(map.mode)}
+        </span>
+      </div>
+
+      {/* Modifiers: nur Icon + Value, zentriert */}
+      {modifiers.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+          }}
+        >
+          <Event.Modifiers modifiers={modifiers} compact />
+        </div>
+      )}
     </Layout.Box>
   );
 };
+
 
 
 function getMapSize(mapCount: number): number {
@@ -139,6 +146,7 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
     </div>
   ))}
 </Layout.Row>
+
     </Layout.Container>
   );
 }

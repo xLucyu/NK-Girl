@@ -15,11 +15,42 @@ import {
 } from "@utils";
 import { Event, Layout } from "@components";
 
+const MapDisplay = ({ map }: { map: MetaBody }) => {
+
+  const modifiers = filterModifiers(buildModifiers(map));
+
+  return (
+    <Layout.Box>
+    <Layout.Column>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+        >
+          <Event.Map map={map.map} />
+          <span style={{ fontSize: 24, color: "white" }}>{splitUppercase(map.map)}</span>
+          <span style={{ fontSize: 16, color: "white" }}>{map.difficulty}</span>
+          <span style={{ fontSize: 16, color: "white" }}>{splitUppercase(map.mode)}</span>
+        </div>
+        {modifiers.length > 0 && <Event.Modifiers modifiers={modifiers} compact /> }
+    </Layout.Column>
+    </Layout.Box>
+  )
+}
+
 
 export interface OdysseyProfileProps {
     event: OdysseyBody;
     metaData: OdysseyMetaData & { mapsData: MetaBody[] };
     difficulty: OdysseyDifficulty;
+}
+
+function getMapSize(mapCount: number): number {
+  if (mapCount <= 3) return 220;
+  if (mapCount === 4) return 170;
+  return 140;
 }
 
 const reward = (metaData: OdysseyMetaData & { mapsData: MetaBody[] }): string => {
@@ -71,7 +102,12 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
         <Layout.Column>
           <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} />
        </Layout.Column>
-       </Layout.Row>
+      </Layout.Row>
+      <Layout.Row>
+        {metaData.mapsData.map((map, index) => (
+          <MapDisplay key={index} map={map} />
+        ))}
+      </Layout.Row>
     </Layout.Container>
   );
 }

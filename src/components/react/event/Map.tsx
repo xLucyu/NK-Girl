@@ -15,7 +15,9 @@ export function MapSection({
 }: MapSectionProps) {
 
   const mapImage = loadImage(MapImages[map as keyof typeof MapImages]);
-  const iconImage = iconPath ? loadImage(iconPath) : undefined;
+  if (!mapImage) return null;
+
+  const iconImage = iconPath ? loadImage(iconPath) : null;
 
   return (
     <div

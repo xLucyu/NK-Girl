@@ -76,7 +76,7 @@ function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
         flexWrap: "wrap",
         gap: sizing.gap,
         width: "100%",
-        alignItems: "center",
+        alignItems: "center"
       }}
     >
       {modifiers.map((modifier) => (

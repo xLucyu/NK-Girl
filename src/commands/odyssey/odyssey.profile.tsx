@@ -17,9 +17,10 @@ import { Event, Layout } from "@components";
 
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
   const modifiers = filterModifiers(buildModifiers(map));
-  const isSmall = size <= 170;
-  const nameFontSize = isSmall ? 18 : 24;
-  const metaFontSize = isSmall ? 13 : 16;
+  const isSmall = size <= 140;
+  const nameFontSize = isSmall ? 16 : 22;
+  const metaFontSize = isSmall ? 12 : 14;
+  const roundFontSize = isSmall ? 13 : 15;
 
   return (
     <Layout.Box
@@ -27,15 +28,13 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 8,
+        gap: 6,
         padding: 12,
         width: "100%",
       }}
     >
-      {/* Map-Bild */}
       <Event.Map map={map.map} height={size} />
 
-      {/* Text zentriert */}
       <div
         style={{
           display: "flex",
@@ -47,15 +46,14 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
         <span style={{ fontSize: nameFontSize, color: "white" }}>
           {splitUppercase(map.map)}
         </span>
-        <span style={{ fontSize: metaFontSize, color: "white" }}>
-          {map.difficulty}
+        <span style={{ fontSize: metaFontSize, color: "#aaa" }}>
+          {`${map.difficulty} - ${splitUppercase(map.mode)}`}
         </span>
-        <span style={{ fontSize: metaFontSize, color: "white" }}>
-          {splitUppercase(map.mode)}
+        <span style={{ fontSize: roundFontSize, color: "white" }}>
+          {`R${map.startRound} - R${map.endRound}`}
         </span>
       </div>
 
-      {/* Modifiers: nur Icon + Value, zentriert */}
       {modifiers.length > 0 && (
         <div
           style={{
@@ -73,11 +71,13 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
 
 
 
+
 function getMapSize(mapCount: number): number {
-  if (mapCount <= 3) return 220;
-  if (mapCount === 4) return 170;
-  return 140;
+  if (mapCount <= 3) return 180;
+  if (mapCount === 4) return 140;
+  return 110;
 }
+
 
 
 export interface OdysseyProfileProps {
@@ -136,17 +136,16 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
           <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} />
        </Layout.Column>
       </Layout.Row>
-<Layout.Row style={{ flex: 1, width: "100%" }}>
-  {metaData.mapsData.map((map, index) => (
-    <div
-      key={index}
-      style={{ display: "flex", flex: 1, minWidth: 0 }}
-    >
-      <MapDisplay map={map} size={getMapSize(metaData.mapsData.length)} />
-    </div>
-  ))}
-</Layout.Row>
-
+      <Layout.Row style={{ flex: 1, width: "100%" }}>
+        {metaData.mapsData.map((map, index) => (
+          <div
+          key={index}
+          style={{ display: "flex", flex: 1, minWidth: 0 }}
+          >
+            <MapDisplay map={map} size={getMapSize(metaData.mapsData.length)} />
+          </div>
+          ))}
+      </Layout.Row>
     </Layout.Container>
   );
 }

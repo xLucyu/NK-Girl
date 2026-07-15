@@ -6,17 +6,11 @@ interface MapSectionProps {
   width?: number | string;
   height?: number | string;
   iconPath?: string;
-  iconSize?: number;
   overlay?: ReactNode;
 }
 
-export function MapSection({
-  map,
-  width,
-  height,
-  iconPath,
-  overlay,
-}: MapSectionProps) {
+export function MapSection({ map, width, height, iconPath, overlay }: MapSectionProps) {
+
   const mapImageKey = MapImages[map as keyof typeof MapImages];
   if (!mapImageKey) return null;
 

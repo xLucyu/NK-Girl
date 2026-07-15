@@ -1,26 +1,25 @@
 import { 
     buildModifiers,
+    convertCash,
     EventImages,
     EventType,
     filterModifiers,
     getNumberForEvent,
     getTowers,
+    loadImage,
     MetaBody, 
     ModifierImages, 
-    OdysseyBody, 
+    type OdysseyBody, 
     OdysseyDifficulty, 
     OdysseyImages, 
-    OdysseyMetaData, 
+    type OdysseyMetaData, 
     splitUppercase
 } from "@utils";
 import { Event, Layout } from "@components";
 
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
+
   const modifiers = filterModifiers(buildModifiers(map));
-  const isSmall = size <= 140;
-  const nameFontSize = isSmall ? 16 : 22;
-  const metaFontSize = isSmall ? 12 : 14;
-  const roundFontSize = isSmall ? 13 : 15;
 
   return (
     <Layout.Box
@@ -33,7 +32,38 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
         width: "100%",
       }}
     >
-      <Event.Map map={map.map} height={size} />
+      <Event.Map
+        map={map.map}
+        height={size}
+        overlay={
+          modifiers.length > 0 ? (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-end",
+                width: "100%",
+                height: "100%",
+                padding: 6,
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  width: "100%",
+                  alignItems: "center",
+                  height: "100%",
+                  padding: 4,
+                }}
+              >
+                <Event.Modifiers modifiers={modifiers} compact />
+              </div>
+            </div>
+          ) : null
+        }
+      />
 
       <div
         style={{
@@ -43,41 +73,22 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
           gap: 2,
         }}
       >
-        <span style={{ fontSize: nameFontSize, color: "white" }}>
+        <span style={{ fontSize: 20, color: "white" }}>
           {splitUppercase(map.map)}
         </span>
-        <span style={{ fontSize: metaFontSize, color: "#aaa" }}>
+        <span style={{ fontSize: 14, color: "white" }}>
           {`${map.difficulty} - ${splitUppercase(map.mode)}`}
         </span>
-        <span style={{ fontSize: roundFontSize, color: "white" }}>
+        <span style={{ fontSize: 15, color: "white" }}>
           {`R${map.startRound} - R${map.endRound}`}
         </span>
+        <span style={{ fontSize: 14, color: "white" }}>
+          {`${loadImage(EventImages.Cash)} ${convertCash(map.startingCash)}`}
+        </span>
       </div>
-
-      {modifiers.length > 0 && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "100%",
-          }}
-        >
-          <Event.Modifiers modifiers={modifiers} compact />
-        </div>
-      )}
     </Layout.Box>
   );
 };
-
-
-
-
-function getMapSize(mapCount: number): number {
-  if (mapCount <= 3) return 180;
-  if (mapCount === 4) return 140;
-  return 110;
-}
-
 
 
 export interface OdysseyProfileProps {
@@ -133,18 +144,18 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
         <Layout.Column>
-          <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} />
+          <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} compact/>
        </Layout.Column>
       </Layout.Row>
-      <Layout.Row style={{ flex: 1, width: "100%" }}>
+      <Layout.Row style={{ flex: 1, justifyContent: "flex-start", gap: 12}}>
         {metaData.mapsData.map((map, index) => (
           <div
-          key={index}
-          style={{ display: "flex", flex: 1, minWidth: 0 }}
+            key={index}
+            style={{ display: "flex", width: 221, flexShrink: 0 }}
           >
-            <MapDisplay map={map} size={getMapSize(metaData.mapsData.length)} />
+            <MapDisplay map={map} size={160} />
           </div>
-          ))}
+        ))}
       </Layout.Row>
     </Layout.Container>
   );

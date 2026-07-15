@@ -51,6 +51,7 @@ export function Info({ items }: InfoProps) {
 }
 
 function InfoCell({ item, fullWidth }: InfoCellProps) {
+
   const src = item.image ? loadImage(item.image) : "";
 
   return (
@@ -58,10 +59,9 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
         width: fullWidth ? "100%" : "50%",
         padding: "0 12px",
-        gap: 2,
+        gap: 8,
       }}
     >
       <span
@@ -88,14 +88,14 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
             src={src}
             width={26}
             height={26}
-            style={{ objectFit: "contain", flexShrink: 0 }}
+            style={{ objectFit: "contain", flexShrink: 0, marginTop: 6 }}
           />
         ) : null}
         <span style={{ 
           color: "white", 
           fontSize: 22, 
           lineHeight: 1,
-          marginTop: 4
+          marginTop: 12
           }}>
           {String(item.value)}
         </span>
@@ -105,6 +105,7 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
 }
 
 function chunk<T>(arr: T[], size: number): T[][] {
+  
   const rows: T[][] = [];
   for (let i = 0; i < arr.length; i += size) {
     rows.push(arr.slice(i, i + size));

@@ -45,6 +45,7 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
                 width: "100%",
                 height: "100%",
                 padding: 6,
+                paddingBottom: 15
               }}
             >
               <div
@@ -83,7 +84,7 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
           {`R${map.startRound} - R${map.endRound}`}
         </span>
         <span style={{ fontSize: 14, color: "white" }}>
-          {`${loadImage(EventImages.Cash)} ${convertCash(map.startingCash)}`}
+          {`${convertCash(map.startingCash)}`}
         </span>
       </div>
     </Layout.Box>

@@ -16,6 +16,7 @@ interface ModifierSizing {
 const COLUMN_GAP = 20;
 
 export function Modifiers({ modifiers, compact = false }: ModifiersProps) {
+  
   if (modifiers.length === 0) return null;
 
   if (compact) return <CompactModifiers modifiers={modifiers} />;
@@ -66,6 +67,7 @@ export function Modifiers({ modifiers, compact = false }: ModifiersProps) {
 }
 
 function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
+
   const sizing = getCompactSizing(modifiers.length);
 
   return (
@@ -90,10 +92,7 @@ function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
   );
 }
 
-function CompactModifierPill({ modifier, sizing }: {
-  modifier: Modifier;
-  sizing: ModifierSizing;
-}) {
+function CompactModifierPill({ modifier, sizing }: {modifier: Modifier; sizing: ModifierSizing; }) {
   const imageKey = modifier.imageKey(modifier.api);
   if (!imageKey) return null;
 
@@ -134,10 +133,8 @@ function CompactModifierPill({ modifier, sizing }: {
   );
 }
 
-function ModifierRow({ modifier, sizing }: {
-  modifier: Modifier;
-  sizing: ModifierSizing;
-}) {
+function ModifierRow({ modifier, sizing }: { modifier: Modifier; sizing: ModifierSizing; }) {
+
   const imageKey = modifier.imageKey(modifier.api);
   if (!imageKey) return null;
 

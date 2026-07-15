@@ -1,10 +1,13 @@
 import { MapImages, loadImage } from "@utils";
+import type { ReactNode } from "react";
 
 interface MapSectionProps {
   map: string;
   width?: number | string;
   height?: number | string;
   iconPath?: string;
+  iconSize?: number;
+  overlay?: ReactNode;
 }
 
 export function MapSection({
@@ -12,12 +15,13 @@ export function MapSection({
   width,
   height,
   iconPath,
+  overlay,
 }: MapSectionProps) {
+  const mapImageKey = MapImages[map as keyof typeof MapImages];
+  if (!mapImageKey) return null;
 
-  const mapImage = loadImage(MapImages[map as keyof typeof MapImages]);
-  if (!mapImage) return null;
-
-  const iconImage = iconPath ? loadImage(iconPath) : null;
+  const mapImage = loadImage(mapImageKey);
+  const iconImage = iconPath ? loadImage(iconPath) : undefined;
 
   return (
     <div
@@ -42,12 +46,22 @@ export function MapSection({
           src={iconImage}
           width={133}
           height={133}
+          style={{ position: "absolute", bottom: 13, right: 13 }}
+        />
+      ) : null}
+      {overlay ? (
+        <div
           style={{
             position: "absolute",
-            bottom: 13,
-            right: 13,
+            top: 0,
+            left: 0,
+            display: "flex",
+            width: "100%",
+            height: "100%",
           }}
-        />
+        >
+          {overlay}
+        </div>
       ) : null}
     </div>
   );

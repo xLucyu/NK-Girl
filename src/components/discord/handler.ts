@@ -4,16 +4,14 @@ import {
   MessageFlags,
   StringSelectMenuInteraction,
 } from "discord.js";
-import { componentState, render } from "@components";
-import { commands, eventCommands } from "@commands";
-
-const TIMEOUT = 3 * 60 * 1000;
+import { componentState, render, TIMEOUT } from "@components";
+import { BaseCommand, eventCommands } from "@commands";
+import { BaseBody } from "@utils";
 
 async function handleComponent(interaction: StringSelectMenuInteraction | ButtonInteraction) {
-
+  
   const state = componentState.get(interaction.message.id);
   if (!state) return;
-
   if (interaction.user.id !== state.userId) {
     await interaction.reply({
       content: "You're not the original user.",
@@ -21,32 +19,17 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
     });
     return;
   }
-
   if (Date.now() > state.expiresAt) {
     componentState.delete(interaction.message.id);
-    await interaction.reply({
-      content: "This menu has expired. Run the command again.",
-      flags: MessageFlags.Ephemeral,
-    });
     return;
   }
 
   const [commandName, value] = interaction.customId.split(":");
-  const command = commands[commandName.toLowerCase() as keyof typeof eventCommands];
-
-  if (!command || typeof command.resolveEvent !== "function") {
-    await interaction.reply({
-      content: "This control is no longer active.",
-      flags: MessageFlags.Ephemeral,
-    });
-    return;
-  }
+  const command = eventCommands[commandName.toLowerCase() as keyof typeof eventCommands] as BaseCommand<BaseBody, unknown>;
 
   await interaction.deferUpdate();
-
   if (interaction.isStringSelectMenu()) state.eventId = interaction.values[0];
-  if (interaction.isButton()) state.difficulty = value;
-
+  if (interaction.isButton()) state.options.difficulty = value;
   state.expiresAt = Date.now() + TIMEOUT;
 
   try {

@@ -18,7 +18,8 @@ import {
   componentState,
   scheduleComponentCleanup,
   ComponentState,
-  CreateComponentState
+  CreateComponentState,
+  Options
 } from "@components";
 import { BaseBody, EventType, GOOGLE_API_ULRS } from "@utils";
 
@@ -62,7 +63,7 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     return eventManager.getEventCache(this.eventType).getCache() as unknown as EventCacheEntry<T, K>;
   }
 
-  protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
+  protected getOptions(_interaction: ChatInputCommandInteraction): Options {
     return {};
   }
 

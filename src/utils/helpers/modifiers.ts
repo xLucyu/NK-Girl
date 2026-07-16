@@ -17,7 +17,7 @@ function increaseDecrease(increaseImage: string, decreaseImage: string) {
   };
 }
 
-export function buildModifiers(body: MetaBody): Modifier[] {
+export function buildModifiers(body: MetaBody, customRounds: boolean = false): Modifier[] {
 
   return [
     {
@@ -122,6 +122,24 @@ export function buildModifiers(body: MetaBody): Modifier[] {
       hasKey: false,
       imageKey: () => "NoContinues",
     },
+    {
+      label: "All Regen",
+      api: body._bloonModifiers.allRegen,
+      hasKey: false,
+      imageKey: () => "AllRegen"
+    },
+    {
+      label: "All Camo",
+      api: body._bloonModifiers.allCamo,
+      hasKey: false,
+      imageKey: () => "AllCamo"
+    },
+    {
+    label: "Custom Rounds",
+    api: customRounds,
+    hasKey: false,
+    imageKey: () => "CustomRounds"
+    }
   ];
 }
 

@@ -1,6 +1,6 @@
 import { EventBody, InstaSchedule } from "@utils";
 
-export interface BossProfileProps {
+export interface CollectionProfileProps {
     event: EventBody;
     metaData: InstaSchedule;
 }

@@ -1,30 +1,36 @@
-import { JSX } from "react";
+import { getData } from "@api";
 import {
+  ApplicationIntegrationType,
   AttachmentBuilder,
   ChatInputCommandInteraction,
+  InteractionContextType,
   InteractionReplyOptions,
-  SlashCommandOptionsOnlyBuilder,
+  SlashCommandBuilder,
+  SlashCommandOptionsOnlyBuilder
 } from "discord.js";
-import {
-  CurrentEventData,
-  EventCacheEntry,
-} from "../event-manager/cache";
+import { 
+  CurrentEventData, 
+  EventCacheEntry, 
+  eventManager 
+} from "@manager";
 import { 
   render,
   componentState,
   scheduleComponentCleanup,
-  ComponentState
- } from "@components";
+  ComponentState,
+  CreateComponentState
+} from "@components";
+import { BaseBody, EventType, GOOGLE_API_ULRS } from "@utils";
 
+export abstract class BaseCommand<T extends BaseBody, K> {
 
-export abstract class BaseCommand<T, K> {
-
-
+  protected abstract readonly eventType: EventType;
+  protected abstract readonly urlKey: keyof typeof GOOGLE_API_ULRS;
   public abstract commandData: SlashCommandOptionsOnlyBuilder;
-  
 
   public async execute(interaction: ChatInputCommandInteraction) {
 
+    await interaction.deferReply();
     const eventProps = this.getEventProps();
     if (!eventProps) throw new Error("no event cache found.");
   
@@ -34,9 +40,9 @@ export abstract class BaseCommand<T, K> {
     const attachment = new AttachmentBuilder(buffer, {name: "image.png" });
     const components = this.getComponents(eventProps, state) ?? [];
 
-    await interaction.reply({
+    await interaction.editReply({
       files: [attachment], 
-      components: components 
+      components 
     });
 
     const message = await interaction.fetchReply();
@@ -52,25 +58,48 @@ export abstract class BaseCommand<T, K> {
     });
   }
 
-  public abstract getEventProps(): EventCacheEntry<T, K> | null;
+  public getEventProps(): EventCacheEntry<T, K> | null {
+    return eventManager.getEventCache(this.eventType).getCache() as unknown as EventCacheEntry<T, K>;
+  }
 
-  protected abstract getInitialState(
-    interaction: ChatInputCommandInteraction,
-    eventProps: EventCacheEntry<T, K>
-  ): ComponentState;
+  public async resolveEvent(eventProps: EventCacheEntry<T, K>, state: ComponentState): Promise<CurrentEventData<T,K>> {
+    
+    if (eventProps.currentEvent.data.id === state.eventId) return eventProps.currentEvent;
 
-  public abstract resolveEvent(
+    const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", state.eventId);
+    return getData<CurrentEventData<T, K>>(eventUrl);
+  }
+
+  protected getInitialState(
+    interaction: ChatInputCommandInteraction, 
     eventProps: EventCacheEntry<T, K>,
-    state: ComponentState
-  ): Promise<CurrentEventData<T, K>>;
+    difficulty?: string
+  ): ComponentState {
 
-  public abstract getProfile(
-    event: CurrentEventData<T, K>,
-    state: ComponentState
-  ): JSX.Element;
+    return CreateComponentState({
+      eventId: eventProps.currentEvent.data.id,
+      difficulty: difficulty ?? "",
+      userId: interaction.user.id
+    })
+  }
 
+  public abstract getProfile(event: CurrentEventData<T, K>, state: ComponentState): JSX.Element
   public abstract getComponents(
-    eventProps: EventCacheEntry<T, K>,
+    eventProps: EventCacheEntry<T, K>, 
     state: ComponentState
-  ): InteractionReplyOptions["components"];
+  ): InteractionReplyOptions["components"]
+
+  protected static baseSlashCommand(name: string, description: string): SlashCommandBuilder {
+    return new SlashCommandBuilder()
+      .setName(name)
+      .setDescription(description)
+      .setIntegrationTypes(
+        ApplicationIntegrationType.GuildInstall,
+        ApplicationIntegrationType.UserInstall,
+      )
+      .setContexts(
+        InteractionContextType.Guild,
+        InteractionContextType.PrivateChannel,
+      );
+  }
 }

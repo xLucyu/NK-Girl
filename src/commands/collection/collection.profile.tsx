@@ -1,4 +1,3 @@
-import { JSX } from "react";
 import { EventBody, InstaSchedule } from "@utils";
 
 export interface BossProfileProps {
@@ -6,10 +5,7 @@ export interface BossProfileProps {
     metaData: InstaSchedule;
 }
 
-export function CollectionProfile({
-  event,
-  metaData,
-}: BossProfileProps): JSX.Element {
+export function CollectionProfile({ event metaData }: BossProfileProps): JSX.Element {
   return (
     <div>
 

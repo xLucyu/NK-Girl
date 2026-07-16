@@ -8,7 +8,6 @@ import {
 } from "discord.js";
 import { 
   EventType,
-  GOOGLE_API_ULRS,
   MetaBody, 
   OdysseyBody, 
   OdysseyDifficulties, 
@@ -18,65 +17,51 @@ import {
 } from "@utils";
 import { BaseCommand } from "../base.command";
 import { 
-  EventCacheEntry, 
+  type EventCacheEntry, 
   eventManager 
 } from "@manager";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
-  ComponentState, 
-  CreateComponentState 
+  ComponentState
 } from "@components";
 import { OdysseyProfile } from "./odyssey.profile";
-import { getData } from "@api";
 
 export type OdysseyCache = Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>
 export type OdysseyProps = EventCacheEntry<OdysseyBody, OdysseyCache>;
 
 export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
 
-  public commandData = new SlashCommandBuilder()
-    .setName("odyssey")
-    .setDescription("show the current odyssey data.")
+  protected readonly eventType = EventType.Odyssey;
+  protected readonly urlKey = EventType.Odyssey;
+
+  public commandData = BaseCommand.baseSlashCommand("odyssey", "Show Boss Event Data")
     .addStringOption((option) =>
-      option 
-        .setName("difficulty")
-        .setDescription("Choose a difficulty")
-        .setRequired(false)
-        .addChoices(
-          ...OdysseyDifficulties.map((difficulty) => ({
-            name: difficulty,
-            value: difficulty 
-          }))
-        )
-    )
-    .setIntegrationTypes(
-      ApplicationIntegrationType.GuildInstall,
-      ApplicationIntegrationType.UserInstall,
-    )
-    .setContexts(
-      InteractionContextType.Guild,
-      InteractionContextType.PrivateChannel
+    option 
+      .setName("difficulty")
+      .setDescription("Choose a difficulty")
+      .setRequired(false)
+      .addChoices(
+        ...OdysseyDifficulties.map((difficulty) => ({
+          name: difficulty,
+          value: difficulty 
+        }))
+      )
     )
 
   public getEventProps(): EventCacheEntry<OdysseyBody, OdysseyCache> | null {
     return eventManager.getEventCache(EventType.Odyssey).getCache();
   }
 
-  protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<OdysseyBody, OdysseyCache>): ComponentState {
-    
-    const difficulty = interaction.options.getString("difficulty") as OdysseyDifficulty ?? OdysseyDifficulties[2];
-
-    return CreateComponentState({
-      eventId: eventProps.currentEvent.data.id,
-      difficulty: difficulty,
-      userId: interaction.user.id
-    });
+  protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
+    return {
+      difficulty: interaction.options.getString("difficulty") ?? OdysseyDifficulties[2]
+    };
   }
 
   public getProfile(eventProps: OdysseyProps["currentEvent"], state: ComponentState): JSX.Element {
 
-    const difficulty = state.difficulty as OdysseyDifficulty;
+    const difficulty = state.options.difficulty as OdysseyDifficulty;
   
     const event = eventProps.data;
     const metaData = eventProps.metaData[difficulty];
@@ -117,18 +102,5 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
         ],
       }),
     ];
-  }
-
-  protected async fetchOtherEvent(eventId: string): Promise<OdysseyProps["currentEvent"]> {
-
-    const eventUrl = GOOGLE_API_ULRS.Odyssey.replace("{}", eventId);
-    return getData<OdysseyProps["currentEvent"]>(eventUrl);
-  }
-
-
-  public async resolveEvent(eventProps: OdysseyProps, state: ComponentState): Promise<OdysseyProps["currentEvent"]> {
-  
-    if (state.eventId === eventProps.currentEvent.data.id) return eventProps.currentEvent;
-    return this.fetchOtherEvent(state.eventId);
   }
 }

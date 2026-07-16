@@ -30,12 +30,17 @@ const capitalize = (value: string): string => {
   return value[0].toUpperCase() + value.slice(1);
 };
 
+const hasCustomRounds = (metaData: MetaBody, event: BossBody) => {
+  return metaData.roundSets.some((set) => set.name !== event.bossType)
+}
+
 export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
   
   const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
   const bossIcon = BossImages[bossTypeKey]?.[difficulty];
+  const customRounds = hasCustomRounds(metaData, event);
 
-  const modifiers = filterModifiers(buildModifiers(metaData));
+  const modifiers = filterModifiers(buildModifiers(metaData, customRounds));
 
   const scoreType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 

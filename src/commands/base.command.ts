@@ -62,6 +62,10 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     return eventManager.getEventCache(this.eventType).getCache() as unknown as EventCacheEntry<T, K>;
   }
 
+  protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
+    return {};
+  }
+
   public async resolveEvent(eventProps: EventCacheEntry<T, K>, state: ComponentState): Promise<CurrentEventData<T,K>> {
     
     if (eventProps.currentEvent.data.id === state.eventId) return eventProps.currentEvent;
@@ -72,13 +76,11 @@ export abstract class BaseCommand<T extends BaseBody, K> {
 
   protected getInitialState(
     interaction: ChatInputCommandInteraction, 
-    eventProps: EventCacheEntry<T, K>,
-    difficulty?: string
+    eventProps: EventCacheEntry<T, K>
   ): ComponentState {
-
     return CreateComponentState({
       eventId: eventProps.currentEvent.data.id,
-      difficulty: difficulty ?? "",
+      options: this.getOptions(interaction),
       userId: interaction.user.id
     })
   }

@@ -6,7 +6,6 @@ import {
     filterModifiers,
     getNumberForEvent,
     getTowers,
-    loadImage,
     MetaBody, 
     ModifierImages, 
     type OdysseyBody, 
@@ -17,9 +16,16 @@ import {
 } from "@utils";
 import { Event, Layout } from "@components";
 
+export interface OdysseyProfileProps {
+  event: OdysseyBody;
+  metaData: OdysseyMetaData & { mapsData: MetaBody[] };
+  difficulty: OdysseyDifficulty;
+}
+
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
 
-  const modifiers = filterModifiers(buildModifiers(map));
+  const hasCustomRounds = map.roundSets.length > 1;
+  const modifiers = filterModifiers(buildModifiers(map, hasCustomRounds));
 
   return (
     <Layout.Box
@@ -91,13 +97,6 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
   );
 };
 
-
-export interface OdysseyProfileProps {
-  event: OdysseyBody;
-  metaData: OdysseyMetaData & { mapsData: MetaBody[] };
-  difficulty: OdysseyDifficulty;
-}
-
 const reward = (metaData: OdysseyMetaData & { mapsData: MetaBody[] }): string => {
 
   const importantReward = metaData._rewards[metaData._rewards.length - 1];
@@ -158,6 +157,7 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
           </div>
         ))}
       </Layout.Row>
+
     </Layout.Container>
   );
 }

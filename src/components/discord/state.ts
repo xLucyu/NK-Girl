@@ -2,7 +2,7 @@ import { Boss } from "@utils";
 
 export const TIMEOUT = 3 * 60 * 1000; // 3 minutes
 
-interface Options {
+export interface Options {
   difficulty?: string;
   playerCount?: number;
   boss?: Boss;
@@ -21,7 +21,7 @@ export const componentState = new Map<string, ComponentState>();
 export function CreateComponentState(paramters: {
   eventId: string;
   userId: string;
-  options?: Record<string, unknown>;
+  options?: Options;
 }): ComponentState {
   return {
     eventId: paramters.eventId,

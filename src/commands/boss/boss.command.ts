@@ -1,6 +1,7 @@
-import { ButtonStyle,
-        ChatInputCommandInteraction, 
-        InteractionReplyOptions 
+import { 
+  ButtonStyle,
+  ChatInputCommandInteraction, 
+  InteractionReplyOptions 
 } from "discord.js";
 import type { EventCacheEntry } from "@manager";
 import { BaseCommand } from "../base.command";
@@ -19,30 +20,31 @@ import {
   ComponentState 
 } from "@components";
 
-export type BossCache = Record<BossDifficulty, MetaBody>;
-export type BossProps = EventCacheEntry<BossBody, BossCache>;
+export type BossMeta = Record<BossDifficulty, MetaBody>;
+export type BossProps = EventCacheEntry<BossBody, BossMeta>;
 
-
-export class BossCommand extends BaseCommand<BossBody, BossCache> {
+export class BossCommand extends BaseCommand<BossBody, BossMeta> {
 
 	protected readonly eventType = EventType.Boss;
 	protected readonly urlKey = EventType.Boss;
 
-  public commandData = BaseCommand.baseSlashCommand("boss", "Show Boss Event Data")
-   .addStringOption((option) =>
-    option 
-      .setName("difficulty")
-      .setDescription("Choose a difficulty")
-      .setRequired(false)
-      .addChoices(
-        ...BossDifficulties.map((difficulty) => ({
-          name: difficulty,
-          value: difficulty 
-        }))
-      )
+  public commandData = BaseCommand
+    .baseSlashCommand("boss", "Show Boss Event Data", true)
+    .addStringOption((option) =>
+      option 
+        .setName("difficulty")
+        .setDescription("Choose a difficulty")
+        .setRequired(false)
+        .addChoices(
+          ...BossDifficulties.map((difficulty) => ({
+            name: difficulty,
+            value: difficulty 
+          }))
+        )
     )
 
   protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
+
     return {
       difficulty: interaction.options.getString("difficulty") ?? BossDifficulties[0]
     };
@@ -81,7 +83,7 @@ export class BossCommand extends BaseCommand<BossBody, BossCache> {
         options: [
           ...eventProps.previousEvents!.map((event) => ({
             label: splitBossNumbers(event.name),
-            value: event.id,
+            value: event.name,
             default: state.eventId === event.id,
             emoji: { id: "1338550202889404487", name: "BossChallenge" }
           })),

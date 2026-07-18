@@ -1,4 +1,4 @@
-import { getData } from "../../../api/api-client";
+import { getData } from "@api";
 import { 
     API_URLS, 
     getNumberForEvent,
@@ -6,7 +6,7 @@ import {
     EventType,
     TileCode
 } from "@utils";
-import { BaseEventCache } from "./base";
+import { BaseEventCache, PreviousEvent } from "./base";
 
 
 export class CTCache extends BaseEventCache<CTBody, Record<string, TileCode>> {
@@ -38,8 +38,8 @@ export class CTCache extends BaseEventCache<CTBody, Record<string, TileCode>> {
     }
 
 
-    protected override getPreviousEvents(): null {
-        return null;
+    protected override getPreviousEvents(): PreviousEvent[] {
+        return [];
     }
 
     protected getBucketPath(event: CTBody): string {

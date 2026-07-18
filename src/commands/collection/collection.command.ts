@@ -1,7 +1,7 @@
 import { EventBody, EventType, InstaSchedule } from "@utils";
 import { BaseCommand } from "../base.command";
 import { CollectionProfile } from "./collection.profile";
-import { EventCacheEntry } from "@manager";
+import { EventCacheEntry, eventManager } from "@manager";
 
 export type CollectionProps = EventCacheEntry<EventBody, InstaSchedule>;
 
@@ -17,5 +17,9 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
       event: event.data,
       metaData: event.metaData
     })
+  }
+
+  public getEventProps(): CollectionProps | null {
+    return eventManager.getEventCache(EventType.Collection).getCache();
   }
 }

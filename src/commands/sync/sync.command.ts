@@ -31,10 +31,10 @@ export class SyncCommand {
     const option = interaction.options.getString("sync_option");
 
     if (option === "global") {
-        await deployCommands({ guildId: interaction.guild?.id });
-        return interaction.editReply("Synced global commands.");
+      await deployCommands();
+      return interaction.editReply("Synced global commands.");
     } else {
-        await deployCommands();
+      await deployCommands({ guildId: interaction.guild?.id });
         return interaction.editReply("Synced debug commands.");
     }
   }

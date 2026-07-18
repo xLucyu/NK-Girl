@@ -8,7 +8,7 @@ import {
   EventType
 } from "@utils";
 import { BaseLeaderboardService, Payload } from "./base";
-import { getData } from "../../../api/api-client";
+import { getData } from "@api";
 
 
 export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,LeaderboardPayload> {

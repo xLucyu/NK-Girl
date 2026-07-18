@@ -1,10 +1,7 @@
 import { 
-  ApplicationIntegrationType, 
   ButtonStyle, 
   ChatInputCommandInteraction, 
-  InteractionContextType, 
   InteractionReplyOptions, 
-  SlashCommandBuilder 
 } from "discord.js";
 import { 
   EventType,
@@ -16,10 +13,7 @@ import {
   splitUppercase
 } from "@utils";
 import { BaseCommand } from "../base.command";
-import { 
-  type EventCacheEntry, 
-  eventManager 
-} from "@manager";
+import { type EventCacheEntry } from "@manager";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
@@ -35,23 +29,20 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
   protected readonly eventType = EventType.Odyssey;
   protected readonly urlKey = EventType.Odyssey;
 
-  public commandData = BaseCommand.baseSlashCommand("odyssey", "Show Boss Event Data")
+  public commandData = BaseCommand
+    .baseSlashCommand("odyssey", "Show Boss Event Data", true)
     .addStringOption((option) =>
-    option 
-      .setName("difficulty")
-      .setDescription("Choose a difficulty")
-      .setRequired(false)
-      .addChoices(
-        ...OdysseyDifficulties.map((difficulty) => ({
-          name: difficulty,
-          value: difficulty 
-        }))
+      option 
+        .setName("difficulty")
+        .setDescription("Choose a difficulty")
+        .setRequired(false)
+        .addChoices(
+          ...OdysseyDifficulties.map((difficulty) => ({
+            name: difficulty,
+            value: difficulty 
+          }))
+        )
       )
-    )
-
-  public getEventProps(): EventCacheEntry<OdysseyBody, OdysseyCache> | null {
-    return eventManager.getEventCache(EventType.Odyssey).getCache();
-  }
 
   protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
     return {

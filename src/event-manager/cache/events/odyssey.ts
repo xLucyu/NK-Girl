@@ -1,4 +1,4 @@
-import { getData } from "../../../api/api-client";
+import { getData } from "@api";
 import { 
     API_URLS,
     EventType,

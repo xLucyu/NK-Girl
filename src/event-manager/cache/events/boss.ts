@@ -1,15 +1,14 @@
-import { JSX } from "react";
 import { 
     EventType, 
     BossBody, 
     MetaBody, 
     MetaData,
     BossDifficulty,
-    BossDifficulties
+    BossDifficulties,
+    API_URLS
 } from "@utils";
 import { BaseEventCache } from "./base";
-import { getData } from "../../../api/api-client";
-import { API_URLS } from "@utils";
+import { getData } from "@api";
 import { BossProfile } from "@commands";
 
 export class BossCache extends BaseEventCache<BossBody, Record<BossDifficulty, MetaBody>> {

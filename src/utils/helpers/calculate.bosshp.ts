@@ -1,4 +1,5 @@
-import { bossHpValues,  } from "../assets";
+import { Boss, bossHpValues,  } from "../assets";
+import { BossDifficulty } from "../types";
 
 const playerMultiplier: Record<number, number> = {
     1: 1,
@@ -14,10 +15,10 @@ interface BossTier {
 }
 
 export function calcBossHp(
-    boss: string, 
+    boss: Boss, 
     hpModifier: number, 
     playerCount: number, 
-    difficulty: string
+    difficulty: BossDifficulty
 ): BossTier[] {
 
     const currentBoss = bossHpValues[difficulty][boss];

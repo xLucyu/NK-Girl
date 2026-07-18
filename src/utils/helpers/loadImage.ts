@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-const ASSET_ROOT = resolve(__dirname, ".");
+const ASSET_ROOT = resolve(__dirname, "../assets/images");
 const cache = new Map<string, string>();
 
 export function loadImage(path: string): string {

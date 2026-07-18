@@ -5,3 +5,4 @@ export * from "./modifiers";
 export * from "./format";
 export * from "./decode.collection";
 export * from "./emojis";
+export * from "./loadImage";

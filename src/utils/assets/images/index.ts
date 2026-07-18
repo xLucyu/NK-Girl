@@ -7,5 +7,3 @@ export { ModifierImages } from "./modifiers";
 export { OdysseyImages } from "./odyssey";
 export { RelicImages } from "./relics";
 export { TowerImages, TowerContainers } from "./towers";
-
-export { loadImage } from "./loadImage";

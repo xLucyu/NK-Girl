@@ -5,7 +5,7 @@ import {
     RaceBody,
     API_URLS 
 } from "@utils";
-import { getData } from "../../../api/api-client";
+import { getData } from "@api";
 import { BaseEventCache } from "./base";
 
 

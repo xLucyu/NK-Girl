@@ -1,4 +1,4 @@
-import { getData } from "../../../api/api-client";
+import { getData } from "@api";
 import { 
     getCollectionCycle,
     InstaSchedule, 
@@ -7,7 +7,7 @@ import {
     API_URLS,
     NkData
 } from "@utils";
-import { BaseEventCache } from "./base";
+import { BaseEventCache, PreviousEvent } from "./base";
 
 export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
 
@@ -38,8 +38,8 @@ export class CollectionCache extends BaseEventCache<EventBody, InstaSchedule> {
         return getCollectionCycle(event);
     }
 
-    protected override getPreviousEvents(): null {
-        return null;
+    protected override getPreviousEvents(): PreviousEvent[] {
+        return [];
     }
 
     protected getBucketPath(event: EventBody): string {

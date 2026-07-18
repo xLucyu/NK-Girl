@@ -52,13 +52,6 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     return this.cache;
   }
 
-  
-  public async getEventById(id: string): Promise<T | null> {
-
-    const events = await this.getEventData();
-    return events.find((event) => event.id === id) ?? null;
-  }
-
 
   async check(firstUse: boolean): Promise<void> {
 
@@ -84,7 +77,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     }
     console.log(this.cache);
 
-    if (!firstUse) {
+    if (firstUse) {
       const bucketPath = this.getBucketPath(currentEvent);
       await this.uploadToBucket(bucketPath);
     }

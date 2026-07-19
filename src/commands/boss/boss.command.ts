@@ -17,7 +17,8 @@ import {
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
-  ComponentState 
+  ComponentState, 
+  Options
 } from "@components";
 
 export type BossMeta = Record<BossDifficulty, MetaBody>;
@@ -43,12 +44,12 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
         )
     )
 
-  protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
-
+  protected getOptions(interaction: ChatInputCommandInteraction): Options {
     return {
       difficulty: interaction.options.getString("difficulty") ?? BossDifficulties[0]
     };
   }
+
 
   public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {
 

@@ -17,7 +17,8 @@ import { type EventCacheEntry } from "@manager";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
-  ComponentState
+  ComponentState,
+  Options
 } from "@components";
 import { OdysseyProfile } from "./odyssey.profile";
 
@@ -44,7 +45,7 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
         )
       )
 
-  protected getOptions(interaction: ChatInputCommandInteraction): Record<string, unknown> {
+  protected getOptions(interaction: ChatInputCommandInteraction): Options {
     return {
       difficulty: interaction.options.getString("difficulty") ?? OdysseyDifficulties[2]
     };

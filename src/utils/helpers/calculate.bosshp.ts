@@ -1,12 +1,14 @@
 import { Boss, bossHpValues,  } from "../assets";
 import { BossDifficulty } from "../types";
 
-const playerMultiplier: Record<number, number> = {
+export const playerMultiplier: Record<number, number> = {
     1: 1,
     2: 1.2,
     3: 1.4,
     4: 1.6
 }
+
+export type CoopOptions = keyof typeof playerMultiplier;
 
 interface BossTier {
     tier: number;

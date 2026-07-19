@@ -8,8 +8,6 @@ export const playerMultiplier: Record<number, number> = {
     4: 1.6
 }
 
-export type CoopOptions = keyof typeof playerMultiplier;
-
 interface BossTier {
     tier: number;
     totalHp: string;

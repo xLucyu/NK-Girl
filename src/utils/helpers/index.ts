@@ -6,3 +6,4 @@ export * from "./format";
 export * from "./decode.collection";
 export * from "./emojis";
 export * from "./loadImage";
+export * from "./calculate.bosshp";

@@ -33,12 +33,6 @@ import { getEventAutocompleteChoices } from "./auto.complete";
 
 type InteractionType = ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction;
 
-export interface BaseProfileProps<T, K> {
-  event: T;
-  metaData: K;
-  difficulty?: string; 
-}
-
 export abstract class BaseCommand<T extends BaseBody, K> {
 
   protected abstract readonly eventType: EventType;
@@ -58,6 +52,7 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     const message = await interaction.fetchReply();
 
     componentState.set(message.id, state);
+    
     scheduleComponentCleanup({
       messageId: message.id,
       editReply: (options) => interaction.editReply(options),

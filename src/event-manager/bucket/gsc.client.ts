@@ -4,7 +4,11 @@ import { EventType } from "@utils";
 export class GscClient {
 
   private storage: Storage;
-  private bucket: Bucket
+  private bucket: Bucket;
+  private cache = new Map<EventType, {
+    ids: string[];
+    expiresAt: number;
+  }>
 
   constructor(filename: string, bucketName: string) {
     this.storage = new Storage({ keyFilename: filename });
@@ -19,28 +23,41 @@ export class GscClient {
     });
   }
 
-  public async getEventIds(eventType: EventType) {
+  public async getEventIds(eventType: EventType, refresh = false): Promise<string[]> {
+
+    const cached = this.cache.get(eventType);
+
+    if (!refresh && cached && cached.expiresAt > Date.now()) {
+      return cached.ids;
+    }
 
     const prefix = `Event/${eventType}/`;
-
     const [files] = await this.bucket.getFiles({ prefix });
 
     const ids = new Set<string>();
 
     for (const file of files) {
-
       const parts = file.name.split("/");
+
       if (
-      parts.length === 4 &&
-      parts[0] === "Event" &&
-      parts[1] === eventType &&
-      parts[2].trim().length > 0 &&
-      parts[3] === "event.json"
-    ) {
-      ids.add(parts[2]);
+        parts.length === 4 &&
+        parts[0] === "Event" &&
+        parts[1] === eventType &&
+        parts[2].trim().length > 0 &&
+        parts[3] === "event.json"
+      ) {
+        ids.add(parts[2]);
+      }
     }
-    }
-    return [...ids].sort();
+
+    const result = [...ids].sort();
+
+    this.cache.set(eventType, {
+      ids: result,
+      expiresAt: Date.now() + 1000 * 60 * 40 * 24
+    });
+
+    return result;
   }
 }
 

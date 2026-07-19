@@ -46,7 +46,7 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
 
   const infoItems = [
     { label: "Difficulty", value: metaData.difficulty },
-    { label: "Mode", value: metaData.mode },
+    { label: "Mode", value: splitUppercase(metaData.mode) },
     { label: "Starting Cash", value: metaData.startingCash, image: EventImages.Cash },
     { label: "Starting Lives", value: metaData.lives, image: EventImages.Lives },
     { label: "Start Round", value: metaData.startRound, image: EventImages.StartRound },
@@ -62,12 +62,14 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
         difficulty={difficulty}
       />
       <Layout.Row>
+        <Layout.Box>
         <Event.Map
           map={metaData.map}
           iconPath={bossIcon}
           width={480}
           height={302}
         />
+        </Layout.Box>
         <Layout.Column>
           <Event.Info items={infoItems} />
           <Event.Bar start={event.start} end={event.end} />

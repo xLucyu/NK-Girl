@@ -3,6 +3,7 @@ export function splitUppercase(value: string): string {
     const specialCases: Record<string, string> = {
         Tutorial: "Monkey Meadows",
         Clicks: "Chimps",
+        AlternateBloonsRounds: "ABR",
         "#ouch": "#ouch"
     };
 

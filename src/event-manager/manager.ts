@@ -39,7 +39,7 @@ export class EventManager {
 
     public async start(): Promise<void> {
 
-        this.job = cron.schedule("0,30 * * * *", async () => {
+        this.job = cron.schedule("0 * * * *", async () => {
             await this.runCycle();
         });
 

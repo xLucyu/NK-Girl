@@ -24,7 +24,7 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 	public getComponents(eventProps: RaceProps, state: ComponentState): InteractionReplyOptions["components"] {
 		return [
 			BuildSelectMenu({
-				customId: "Race:Select",
+				customId: "race:eventId:Select",
 				placeholder: "Choose a Race Event",
 				options: eventProps.previousEvents!.map((event) => ({
 					label: splitUppercase(event.name),

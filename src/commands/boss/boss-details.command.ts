@@ -20,6 +20,7 @@ import {
 import { BaseCommand } from "../base.command";
 import type { BossMeta, BossProps } from "./boss.command";
 import { BossDetailsProfile } from "./boss-details.profile";
+import { EventCacheEntry, CurrentEventData } from "@manager";
 
 
 export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
@@ -28,7 +29,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
   protected readonly urlKey = EventType.Boss;
 
   public commandData = BaseCommand
-    .baseSlashCommand("boss_details", "Check the Stats of a Boss.", true)
+    .baseSlashCommand("boss_details", "Check the Stats of a Boss.", false)
     .addStringOption((option) =>
       option 
         .setName("difficulty")
@@ -46,8 +47,12 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
         .setName("player_count")
         .setDescription("choose a coop mode.")
         .setRequired(false)
-        .setMinValue(1)
-        .setMaxValue(4)
+        .addChoices(
+          ...Object.keys(playerMultiplier).map((playerCount) => ({
+            name: `${playerCount} Player${playerCount === "1" ? "" : "s"}`,
+            value: Number(playerCount)
+          }))
+        )
       )
     .addStringOption((option) =>
       option 
@@ -55,7 +60,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
         .setDescription("Choose a difficulty")
         .setRequired(false)
         .addChoices(
-          Object.values(Boss).map((boss) => ({
+          ...Object.values(Boss).map((boss) => ({
             name: boss,
             value: boss
           }))
@@ -94,24 +99,25 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
     })
   }
 
-  public getComponents(eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
+  public getComponents(_eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
   
     return [
       BuildButtonMenu({
         buttons: BossDifficulties.map((difficulty) => ({
           label: difficulty,
-          customId: `BossDetails:${difficulty}`,
+          customId: `boss_details:difficulty:${difficulty}`,
           style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
         })),
       }),
       
       BuildSelectMenu({
-        customId: "BossDetails:Select",
+        customId: "boss_details:playerCount:Select",
         placeholder: "Choose a Coop Mode.",
         options: Object.keys(playerMultiplier).map((playerCount) => ({
           label: `${playerCount} Player${playerCount === "1" ? "" : "s"}`,
           value: playerCount,
-          default: Number(playerCount) === state.options.playerCount
+          default: Number(playerCount) === state.options.playerCount,
+          emoji: { id: "1341515962410598521", name: "Coop" }
         }))  
       }),
     ];

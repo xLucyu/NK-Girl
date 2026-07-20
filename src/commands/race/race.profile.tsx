@@ -20,7 +20,8 @@ export interface RaceProfileProps {
 export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element {
 
   const raceIcon = EventImages.Race;
-  const modifiers = filterModifiers(buildModifiers(metaData));
+  const hasCustomRounds = metaData.roundSets.length > 1;
+  const modifiers = filterModifiers(buildModifiers(metaData, hasCustomRounds));
 
   const raceNumber = getNumberForEvent(event.start, EventType.Race)
 

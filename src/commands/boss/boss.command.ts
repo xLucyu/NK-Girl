@@ -73,14 +73,14 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
       BuildButtonMenu({
         buttons: BossDifficulties.map((difficulty) => ({
           label: difficulty,
-          customId: `Boss:${difficulty}`,
+          customId: `boss:difficulty:${difficulty}`,
           style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
         })),
       }),
       
       BuildSelectMenu({
-        customId: "Boss:Select",
-        placeholder: "Choose a Boss Event",
+        customId: "boss:eventId:Select",
+        placeholder: "Choose a Boss Event.",
         options: [
           ...eventProps.previousEvents!.map((event) => ({
             label: splitBossNumbers(event.name),

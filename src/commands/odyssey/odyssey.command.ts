@@ -67,14 +67,12 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
     })
   }
 
-  public getComponents(eventProps: EventCacheEntry<OdysseyBody, OdysseyCache>, state: ComponentState): InteractionReplyOptions["components"] {
-    
+  public getComponents(eventProps: OdysseyProps, state: ComponentState): InteractionReplyOptions["components"] {
     return [
-
       BuildButtonMenu({
         buttons: OdysseyDifficulties.map((difficulty) => ({
           label: difficulty,
-          customId: `Odyssey:${difficulty}`,
+          customId: `odyssey:difficulty:${difficulty}`,
           style: difficulty === "Hard" ? ButtonStyle.Danger 
             : difficulty === "Medium" ? ButtonStyle.Success 
             : ButtonStyle.Primary 
@@ -82,7 +80,7 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
       }),
         
       BuildSelectMenu({
-        customId: "Odyssey:Select",
+        customId: "odyssey:eventId:Select",
         placeholder: "Choose an Odyssey Event.",
         options: [
           ...eventProps.previousEvents!.map((event) => ({

@@ -41,15 +41,13 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
         eventName={splitUppercase(event.name)}
       />
       <Layout.Row>
-        <Layout.Box>
+        <Layout.Box style={{ flex: 1 }}>
         <Event.Map
           map={metaData.map}
           iconPath={raceIcon}
-          width={480}
-          height={302}
         />
         </Layout.Box>
-        <Layout.Column>
+        <Layout.Column flex={1}>
           <Event.Info items={infoItems} />
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>

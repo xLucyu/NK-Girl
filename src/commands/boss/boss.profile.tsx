@@ -10,6 +10,7 @@ import {
   buildModifiers,
   EventImages,
   ModifierImages,
+  capitalize,
 } from "@utils";
 import { Layout, Event } from "@components";
 import { ScoringType } from "@manager";
@@ -25,10 +26,6 @@ const scoreTypeImage: Record<ScoringType, string> = {
   [ScoringType.LeastCash]: ModifierImages.LeastCash,
   [ScoringType.LeastTiers]: ModifierImages.LeastTiers
 }
-
-const capitalize = (value: string): string => {
-  return value[0].toUpperCase() + value.slice(1);
-};
 
 const hasCustomRounds = (metaData: MetaBody, event: BossBody) => {
   return metaData.roundSets.some((set) => set.name !== event.bossType)
@@ -62,15 +59,13 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
         difficulty={difficulty}
       />
       <Layout.Row>
-        <Layout.Box>
+        <Layout.Box style={{ flex: 1 }}>
         <Event.Map
           map={metaData.map}
           iconPath={bossIcon}
-          width={480}
-          height={302}
         />
         </Layout.Box>
-        <Layout.Column>
+        <Layout.Column style={{ flex: 1 }}>
           <Event.Info items={infoItems} />
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>

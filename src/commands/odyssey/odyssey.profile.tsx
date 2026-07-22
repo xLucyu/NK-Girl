@@ -25,6 +25,7 @@ export interface OdysseyProfileProps {
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
 
   const hasCustomRounds = map.roundSets.length > 1;
+  console.log(map.roundSets);
   const modifiers = filterModifiers(buildModifiers(map, hasCustomRounds));
 
   return (
@@ -139,11 +140,11 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
         difficulty={difficulty}
       />
       <Layout.Row>
-        <Layout.Column>
+        <Layout.Column flex={1} style={{ justifyContent: "space-between" }}>
           <Event.Info items={infoItems} />
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
-        <Layout.Column>
+        <Layout.Column flex={1}>
           <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} compact/>
        </Layout.Column>
       </Layout.Row>
@@ -157,7 +158,6 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
           </div>
         ))}
       </Layout.Row>
-
     </Layout.Container>
   );
 }

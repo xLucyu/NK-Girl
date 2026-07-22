@@ -25,7 +25,6 @@ export function Towers({ towers, compact = false }: TowersProps) {
       style={{
         flexDirection: "column",
         alignItems: "flex-start",
-        alignSelf: "flex-start",
         gap: 10,
         padding: 12,
         width: "100%",
@@ -74,7 +73,6 @@ function CompactTowers({
       style={{
         flexDirection: "column",
         alignItems: "flex-start",
-        alignSelf: "flex-start",
         gap: 8,
         padding: 8,
         width: "100%",

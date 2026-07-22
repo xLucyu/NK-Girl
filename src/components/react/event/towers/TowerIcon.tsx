@@ -29,8 +29,8 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
   const backgroundPath = TowerContainers[category];
   if (!towerPath || !backgroundPath) return null;
 
-  const badgeSize = Math.max(22, Math.round(size * 0.36));
-  const badgeFontSize = Math.max(11, Math.round(size * 0.2));
+  const badgeSize = Math.max(22, Math.round(size * 0.4));
+  const badgeFontSize = Math.max(11, Math.round(size * 0.3));
 
 
   return (
@@ -94,7 +94,7 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
               fontSize: badgeFontSize,
               fontWeight: 700,
               lineHeight: 1,
-              marginTop: 6, // optical centering — badge art has more space at the bottom
+              marginTop: 6, 
             }}
           >
             {max}
@@ -116,9 +116,10 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
           <span
             style={{
               color: "#ff3838",
-              fontSize: Math.max(11, Math.round(size * 0.22)),
+              fontSize: Math.max(11, Math.round(size * 0.3)),
+              fontWeight: 900,
               letterSpacing: 1,
-              textShadow: "-1.5px -1.5px 0 #000, 1.5px -1.5px 0 #000, -1.5px 1.5px 0 #000, 1.5px 1.5px 0 #000",
+              textShadow: "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 3px #000",
             }}
           >
             {crossPaths}

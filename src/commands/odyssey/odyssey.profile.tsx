@@ -140,8 +140,10 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
         difficulty={difficulty}
       />
       <Layout.Row>
-        <Layout.Column flex={1} style={{ justifyContent: "space-between" }}>
-          <Event.Info items={infoItems} />
+        <Layout.Column style={{flex: 1}}>
+          <div style={{ display: "flex", flex: 1 }}>
+            <Event.Info items={infoItems} />
+          </div>
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
         <Layout.Column flex={1}>

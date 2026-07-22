@@ -44,10 +44,10 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   try {
     await command.renderAndReply(interaction, state);
   } catch (error) {
-    console.error(`[handleComponent] ${interaction.customId} failed:`, error);
-    try {
-      await interaction.editReply({ content: "Something went wrong.", components: [] });
-    } catch {}
+    await interaction.reply({ 
+      content: "Something went wrong. Please try again",
+      flags: MessageFlags.Ephemeral
+    });
   }
 }
 

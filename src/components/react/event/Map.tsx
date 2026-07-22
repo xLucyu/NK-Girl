@@ -23,7 +23,9 @@ export function MapSection({ map, width, height, iconPath, overlay }: MapSection
         position: "relative",
         display: "flex",
         width: "100%",
+        height: "100%",
         ...(width ? { width } : {}),
+        ...(height ? { height } : {})
       }}
     >
       <img
@@ -32,7 +34,7 @@ export function MapSection({ map, width, height, iconPath, overlay }: MapSection
           borderRadius: 7,
           objectFit: "cover",
           width: "100%",
-          ...(height ? { height } : {}),
+          height: "100%"
         }}
       />
       {iconImage ? (

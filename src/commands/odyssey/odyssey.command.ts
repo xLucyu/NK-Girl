@@ -85,8 +85,8 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
         options: [
           ...eventProps.previousEvents!.map((event) => ({
             label: splitUppercase(event.name),
-            value: event.id,
-            default: state.eventId === event.id,
+            value: event.name,
+            default: state.eventId === event.name,
             emoji: { id: "1338551267043180635", name: "OdysseyCrewBtn" }
           })),
         ],

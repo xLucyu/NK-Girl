@@ -9,12 +9,18 @@ export type TowerEntry = {
 
 export type TowerCategories = Record<keyof typeof CATEGORIES, TowerEntry[]>;
 
-function getCrossPaths(tower: Tower): [number, number, number] {
+function getCrossPaths(tower: Tower): [number, number, number] { 
+  
+  const getTier = (blockedTiers: number | undefined): number => {
+    if (blockedTiers === undefined || blockedTiers === -1) return 5; // ct doesnt have crossPaths
+    return Math.max(0, 5 - blockedTiers);
+  }
+
   return [
-    Math.max(0, 5 - (tower.path1NumBlockedTiers !== -1 ? tower.path1NumBlockedTiers : 5)),
-    Math.max(0, 5 - (tower.path2NumBlockedTiers !== -1 ? tower.path2NumBlockedTiers : 5)),
-    Math.max(0, 5 - (tower.path3NumBlockedTiers !== -1 ? tower.path3NumBlockedTiers : 5)),
-  ];
+    getTier(tower.path1NumBlockedTiers),
+    getTier(tower.path2NumBlockedTiers),
+    getTier(tower.path3NumBlockedTiers)
+  ]
 }
 
 export function getTowers(towers: Tower[]): TowerCategories {
@@ -25,7 +31,7 @@ export function getTowers(towers: Tower[]): TowerCategories {
     incoming.set(tower.tower, tower);
   }
 
-  const result = {
+  const availableTowers = {
     Heroes: [],
     Primary: [],
     Military: [],
@@ -47,6 +53,5 @@ export function getTowers(towers: Tower[]): TowerCategories {
       });
     }
   }
-
-  return result;
+  return availableTowers;
 }

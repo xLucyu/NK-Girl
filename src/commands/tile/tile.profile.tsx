@@ -80,9 +80,9 @@ export function TileProfile({ event, tile }: CtProps): JSX.Element {
         />
       </Layout.Box>
       <Layout.Column flex={1}>
-        <div style={{ flex: 1, display: "flex" }}>
-        <Event.Info items={infoItems} />
-        </div>
+        <Layout.Fit>
+          <Event.Info items={infoItems} />
+        </Layout.Fit>
         <Event.Bar start={event.start} end={event.end} />
       </Layout.Column>
     </Layout.Row>

@@ -1,24 +1,34 @@
 import { InteractionEditReplyOptions } from "discord.js";
-import { componentState } from "./state";
 
-export function scheduleComponentCleanup(paramters: {
+const cleanupTimers = new Map<string, NodeJS.Timeout>();
+
+export function scheduleComponentCleanup(parameters: {
   messageId: string;
   editReply: (options: InteractionEditReplyOptions) => Promise<unknown>;
-  expiresAt: number; 
+  expiresAt: number;
   onExpire: () => void;
 }): void {
 
-  const delay = paramters.expiresAt - Date.now();
+  const existing = cleanupTimers.get(parameters.messageId);
+  if (existing) clearTimeout(existing);
+
+  const delay = parameters.expiresAt - Date.now();
+
   if (delay <= 0) {
-    paramters.onExpire();
+    cleanupTimers.delete(parameters.messageId);
+    parameters.onExpire();
     return;
   }
 
-  setTimeout(async () => {
+  const timer = setTimeout(async () => {
+    cleanupTimers.delete(parameters.messageId);
     try {
-      await paramters.editReply({ components: [] });
-    } catch {}
-    
-    paramters.onExpire();
+      await parameters.editReply({ components: [] });
+    } catch {
+      return;
+    }
+    parameters.onExpire();
   }, delay);
+
+  cleanupTimers.set(parameters.messageId, timer);
 }

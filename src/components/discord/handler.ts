@@ -3,7 +3,7 @@ import {
   MessageFlags,
   StringSelectMenuInteraction,
 } from "discord.js";
-import { componentState, TIMEOUT } from "@components";
+import { componentState, scheduleComponentCleanup, TIMEOUT } from "@components";
 import { BaseCommand, eventCommands } from "@commands";
 import { BaseBody } from "@utils";
 
@@ -13,10 +13,13 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   if (!state) return;
 
   if (interaction.user.id !== state.userId) {
-    await interaction.reply({ content: "You're not the original user.", flags: MessageFlags.Ephemeral });
+    await interaction.reply({
+      content: "You're not the original user.",
+      flags: MessageFlags.Ephemeral,
+    });
     return;
   }
-  
+
   if (Date.now() > state.expiresAt) {
     componentState.delete(interaction.message.id);
     return;
@@ -40,13 +43,21 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   }
 
   state.expiresAt = Date.now() + TIMEOUT;
+  componentState.set(interaction.message.id, state);
+
+  scheduleComponentCleanup({
+    messageId: interaction.message.id,
+    editReply: (options) => interaction.editReply(options),
+    expiresAt: state.expiresAt,
+    onExpire: () => componentState.delete(interaction.message.id),
+  });
 
   try {
     await command.renderAndReply(interaction, state);
   } catch (error) {
-    await interaction.reply({ 
-      content: "Something went wrong. Please try again",
-      flags: MessageFlags.Ephemeral
+    await interaction.followUp({
+      content: "Something went wrong. Please try again.",
+      flags: MessageFlags.Ephemeral,
     });
   }
 }

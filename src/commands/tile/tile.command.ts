@@ -1,14 +1,14 @@
-import { ChatInputCommandInteraction, InteractionReplyOptions } from "discord.js";
-import { EventCacheEntry } from "@manager";
 import { CTBody, EventType, TileCode } from "@utils";
-import { BuildSelectMenu, ComponentState, Options } from "@components";
 import { BaseCommand } from "../base.command";
-import { CtProfile } from "./ct.profile";
+import { EventCacheEntry } from "@manager";
+import { BuildSelectMenu, ComponentState, Options } from "@components";
+import { TileProfile } from "./tile.profile";
+import { ChatInputCommandInteraction, InteractionReplyOptions } from "discord.js";
 
-type CtCache = Record<string, TileCode>;
-type CtProps = EventCacheEntry<CTBody, CtCache>;
+type TileCache = Record<string, TileCode>;
+type TileProps = EventCacheEntry<CTBody, TileCache>;
 
-export class CTCommand extends BaseCommand<CTBody, CtCache> {
+export class TileCommand extends BaseCommand<CTBody, TileCache> {
 
   protected readonly eventType = EventType.CT;
   protected readonly urlKey = EventType.CT;
@@ -24,7 +24,7 @@ export class CTCommand extends BaseCommand<CTBody, CtCache> {
         .setMaxLength(3)     
   );
 
-  public getProfile(props: CtProps["currentEvent"], state: ComponentState): JSX.Element {
+  public getProfile(props: TileProps["currentEvent"], state: ComponentState): JSX.Element {
 
     const tileCode = state.options.tileCode;
 
@@ -33,7 +33,7 @@ export class CTCommand extends BaseCommand<CTBody, CtCache> {
     const event = props.data;
     const tile = props.metaData[tileCode];
 
-    return CtProfile({
+    return TileProfile({
       event,
       tile
     })
@@ -45,7 +45,7 @@ export class CTCommand extends BaseCommand<CTBody, CtCache> {
     };
   }
 
-  protected getComponents(eventProps: CtProps, state: ComponentState): InteractionReplyOptions["components"] {
+  protected getComponents(eventProps: TileProps, state: ComponentState): InteractionReplyOptions["components"] {
 
     const tiles = Object.values(eventProps.currentEvent.metaData);
 

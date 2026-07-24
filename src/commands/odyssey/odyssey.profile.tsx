@@ -25,7 +25,6 @@ export interface OdysseyProfileProps {
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
 
   const hasCustomRounds = map.roundSets.length > 1;
-  console.log(map.roundSets);
   const modifiers = filterModifiers(buildModifiers(map, hasCustomRounds));
 
   return (
@@ -34,9 +33,11 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        justifyContent: "flex-start",
         gap: 6,
         padding: 12,
         width: "100%",
+        height: "100%"
       }}
     >
       <Event.Map
@@ -48,7 +49,7 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 width: "100%",
                 height: "100%",
                 padding: 6,
@@ -77,20 +78,20 @@ const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
         style={{
           display: "flex",
           flexDirection: "column",
-          alignItems: "center",
+          alignItems: "flex-start",
           gap: 2,
         }}
       >
         <span style={{ fontSize: 20, color: "white" }}>
           {splitUppercase(map.map)}
         </span>
-        <span style={{ fontSize: 14, color: "white" }}>
+        <span style={{ fontSize: 20, color: "white" }}>
           {`${map.difficulty} - ${splitUppercase(map.mode)}`}
         </span>
-        <span style={{ fontSize: 15, color: "white" }}>
+        <span style={{ fontSize: 20, color: "white" }}>
           {`R${map.startRound} - R${map.endRound}`}
         </span>
-        <span style={{ fontSize: 14, color: "white" }}>
+        <span style={{ fontSize: 20, color: "white" }}>
           {`${convertCash(map.startingCash)}`}
         </span>
       </div>
@@ -140,10 +141,10 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
         difficulty={difficulty}
       />
       <Layout.Row>
-        <Layout.Column style={{flex: 1}}>
-          <div style={{ display: "flex", flex: 1 }}>
+        <Layout.Column>
+          <Layout.Fit>
             <Event.Info items={infoItems} />
-          </div>
+          </Layout.Fit>
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
         <Layout.Column flex={1}>

@@ -3,16 +3,20 @@ import {
   ChatInputCommandInteraction, 
   InteractionReplyOptions 
 } from "discord.js";
-import type { EventCacheEntry } from "@manager";
 import { BaseCommand } from "../base.command";
 import { BossProfile } from "./boss.profile";
+import type { 
+  CurrentEventData, 
+  EventCacheEntry, 
+  PreviousEvent 
+} from "@manager";
 import { 
-  BossBody, 
   EventType, 
-  MetaBody,
-  splitBossNumbers,
   BossDifficulties,
-  BossDifficulty
+  splitBossNumbers,
+  type BossBody, 
+  type MetaBody,
+  type BossDifficulty
  } from "@utils";
 import { 
   BuildButtonMenu, 
@@ -67,7 +71,11 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
     })
   }
 
-  public getComponents(eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
+  protected getComponents(
+    _event: CurrentEventData<BossBody, BossMeta>,
+    state: ComponentState, 
+    previousEvents: PreviousEvent[]
+  ): InteractionReplyOptions["components"] {
 
     return [
       BuildButtonMenu({
@@ -82,7 +90,7 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
         customId: "boss:eventId:Select",
         placeholder: "Choose a Boss Event.",
         options: [
-          ...eventProps.previousEvents!.map((event) => ({
+          ...previousEvents.map((event) => ({
             label: splitBossNumbers(event.name),
             value: event.name,
             default: state.event === event.name,

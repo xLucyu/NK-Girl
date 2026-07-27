@@ -15,7 +15,8 @@ import {
 import { 
   CurrentEventData, 
   EventCacheEntry, 
-  eventManager 
+  eventManager, 
+  PreviousEvent
 } from "@manager";
 import { 
   render,
@@ -80,7 +81,12 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     const buffer = await render(profile);
 
     const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
-    const components = eventProps ? (this.getComponents(eventProps, state) ?? []) : [];
+    const components = this.getComponents(
+      event, 
+      state,
+      eventProps?.previousEvents ?? []
+    ) ?? [];
+
     await interaction.editReply({ files: [attachment], components });
   }
 
@@ -127,9 +133,13 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     await interaction.respond(choices);
   }
 
-  protected getComponents( _eventProps: EventCacheEntry<T, K>,  _state: ComponentState): InteractionReplyOptions["components"] {
-    return [];
-  }
+  protected getComponents( 
+    _event: CurrentEventData<T, K>,
+    _state: ComponentState,
+    _previousEvents: PreviousEvent[],
+    ): InteractionReplyOptions["components"] {
+      return [];
+    }
 
   protected static baseSlashCommand(name: string, description: string, autocomplete = false): SlashCommandOptionsOnlyBuilder {
 

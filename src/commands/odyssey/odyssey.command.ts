@@ -5,7 +5,7 @@ import {
 } from "discord.js";
 import { BaseCommand } from "../base.command";
 import { OdysseyProfile } from "./odyssey.profile";
-import type { EventCacheEntry } from "@manager";
+import type { CurrentEventData, EventCacheEntry, PreviousEvent } from "@manager";
 import { 
   OdysseyDifficulties,
   addUnderscore,
@@ -68,7 +68,12 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
     })
   }
 
-  public getComponents(eventProps: OdysseyProps, state: ComponentState): InteractionReplyOptions["components"] {
+  public getComponents(
+    _event: CurrentEventData<OdysseyBody, OdysseyCache>, 
+    state: ComponentState,
+    previousEvents: PreviousEvent[]
+  ): InteractionReplyOptions["components"] {
+    
     return [
       BuildButtonMenu({
         buttons: OdysseyDifficulties.map((difficulty) => ({
@@ -84,7 +89,7 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
         customId: "odyssey:eventId:Select",
         placeholder: "Choose an Odyssey Event.",
         options: [
-          ...eventProps.previousEvents!.map((event) => ({
+          ...previousEvents.map((event) => ({
             label: splitUppercase(event.name),
             value: addUnderscore(event.name),
             default: state.event === event.name,

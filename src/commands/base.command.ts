@@ -93,16 +93,17 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     const selectedEventId = interaction.options.getString(`${interaction.commandName}_id`);
 
     return CreateComponentState({
-      eventId: selectedEventId ?? eventProps.currentEvent.data.id,
+      event: selectedEventId ?? eventProps.currentEvent.data.name,
       options: this.getOptions(interaction),
       userId: interaction.user.id
     })
   }
 
   public async resolveEvent(eventProps: EventCacheEntry<T, K>, state: ComponentState): Promise<CurrentEventData<T,K>> {
-    
-    if (eventProps.currentEvent.data.id === state.eventId) return eventProps.currentEvent;
-    const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", state.eventId);
+
+    if (eventProps.currentEvent.data.name === state.event) return eventProps.currentEvent;
+    const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", state.event.replace(/ /g, "_"));
+    console.log(eventUrl);
     return getData<CurrentEventData<T, K>>(eventUrl);
   }
 

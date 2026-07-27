@@ -1,8 +1,11 @@
 import { InteractionReplyOptions } from "discord.js";
 import { BaseCommand } from "../base.command";
 import { RaceProfile } from "./race.profile";
-import { EventCacheEntry } from "@manager";
-import { BuildSelectMenu, ComponentState } from "@components";
+import { 
+  type CurrentEventData, 
+  EventCacheEntry, 
+  type PreviousEvent 
+} from "@manager";
 import { 
   EventType, 
   addUnderscore, 
@@ -10,6 +13,7 @@ import {
   type MetaBody, 
   type RaceBody, 
 } from "@utils";
+import { BuildSelectMenu, ComponentState } from "@components";
 
 export type RaceProps = EventCacheEntry<RaceBody, MetaBody>;
 
@@ -27,12 +31,16 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 		})
 	}
 
-	public getComponents(eventProps: RaceProps, state: ComponentState): InteractionReplyOptions["components"] {
+	public getComponents(
+    _event: CurrentEventData<RaceBody, MetaBody>, 
+    state: ComponentState,
+    previousEvents: PreviousEvent[]
+  ): InteractionReplyOptions["components"] {
 		return [
 			BuildSelectMenu({
 				customId: "race:eventId:Select",
 				placeholder: "Choose a Race Event",
-				options: eventProps.previousEvents!.map((event) => ({
+				options: previousEvents.map((event) => ({
 					label: splitUppercase(event.name),
 					value: addUnderscore(event.name),
 					default: addUnderscore(state.event) === addUnderscore(event.name),

@@ -1,6 +1,8 @@
+import { ButtonStyle, InteractionReplyOptions } from "discord.js";
 import { BaseCommand } from "../base.command";
 import { CollectionProfile } from "./collection.profile";
-import { EventCacheEntry } from "@manager";
+import { BuildButtonMenu, ComponentState, Options } from "@components";
+import { CurrentEventData, EventCacheEntry} from "@manager";
 import { 
   EventType, 
   type EventBody, 
@@ -16,11 +18,47 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
 
   public commandData = BaseCommand.baseSlashCommand("collection", "Show Collection Event Data.", true);
 
-  public getProfile(event: CollectionProps["currentEvent"]): JSX.Element {
+  protected getOptions(): Options {
+    return {
+      currentPage: 0
+    };
+  }
+
+  public getProfile(event: CollectionProps["currentEvent"], state: ComponentState): JSX.Element {
     return CollectionProfile({
       event: event.data,
       metaData: event.metaData,
-      page: 0
+      page: state.options.currentPage ?? 0
     })
+  }
+
+  
+  protected getComponents(
+    event: CurrentEventData<EventBody, InstaSchedule>,
+    state: ComponentState
+  ): InteractionReplyOptions["components"] {
+    
+    const totalPages = Math.max(
+      1, Math.ceil(Object.keys(event.metaData.Rotations).length / 10)
+    );
+
+    return [
+      BuildButtonMenu({
+        buttons: [
+          {
+            customId: "collection:currentPage:previous",
+            label: "◀",
+            style: ButtonStyle.Secondary,
+            disabled: state.options.currentPage! <= 0
+          },
+          {
+            customId: "collection:currentPage:next",
+            label: "▶",
+            style: ButtonStyle.Secondary,
+            disabled: state.options.currentPage! >= totalPages - 1
+          },
+        ],
+      }),
+    ];
   }
 }

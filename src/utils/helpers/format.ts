@@ -1,28 +1,36 @@
 export function splitUppercase(value: string): string {
 
-    const specialCases: Record<string, string> = {
-        Tutorial: "Monkey Meadows",
-        Clicks: "Chimps",
-        AlternateBloonsRounds: "ABR",
-        "#ouch": "#ouch"
+  const specialCases: Record<string, string> = {
+    Tutorial: "Monkey Meadows",
+    Clicks: "Chimps",
+    AlternateBloonsRounds: "ABR",
+    "#ouch": "#ouch"
     };
 
-    if (value in specialCases) return specialCases[value];
+  if (value in specialCases) return specialCases[value];
 
-    const split = value.match(/[A-Z][a-z]*/g) ?? [];
-    return split.join(" ");
+  const split = value.match(/[A-Z][a-z]*/g) ?? [];
+  return split.join(" ");
 }
 
 export function splitBossNumbers(value: string): string {
 
-    const match = value.match(/(\D*)(\d*)/);
-    if (!match) throw new Error();
+  const match = value.match(/(\D*)(\d*)/);
+  if (!match) throw new Error();
 
-    const [, name, number] = match;
-    return `${name} #${number}`;
+  const [, name, number] = match;
+  return `${name} #${number}`;
 }
 
 
-export const convertCash = (value: number): string => {
-    return `$ ${value.toLocaleString("en-US")}`;
+export function convertCash(value: number): string {
+  return `$ ${value.toLocaleString("en-US")}`;
 }
+
+export function capitalize(value: string): string {
+  return value[0].toUpperCase() + value.slice(1);
+};
+
+export function addUnderscore(value: string): string {
+  return value.replace(/ /g, "_");
+};

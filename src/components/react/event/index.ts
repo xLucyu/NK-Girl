@@ -3,8 +3,7 @@ import { Info } from "./Info"
 import { MapSection} from "./Map"
 import { ProgressBar } from "./ProgressBar"
 import { Modifiers } from "./Modifiers";
-import { Towers, Rotations } from "./towers";
-
+import { Towers, Rotations, Rotation } from "./towers";
 
 export const Event = {
     Header: Header,
@@ -15,3 +14,5 @@ export const Event = {
     Towers: Towers,
     Rotations: Rotations
 }
+
+export type { Rotation };

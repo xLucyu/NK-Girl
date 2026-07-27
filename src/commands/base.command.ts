@@ -1,4 +1,3 @@
-import { getData } from "@api";
 import {
   ApplicationIntegrationType,
   AttachmentBuilder,
@@ -12,25 +11,26 @@ import {
   SlashCommandOptionsOnlyBuilder,
   StringSelectMenuInteraction
 } from "discord.js";
+import { getData } from "@api";
 import { 
   CurrentEventData, 
-  EventCacheEntry, 
   eventManager, 
-  PreviousEvent
+  type EventCacheEntry, 
+  type PreviousEvent
 } from "@manager";
 import { 
-  render,
-  componentState,
-  scheduleComponentCleanup,
-  ComponentState,
   CreateComponentState,
-  Options
+  componentState,
+  render,
+  scheduleComponentCleanup,
+  type ComponentState,
+  type Options
 } from "@components";
 import { 
-  addUnderscore,
-  BaseBody, 
   EventType, 
-  GOOGLE_API_ULRS 
+  GOOGLE_API_ULRS, 
+  addUnderscore,
+  type BaseBody, 
 } from "@utils";
 import { getEventAutocompleteChoices } from "./auto.complete";
 

@@ -3,24 +3,25 @@ import {
   ChatInputCommandInteraction, 
   InteractionReplyOptions, 
 } from "discord.js";
-import { 
-  EventType,
-  MetaBody, 
-  OdysseyBody, 
-  OdysseyDifficulties, 
-  OdysseyDifficulty, 
-  OdysseyMetaData, 
-  splitUppercase
-} from "@utils";
 import { BaseCommand } from "../base.command";
-import { type EventCacheEntry } from "@manager";
+import { OdysseyProfile } from "./odyssey.profile";
+import type { EventCacheEntry } from "@manager";
+import { 
+  OdysseyDifficulties,
+  addUnderscore,
+  EventType,
+  splitUppercase,
+  type MetaBody,
+  type OdysseyDifficulty,
+  type OdysseyMetaData,
+  type OdysseyBody,
+} from "@utils";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
-  ComponentState,
-  Options
+  type ComponentState,
+  type Options
 } from "@components";
-import { OdysseyProfile } from "./odyssey.profile";
 
 export type OdysseyCache = Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>
 export type OdysseyProps = EventCacheEntry<OdysseyBody, OdysseyCache>;
@@ -85,8 +86,8 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
         options: [
           ...eventProps.previousEvents!.map((event) => ({
             label: splitUppercase(event.name),
-            value: event.name,
-            default: state.eventId === event.name,
+            value: addUnderscore(event.name),
+            default: state.event === event.name,
             emoji: { id: "1338551267043180635", name: "OdysseyCrewBtn" }
           })),
         ],

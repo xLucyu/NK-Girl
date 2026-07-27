@@ -33,8 +33,8 @@ export interface DcModel {
 }
 
 export interface BossData {
-  bossBloon?: number;
-  TierCount?: number;
+  bossBloon: number;
+  TierCount: number;
 }
 
 export interface CTMetaData {

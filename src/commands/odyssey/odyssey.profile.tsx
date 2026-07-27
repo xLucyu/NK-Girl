@@ -1,18 +1,20 @@
 import { 
-    buildModifiers,
-    convertCash,
-    EventImages,
-    EventType,
-    filterModifiers,
-    getNumberForEvent,
-    getTowers,
-    MetaBody, 
-    ModifierImages, 
-    type OdysseyBody, 
-    OdysseyDifficulty, 
-    OdysseyImages, 
-    type OdysseyMetaData, 
-    splitUppercase
+  EventType,
+  OdysseyImages, 
+  ModifierImages, 
+  EventImages,
+  buildModifiers,
+  convertCash,
+  getNumberForEvent,
+  getTowers,
+  splitUppercase,
+  filterModifiers
+} from "@utils";
+import type {
+  MetaBody, 
+  OdysseyDifficulty, 
+  OdysseyMetaData, 
+  OdysseyBody
 } from "@utils";
 import { Event, Layout } from "@components";
 

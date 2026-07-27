@@ -7,6 +7,7 @@ import {
   ChatInputCommandInteraction,
   InteractionContextType,
   InteractionReplyOptions,
+  MessageFlags,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
   StringSelectMenuInteraction
@@ -25,6 +26,7 @@ import {
   Options
 } from "@components";
 import { 
+  addUnderscore,
   BaseBody, 
   EventType, 
   GOOGLE_API_ULRS 
@@ -44,8 +46,6 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     await interaction.deferReply();
 
     const eventProps = this.getEventProps();
-    if (!eventProps) throw new Error("No event cache found.");
-
     const state = this.getInitialState(interaction, eventProps);
 
     await this.renderAndReply(interaction, state);
@@ -65,46 +65,58 @@ export abstract class BaseCommand<T extends BaseBody, K> {
   public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
     
     const eventProps = this.getEventProps();
-    if (!eventProps) throw new Error("No event cache found.");
-    
-    const event = await this.resolveEvent(eventProps, state); // also works if user has selected a seperate id
+    const event = await this.resolveEvent(eventProps, state);
+
+    if (!event) {
+      await interaction.followUp({ 
+        content: `No event found for "${state.event || "current"}".`,
+        flags: MessageFlags.Ephemeral
+      });
+      return;
+    }
 
     const profile = this.getProfile(event, state);
 
     const buffer = await render(profile);
 
     const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
-    const components = this.getComponents(eventProps, state) ?? [];
+    const components = eventProps ? (this.getComponents(eventProps, state) ?? []) : [];
     await interaction.editReply({ files: [attachment], components });
   }
 
   protected getEventProps(): EventCacheEntry<T, K> | null {
     return eventManager 
       .getEventCache(this.eventType)
-      .getCache() as unknown as EventCacheEntry<T, K>;
+      .getCache() as unknown as EventCacheEntry<T, K> | null;
   }
 
   protected getOptions(_interaction: ChatInputCommandInteraction): Options {
     return {};
   }
 
-  protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<T, K>): ComponentState {
+  protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<T, K> | null): ComponentState {
 
     const selectedEventId = interaction.options.getString(`${interaction.commandName}_id`);
 
     return CreateComponentState({
-      event: selectedEventId ?? eventProps.currentEvent.data.name,
+      event: selectedEventId ?? eventProps?.currentEvent.data.name ?? "",
       options: this.getOptions(interaction),
       userId: interaction.user.id
     })
   }
 
-  public async resolveEvent(eventProps: EventCacheEntry<T, K>, state: ComponentState): Promise<CurrentEventData<T,K>> {
+  public async resolveEvent(eventProps: EventCacheEntry<T, K> | null, state: ComponentState): Promise<CurrentEventData<T,K> | null> {
 
-    if (eventProps.currentEvent.data.name === state.event) return eventProps.currentEvent;
-    const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", state.event.replace(/ /g, "_"));
-    console.log(eventUrl);
-    return getData<CurrentEventData<T, K>>(eventUrl);
+    if (eventProps && eventProps.currentEvent.data.name === state.event) return eventProps.currentEvent;
+
+    const key = addUnderscore(state.event || "current");
+    const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", key);
+
+    try {
+      return await getData<CurrentEventData<T, K>>(eventUrl);
+    } catch (err) {
+      return null;
+    }
   }
 
   public async autoComplete(interaction: AutocompleteInteraction): Promise<void> {

@@ -3,24 +3,24 @@ import {
   ChatInputCommandInteraction, 
   InteractionReplyOptions 
 } from "discord.js";
-import { 
-  Boss, 
-  BossBody, 
-  BossDifficulties, 
-  BossDifficulty, 
-  EventType,
-  playerMultiplier, 
-} from "@utils";
+import { BaseCommand } from "../base.command";
+import type { BossMeta, BossProps } from "./boss.command";
+import { BossDetailsProfile } from "./boss-details.profile";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
   ComponentState, 
   Options 
 } from "@components";
-import { BaseCommand } from "../base.command";
-import type { BossMeta, BossProps } from "./boss.command";
-import { BossDetailsProfile } from "./boss-details.profile";
-import { EventCacheEntry, CurrentEventData } from "@manager";
+import { 
+  Boss, 
+  BossDifficulties, 
+  EventType,
+  playerMultiplier, 
+  type BossBody, 
+  type BossDifficulty, 
+} from "@utils";
+import { CurrentEventData } from "@manager";
 
 
 export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
@@ -99,7 +99,10 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
     })
   }
 
-  public getComponents(_eventProps: BossProps, state: ComponentState): InteractionReplyOptions["components"] {
+  public getComponents(
+    _event: CurrentEventData<BossBody, BossMeta>,
+    state: ComponentState
+    ): InteractionReplyOptions["components"] {
   
     return [
       BuildButtonMenu({

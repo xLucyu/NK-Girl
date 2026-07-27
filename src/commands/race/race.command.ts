@@ -1,9 +1,15 @@
 import { InteractionReplyOptions } from "discord.js";
-import { EventCacheEntry } from "@manager";
-import { EventType, MetaBody, RaceBody, splitUppercase } from "@utils";
 import { BaseCommand } from "../base.command";
 import { RaceProfile } from "./race.profile";
+import { EventCacheEntry } from "@manager";
 import { BuildSelectMenu, ComponentState } from "@components";
+import { 
+  EventType, 
+  addUnderscore, 
+  splitUppercase, 
+  type MetaBody, 
+  type RaceBody, 
+} from "@utils";
 
 export type RaceProps = EventCacheEntry<RaceBody, MetaBody>;
 
@@ -28,8 +34,8 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 				placeholder: "Choose a Race Event",
 				options: eventProps.previousEvents!.map((event) => ({
 					label: splitUppercase(event.name),
-					value: event.id,
-					default: state.eventId === event.id,
+					value: addUnderscore(event.name),
+					default: addUnderscore(state.event) === addUnderscore(event.name),
 					emoji: { id: "1338550190390382694", name: "EventRace" }
 				})),
 			}),

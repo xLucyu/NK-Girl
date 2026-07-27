@@ -1,22 +1,24 @@
-import * as boss from "./boss/boss.command";
-import * as boss_details from "./boss/boss-details.command";
-import * as sync from "./sync/sync.command";
-import * as help from "./help/help.command";
-import * as race from "./race/race.command";
-import * as odyssey from "./odyssey/odyssey.command";
-import * as tile from "./ct/tile.command";
+import { BossCommand } from "./boss/boss.command";
+import { BossDetailsCommand } from "./boss/boss-details.command";
+import { RaceCommand } from "./race/race.command";
+import { OdysseyCommand } from "./odyssey/odyssey.command";
+import { TileCommand } from "./ct/tile.command";
+import { CollectionCommand } from "./collection/collection.command";
+import { SyncCommand } from "./sync/sync.command";
+import { HelpCommand } from "./help/help.command";
 
 export const eventCommands = {
-  boss: new boss.BossCommand(),
-  boss_details: new boss_details.BossDetailsCommand(),
-  race: new race.RaceCommand(),
-  odyssey: new odyssey.OdysseyCommand(),
-  tile: new tile.TileCommand()
+  boss: new BossCommand(),
+  race: new RaceCommand(),
+  odyssey: new OdysseyCommand(),
+  boss_details: new BossDetailsCommand(),
+  tile: new TileCommand(),
+  collection: new CollectionCommand()
 }
 
 export const helperCommands = {
-  sync: new sync.SyncCommand(),
-  help: new help.HelpCommand()
+  sync: new SyncCommand(),
+  help: new HelpCommand()
 }
 
 export const commands = {

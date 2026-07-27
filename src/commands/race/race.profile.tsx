@@ -1,14 +1,14 @@
 import { 
-  buildModifiers, 
-  convertCash, 
   EventImages, 
   EventType, 
+  buildModifiers, 
+  convertCash, 
   filterModifiers, 
   getNumberForEvent, 
+  splitUppercase, 
   getTowers, 
-  MetaBody, 
-  RaceBody, 
-  splitUppercase 
+  type MetaBody, 
+  type RaceBody, 
 } from "@utils";
 import { Event, Layout } from "@components";
 

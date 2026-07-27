@@ -1,9 +1,9 @@
 export interface Tower {
   tower: string;
   max: number;
-  path1NumBlockedTiers: number;
-  path2NumBlockedTiers: number;
-  path3NumBlockedTiers: number;
+  path1NumBlockedTiers?: number;
+  path2NumBlockedTiers?: number;
+  path3NumBlockedTiers?: number;
   isHero: boolean;
 }
 

@@ -1,9 +1,13 @@
-import { CTBody, EventType, TileCode } from "@utils";
-import { BaseCommand } from "../base.command";
-import { EventCacheEntry } from "@manager";
-import { BuildSelectMenu, ComponentState, Options } from "@components";
-import { TileProfile } from "./tile.profile";
 import { ChatInputCommandInteraction, InteractionReplyOptions } from "discord.js";
+import { BaseCommand } from "../base.command";
+import { TileProfile } from "./tile.profile";
+import type { CurrentEventData, EventCacheEntry } from "@manager";
+import { 
+  type CTBody, 
+  EventType, 
+  type TileCode 
+} from "@utils";
+import { BuildSelectMenu, ComponentState, Options } from "@components";
 
 type TileCache = Record<string, TileCode>;
 type TileProps = EventCacheEntry<CTBody, TileCache>;
@@ -45,9 +49,12 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
     };
   }
 
-  protected getComponents(eventProps: TileProps, state: ComponentState): InteractionReplyOptions["components"] {
+  protected getComponents(
+    event: CurrentEventData<CTBody, TileCache>,
+    state: ComponentState
+  ): InteractionReplyOptions["components"] {
 
-    const tiles = Object.values(eventProps.currentEvent.metaData);
+    const tiles = Object.values(event.metaData);
 
     const banners = tiles.filter((tile) => tile.TileType === "Banner");
     const relics = tiles.filter((tile) => tile.TileType === "Relic");
@@ -70,8 +77,8 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
           label: tile.Code,
           value: tile.Code,
           default: tile.Code === state.options.tileCode
-        }))
-      })
-    ]
+        })),
+      }),
+    ];
   }
 }

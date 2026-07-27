@@ -85,7 +85,7 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
           ...eventProps.previousEvents!.map((event) => ({
             label: splitBossNumbers(event.name),
             value: event.name,
-            default: state.eventId === event.id,
+            default: state.event === event.name,
             emoji: { id: "1338550202889404487", name: "BossChallenge" }
           })),
         ],

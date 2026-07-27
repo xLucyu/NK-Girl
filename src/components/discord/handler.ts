@@ -37,7 +37,11 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   const value = interaction.isStringSelectMenu() ? interaction.values[0] : buttonValue;
 
   if (field === "eventId") {
-    state.eventId = value;
+    state.event = value;
+  } else if (value === "next" || value === "previous") {
+    const current = Number((state.options as Record<string, unknown>)[field] ?? 0);
+    (state.options as Record<string, unknown>)[field] =
+      value === "next" ? current + 1 : current - 1;
   } else {
     (state.options as Record<string, unknown>)[field] = value;
   }
@@ -55,6 +59,7 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   try {
     await command.renderAndReply(interaction, state);
   } catch (error) {
+    console.error("[handleComponent] renderAndReply failed:", error);
     await interaction.followUp({
       content: "Something went wrong. Please try again.",
       flags: MessageFlags.Ephemeral,

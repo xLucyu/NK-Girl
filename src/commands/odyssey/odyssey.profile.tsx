@@ -8,13 +8,11 @@ import {
   getNumberForEvent,
   getTowers,
   splitUppercase,
-  filterModifiers
-} from "@utils";
-import type {
-  MetaBody, 
-  OdysseyDifficulty, 
-  OdysseyMetaData, 
-  OdysseyBody
+  filterModifiers,
+  type MetaBody, 
+  type OdysseyDifficulty, 
+  type OdysseyMetaData, 
+  type OdysseyBody
 } from "@utils";
 import { Event, Layout } from "@components";
 

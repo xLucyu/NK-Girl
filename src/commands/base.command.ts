@@ -24,7 +24,7 @@ import {
   render,
   scheduleComponentCleanup,
   type ComponentState,
-  type Options
+  type BaseOptions
 } from "@components";
 import { 
   EventType, 
@@ -62,7 +62,6 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     });
   }
 
-  
   public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
     
     const eventProps = this.getEventProps();
@@ -96,11 +95,14 @@ export abstract class BaseCommand<T extends BaseBody, K> {
       .getCache() as unknown as EventCacheEntry<T, K> | null;
   }
 
-  protected getOptions(_interaction: ChatInputCommandInteraction): Options {
+  protected getOptions(_interaction: ChatInputCommandInteraction): BaseOptions {
     return {};
   }
 
-  protected getInitialState(interaction: ChatInputCommandInteraction, eventProps: EventCacheEntry<T, K> | null): ComponentState {
+  protected getInitialState(
+    interaction: ChatInputCommandInteraction, 
+    eventProps: EventCacheEntry<T, K> | null
+  ): ComponentState {
 
     const selectedEventId = interaction.options.getString(`${interaction.commandName}_id`);
 
@@ -111,7 +113,10 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     })
   }
 
-  public async resolveEvent(eventProps: EventCacheEntry<T, K> | null, state: ComponentState): Promise<CurrentEventData<T,K> | null> {
+  public async resolveEvent(
+    eventProps: EventCacheEntry<T, K> | null, 
+    state: ComponentState
+  ): Promise<CurrentEventData<T,K> | null> {
 
     if (eventProps && eventProps.currentEvent.data.name === state.event) return eventProps.currentEvent;
 
@@ -141,7 +146,10 @@ export abstract class BaseCommand<T extends BaseBody, K> {
       return [];
     }
 
-  protected static baseSlashCommand(name: string, description: string, autocomplete = false): SlashCommandOptionsOnlyBuilder {
+  protected static baseSlashCommand(
+    name: string, 
+    description: string, 
+    autocomplete = false): SlashCommandOptionsOnlyBuilder {
 
     const command = new SlashCommandBuilder()
       .setName(name)

@@ -1,28 +1,29 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { addUnderscore, EventType, GOOGLE_API_ULRS, LeaderboardPayload } from "@utils";
-import { BaseLeaderboard, LeaderboardConfig } from "../base.leaderboard";
+import { BaseLeaderboard, LeaderboardConfigInput } from "../base.leaderboard";
 import { getData } from "@api";
+import { 
+  GOOGLE_API_ULRS, 
+  EventType, 
+  addUnderscore, 
+  type LeaderboardPayload 
+} from "@utils";
 
 export class RaceLeaderboard extends BaseLeaderboard {
 
-  public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+  protected buildConfig(interaction: ChatInputCommandInteraction): LeaderboardConfigInput {
 
     const event = interaction.options.getString("event", true);
 
-    const config: LeaderboardConfig = {
-      interaction,
+    return {
       type: EventType.Race,
       eventName: event,
       fetchLeaderboard: () => this.fetchLeaderboard(event),
-      difficulty: "",
     };
-
-    await this.createLeaderboard(config);
   }
 
   private async fetchLeaderboard(event: string): Promise<LeaderboardPayload | null> {
-    const url = GOOGLE_API_ULRS.LeaderboardRace
+    const url = GOOGLE_API_ULRS.RaceLeaderboard
       .replace("{event}", addUnderscore(event));
-    return getData(url);
+    return getData<LeaderboardPayload>(url);
   }
 }

@@ -15,5 +15,8 @@ export const GOOGLE_API_ULRS = {
   Race: "https://storage.googleapis.com/btd6api/Event/Race/{}/event.json",
   Odyssey: "https://storage.googleapis.com/btd6api/Event/Odyssey/{}/event.json",
   Collection: "https://storage.googleapis.com/btd6api/Event/Collection/{}/event.json",
-  CT: "https://storage.googleapis.com/btd6-ct-map/events/{}/tiles.json"
+  CT: "https://storage.googleapis.com/btd6-ct-map/events/{}/tiles.json",
+  BossLeaderboard: "https://storage.googleapis.com/btd6api/Leaderboard/Boss/{}/{}/{}/leaderboard.json",
+  RaceLeaderboard: "https://storage.googleapis.com/btd6api/Leaderboard/Race/{}/leaderboard.json",
+  CTLeaderboard: "https://storage.googleapis.com/btd6api/Leaderboard/CT/{}/{}/leaderboard.json"
 }

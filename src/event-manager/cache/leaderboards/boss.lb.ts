@@ -1,16 +1,16 @@
-import { 
-    BossBody,
-    Leaderboard,
-    BossDifficulties,
-    LeaderboardBody, 
-    LeaderboardPayload, 
-    Team,
-    EventType,
-    API_URLS,
-    sleep,
-} from "@utils";
 import { BaseLeaderboardService, Payload } from "./base";
-import { getData } from "../../../api/api-client";
+import { getData } from "@api";
+import { 
+  BossDifficulties,
+  EventType,
+  API_URLS,
+  sleep,
+  type BossBody,
+  type Leaderboard,
+  type LeaderboardBody, 
+  type LeaderboardPayload, 
+  type Team
+} from "@utils";
 
 
 export enum ScoringType {
@@ -31,31 +31,29 @@ export class BossLeaderboardSerivce extends BaseLeaderboardService<BossBody, Lea
     const payloads: Payload<LeaderboardPayload>[] = [];
 
     for (const difficulty of BossDifficulties) {
-        for (const playerCount of players) {
-            const url = `${this.baseUrl}/${event.id}/leaderboard/${difficulty.toLocaleLowerCase()}/${playerCount}`;
-            const currentScoringType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
+      for (const playerCount of players) {
+        const url = `${this.baseUrl}/${event.id}/leaderboard/${difficulty.toLocaleLowerCase()}/${playerCount}`;
+        const currentScoringType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 
-            const teamsMap = await this.handleFormatting(url, currentScoringType);
-            const teams = Array.from(teamsMap.values());
+        const teamsMap = await this.handleFormatting(url, currentScoringType);
+        const teams = Array.from(teamsMap.values());
 
-            payloads.push({
-                path: `Leaderboard/Boss/${event.id}/${difficulty}/${playerCount}/leaderboard.json`,
-                data: {
-                    id: event.id,
-                    eventType: EventType.Boss,
-                    name: event.name,
-                    totalScores: teams.length,
-                    scoringType: currentScoringType,
-                    teams
-                }
-            });
-            await sleep(10_000);
-        }
+        payloads.push({
+          path: `Leaderboard/Boss/${event.name}/${difficulty}/${playerCount}/leaderboard.json`,
+          data: {
+            id: event.id,
+              eventType: EventType.Boss,
+              name: event.name,
+              totalScores: teams.length,
+              scoringType: currentScoringType,
+              teams
+          }
+        });
+        await sleep(10_000);
+      }
     }
-
     return payloads;
-}
-
+  }
 
   private async handleFormatting(url: string, currentScoringType: string): Promise<Map<string, Team>> {
     
@@ -100,7 +98,6 @@ export class BossLeaderboardSerivce extends BaseLeaderboardService<BossBody, Lea
     return scoreboard;
   }
 
-  
   private getScoreKey(player: LeaderboardBody, currentScoringType: string): { bucketedScore: number[]; actualScore: number[] } {
 
     const actualScore = [

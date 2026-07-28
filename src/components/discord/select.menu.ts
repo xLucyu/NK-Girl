@@ -4,6 +4,7 @@ import {
   StringSelectMenuBuilder,
   StringSelectMenuInteraction
 } from "discord.js" 
+import { getEmoji } from "@utils";
 
 export function BuildSelectMenu(args: {
   customId: string;
@@ -12,14 +13,20 @@ export function BuildSelectMenu(args: {
     label: string, 
     value: string, 
     default?: boolean,
-    emoji?: APIMessageComponentEmoji 
+    emoji?: APIMessageComponentEmoji | string
   }[];
 }) {
+
+  const resolved = args.options.map(({ emoji, ...rest }) => ({
+    ...rest,
+    emoji: typeof emoji === "string" ? getEmoji(emoji) : emoji
+  }));
+
   return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
     new StringSelectMenuBuilder()
       .setCustomId(args.customId)
       .setPlaceholder(args.placeholder)
-      .addOptions(args.options) 
+      .addOptions(resolved) 
   );
 }
 

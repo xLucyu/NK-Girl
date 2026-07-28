@@ -1,26 +1,28 @@
-import { getData } from "@api";
 import { ChatInputCommandInteraction } from "discord.js";
-import { addUnderscore, EventType, GOOGLE_API_ULRS, LeaderboardPayload } from "@utils";
-import { BaseLeaderboard, LeaderboardConfig } from "../base.leaderboard";
+import { BaseLeaderboard, LeaderboardConfigInput } from "../base.leaderboard";
+import { getData } from "@api";
+import { 
+  GOOGLE_API_ULRS, 
+  EventType, 
+  addUnderscore, 
+  type LeaderboardPayload, 
+} from "@utils";
 
 export class BossLeaderboard extends BaseLeaderboard {
 
-  public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+  protected buildConfig(interaction: ChatInputCommandInteraction): LeaderboardConfigInput {
 
     const event = interaction.options.getString("event", true);
     const difficulty = interaction.options.getString("difficulty", true);
     const teamSize = interaction.options.getInteger("team_size", true);
 
-    const config: LeaderboardConfig = {
-      interaction,
+    return {
       type: EventType.Boss,
       eventName: event,
       subtitle: `${difficulty} · ${teamSize}-player`,
       fetchLeaderboard: () => this.fetchLeaderboard(event, difficulty, teamSize),
       difficulty,
     };
-
-    await this.createLeaderboard(config);
   }
 
   private async fetchLeaderboard(
@@ -28,10 +30,10 @@ export class BossLeaderboard extends BaseLeaderboard {
     difficulty: string,
     teamSize: number,
   ): Promise<LeaderboardPayload | null> {
-    const url = GOOGLE_API_ULRS.LeaderboardBoss
+    const url = GOOGLE_API_ULRS.BossLeaderboard
       .replace("{event}", addUnderscore(event))
       .replace("{difficulty}", difficulty)
       .replace("{teamSize}", String(teamSize));
-    return getData(url);
+    return getData<LeaderboardPayload>(url);
   }
 }

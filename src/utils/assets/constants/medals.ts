@@ -28,7 +28,7 @@ export const MEDALS: Record<MedalsMode, MedalEntry[]> = {
     { min: 4, max: 50, medal: "BossT50" },
     { min: 51, max: 100, medal: "BossT100" },
     { min: 0.00, max: 0.10, medal: "BossT10Perc" },
-    { min: 0.00, max: 0.25, medal: "BossT25Perc" },
+    { min: 0.10, max: 0.25, medal: "BossT25Perc" },
     { min: 0.25, max: 0.50, medal: "BossT50Perc" },
     { min: 0.50, max: 0.75, medal: "BossT75Perc" },
     { min: 0.75, max: 1.0, medal: "Participant" }
@@ -41,7 +41,7 @@ export const MEDALS: Record<MedalsMode, MedalEntry[]> = {
     { min: 4, max: 50, medal: "BossET50" },
     { min: 51, max: 100, medal: "BossET100" },
     { min: 0.00, max: 0.10, medal: "BossET10Perc" },
-    { min: 0.00, max: 0.25, medal: "BossET25Perc" },
+    { min: 0.10, max: 0.25, medal: "BossET25Perc" },
     { min: 0.25, max: 0.50, medal: "BossET50Perc" },
     { min: 0.50, max: 0.75, medal: "BossET75Perc" },
     { min: 0.75, max: 1.0, medal: "Participant" }

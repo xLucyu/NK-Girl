@@ -28,7 +28,7 @@ export interface LeaderboardConfigInput {
   type: LeaderboardType;
   eventName: string;
   subtitle?: string;
-  difficulty: string;
+  difficulty?: string;
   fetchLeaderboard: () => Promise<LeaderboardPayload | null>;
 }
 
@@ -165,7 +165,7 @@ export abstract class BaseLeaderboard {
     ];
   }
 
-  public static getMedalsMode(type: LeaderboardType, difficulty: string): MedalsMode {
+  public static getMedalsMode(type: LeaderboardType, difficulty?: string): MedalsMode {
 
     switch (type) {
       case EventType.Boss: return difficulty === "Elite" ? "Elite" : "Standard";

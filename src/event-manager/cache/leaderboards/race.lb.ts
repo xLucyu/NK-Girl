@@ -1,21 +1,19 @@
 import {
-  RaceBody,
-  Leaderboard,
-  LeaderboardBody,
-  LeaderboardPayload,
-  Team,
   API_URLS,
-  EventType
+  LeaderboardPayload,
+  EventType,
+  type RaceBody,
+  type Leaderboard,
+  type LeaderboardBody,
+  type Team,
 } from "@utils";
 import { BaseLeaderboardService, Payload } from "./base";
 import { getData } from "@api";
-
 
 export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,LeaderboardPayload> {
 
   public readonly eventType = EventType.Race;
   private baseUrl = API_URLS.Race;
-
 
   protected async formatLeaderboard(event: RaceBody): Promise<Payload<LeaderboardPayload>[]> {
     
@@ -24,7 +22,7 @@ export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,Lead
 
     return [
       {
-        path: `Leaderboard/Race/${event.id}/leaderboard.json`,
+        path: `Leaderboard/Race/${event.name}/leaderboard.json`,
         data: {
           id: event.id,
           eventType: EventType.Race,
@@ -58,9 +56,7 @@ export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,Lead
     return teams;
   }
 
-
   private mapPlayerToTeam(player: LeaderboardBody, position: number): Team {
-
     return {
       position,
       members: [

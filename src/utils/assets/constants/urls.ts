@@ -19,4 +19,4 @@ export const GOOGLE_API_ULRS = {
   BossLeaderboard: "https://storage.googleapis.com/btd6api/Leaderboard/Boss/{}/{}/{}/leaderboard.json",
   RaceLeaderboard: "https://storage.googleapis.com/btd6api/Leaderboard/Race/{}/leaderboard.json",
   CTLeaderboard: "https://storage.googleapis.com/btd6api/Leaderboard/CT/{}/{}/leaderboard.json"
-}
+};

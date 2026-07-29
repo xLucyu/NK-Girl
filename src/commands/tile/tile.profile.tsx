@@ -52,6 +52,8 @@ const getEndRound = (tile: TileCode): number => {
 
 export function TileProfile({ event, tile }: CtProps): JSX.Element {
 
+  console.log(tile)
+
   const ctNumber = tile.EventNumber;
   const ctIcon = EventImages.CT;
   const modifiers = filterModifiers(buildCTModifiers(tile.GameData));
@@ -66,32 +68,32 @@ export function TileProfile({ event, tile }: CtProps): JSX.Element {
   ];
 
   return (
-  <Layout.Container>
-    <Event.Header
-      eventType={EventType.CT}
-      eventName={`Contested Territory #${ctNumber}`}
-      difficulty={getTitle(tile)}
-    />
-    <Layout.Row style={{ alignItems: "stretch", height: 300 }}>
-      <Layout.Box style={{ flex: 1}}>
-        <Event.Map
-          map={tile.GameData.selectedMap}
-          iconPath={ctIcon}
-        />
-      </Layout.Box>
-      <Layout.Column flex={1}>
-        <Layout.Fit>
-          <Event.Info items={infoItems} />
-        </Layout.Fit>
-        <Event.Bar start={event.start} end={event.end} />
-      </Layout.Column>
-    </Layout.Row>
-      <Layout.Row>
-        <Event.Modifiers modifiers={modifiers} />
-          <Layout.Column>
-            <Event.Towers towers={getTowers(tile.GameData.dcModel.towers._items ?? [])} />
-          </Layout.Column>
+    <Layout.Container>
+      <Event.Header
+        eventType={EventType.CT}
+        eventName={`Contested Territory #${ctNumber}`}
+        difficulty={`${getTitle(tile)} - Tile ${tile.Code}`}
+      />
+      <Layout.Row style={{ alignItems: "stretch", height: 300 }}>
+        <Layout.Box style={{ flex: 1}}>
+          <Event.Map
+            map={tile.GameData.selectedMap}
+            iconPath={ctIcon}
+          />
+        </Layout.Box>
+        <Layout.Column flex={1}>
+          <Layout.Fit>
+            <Event.Info items={infoItems} />
+          </Layout.Fit>
+          <Event.Bar start={event.start} end={event.end} />
+        </Layout.Column>
       </Layout.Row>
-  </Layout.Container>
+        <Layout.Row>
+          <Event.Modifiers modifiers={modifiers} />
+            <Layout.Column>
+              <Event.Towers towers={getTowers(tile.GameData.dcModel.towers._items ?? [])} />
+            </Layout.Column>
+        </Layout.Row>
+    </Layout.Container>
   )
 }

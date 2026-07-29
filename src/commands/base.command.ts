@@ -34,7 +34,7 @@ import {
 } from "@utils";
 import { getEventAutocompleteChoices } from "./auto.complete";
 
-type InteractionType = ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction;
+export type InteractionType = ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction;
 
 export abstract class BaseCommand<T extends BaseBody, K> {
 
@@ -105,9 +105,10 @@ export abstract class BaseCommand<T extends BaseBody, K> {
   ): ComponentState {
 
     const selectedEventId = interaction.options.getString(`${interaction.commandName}_id`);
+    const currentEvent = eventProps?.currentEvent.data;
 
     return CreateComponentState({
-      event: selectedEventId ?? eventProps?.currentEvent.data.name ?? "",
+      event: selectedEventId ?? currentEvent?.name ?? currentEvent?.id ?? "",
       options: this.getOptions(interaction),
       userId: interaction.user.id
     })
@@ -118,7 +119,10 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     state: ComponentState
   ): Promise<CurrentEventData<T,K> | null> {
 
-    if (eventProps && eventProps.currentEvent.data.name === state.event) return eventProps.currentEvent;
+    if(eventProps && state.event) {
+      const data = eventProps.currentEvent.data;
+      if (data.id === state.event || data.name === state.event) return eventProps.currentEvent;
+    }
 
     const key = addUnderscore(state.event || "current");
     const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", key);

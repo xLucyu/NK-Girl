@@ -52,8 +52,6 @@ const getEndRound = (tile: TileCode): number => {
 
 export function TileProfile({ event, tile }: CtProps): JSX.Element {
 
-  console.log(tile)
-
   const ctNumber = tile.EventNumber;
   const ctIcon = EventImages.CT;
   const modifiers = filterModifiers(buildCTModifiers(tile.GameData));

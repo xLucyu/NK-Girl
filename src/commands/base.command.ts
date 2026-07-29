@@ -108,7 +108,7 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     const currentEvent = eventProps?.currentEvent.data;
 
     return CreateComponentState({
-      event: selectedEventId ?? currentEvent?.name ?? currentEvent?.id ?? "",
+      event: selectedEventId ?? (currentEvent ? this.getIdentity(currentEvent) : ""),
       options: this.getOptions(interaction),
       userId: interaction.user.id
     })
@@ -119,9 +119,10 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     state: ComponentState
   ): Promise<CurrentEventData<T,K> | null> {
 
-    if(eventProps && state.event) {
-      const data = eventProps.currentEvent.data;
-      if (data.id === state.event || data.name === state.event) return eventProps.currentEvent;
+    if (eventProps && !state.event) return eventProps.currentEvent;
+
+    if (eventProps && state.event) {
+      if (this.getIdentity(eventProps.currentEvent.data) === state.event) return eventProps.currentEvent;
     }
 
     const key = addUnderscore(state.event || "current");
@@ -178,5 +179,6 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     );
   }
 
+  protected abstract getIdentity(data: T): string;
   public abstract getProfile(event: CurrentEventData<T, K>, state: ComponentState): JSX.Element
 }

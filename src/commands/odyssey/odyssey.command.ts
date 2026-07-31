@@ -17,11 +17,15 @@ import {
   type OdysseyBody,
 } from "@utils";
 import { 
+  BaseOptions,
   BuildButtonMenu, 
   BuildSelectMenu, 
   type ComponentState,
-  type Options
 } from "@components";
+
+interface OdysseyOptions extends BaseOptions {
+  difficulty: string;
+} 
 
 export type OdysseyCache = Record<OdysseyDifficulty, OdysseyMetaData & { mapsData: MetaBody[] }>
 export type OdysseyProps = EventCacheEntry<OdysseyBody, OdysseyCache>;
@@ -46,10 +50,14 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
         )
       )
 
-  protected getOptions(interaction: ChatInputCommandInteraction): Options {
+  protected getOptions(interaction: ChatInputCommandInteraction): OdysseyOptions {
     return {
       difficulty: interaction.options.getString("difficulty") ?? OdysseyDifficulties[2]
     };
+  }
+
+  protected getIdentity(data: OdysseyBody): string {
+    return data.name;
   }
 
   public getProfile(eventProps: OdysseyProps["currentEvent"], state: ComponentState): JSX.Element {

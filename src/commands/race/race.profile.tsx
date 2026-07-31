@@ -40,7 +40,7 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
         eventType={`${EventType.Race} #${raceNumber}`}
         eventName={splitUppercase(event.name)}
       />
-      <Layout.Row>
+      <Layout.Row style={{ alignItems: "stretch", height: 300 }}>
         <Layout.Box style={{ flex: 1 }}>
         <Event.Map
           map={metaData.map}
@@ -48,7 +48,9 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
         />
         </Layout.Box>
         <Layout.Column flex={1}>
+          <Layout.Fit>
           <Event.Info items={infoItems} />
+          </Layout.Fit>
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
       </Layout.Row>

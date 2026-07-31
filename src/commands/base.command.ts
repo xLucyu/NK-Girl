@@ -154,7 +154,8 @@ export abstract class BaseCommand<T extends BaseBody, K> {
   protected static baseSlashCommand(
     name: string, 
     description: string, 
-    autocomplete = false): SlashCommandOptionsOnlyBuilder {
+    autocomplete = false
+  ): SlashCommandOptionsOnlyBuilder {
 
     const command = new SlashCommandBuilder()
       .setName(name)

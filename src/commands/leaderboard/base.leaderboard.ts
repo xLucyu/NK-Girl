@@ -1,119 +1,64 @@
 import {
-  ApplicationIntegrationType,
-  AutocompleteInteraction,
+  AttachmentBuilder,
+  ButtonStyle,
   ChatInputCommandInteraction,
-  InteractionContextType,
-  SlashCommandBuilder,
+  InteractionReplyOptions,
+  SlashCommandSubcommandBuilder,
 } from "discord.js";
-import { BaseLeaderboard } from "./base.leaderboard";
+import { InteractionType } from "../base.command";
+import { LeaderboardProfile } from "./leaderboard.profile";
+import { eventManager } from "@manager";
 import {
-  BossDifficulties,
-  playerMultiplier,
+  BuildButtonMenu,
+  CreateComponentState,
+  componentState,
+  scheduleComponentCleanup,
+  render,
+  type ComponentState,
+  type BaseOptions,
+} from "@components";
+import {
+  EventType,
+  MEDALS,
+  type LeaderboardPayload,
+  type MedalsMode,
 } from "@utils";
-import { BossLeaderboard, CTLeaderboard, RaceLeaderboard } from "./modes";
-import { getEventAutocompleteChoices } from "../auto.complete";
 
-export class LeaderboardCommand {
+export const PAGE_SIZE = 10;
 
-  private readonly modes = {
-    boss: new BossLeaderboard(),
-    race: new RaceLeaderboard(),
-    ct: new CTLeaderboard()
+export type LeaderboardType = EventType.Race | EventType.Boss | EventType.CT;
+
+export interface LeaderboardQuery {
+  type: LeaderboardType;
+  eventName: string;
+  subtitle: string;
+  difficulty?: string;
+}
+
+export interface LeaderboardConfig {
+  query: LeaderboardQuery;
+  fetch: () => Promise<LeaderboardPayload | null>;
+}
+
+export interface LeaderboardOptions extends BaseOptions {
+  query: LeaderboardQuery;
+  data: LeaderboardPayload;
+  page: number;
+}
+
+export abstract class BaseLeaderboard {
+ 
+  public abstract readonly eventType: LeaderboardType;
+
+  public execute(interaction: ChatInputCommandInteraction) {
+
   }
 
-  public commandData = new SlashCommandBuilder()
-    .setName("leaderboard")
-    .setDescription("Show Leaderboard Data.")
-    .setIntegrationTypes(
-      ApplicationIntegrationType.GuildInstall,
-      ApplicationIntegrationType.UserInstall,
-    )
-    .setContexts(
-      InteractionContextType.Guild,
-      InteractionContextType.PrivateChannel,
-    )
-    .addSubcommand((command) =>
-      command
-        .setName("boss")
-        .setDescription("Boss Event Leaderboard")
-        .addStringOption((option) =>
-          option 
-            .setName("event")
-            .setDescription("Select a Boss Event, default is the current one")
-            .setAutocomplete(true)
-            .setRequired(false),
-        )
-        .addStringOption((option) =>
-          option
-            .setName("difficulty")
-            .setDescription("Select a Difficulty, default is Standard")
-            .setRequired(false)
-            .addChoices(...BossDifficulties.map((difficulty) => ({ 
-              name: difficulty, 
-              value: difficulty 
-            }))),
-        )
-        .addIntegerOption((option) =>
-          option
-            .setName("team_size")
-            .setDescription(`Select the Team Size, default is Solo}`)
-            .setRequired(false)
-            .addChoices(
-              ...Object.keys(playerMultiplier).map((count) => ({
-                name: `${count} Player${count === "1" ? "" : "s"}`,
-                value: Number(count),
-              })),
-            ),
-        )
-      )
-    .addSubcommand((command) =>
-      command
-          .setName("race")
-          .setDescription("Race Event Leaderboard")
-          .addStringOption((option) =>
-            option
-              .setName("event")
-              .setDescription("Select a Boss Event, default is the current one")
-              .setAutocomplete(true)
-              .setRequired(false),
-        ),
-    )
-    .addSubcommand((command) =>
-      command
-        .setName("ct")
-        .setDescription("CT event leaderboard")
-        .addStringOption((option) =>
-          option 
-            .setName("event")
-            .setDescription("CT event — defaults to the current event")
-            .setAutocomplete(true)
-            .setRequired(false),
-        )
-        .addStringOption((option) =>
-          option
-            .setName("mode")
-            .setDescription("Player or Team")
-            .setRequired(true)
-            .addChoices(
-              { name: "Player", value: "Player" },
-              { name: "Team", value: "Team" },
-            ),
-        ),
-    )
+  private getMedal() {
 
-  public async execute(interaction: ChatInputCommandInteraction) { 
-    const mode = this.modes[interaction.options.getSubcommand(true) as keyof typeof this.modes];
-    await mode.execute(interaction);
   }
 
-  public async autoComplete(interaction: AutocompleteInteraction): Promise<void> {
-
-    const mode = this.modes[interaction.options.getSubcommand(true) as keyof typeof this.modes];
-
-    await interaction.respond(await getEventAutocompleteChoices(
-      mode.eventType, 
-      interaction.options.getFocused(),
-      "Leaderboard"
-    ));
+  protected resolveEventName(interaction: ChatInputCommandInteraction): string {
+    return interaction.options.getString("event") ? eventManager.getEventCache(this.eventType).getCache()!.currentEvent.data.name : ""
   }
 }

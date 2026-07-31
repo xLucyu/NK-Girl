@@ -44,12 +44,16 @@ export async function loadEmojis(): Promise<void> {
     }
 }
 
-export function getEmoji(name: string): FormattedEmojiData {
+export function getEmoji(name: string): FormattedEmojiData | undefined {
 
-    const emoji = EmojiCache.get(name);
-    if (!emoji) throw new Error();
-    return {
-        id: emoji.id,
-        name: emoji.name
-    }
+  const emoji = EmojiCache.get(name);
+  console.log(EmojiCache);
+  if (!emoji) {
+    console.warn(`Emoji ${name} wasn't found.`);
+    return undefined;
+  }
+  return {
+    id: emoji.id,
+    name: emoji.name
+  }
 }

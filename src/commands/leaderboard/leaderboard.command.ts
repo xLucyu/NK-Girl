@@ -10,8 +10,16 @@ import {
   BossDifficulties,
   playerMultiplier,
 } from "@utils";
+import { BossLeaderboard, CTLeaderboard, RaceLeaderboard } from "./modes";
+import { getEventAutocompleteChoices } from "../auto.complete";
 
 export class LeaderboardCommand {
+
+  private readonly modes = {
+    boss: new BossLeaderboard(),
+    race: new RaceLeaderboard(),
+    ct: new CTLeaderboard()
+  }
 
   public commandData = new SlashCommandBuilder()
     .setName("leaderboard")
@@ -93,11 +101,19 @@ export class LeaderboardCommand {
         ),
     )
 
-  public async execute(interaction: ChatInputCommandInteraction) {
-    
+  public async execute(interaction: ChatInputCommandInteraction) { 
+    const mode = this.modes[interaction.options.getSubcommand(true) as keyof typeof this.modes];
+    await mode.execute(interaction);
   }
 
   public async autoComplete(interaction: AutocompleteInteraction): Promise<void> {
 
+    const mode = this.modes[interaction.options.getSubcommand(true) as keyof typeof this.modes];
+
+    await interaction.respond(await getEventAutocompleteChoices(
+      mode.eventType, 
+      interaction.options.getFocused(),
+      "Leaderboard"
+    ));
   }
 }

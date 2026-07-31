@@ -5,6 +5,9 @@ interface ProgressBarProps {
   end: number;
 }
 
+const TRACK_HEIGHT = 10;
+const KNOB_SIZE = 14;
+
 const formatDate = (ts: number) => {
   const d = new Date(ts);
   const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -30,8 +33,8 @@ export function ProgressBar({ start, end }: ProgressBarProps) {
 
   const progressPct = `${progress * 100}%`;
 
-  return (
-    <Box style={{ flexDirection: "column", padding: 20, gap: 6 }}>
+   return (
+    <Box style={{ flexDirection: "column", padding: 12, gap: 4 }}>
       <div
         style={{
           display: "flex",
@@ -40,21 +43,17 @@ export function ProgressBar({ start, end }: ProgressBarProps) {
           width: "100%",
         }}
       >
-        <span style={{ color: "#c0d0e0", fontSize: 16 }}>
-          {formatDate(start)}
-        </span>
-        <span style={{ color: "#c0d0e0", fontSize: 16 }}>
-          {formatDate(end)}
-        </span>
+        <span style={{ color: "#c0d0e0", fontSize: 13 }}>{formatDate(start)}</span>
+        <span style={{ color: "#c0d0e0", fontSize: 13 }}>{formatDate(end)}</span>
       </div>
 
       <div
         style={{
           display: "flex",
           width: "100%",
-          height: 15,
+          height: TRACK_HEIGHT,
           backgroundColor: "rgba(0, 0, 0, 0.3)",
-          borderRadius: 6,
+          borderRadius: TRACK_HEIGHT / 2,
           position: "relative",
         }}
       >
@@ -64,32 +63,26 @@ export function ProgressBar({ start, end }: ProgressBarProps) {
             width: progressPct,
             height: "100%",
             backgroundColor: "#5b8cc0",
-            borderRadius: 6,
+            borderRadius: TRACK_HEIGHT / 2,
           }}
         />
         <div
           style={{
             display: "flex",
             position: "absolute",
-            width: 20,
-            height: 20,
-            borderRadius: 10,
+            width: KNOB_SIZE,
+            height: KNOB_SIZE,
+            borderRadius: KNOB_SIZE / 2,
             backgroundColor: "#90b8e0",
-            top: -4,
+            top: (TRACK_HEIGHT - KNOB_SIZE) / 2,
             left: progressPct,
             transform: "translateX(-50%)",
           }}
         />
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%",
-        }}
-      >
-        <span style={{ color: "#90a8c0", fontSize: 14 }}>{remaining}</span>
+      <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+        <span style={{ color: "#90a8c0", fontSize: 12 }}>{remaining}</span>
       </div>
     </Box>
   );

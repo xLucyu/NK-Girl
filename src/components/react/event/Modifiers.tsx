@@ -182,20 +182,20 @@ function formatCompactValue(modifier: Modifier): string {
 }
 
 function getSizing(count: number): ModifierSizing {
-  if (count <= 6) return { iconSize: 36, fontSize: 16, gap: 8, padding: 12 };
-  if (count <= 12) return { iconSize: 32, fontSize: 14, gap: 6, padding: 10 };
+  if (count < 6) return { iconSize: 36, fontSize: 16, gap: 8, padding: 12 };
+  if (count < 12) return { iconSize: 32, fontSize: 14, gap: 6, padding: 10 };
   return { iconSize: 28, fontSize: 12, gap: 5, padding: 8 };
 }
 
 function getCompactSizing(count: number): ModifierSizing {
-  if (count <= 4) return { iconSize: 28, fontSize: 16, gap: 6, padding: 4 };
-  if (count <= 8) return { iconSize: 24, fontSize: 14, gap: 5, padding: 3 };
+  if (count < 4) return { iconSize: 28, fontSize: 16, gap: 6, padding: 4 };
+  if (count < 8) return { iconSize: 24, fontSize: 14, gap: 5, padding: 3 };
   return { iconSize: 20, fontSize: 12, gap: 4, padding: 2 };
 }
 
 function getColumnCount(count: number): number {
-  if (count <= 6) return 1;
-  if (count <= 12) return 2;
+  if (count < 6) return 1;
+  if (count < 12) return 2;
   return 3;
 }
 

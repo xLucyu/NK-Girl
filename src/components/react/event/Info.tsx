@@ -17,6 +17,8 @@ interface InfoCellProps {
 }
 
 const ITEMS_PER_ROW = 2;
+const ICON_SIZE = 26;
+const LABEL_HEIGHT = 18;
 
 export function Info({ items }: InfoProps) {
 
@@ -27,16 +29,12 @@ export function Info({ items }: InfoProps) {
       style={{
         flexDirection: "column",
         width: "100%",
-        flex: 1,
         padding: 12,
         gap: 8,
       }}
     >
       {rows.map((row, i) => (
-        <div
-          key={i}
-          style={{ display: "flex", flexDirection: "row", flex: 1 }}
-        >
+        <div key={i} style={{ display: "flex", flexDirection: "row" }}>
           {row.map((item) => (
             <InfoCell
               key={item.label}
@@ -61,14 +59,18 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
         flexDirection: "column",
         width: fullWidth ? "100%" : "50%",
         padding: "0 12px",
-        gap: 8,
+        gap: 0,
       }}
     >
       <span
         style={{
           color: "#90caf9",
           fontSize: 15,
+          height: LABEL_HEIGHT,
+          lineHeight: `${LABEL_HEIGHT}px`,
           textTransform: "uppercase",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
           opacity: 0.7,
         }}
       >
@@ -80,23 +82,27 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
+          height: ICON_SIZE,
           gap: 8,
         }}
       >
         {src ? (
           <img
             src={src}
-            width={26}
-            height={26}
-            style={{ objectFit: "contain", flexShrink: 0, marginTop: 6 }}
+            width={ICON_SIZE}
+            height={ICON_SIZE}
+            style={{ objectFit: "contain", flexShrink: 0, marginBottom: 3 }}
           />
         ) : null}
-        <span style={{ 
-          color: "white", 
-          fontSize: 22, 
-          lineHeight: 1,
-          marginTop: 12
-          }}>
+
+        <span
+          style={{
+            color: "white",
+            fontSize: 22,
+            lineHeight: `${ICON_SIZE}px`,
+            whiteSpace: "nowrap",
+          }}
+        >
           {String(item.value)}
         </span>
       </div>
@@ -105,7 +111,7 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
 }
 
 function chunk<T>(arr: T[], size: number): T[][] {
-  
+
   const rows: T[][] = [];
   for (let i = 0; i < arr.length; i += size) {
     rows.push(arr.slice(i, i + size));

@@ -10,7 +10,7 @@ import {
   BuildButtonMenu, 
   BuildSelectMenu, 
   ComponentState, 
-  Options 
+  BaseOptions 
 } from "@components";
 import { 
   Boss, 
@@ -22,6 +22,12 @@ import {
 } from "@utils";
 import { CurrentEventData } from "@manager";
 
+interface BossDetailsOptions extends BaseOptions {
+  difficulty: string;
+  playerCount: number;
+  boss: Boss;
+  hpModifier: number;
+}
 
 export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
 
@@ -74,13 +80,17 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
         .setMinValue(0.1)
       )
 
-  protected getOptions(interaction: ChatInputCommandInteraction): Options {
+  protected getOptions(interaction: ChatInputCommandInteraction): BossDetailsOptions {
     return {
       difficulty: interaction.options.getString("difficulty") ?? BossDifficulties[0],
       playerCount: interaction.options.getInteger("player_count") ?? 1,
       boss: interaction.options.getString("boss") as Boss ?? null,
       hpModifier: interaction.options.getNumber("hp_modifier") ?? 1
     };
+  }
+
+  protected getIdentity(data: BossBody): string {
+    return data.name;
   }
 
   public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {

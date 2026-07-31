@@ -31,6 +31,10 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 		})
 	}
 
+  protected getIdentity(data: RaceBody): string {
+    return data.name;
+  }
+
 	public getComponents(
     _event: CurrentEventData<RaceBody, MetaBody>, 
     state: ComponentState,

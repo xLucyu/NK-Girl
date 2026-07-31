@@ -7,7 +7,11 @@ import {
   EventType, 
   type TileCode 
 } from "@utils";
-import { BuildSelectMenu, ComponentState, Options } from "@components";
+import { BuildSelectMenu, ComponentState, BaseOptions } from "@components";
+
+interface TileOptions extends BaseOptions {
+  tileCode: string;
+}
 
 type TileCache = Record<string, TileCode>;
 type TileProps = EventCacheEntry<CTBody, TileCache>;
@@ -30,7 +34,7 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
 
   public getProfile(props: TileProps["currentEvent"], state: ComponentState): JSX.Element {
 
-    const tileCode = state.options.tileCode;
+    const tileCode = state.options.tileCode as string;
 
     if (!tileCode) throw new Error();
 
@@ -43,10 +47,14 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
     })
   }
 
-  protected getOptions(interaction: ChatInputCommandInteraction): Options {
+  protected getOptions(interaction: ChatInputCommandInteraction): TileOptions {
     return {
       tileCode: interaction.options.getString("tile_code", true).toLocaleUpperCase()
     };
+  }
+
+  protected getIdentity(data: CTBody): string {
+    return data.id;
   }
 
   protected getComponents(

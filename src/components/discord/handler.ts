@@ -4,8 +4,7 @@ import {
   StringSelectMenuInteraction,
 } from "discord.js";
 import { componentState, scheduleComponentCleanup, TIMEOUT } from "@components";
-import { BaseCommand, eventCommands } from "@commands";
-import { BaseBody } from "@utils";
+import { registry } from "@client";
 
 async function handleComponent(interaction: StringSelectMenuInteraction | ButtonInteraction) {
 
@@ -26,9 +25,7 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   }
 
   const [commandKey, field, buttonValue] = interaction.customId.split(":");
-  const command = eventCommands[
-    commandKey as keyof typeof eventCommands
-  ] as BaseCommand<BaseBody, unknown> | undefined;
+  const command = registry.get(commandKey);
 
   if (!command || !field) return;
 
@@ -57,7 +54,7 @@ async function handleComponent(interaction: StringSelectMenuInteraction | Button
   });
 
   try {
-    await command.renderAndReply(interaction, state);
+    await command.renderAndReply?.(interaction, state);
   } catch (error) {
     console.error("[handleComponent] renderAndReply failed:", error);
     await interaction.followUp({

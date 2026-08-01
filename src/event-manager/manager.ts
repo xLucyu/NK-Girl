@@ -10,9 +10,11 @@ import {
   CTLeaderboardService
 } from "@manager";
 import { EventType } from "@utils";
+import { BossRushCache } from "./cache/events/boss-rush";
 
 interface CacheMap {
   [EventType.Boss]: BossCache;
+  [EventType.BossRush]: BossRushCache;
   [EventType.Race]: RaceCache;
   [EventType.Odyssey]: OdysseyCache;
   [EventType.Collection]: CollectionCache;
@@ -29,7 +31,8 @@ export class EventManager {
     [EventType.Race]: new RaceCache(),
     [EventType.CT]: new CTCache(),
     [EventType.Collection]: new CollectionCache(),
-    [EventType.Odyssey]: new OdysseyCache()
+    [EventType.Odyssey]: new OdysseyCache(),
+    [EventType.BossRush]: new BossRushCache()
   };
   private leaderboards = {
     [EventType.Boss]: new BossLeaderboardSerivce(),

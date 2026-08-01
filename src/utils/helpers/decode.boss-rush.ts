@@ -1,24 +1,20 @@
-// bossrush.generator.ts
-// Requires tsconfig: "target": "ES2020" or later (BigInt literals in seedFromId).
-
 import { 
     maps as RAW_MAPS, 
     type RawMap, 
-    BOSS_RUSH_SETTINGS } from '@utils';
+    BOSS_RUSH_SETTINGS 
+} from '@utils';
 
-/* ────────────────────────────── types ────────────────────────────── */
+type DifficultyName = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+type Difficulty = 0 | 1 | 2 | 3;
 
-export type DifficultyName = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
-export type Difficulty = 0 | 1 | 2 | 3;
-
-export interface TowerSetting {
+interface TowerSetting {
   chance?: number;         Chance?: number;
   canPopLead?: boolean;    CanPopLead?: boolean;
   canPopCamo?: boolean;    CanPopCamo?: boolean;
   isCheapTower?: boolean;  IsCheapTower?: boolean;
 }
 
-export interface BossSpecialEntry {
+interface BossSpecialEntry {
   Primary?: string[] | null;
   Military?: string[] | null;
   Magic?: string[] | null;
@@ -26,14 +22,14 @@ export interface BossSpecialEntry {
   AllTowers?: string[] | null;
 }
 
-export interface GameMap {
+interface GameMap {
   mapId: string;
   difficulty: Difficulty;
   hasWater: boolean;
   isStandard: boolean;
 }
 
-export interface StageResult {
+interface StageResult {
   stage: number;
   map: string;
   boss: string;
@@ -51,13 +47,11 @@ export interface BossRushResult {
   stages: StageResult[];
 }
 
-/* ─────────────────────── System.Random (IL2CPP) ─────────────────────── */
-
 const MBIG = 2147483647;
 const MSEED = 161803398;
 const INT_MIN = -2147483648;
 
-export class SystemRandom {
+class SystemRandom {
   private seedArray = new Array<number>(56).fill(0);
   private inext = 0;
   private inextp = 21;
@@ -112,8 +106,7 @@ export class SystemRandom {
   }
 }
 
-/** Base-36 decode of the seed string, decimal-truncated until it fits in int32. */
-export function seedFromId(id: string): number {
+function seedFromId(id: string): number {
   if (!id || !id.trim()) return 0;
   const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
   const lower = id.toLowerCase();
@@ -125,8 +118,6 @@ export function seedFromId(id: string): number {
   while (result > 2147483647n) result /= 10n;
   return Number(result);
 }
-
-/* ───────────────────────── weighted selection ───────────────────────── */
 
 function reservoirPick<T>(rng: SystemRandom, values: readonly T[], fallback: T | null = null): T | null {
   let result: T | null = fallback;
@@ -149,7 +140,6 @@ function weightedIndex(rng: SystemRandom, weights: readonly number[]): number {
   throw new Error('weightedIndex: no index selected');
 }
 
-/** Reconstruction of the IL2CPP generic WeightedItem<T>. Single nextDouble, `<=` boundary. */
 function weightedItem<T>(rng: SystemRandom, items: readonly T[], getWeight: (item: T) => number): T | null {
   if (items.length === 0) return null;
   const weighted = items.map((i) => [i, getWeight(i)] as const);
@@ -180,8 +170,6 @@ function weightedFromMap<T>(rng: SystemRandom, map: ReadonlyMap<T, number>): T |
   return fallback;
 }
 
-/* ────────────────────────────── constants ────────────────────────────── */
-
 const DIFFICULTY_BY_NAME: Record<string, Difficulty> = {
   Beginner: 0, Intermediate: 1, Advanced: 2, Expert: 3,
 };
@@ -193,7 +181,7 @@ const WATER_MAPS = new Set(['Peninsula', 'SpiceIslands']);
 const WATER_TOWERS = new Set(['MonkeySub', 'MonkeyBuccaneer']);
 const CHOSEN_PRIMARY_HERO = 'ChosenPrimaryHero';
 
-export const DEFAULT_TOWER_ORDER = [
+const DEFAULT_TOWER_ORDER = [
   'Quincy', 'Gwendolin', 'StrikerJones', 'ObynGreenfoot', 'Silas', 'CaptainChurchill',
   'Benjamin', 'PatFusty', 'Ezili', 'Rosalia', 'Adora', 'Etienne', 'Sauda',
   'AdmiralBrickell', 'Psi', 'Geraldo', 'Corvus', 'ChosenPrimaryHero',
@@ -216,8 +204,6 @@ const BOSS_BY_KEY: Record<string, string> = {
   blastapopoulos: 'Blastapopoulos', lych: 'Lych', diamondback: 'Diamondback',
 };
 
-/* ─────────────────────────── settings parsing ─────────────────────────── */
-
 const rs = BOSS_RUSH_SETTINGS.RandomSettings as any;
 
 const SETTINGS = {
@@ -227,7 +213,6 @@ const SETTINGS = {
     finalStageTowerCount: rs.FinalStageTowerCount as number,
     stageTowerIncrement: rs.StageTowerIncrement as number,
     availableBosses: rs.AvailableBosses as string[],
-    // These are `null` (not absent) in the shipped data — the `?? []` is load-bearing.
     bannedMaps: (rs.BannedMaps ?? []) as string[],
     bannedRelics: (rs.BannedRelics ?? []) as string[],
     bannedHeroes: (rs.BannedHeroes ?? []) as string[],
@@ -259,8 +244,6 @@ const towerFlag = (s: TowerSetting | undefined, ...keys: (keyof TowerSetting)[])
   keys.some((k) => !!s?.[k]);
 const towerChance = (ts: Record<string, TowerSetting>, id: string) =>
   Number(ts[id]?.chance ?? ts[id]?.Chance ?? 0);
-
-/* ─────────────────────────── generation steps ─────────────────────────── */
 
 function rollDifficulty(rng: SystemRandom, stage: number, invalid: ReadonlySet<Difficulty>): Difficulty {
   const chances = SETTINGS.randomSettings.mapDifficultyChances;
@@ -385,11 +368,7 @@ function isValidTowerSet(
   return true;
 }
 
-/**
- * With the shipped data, HeroChances contains only ChosenPrimaryHero: 0.5,
- * so every named hero has weight 0 and this can only return ChosenPrimaryHero.
- * That is correct behaviour, not a bug.
- */
+
 function pickHero(rng: SystemRandom): string | null {
   const override = SETTINGS.overrides.hero;
   if (override) {
@@ -415,11 +394,9 @@ function generateStageTowers(
   const chances = new Map(Object.keys(ts).map((id) => [id, towerChance(ts, id)] as const));
   const bossTowers = getBossSpecialTowers(rng, boss, chances);
   const banned = new Set(R.bannedTowers);
-  // BananaFarm has chance 0 in the shipped data, so it is filtered out here.
   const available = TOWER_IDS.filter((id) => !banned.has(id) && (chances.get(id) ?? 0) > 0);
   const proposed: string[] = [];
 
-  // Earlier stages: grow backwards from the following stage's set.
   if (nextStageTowers !== null) {
     proposed.push(...nextStageTowers);
     const target = nextStageTowers.length + R.stageTowerIncrement;
@@ -440,7 +417,6 @@ function generateStageTowers(
     return proposed;
   }
 
-  // Final stage: seed the set from overrides / boss towers / lead+camo coverage.
   const availableSet = new Set(available);
   proposed.push(
     ...(SETTINGS.overrides.baseTowerSet ?? []).map(String).filter((id) => id && availableSet.has(id)),
@@ -502,7 +478,6 @@ function generateTowers(
   }
   return generated;
 }
-
 
 function generateRelics(rng: SystemRandom, stageCount: number, relicOrder: readonly string[]): string[][] {
   const banned = new Set(SETTINGS.randomSettings.bannedRelics);

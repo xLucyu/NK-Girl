@@ -3,6 +3,7 @@ export * from "./event.number";
 export * from "./towers";
 export * from "./modifiers";
 export * from "./format";
+export * from "./decode.boss-rush";
 export * from "./decode.collection";
 export * from "./emojis";
 export * from "./loadImage";

@@ -64,7 +64,6 @@ export class EventManager {
     }
   }
 
-
   private async runEventChecks(firstUse: boolean = false): Promise<void> {
 
     const results = await Promise.allSettled(

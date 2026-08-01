@@ -1,6 +1,11 @@
-import { API_URLS, EventBody, EventType } from "@utils";
+import { 
+  API_URLS, 
+  EventBody, 
+  EventType, 
+  BossRushResult, 
+  generateBossRush 
+} from "@utils";
 import { BaseEventCache, PreviousEvent } from "./base";
-import { BossRushResult, generateBossRush } from "../../../utils/helpers/decode.boss-rush";
 
 export class BossRushCache extends BaseEventCache<EventBody, BossRushResult> {
   
@@ -21,7 +26,7 @@ export class BossRushCache extends BaseEventCache<EventBody, BossRushResult> {
     return currentEvent;
   }
 
-  protected async getMetaData(event: EventBody, now?: number): Promise<BossRushResult> {
+  protected async getMetaData(event: EventBody): Promise<BossRushResult> {
     return generateBossRush(event.id);
   }
 

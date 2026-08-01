@@ -2,7 +2,6 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { deployCommands } from "@client";
 import { config } from "@config";
 
-
 export class SyncCommand {
 
   public commandData = new SlashCommandBuilder()
@@ -23,19 +22,19 @@ export class SyncCommand {
 
     await interaction.deferReply();
 
-    if (interaction.user.id !== config.OWNER_ID) return interaction.followUp({
-        content: "You don't have permission to run this command.",
-        ephemeral: true
+    if (interaction.user.id !== config.OWNER_ID) await interaction.followUp({
+      content: "You don't have permission to run this command.",
+      ephemeral: true
     })
 
     const option = interaction.options.getString("sync_option");
 
     if (option === "global") {
       await deployCommands();
-      return interaction.editReply("Synced global commands.");
+      await interaction.editReply("Synced global commands.");
     } else {
       await deployCommands({ guildId: interaction.guild?.id });
-        return interaction.editReply("Synced debug commands.");
+      await interaction.editReply("Synced debug commands.");
     }
   }
 }

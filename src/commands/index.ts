@@ -2,7 +2,7 @@ import { BossCommand } from "./boss/boss.command";
 import { BossDetailsCommand } from "./boss/boss-details.command";
 import { RaceCommand } from "./race/race.command";
 import { OdysseyCommand } from "./odyssey/odyssey.command";
-import { TileCommand } from "./ct/tile.command";
+import { TileCommand } from "./tile/tile.command";
 import { CollectionCommand } from "./collection/collection.command";
 import { SyncCommand } from "./sync/sync.command";
 import { HelpCommand } from "./help/help.command";

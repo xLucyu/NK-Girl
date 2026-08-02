@@ -33,10 +33,11 @@ import {
   type BaseBody, 
 } from "@utils";
 import { getEventAutocompleteChoices } from "./auto.complete";
+import { Command } from "@client";
 
 export type InteractionType = ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction;
 
-export abstract class BaseCommand<T extends BaseBody, K> {
+export abstract class BaseCommand<T extends BaseBody, K> implements Command {
 
   protected abstract readonly eventType: EventType;
   protected abstract readonly urlKey: keyof typeof GOOGLE_API_ULRS;

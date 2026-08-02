@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { BaseLeaderboard, LeaderboardConfigInput } from "../base.leaderboard";
+import { BaseLeaderboard, LeaderboardData } from "../base.leaderboard";
 import { 
   GOOGLE_API_ULRS, 
   EventType, 
@@ -8,29 +8,37 @@ import {
  } from "@utils";
 import { getData } from "@api";
 
+type CTMode = "Player" | "Team";
+
 export class CtLeaderboard extends BaseLeaderboard {
 
-  protected buildConfig(interaction: ChatInputCommandInteraction): LeaderboardConfigInput {
+  public readonly eventType = EventType.CT;
 
-    const event = interaction.options.getString("event", true);
-    const mode = interaction.options.getString("mode", true);
+  protected async resolveLeaderboard(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
+
+    const event = this.resolveEventName(interaction);
+    const mode = interaction.options.getString("mode", true) as CTMode;
+
+    const data = await this.fetchLeaderboard(event, mode);
 
     return {
-      type: EventType.CT,
-      eventName: event,
-      subtitle: mode,
-      difficulty: mode,
-      fetchLeaderboard: () => this.fetchLeaderboard(event, mode),
-    };
+      query: {
+        type: this.eventType,
+        eventName: event,
+        subTitle: mode 
+      },
+      medalsMode: mode,
+      data: data
+    }
   }
 
-  private fetchLeaderboard(
+  private async fetchLeaderboard(
     event: string,
     mode: string,
-  ): Promise<LeaderboardPayload | null> {
+  ): Promise<LeaderboardPayload> {
     const url = GOOGLE_API_ULRS.CTLeaderboard
       .replace("{event}", addUnderscore(event))
       .replace("{mode}",  mode);
-    return getData<LeaderboardPayload>(url);
+    return await getData<LeaderboardPayload>(url);
   }
 }

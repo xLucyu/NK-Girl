@@ -1,35 +1,43 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { BaseLeaderboard, LeaderboardConfigInput } from "../base.leaderboard";
+import { BaseLeaderboard, LeaderboardData } from "../base.leaderboard";
 import { getData } from "@api";
 import { 
   GOOGLE_API_ULRS, 
   EventType, 
   addUnderscore, 
-  type LeaderboardPayload, 
+  type LeaderboardPayload,
+  BossDifficulty,
+  BossDifficulties, 
 } from "@utils";
 
 export class BossLeaderboard extends BaseLeaderboard {
 
-  protected buildConfig(interaction: ChatInputCommandInteraction): LeaderboardConfigInput {
+  public readonly eventType = EventType.Boss;
 
-    const event = interaction.options.getString("event", true);
-    const difficulty = interaction.options.getString("difficulty", true);
-    const teamSize = interaction.options.getInteger("team_size", true);
+  protected async resolveLeaderboard(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
+    
+    const event = this.resolveEventName(interaction);
+    const difficulty = interaction.options.getString("difficulty") as BossDifficulty ?? BossDifficulties[0];
+    const teamSize = interaction.options.getInteger("team_size") ?? 1;
+
+    const data = await this.fetchLeaderboard(event, difficulty, teamSize);
 
     return {
-      type: EventType.Boss,
-      eventName: event,
-      subtitle: `${difficulty} · ${teamSize}-player`,
-      fetchLeaderboard: () => this.fetchLeaderboard(event, difficulty, teamSize),
-      difficulty,
-    };
+      query: {
+        type: this.eventType,
+        eventName: event,
+        subTitle: `${difficulty} - ${teamSize}-player`
+      },
+      medalsMode: difficulty,
+      data: data
+    }
   }
 
   private async fetchLeaderboard(
     event: string,
     difficulty: string,
     teamSize: number,
-  ): Promise<LeaderboardPayload | null> {
+  ): Promise<LeaderboardPayload> {
     const url = GOOGLE_API_ULRS.BossLeaderboard
       .replace("{event}", addUnderscore(event))
       .replace("{difficulty}", difficulty)

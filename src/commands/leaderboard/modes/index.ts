@@ -1,3 +1,3 @@
-export * from "./boss.leaderboard";
-export * from "./ct.leaderboard";
-export * from "./race.leaderboard";
+export * from "./boss.mode";
+export * from "./ct.mode";
+export * from "./race.mode";

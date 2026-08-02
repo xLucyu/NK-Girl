@@ -2,6 +2,7 @@ import {
   AttachmentBuilder,
   ButtonStyle,
   ChatInputCommandInteraction,
+  InteractionEditReplyOptions,
   InteractionReplyOptions,
   SlashCommandSubcommandBuilder,
 } from "discord.js";
@@ -31,34 +32,90 @@ export type LeaderboardType = EventType.Race | EventType.Boss | EventType.CT;
 export interface LeaderboardQuery {
   type: LeaderboardType;
   eventName: string;
-  subtitle: string;
-  difficulty?: string;
+  subTitle: string;
 }
 
-export interface LeaderboardConfig {
+export interface LeaderboardData {
   query: LeaderboardQuery;
-  fetch: () => Promise<LeaderboardPayload | null>;
+  medalsMode: MedalsMode;
+  data: LeaderboardPayload;
 }
 
 export interface LeaderboardOptions extends BaseOptions {
-  query: LeaderboardQuery;
-  data: LeaderboardPayload;
   page: number;
 }
+
 
 export abstract class BaseLeaderboard {
  
   public abstract readonly eventType: LeaderboardType;
 
-  public execute(interaction: ChatInputCommandInteraction) {
+  public async execute(interaction: ChatInputCommandInteraction) {
+
+    await interaction.deferReply();
+
+   // const leaderboard = await this.resolveLeaderboard(interaction);
+  }
+
+  private getMedal(mode: MedalsMode, position: number, totalScores: number): string | null {
+
+    const percentile = position / totalScores;
+
+    for (const entry of MEDALS[mode]) {
+      const value = entry.max >= 1 ? position : percentile
+      if (value >= entry.min && value <= entry.max) return entry.medal;
+    };
+
+    return null;
+  }
+
+  public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
 
   }
 
-  private getMedal() {
+  private buildComponents(page: number, totalPages: number): InteractionEditReplyOptions["components"] {
 
+    if (totalPages <= 1) return [];
+
+    return [
+      BuildButtonMenu({
+        buttons: [
+          {
+            customId: "leaderboard:page:previous",
+            label: "<-", // placeholder
+            style: ButtonStyle.Primary,
+            disabled: page <= 1
+          },
+          {
+            customId: "leaderboard:page:next",
+            label: "->",
+            style: ButtonStyle.Primary,
+            disabled: page >= totalPages - 1 
+          },
+          {
+            customId: "leaderboard:modal:player",
+            label: "Search",
+            style: ButtonStyle.Secondary
+          },
+          {
+            customId: "leaderboard:modal:position",
+            label: "Position",
+            style: ButtonStyle.Secondary
+          }
+        ]
+      })
+    ];
   }
 
   protected resolveEventName(interaction: ChatInputCommandInteraction): string {
-    return interaction.options.getString("event") ? eventManager.getEventCache(this.eventType).getCache()!.currentEvent.data.name : ""
+
+    const selectedOption = interaction.options.getString("event");
+    if (selectedOption) return selectedOption;
+
+    const currentEvent = eventManager.getEventCache(this.eventType).getCache()?.currentEvent.data!;
+
+    return this.eventType === EventType.CT ? currentEvent.id : currentEvent?.name;
   }
+
+  protected abstract resolveLeaderboard(interaction: ChatInputCommandInteraction): Promise<LeaderboardData | null>;
 }

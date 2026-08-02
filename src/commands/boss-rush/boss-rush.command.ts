@@ -1,6 +1,6 @@
 import { BaseCommand } from "../base.command";
 import { BossRushProfile } from "./boss-rush.profile";
-import { EventCacheEntry } from "@manager";
+import type { EventCacheEntry } from "@manager";
 import type { ComponentState } from "@components";
 import { 
     type BossRushResult, 

@@ -1,6 +1,6 @@
 import { MedalImages } from "../images";
 
-export type MedalsMode = "Race" | "Standard" | "Elite" | "CTplayer" | "CTteam";
+export type MedalsMode = "Race" | "Standard" | "Elite" | "Player" | "Team";
 
 export type MedalEntry = {
   min: number;
@@ -47,7 +47,7 @@ export const MEDALS: Record<MedalsMode, MedalEntry[]> = {
     { min: 0.50, max: 0.75, medal: MedalImages.Boss.Elite.Top75Percent },
   ],
 
-  CTplayer: [
+  Player: [
     { min: 1, max: 25, medal: MedalImages.CT.Player.Top25 },
     { min: 26, max: 100, medal: MedalImages.CT.Player.Top100 },
     { min: 0.00, max: 0.01, medal: MedalImages.CT.Player.Top1Percent },
@@ -57,7 +57,7 @@ export const MEDALS: Record<MedalsMode, MedalEntry[]> = {
     { min: 0.50, max: 0.75, medal: MedalImages.CT.Player.Top75Percent },
   ],
 
-  CTteam: [
+  Team: [
     { min: 1, max: 1, medal: MedalImages.CT.Teams.First },
     { min: 2, max: 2, medal: MedalImages.CT.Teams.Second },
     { min: 3, max: 3, medal: MedalImages.CT.Teams.Third },

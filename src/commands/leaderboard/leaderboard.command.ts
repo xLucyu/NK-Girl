@@ -113,7 +113,6 @@ export class LeaderboardCommand {
     await interaction.respond(await getEventAutocompleteChoices(
       mode.eventType, 
       interaction.options.getFocused(),
-      "Leaderboard"
     ));
   }
 }

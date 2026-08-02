@@ -22,7 +22,7 @@ class CommandRegistry {
   public register(commands: Command[]): void {
     for (const command of commands) {
       const name = command.commandData.name;
-      if (this.commands.has(name)) throw new Error("duplicate Name");
+      if (this.commands.has(name)) throw new Error(`duplicate name for ${name}`);
       this.commands.set(name, command);
     }
   }

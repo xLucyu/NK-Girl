@@ -15,7 +15,7 @@ export class BossRushCommand extends BaseCommand<EventBody, BossRushResult> {
   protected readonly eventType = EventType.BossRush;
   protected readonly urlKey = EventType.BossRush;
 
-  public commandData = BaseCommand.baseSlashCommand("collection", "Show Collection Event Data.", true);
+  public commandData = BaseCommand.baseSlashCommand("boss_rush", "Show Boss Rush Event Data.", true);
 
   protected getIdentity(data: EventBody): string {
     return data.id;

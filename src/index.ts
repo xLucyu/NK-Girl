@@ -6,6 +6,7 @@ import { loadEmojis } from "@utils";
 async function main() {
   const discordClient = new DiscordClient();
   await discordClient.start();
+  await discordClient.addListeners();
   await discordClient.startEventManager();
   registry.register(allCommands);
   await loadEmojis();

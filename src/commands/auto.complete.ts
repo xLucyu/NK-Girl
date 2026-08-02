@@ -16,16 +16,19 @@ const formatEventName = (id: string): string => {
   const match = cleanedId.match(/^(.+?)(\d+)$/u);
 
   if (!match) {
-    return splitUppercase(cleanedId).trim();
+    return splitUppercase(cleanedId).trim() || cleanedId;
   }
 
   const [, rawName, number] = match;
-  const name = splitUppercase(rawName).trim();
 
-  return `${name} ${number}`;
+  const formattedName =
+    splitUppercase(rawName).trim() || rawName.trim();
+
+  return `${formattedName} ${number}`;
 };
 
 export async function getEventAutocompleteChoices(eventType: EventType, focused: string): Promise<AutocompleteChoice[]> {
+
   const search = focused.toLowerCase().trim();
   const ids = await gsc.getEventIds(eventType);
 

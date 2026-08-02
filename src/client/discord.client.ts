@@ -6,9 +6,8 @@ import {
 } from "discord.js";
 import { config } from "@config";
 import { deployCommands } from "./deploy.commands";
-import { listener } from "@commands";
+import { handleInteraction } from "@commands";
 import { eventManager } from "@manager";
-import { GuildTable, UsageTable } from "@database";
 
 export class DiscordClient {
 
@@ -27,8 +26,6 @@ export class DiscordClient {
         Partials.User
       ], 
     });
-
-    this.addListeners();
   }
 
   public async startEventManager() {
@@ -36,7 +33,7 @@ export class DiscordClient {
     console.log("EventManager started");
   }
 
-  private addListeners() {
+  public async addListeners() {
 
     this.client.once("clientReady", async () => {
       console.log(`Bot is online as ${this.client.user?.tag}`);
@@ -49,7 +46,7 @@ export class DiscordClient {
     });
 
     this.client.on("interactionCreate", async (interaction: Interaction) => {
-      await listener(interaction);
+      await handleInteraction(interaction);
     })
 
     this.client.on("error", (error) => console.error("client error", error));

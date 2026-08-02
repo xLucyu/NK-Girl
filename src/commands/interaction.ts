@@ -1,19 +1,19 @@
 import { Interaction } from "discord.js";
-import { commands, eventCommands } from ".";
 import { sendCommandError } from "@utils";
 import { handleButton, handleSelectMenu } from "@components";
 import { checkCooldown } from "./cooldown";
+import { registry } from "@client";
 
 const CMDCOOLDOWN = 5000;
 
-export async function listener(interaction: Interaction): Promise<void> {
+export async function handleInteraction(interaction: Interaction): Promise<void> {
 
   if (interaction.isAutocomplete()) {
 
-    const command = eventCommands[interaction.commandName as keyof typeof eventCommands];
+    const command = registry.get(interaction.commandName);
 
     try {
-      command.autoComplete(interaction);
+      command.autoComplete?.(interaction);
     } catch (error) {
       {
         throw new Error();
@@ -23,7 +23,7 @@ export async function listener(interaction: Interaction): Promise<void> {
 
   if (interaction.isChatInputCommand()) {
 
-    const command = commands[interaction.commandName as keyof typeof commands];
+    const command = registry.get(interaction.commandName);
 
     if (!command) return;
       try {

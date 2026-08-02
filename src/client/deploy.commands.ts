@@ -6,7 +6,8 @@ const rest = new REST({ version: "10" }).setToken(config.BOT_TOKEN);
 
 export async function deployCommands({ guildId }: { guildId?: string } = {}) {
 
-  const commands = registry.all();
+  const commands = registry.all().map(command => command.commandData.toJSON());
+  
   try {
 
     const route = guildId

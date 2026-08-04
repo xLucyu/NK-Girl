@@ -3,23 +3,26 @@ import {
   AutocompleteInteraction,
   ChatInputCommandInteraction,
   InteractionContextType,
+  ModalBuilder,
   SlashCommandBuilder,
 } from "discord.js";
-import { BaseLeaderboard } from "./base.leaderboard";
-import {
-  BossDifficulties,
-  playerMultiplier,
-} from "@utils";
-import { BossLeaderboard, CTLeaderboard, RaceLeaderboard } from "./modes";
+import type { InteractionType } from "../base.command";
+import type { ComponentState } from "@components";
 import { getEventAutocompleteChoices } from "../auto.complete";
+import {
+  BaseLeaderboard,
+  type LeaderboardOptions,
+} from "./base.leaderboard";
+import { BossLeaderboard, CtLeaderboard, RaceLeaderboard } from "./modes";
+import { BossDifficulties, EventType, playerMultiplier } from "@utils";
 
 export class LeaderboardCommand {
 
   private readonly modes = {
     boss: new BossLeaderboard(),
     race: new RaceLeaderboard(),
-    ct: new CTLeaderboard()
-  }
+    ct: new CtLeaderboard(),
+  };
 
   public commandData = new SlashCommandBuilder()
     .setName("leaderboard")
@@ -37,7 +40,7 @@ export class LeaderboardCommand {
         .setName("boss")
         .setDescription("Boss Event Leaderboard")
         .addStringOption((option) =>
-          option 
+          option
             .setName("event")
             .setDescription("Select a Boss Event, default is the current one")
             .setAutocomplete(true)
@@ -48,15 +51,15 @@ export class LeaderboardCommand {
             .setName("difficulty")
             .setDescription("Select a Difficulty, default is Standard")
             .setRequired(false)
-            .addChoices(...BossDifficulties.map((difficulty) => ({ 
-              name: difficulty, 
-              value: difficulty 
+            .addChoices(...BossDifficulties.map((difficulty) => ({
+              name: difficulty,
+              value: difficulty,
             }))),
         )
         .addIntegerOption((option) =>
           option
             .setName("team_size")
-            .setDescription(`Select the Team Size, default is Solo}`)
+            .setDescription("Select the Team Size, default is Solo")
             .setRequired(false)
             .addChoices(
               ...Object.keys(playerMultiplier).map((count) => ({
@@ -64,31 +67,24 @@ export class LeaderboardCommand {
                 value: Number(count),
               })),
             ),
-        )
-      )
+        ),
+    )
     .addSubcommand((command) =>
       command
-          .setName("race")
-          .setDescription("Race Event Leaderboard")
-          .addStringOption((option) =>
-            option
-              .setName("event")
-              .setDescription("Select a Boss Event, default is the current one")
-              .setAutocomplete(true)
-              .setRequired(false),
+        .setName("race")
+        .setDescription("Race Event Leaderboard")
+        .addStringOption((option) =>
+          option
+            .setName("event")
+            .setDescription("Select a Race Event, default is the current one")
+            .setAutocomplete(true)
+            .setRequired(false),
         ),
     )
     .addSubcommand((command) =>
       command
         .setName("ct")
         .setDescription("CT event leaderboard")
-        .addStringOption((option) =>
-          option 
-            .setName("event")
-            .setDescription("CT event — defaults to the current event")
-            .setAutocomplete(true)
-            .setRequired(false),
-        )
         .addStringOption((option) =>
           option
             .setName("mode")
@@ -98,21 +94,56 @@ export class LeaderboardCommand {
               { name: "Player", value: "Player" },
               { name: "Team", value: "Team" },
             ),
-        ),
-    )
+          )
+      .addStringOption((option) =>
+          option
+            .setName("event")
+            .setDescription("CT event — defaults to the current event")
+            .setAutocomplete(true)
+            .setRequired(false),
+        )
+    );
 
-  public async execute(interaction: ChatInputCommandInteraction) { 
-    const mode = this.modes[interaction.options.getSubcommand(true) as keyof typeof this.modes];
+  public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+
+    const mode = this.modeFromSubcommand(interaction.options.getSubcommand(true));
+    if (!mode) return;
+
     await mode.execute(interaction);
   }
 
   public async autoComplete(interaction: AutocompleteInteraction): Promise<void> {
 
-    const mode = this.modes[interaction.options.getSubcommand(true) as keyof typeof this.modes];
+    const mode = this.modeFromSubcommand(interaction.options.getSubcommand(true));
+    if (!mode) return interaction.respond([]);
 
-    await interaction.respond(await getEventAutocompleteChoices(
-      mode.eventType, 
-      interaction.options.getFocused(),
-    ));
+    await interaction.respond(
+      await getEventAutocompleteChoices(mode.eventType, interaction.options.getFocused(), "Leaderboard"),
+    );
+  }
+
+  public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
+    await this.modeFromState(state).renderAndReply(interaction, state);
+  }
+
+  public handleModal(state: ComponentState, key: string, input: string): boolean {
+    return this.modeFromState(state).handleModal(state, key, input);
+  }
+
+  public buildModal(key: string): ModalBuilder | null {
+    return BaseLeaderboard.buildModal(key);
+  }
+
+  private modeFromSubcommand(name: string): BaseLeaderboard | undefined {
+    return this.modes[name as keyof typeof this.modes];
+  }
+
+  private modeFromState(state: ComponentState): BaseLeaderboard {
+
+    const { query } = state.options as LeaderboardOptions;
+
+    return query.type === EventType.Boss ? this.modes.boss
+         : query.type === EventType.Race ? this.modes.race
+         : this.modes.ct;
   }
 }

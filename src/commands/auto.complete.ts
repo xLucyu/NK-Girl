@@ -1,4 +1,4 @@
-import { gsc } from "@manager";
+import { BucketRoot, gsc } from "@manager";
 import { EventType, splitUppercase } from "@utils";
 
 type AutocompleteChoice = {
@@ -27,10 +27,14 @@ const formatEventName = (id: string): string => {
   return `${formattedName} ${number}`;
 };
 
-export async function getEventAutocompleteChoices(eventType: EventType, focused: string): Promise<AutocompleteChoice[]> {
+export async function getEventAutocompleteChoices(
+  eventType: EventType, 
+  focused: string,
+  root: BucketRoot = "Event"
+): Promise<AutocompleteChoice[]> {
 
   const search = focused.toLowerCase().trim();
-  const ids = await gsc.getEventIds(eventType);
+  const ids = await gsc.getEventIds(eventType, { root });
 
   return ids
     .map((id) => {

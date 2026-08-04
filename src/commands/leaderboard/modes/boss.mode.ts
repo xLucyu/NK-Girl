@@ -1,23 +1,22 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { BaseLeaderboard, LeaderboardData } from "../base.leaderboard";
+import { LeaderboardData } from "../base.leaderboard";
+import { LeaderboardModeResolver } from "./base.mode-resolver";
 import { getData } from "@api";
 import { 
-  GOOGLE_API_ULRS, 
   EventType, 
-  addUnderscore, 
-  type LeaderboardPayload,
-  BossDifficulty,
-  BossDifficulties, 
+  GOOGLE_API_ULRS, 
+  type BossDifficulty, 
+  type LeaderboardPayload 
 } from "@utils";
 
-export class BossLeaderboard extends BaseLeaderboard {
+export class BossLeaderboard extends LeaderboardModeResolver {
 
   public readonly eventType = EventType.Boss;
 
-  protected async resolveLeaderboard(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
+  public async resolve(interaction: ChatInputCommandInteraction): Promise<LeaderboardData | null> {
     
     const event = this.resolveEventName(interaction);
-    const difficulty = interaction.options.getString("difficulty") as BossDifficulty ?? BossDifficulties[0];
+    const difficulty = (interaction.options.getString("difficulty") as BossDifficulty | null) ?? "Standard";
     const teamSize = interaction.options.getInteger("team_size") ?? 1;
 
     const data = await this.fetchLeaderboard(event, difficulty, teamSize);
@@ -26,7 +25,7 @@ export class BossLeaderboard extends BaseLeaderboard {
       query: {
         type: this.eventType,
         eventName: event,
-        subTitle: `${difficulty} - ${teamSize}-player`
+        subTitle: `${difficulty} - ${teamSize}-player ${data.totalScores}-scores`
       },
       medalsMode: difficulty,
       data: data
@@ -35,13 +34,15 @@ export class BossLeaderboard extends BaseLeaderboard {
 
   private async fetchLeaderboard(
     event: string,
-    difficulty: string,
+    difficulty: BossDifficulty,
     teamSize: number,
   ): Promise<LeaderboardPayload> {
+
     const url = GOOGLE_API_ULRS.BossLeaderboard
-      .replace("{event}", addUnderscore(event))
+      .replace("{event}", event)
       .replace("{difficulty}", difficulty)
       .replace("{teamSize}", String(teamSize));
+
     return getData<LeaderboardPayload>(url);
   }
 }

@@ -15,7 +15,6 @@ import {
   BuildModalMenu,
   CreateComponentState,
   componentState,
-  jumpToPage,
   render,
   scheduleComponentCleanup,
   type BaseOptions,
@@ -47,9 +46,11 @@ export interface LeaderboardData {
 }
 
 export interface LeaderboardOptions extends BaseOptions, LeaderboardData {
-  page: number;
-  totalPages: number;
+  offset: number;
+  pageSize: number;
+  total: number;
 }
+
 
 export interface LeaderboardRow extends Team {
   medal: string | null;
@@ -82,11 +83,13 @@ export abstract class BaseLeaderboard {
       event: leaderboard.query.eventName,
       options: {
         ...leaderboard,
-        page: 0,
-        totalPages: this.totalPages(leaderboard.data),
+        offset: 0,
+        pageSize: PAGE_SIZE,
+        total: leaderboard.data.teams.length,
       },
       userId: interaction.user.id,
     });
+
 
     await this.renderAndReply(interaction, state);
 
@@ -101,20 +104,22 @@ export abstract class BaseLeaderboard {
     });
   }
 
-  public async renderAndReply(
+    public async renderAndReply(
     interaction: InteractionType,
     state: ComponentState,
   ): Promise<void> {
 
     const options = state.options as LeaderboardOptions;
 
-    const totalPages = this.totalPages(options.data);
-    const page = this.clampPage(Number(options.page), totalPages);
+    const total = options.data.teams.length;
+    const maxOffset = Math.max(0, total - PAGE_SIZE);
+    const offset = Math.min(Math.max(0, Math.trunc(Number(options.offset) || 0)), maxOffset);
 
-    options.page = page;
-    options.totalPages = totalPages;
+    options.offset = offset;
+    options.total = total;
+    options.pageSize = PAGE_SIZE;
 
-    const rows = this.prepareRows(options.data, options.medalsMode, page);
+    const rows = this.prepareRows(options.data, options.medalsMode, offset);
 
     const profile = LeaderboardProfile({
       type: options.query.type,
@@ -129,9 +134,10 @@ export abstract class BaseLeaderboard {
     await interaction.editReply({
       attachments: [],
       files: [attachment],
-      components: this.getComponents(page, totalPages),
+      components: this.getComponents(offset, total),
     });
   }
+
 
   public static buildModal(key: string): ModalBuilder | null {
 
@@ -158,8 +164,6 @@ export abstract class BaseLeaderboard {
     const page = this.findPage(options.data, input);
 
     if (page === null) return false;
-
-    jumpToPage(state, page);
     return true;
   }
 
@@ -184,19 +188,19 @@ export abstract class BaseLeaderboard {
   private prepareRows(
     data: LeaderboardPayload,
     medalsMode: MedalsMode,
-    page: number,
+    offset: number,
   ): LeaderboardRow[] {
 
-    const start = page * PAGE_SIZE;
     const totalScores = data.totalScores || data.teams.length;
 
     return data.teams
-      .slice(start, start + PAGE_SIZE)
+      .slice(offset, offset + PAGE_SIZE)
       .map((team) => ({
         ...team,
         medal: this.getMedal(medalsMode, team.position, totalScores),
       }));
   }
+
 
   private getMedal(
     mode: MedalsMode,
@@ -221,16 +225,7 @@ export abstract class BaseLeaderboard {
 
     return null;
   }
-
-  private totalPages(data: LeaderboardPayload): number {
-    return Math.max(1, Math.ceil(data.teams.length / PAGE_SIZE));
-  }
-
-  private clampPage(page: number, totalPages: number): number {
-    if (!Number.isFinite(page)) return 0;
-    return Math.max(0, Math.min(Math.trunc(page), totalPages - 1));
-  }
-
+  
   private getComponents(
     page: number,
     totalPages: number,

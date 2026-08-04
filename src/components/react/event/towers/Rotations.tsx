@@ -1,6 +1,4 @@
-import { Box } from "../../layout/Box";
 import { TowerIcon } from "./TowerIcon";
-import { getRotationTowerSize } from "./sizes";
 
 export interface Rotation {
   instas: string[];
@@ -9,59 +7,82 @@ export interface Rotation {
 
 interface RotationsProps {
   rotations: Rotation[];
+  allRotations?: Rotation[];
+  columns?: number;
 }
 
-interface RotationRow {
+interface RotationRowProps {
   rotation: Rotation;
-  size: number;
   current: boolean;
 }
+
+const TOWER_SIZE = 62;
 
 const MONTHS = [
   "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-export function Rotations({ rotations }: RotationsProps) {
+export function Rotations({
+  rotations,
+  allRotations = rotations,
+  columns = 2,
+}: RotationsProps) {
 
   if (rotations.length === 0) return null;
 
-  const size = getRotationTowerSize(rotations.length);
+  const perColumn = Math.ceil(rotations.length / columns);
+  const currentTimestamp = findCurrentTimestamp(allRotations);
+
+  const chunks = Array.from({ length: columns }, (_, i) =>
+    rotations.slice(i * perColumn, (i + 1) * perColumn),
+  ).filter((chunk) => chunk.length > 0);
 
   return (
-    <Box
+    <div
       style={{
-        flexDirection: "column",
+        display: "flex",
+        flexDirection: "row",
         alignItems: "flex-start",
-        alignSelf: "flex-start",
-        gap: 10,
-        padding: 12,
         width: "100%",
+        gap: 12,
       }}
     >
-      {rotations.map((rotation, index) => (
-        <RotationRow
-          key={rotation.timeStamp}
-          rotation={rotation}
-          size={size}
-          current={isCurrentRotation(rotations, index)}
-        />
+      {chunks.map((chunk, columnIndex) => (
+        <div
+          key={columnIndex}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: 4,
+            flex: 1,
+          }}
+        >
+          {chunk.map((rotation) => (
+            <RotationRow
+              key={rotation.timeStamp}
+              rotation={rotation}
+              current={rotation.timeStamp === currentTimestamp}
+            />
+          ))}
+        </div>
       ))}
-    </Box>
+    </div>
   );
 }
 
-function RotationRow({ rotation, size, current }: RotationRow) {
+function RotationRow({ rotation, current }: RotationRowProps) {
   return (
     <div
       style={{
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        gap: 14,
+        gap: 8,
         width: "100%",
-        padding: "6px 10px",
-        borderRadius: 8,
+        padding: "2px 6px",
+        borderRadius: 6,
         backgroundColor: current ? "rgba(144, 202, 249, 0.15)" : "transparent",
         border: current
           ? "1px solid rgba(144, 202, 249, 0.5)"
@@ -71,8 +92,8 @@ function RotationRow({ rotation, size, current }: RotationRow) {
       <span
         style={{
           color: current ? "#90caf9" : "#c0d0e0",
-          fontSize: 14,
-          minWidth: 140,
+          fontSize: 12,
+          minWidth: 112,
           textTransform: "uppercase",
           opacity: current ? 1 : 0.75,
         }}
@@ -80,9 +101,9 @@ function RotationRow({ rotation, size, current }: RotationRow) {
         {current ? "NOW" : formatTimestamp(rotation.timeStamp)}
       </span>
 
-      <div style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+      <div style={{ display: "flex", flexDirection: "row", gap: 5 }}>
         {rotation.instas.map((towerName) => (
-          <TowerIcon key={towerName} towerName={towerName} size={size} />
+          <TowerIcon key={towerName} towerName={towerName} size={TOWER_SIZE} />
         ))}
       </div>
     </div>
@@ -90,7 +111,6 @@ function RotationRow({ rotation, size, current }: RotationRow) {
 }
 
 function formatTimestamp(iso: string): string {
-
   const d = new Date(iso);
   const day = d.getUTCDate();
   const month = MONTHS[d.getUTCMonth()];
@@ -99,13 +119,18 @@ function formatTimestamp(iso: string): string {
   return `${day} ${month}, ${hh}:${mm} UTC`;
 }
 
-function isCurrentRotation(rotations: Rotation[], index: number): boolean {
+function findCurrentTimestamp(all: Rotation[]): string | null {
 
   const now = Date.now();
-  const start = new Date(rotations[index].timeStamp).getTime();
-  const end =
-    index + 1 < rotations.length
-      ? new Date(rotations[index + 1].timeStamp).getTime()
-      : Infinity;
-  return now >= start && now < end;
+  let currentTimestamp: string | null = null;
+
+  for (const rotation of all) {
+    if (new Date(rotation.timeStamp).getTime() <= now) {
+      currentTimestamp = rotation.timeStamp;
+    } else {
+      break;
+    }
+  }
+
+  return currentTimestamp;
 }

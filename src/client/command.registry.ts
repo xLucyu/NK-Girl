@@ -1,6 +1,7 @@
 import { 
   AutocompleteInteraction, 
   ChatInputCommandInteraction, 
+  ModalBuilder, 
   SlashCommandOptionsOnlyBuilder, 
   SlashCommandSubcommandsOnlyBuilder 
 } from "discord.js";
@@ -13,6 +14,7 @@ export interface Command {
   autoComplete?(interaction: AutocompleteInteraction): Promise<void>;
   renderAndReply?(interaction: InteractionType, state: ComponentState): Promise<void>;
   handleModal?(state: ComponentState, key: string, input: string): boolean;
+  buildModal?(key: string): ModalBuilder | null;
 }
 
 class CommandRegistry {

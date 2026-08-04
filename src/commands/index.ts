@@ -8,6 +8,7 @@ import { TileCommand } from "./tile/tile.command";
 import { CollectionCommand } from "./collection/collection.command";
 import { SyncCommand } from "./sync/sync.command";
 import { HelpCommand } from "./help/help.command";
+import { LeaderboardCommand } from "./leaderboard/leaderboard.command";
 
 export const allCommands: Command[] = [
   new BossCommand(),
@@ -18,7 +19,8 @@ export const allCommands: Command[] = [
   new TileCommand(),
   new CollectionCommand(),
   new SyncCommand(),
-  new HelpCommand()
+  new HelpCommand(),
+  new LeaderboardCommand()
 ]
 
 export * from "./interaction";

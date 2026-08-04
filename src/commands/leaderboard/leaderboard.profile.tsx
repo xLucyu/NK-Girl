@@ -1,22 +1,17 @@
 import { Event, Layout } from "@components";
-import { BaseLeaderboard } from "./base.leaderboard";
 import {
   EventImages,
   EventType,
-  LeaderboardPayload,
-  MedalsMode,
   ModifierImages,
   loadImage,
 } from "@utils";
-import type { LeaderboardType } from "./base.leaderboard";
+import type { LeaderboardRow, LeaderboardType } from "./base.leaderboard";
 
 interface LeaderboardProfileProps {
-  data: LeaderboardPayload;
   type: LeaderboardType;
   subtitle: string;
-  medalsMode: MedalsMode;
-  page: number;
-  pageSize: number;
+  scoringType: string;
+  rows: LeaderboardRow[];
 }
 
 interface ScoreCell {
@@ -34,6 +29,7 @@ function formatScore(n: number): string {
 /** Format a duration expressed in milliseconds → "H:MM:SS.mmm" or "M:SS.mmm". */
 function formatDuration(ms: number): string {
   if (!Number.isFinite(ms) || ms < 0) return "—";
+
   const hours   = Math.floor(ms / 3_600_000);
   const minutes = Math.floor((ms % 3_600_000) / 60_000);
   const seconds = Math.floor((ms % 60_000) / 1000);
@@ -46,9 +42,18 @@ function formatDuration(ms: number): string {
   return hours > 0 ? `${hours}:${mm}:${ss}.${mmm}` : `${minutes}:${ss}.${mmm}`;
 }
 
+function isLeastScoring(scoringType: string): boolean {
+  return scoringType === "LeastCash" || scoringType === "LeastTiers";
+}
+
 /**
- * Build the score cells for a team based on event type and scoring type.
- * Column count returned here MUST match scoreHeaders() below.
+ * Build the score cells for one row.
+ * Column count here MUST match scoreHeaders().
+ *
+ * Boss layout:
+ *   score       → tier reached (always)
+ *   secondScore → time, or the least-cash / least-tiers metric
+ *   thirdScore  → tie-breaker time (least scoring only)
  */
 function formatScoreParts(
   type: LeaderboardType,
@@ -67,37 +72,47 @@ function formatScoreParts(
     ];
   }
 
-  // Boss
-  const isLeast = scoringType === "LeastCash" || scoringType === "LeastTiers";
-  if (isLeast) {
-    const scoreIcon =
-      scoringType === "LeastCash"  ? EventImages.Lives :
-      scoringType === "LeastTiers" ? EventImages.Lives : undefined;
+  // Boss — the primary score is always the tier reached.
+  const tier: ScoreCell = {
+    value: formatScore(parts.score),
+    icon: ModifierImages.BossTier,
+  };
 
+  if (!isLeastScoring(scoringType)) {
+    // Timed boss: tier, then the clear time.
     return [
-      { value: formatScore(parts.score),                                            icon: ModifierImages.BossTier },
-      { value: parts.secondScore != null ? formatScore(parts.secondScore) : "—",    icon: scoreIcon },
-      { value: parts.thirdScore  != null ? formatDuration(parts.thirdScore) : "—" },
+      tier,
+      { value: parts.secondScore != null ? formatDuration(parts.secondScore) : "—" },
     ];
   }
-  // Boss Timed
-  return [{ value: formatDuration(parts.score) }];
+
+  // Least cash / least tiers: tier, the metric, then time as tie-breaker.
+  const metricIcon =
+    scoringType === "LeastCash" ? EventImages.LeastCash : EventImages.LeastTiers;
+
+  return [
+    tier,
+    {
+      value: parts.secondScore != null ? formatScore(parts.secondScore) : "—",
+      icon: metricIcon,
+    },
+    { value: parts.thirdScore != null ? formatDuration(parts.thirdScore) : "—" },
+  ];
 }
 
 function scoreHeaders(type: LeaderboardType, scoringType: string): string[] {
   if (type === EventType.CT)   return ["Score"];
   if (type === EventType.Race) return ["Score", "Time"];
-  const isLeast = scoringType === "LeastCash" || scoringType === "LeastTiers";
-  return isLeast ? ["Tier", "Score", "Time"] : ["Time"];
+
+  return isLeastScoring(scoringType)
+    ? ["Tier", scoringType === "LeastCash" ? "Cash" : "Tiers", "Time"]
+    : ["Tier", "Time"];
 }
 
-// ── Shared column-width helper ────────────────────────────────────────────────
-
-function scoreColumnWidth(count: number): number {
-  if (count === 1) return 160;
-  if (count === 2) return 160;
-  return 140;
-}
+const scoreColumnWidth = (count: number) =>
+  count === 1 ? 158 :
+  count === 2 ? 158 :
+                136;
 
 // ── Header row ────────────────────────────────────────────────────────────────
 
@@ -113,25 +128,22 @@ const HeaderRow = ({
       display: "flex",
       flexDirection: "row",
       alignItems: "center",
-      gap: 16,
-      padding: "8px 14px",
+      gap: 15,
+      padding: "8px 15px",
       width: "100%",
     }}
   >
     {/* Medal spacer */}
-    <div style={{ display: "flex", width: 40 }} />
+    <div style={{ display: "flex", width: 45 }} />
 
-    {/* # */}
-    <div style={{ display: "flex", width: 60, justifyContent: "flex-end" }}>
+    <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
       <span style={{ fontSize: 22, color: "white", fontWeight: "bold" }}>#</span>
     </div>
 
-    {/* Team */}
     <div style={{ display: "flex", flex: 1 }}>
       <span style={{ fontSize: 22, color: "white", fontWeight: "bold" }}>Team</span>
     </div>
 
-    {/* Score column headers */}
     {headers.map((label, i) => (
       <div
         key={i}
@@ -159,136 +171,125 @@ interface RowProps {
   scoreColumnCount: number;
 }
 
-const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) => {
-  return (
-    <Layout.Box
+const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) => (
+  <Layout.Box
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 15,
+      padding: "6px 15px",
+      width: "100%",
+    }}
+  >
+    {/* Medal */}
+    <div
       style={{
         display: "flex",
-        flexDirection: "row",
+        width: 45,
+        justifyContent: "center",
         alignItems: "center",
-        gap: 14,
-        padding: "6px 14px",
-        width: "100%",
       }}
     >
-      {/* Medal */}
-      <div
-        style={{
-          display: "flex",
-          width: 40,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {medal ? (
-          <img src={loadImage(medal)} width={36} height={36} />
-        ) : (
-          <div style={{ display: "flex", width: 36, height: 36 }} />
-        )}
-      </div>
+      {medal ? (
+        <img src={loadImage(medal)} width={37} height={37} />
+      ) : (
+        <div style={{ display: "flex", width: 37, height: 37 }} />
+      )}
+    </div>
 
-      {/* Placement */}
-      <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
-        <span style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>
-          #{position}
-        </span>
-      </div>
+    {/* Placement */}
+    <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
+      <span style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>
+        #{position}
+      </span>
+    </div>
 
-      {/* Player name(s) — horizontal */}
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-          flexWrap: "nowrap",
-          overflow: "hidden",
-          gap: 6,
-        }}
-      >
-        {members.map((m, i) => (
-          <div
-            key={`${m.displayName}-${i}`}
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 6,
-            }}
-          >
-            <span
-              style={{
-                fontSize: 22,
-                color: "white",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {m.displayName}
-            </span>
-            {i < members.length - 1 && (
-              <span style={{ fontSize: 20, color: "#9aa4b2" }}>·</span>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Score parts */}
-      {scores.map((cell, i) => (
+    {/* Player name(s) */}
+    <div
+      style={{
+        display: "flex",
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        flexWrap: "nowrap",
+        overflow: "hidden",
+        gap: 8,
+      }}
+    >
+      {members.map((member, i) => (
         <div
-          key={i}
+          key={`${member.displayName}-${i}`}
           style={{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            gap: 6,
-            width: scoreColumnWidth(scoreColumnCount),
-            justifyContent: "flex-start",
+            gap: 8,
           }}
         >
-          {cell.icon && (
-            <img src={loadImage(cell.icon)} width={26} height={26} />
-          )}
           <span
             style={{
               fontSize: 22,
               color: "white",
-              fontWeight: i === 0 ? "bold" : "normal",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             }}
           >
-            {cell.value}
+            {member.displayName}
           </span>
+          {i < members.length - 1 && (
+            <span style={{ fontSize: 22, color: "#9aa4b2" }}>·</span>
+          )}
         </div>
       ))}
-    </Layout.Box>
-  );
-};
+    </div>
+
+    {/* Score parts */}
+    {scores.map((cell, i) => (
+      <div
+        key={i}
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8,
+          width: scoreColumnWidth(scoreColumnCount),
+          justifyContent: "flex-start",
+        }}
+      >
+        {cell.icon && <img src={loadImage(cell.icon)} width={28} height={28} />}
+        <span
+          style={{
+            fontSize: 22,
+            color: "white",
+            fontWeight: i === 0 ? "bold" : "normal",
+          }}
+        >
+          {cell.value}
+        </span>
+      </div>
+    ))}
+  </Layout.Box>
+);
 
 // ── Main profile ──────────────────────────────────────────────────────────────
 
 export function LeaderboardProfile({
-  data,
   type,
   subtitle,
-  medalsMode,
-  page,
-  pageSize,
+  scoringType,
+  rows,
 }: LeaderboardProfileProps): JSX.Element {
 
-  const totalTeams = data.teams.length;
-  const start      = page * pageSize;
-  const end        = Math.min(start + pageSize, totalTeams);
-  const visible    = data.teams.slice(start, end);
-
-  const headers          = scoreHeaders(type, data.scoringType);
+  const headers = scoreHeaders(type, scoringType);
   const scoreColumnCount = headers.length;
 
   return (
     <Layout.Container>
       <Event.Header
         eventType={type}
-        eventName={data.name}
+        eventName={subtitle}
         difficulty={subtitle}
       />
 
@@ -299,24 +300,19 @@ export function LeaderboardProfile({
           display: "flex",
           flexDirection: "column",
           width: "100%",
-          gap: 3,
+          gap: 5,
         }}
       >
-        {visible.map((team) => {
-          const medal  = BaseLeaderboard.getMedal(medalsMode, team.position, totalTeams);
-          const scores = formatScoreParts(type, data.scoringType, team.scoreParts);
-
-          return (
-            <Row
-              key={team.position}
-              medal={medal}
-              position={team.position}
-              members={team.members}
-              scores={scores}
-              scoreColumnCount={scoreColumnCount}
-            />
-          );
-        })}
+        {rows.map((row) => (
+          <Row
+            key={row.position}
+            medal={row.medal}
+            position={row.position}
+            members={row.members}
+            scores={formatScoreParts(type, scoringType, row.scoreParts)}
+            scoreColumnCount={scoreColumnCount}
+          />
+        ))}
       </div>
     </Layout.Container>
   );

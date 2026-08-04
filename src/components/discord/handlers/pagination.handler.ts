@@ -1,16 +1,5 @@
 import type { ComponentState } from "../state";
 
-/**
- * Offset-based pagination.
- *
- * customId: <command>:page:next | previous | first | last
- *
- * State contract:
- *   state.options.offset   : number  (0-based row index of the first visible row)
- *   state.options.pageSize : number
- *   state.options.total    : number  (total row count)
- */
-
 const PAGE_SEGMENT = "page";
 
 export type PageDirection = "next" | "previous" | "first" | "last";

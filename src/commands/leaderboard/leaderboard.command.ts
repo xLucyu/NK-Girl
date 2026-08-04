@@ -7,14 +7,14 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import type { InteractionType } from "../base.command";
-import type { ComponentState } from "@components";
+import { centerOn, type ComponentState } from "@components";
 import { getEventAutocompleteChoices } from "../auto.complete";
 import {
   BaseLeaderboard,
   type LeaderboardOptions,
 } from "./base.leaderboard";
 import { BossLeaderboard, CtLeaderboard, RaceLeaderboard } from "./modes";
-import { BossDifficulties, EventType, playerMultiplier } from "@utils";
+import { BossDifficulties, EventType, LeaderboardPayload, playerMultiplier } from "@utils";
 
 export class LeaderboardCommand {
 
@@ -122,13 +122,45 @@ export class LeaderboardCommand {
     );
   }
 
-  public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
+  public async renderAndReply(
+    interaction: InteractionType,
+    state: ComponentState,
+  ): Promise<void> {
     await this.modeFromState(state).renderAndReply(interaction, state);
   }
 
-  public handleModal(state: ComponentState, key: string, input: string): boolean {
-    return this.modeFromState(state).handleModal(state, key, input);
-  }
+public handleModal(state: ComponentState, key: string, input: string): boolean {
+
+  if (key !== "search") return false;
+
+  const options = state.options as LeaderboardOptions;
+  const index = this.findIndex(options.data, input);
+
+  if (index === null) return false;
+
+  centerOn(state, index);
+  return true;
+}
+
+
+  private findIndex(data: LeaderboardPayload, input: string): number | null {
+
+    const needle = input.trim();
+    if (!needle) return null;
+
+    const asNumber = Number(needle);
+
+    const index = Number.isInteger(asNumber) && asNumber > 0
+      ? data.teams.findIndex((team) => team.position === asNumber)
+      : data.teams.findIndex((team) =>
+          team.members.some((member) =>
+            member.displayName.toLowerCase().includes(needle.toLowerCase()),
+          ),
+        );
+
+  return index === -1 ? null : index;
+}
+
 
   public buildModal(key: string): ModalBuilder | null {
     return BaseLeaderboard.buildModal(key);
@@ -144,6 +176,6 @@ export class LeaderboardCommand {
 
     return query.type === EventType.Boss ? this.modes.boss
          : query.type === EventType.Race ? this.modes.race
-         : this.modes.ct;
+         :                                 this.modes.ct;
   }
 }

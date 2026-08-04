@@ -1,6 +1,6 @@
 import { Interaction } from "discord.js";
 import { sendCommandError } from "@utils";
-import { handleButton, handleSelectMenu } from "@components";
+import { handleButton, handleModalSubmit, handleSelectMenu } from "@components";
 import { checkCooldown } from "./cooldown";
 import { registry } from "@client";
 
@@ -51,5 +51,9 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
       throw new Error();
     }
     return;
+  }
+
+  if (interaction.isModalSubmit()) {
+    await handleModalSubmit(interaction);
   }
 }

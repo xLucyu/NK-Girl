@@ -335,6 +335,14 @@ export const BOSS_RUSH_SETTINGS = {
         "canPopCamo": true,
         "canRevealCamo": false,
         "isCheapTower": true
+      },
+      "Skywarden": {
+        "chance": 0.16,
+        "isBoostedByWaterMap": false,
+        "canPopLead": true,
+        "canPopCamo": true,
+        "canRevealCamo": false,
+        "isCheapTower": true
       }
     },
     "BossSpecialTowers": {

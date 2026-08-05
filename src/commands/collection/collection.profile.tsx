@@ -6,7 +6,7 @@ const PAGE_SIZE = 10;
 export interface CollectionProfileProps {
   event: EventBody;
   metaData: InstaSchedule;
-  page: number;
+  offset: number;
 }
 
 function toRotationList(rotations: InstaSchedule["Rotations"]): Rotation[] {
@@ -40,12 +40,19 @@ function formatCountdown(target: Date): string {
   return `${minutes}m`;
 }
 
-export function CollectionProfile({event, metaData, page}: CollectionProfileProps): JSX.Element {
+export function CollectionProfile({
+  event,
+  metaData,
+  offset,
+}: CollectionProfileProps): JSX.Element {
 
   const allRotations = toRotationList(metaData.Rotations);
-  const totalPages = Math.max(1, Math.ceil(allRotations.length / PAGE_SIZE));
-  const safePage = Math.min(Math.max(0, page), totalPages - 1);
-  const pageRotations = allRotations.slice(safePage * PAGE_SIZE, (safePage + 1) * PAGE_SIZE);
+
+  const maxOffset = Math.max(0, allRotations.length - PAGE_SIZE);
+  const safeOffset = Math.min(Math.max(0, offset), maxOffset);
+
+  // 10 per page, laid out as two columns of 5 inside a single box.
+  const pageRotations = allRotations.slice(safeOffset, safeOffset + PAGE_SIZE);
 
   const next = getNextRotation(allRotations);
 
@@ -63,18 +70,20 @@ export function CollectionProfile({event, metaData, page}: CollectionProfileProp
         eventName={event.name}
         difficulty="Insta Rotations"
       />
+
       <Layout.Row>
         <Layout.Column flex={1}>
           <Event.Info items={infoItems} />
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
       </Layout.Row>
+
       <Layout.Row style={{ flex: 1 }}>
-        <Event.Rotations
-          rotations={pageRotations}
-          allRotations={allRotations}
-          columns={2}
-        />
+          <Event.Rotations
+            rotations={pageRotations}
+            allRotations={allRotations}
+            columns={2}
+          />
       </Layout.Row>
     </Layout.Container>
   );

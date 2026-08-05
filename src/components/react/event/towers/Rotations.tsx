@@ -1,4 +1,5 @@
 import { TowerIcon } from "./TowerIcon";
+import { Layout } from "../../layout";
 
 export interface Rotation {
   instas: string[];
@@ -6,7 +7,9 @@ export interface Rotation {
 }
 
 interface RotationsProps {
+  /** The rotations visible on this page. */
   rotations: Rotation[];
+  /** Every rotation in the event — needed to detect the active one correctly. */
   allRotations?: Rotation[];
   columns?: number;
 }
@@ -39,7 +42,7 @@ export function Rotations({
   ).filter((chunk) => chunk.length > 0);
 
   return (
-    <div
+    <Layout.Box
       style={{
         display: "flex",
         flexDirection: "row",
@@ -68,7 +71,7 @@ export function Rotations({
           ))}
         </div>
       ))}
-    </div>
+    </Layout.Box>
   );
 }
 
@@ -119,6 +122,11 @@ function formatTimestamp(iso: string): string {
   return `${day} ${month}, ${hh}:${mm} UTC`;
 }
 
+/**
+ * The active rotation is the last one whose start is in the past. Computed
+ * against the full list so a page boundary can't fake an open-ended window.
+ * Returns null if the event hasn't started yet.
+ */
 function findCurrentTimestamp(all: Rotation[]): string | null {
 
   const now = Date.now();

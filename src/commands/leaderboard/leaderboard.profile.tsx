@@ -1,11 +1,11 @@
 import { Event, Layout } from "@components";
+import type { LeaderboardRow, LeaderboardType } from "./base.leaderboard";
 import {
   EventImages,
   EventType,
   ModifierImages,
   loadImage,
 } from "@utils";
-import type { LeaderboardRow, LeaderboardType } from "./base.leaderboard";
 
 interface LeaderboardProfileProps {
   type: LeaderboardType;
@@ -18,6 +18,23 @@ interface ScoreCell {
   value: string;
   icon?: string;
 }
+
+
+const FONT = {
+  header: 22,
+  position: 26,
+  name: 24,
+  score: 24,
+  separator: 24,
+} as const;
+
+const MEDAL_SIZE = 37;
+const SCORE_ICON_SIZE = 28;
+
+const scoreColumnWidth = (count: number) =>
+  count === 1 ? 158 :
+  count === 2 ? 158 :
+                150;
 
 // ── Formatting helpers ────────────────────────────────────────────────────────
 
@@ -109,11 +126,6 @@ function scoreHeaders(type: LeaderboardType, scoringType: string): string[] {
     : ["Tier", "Time"];
 }
 
-const scoreColumnWidth = (count: number) =>
-  count === 1 ? 158 :
-  count === 2 ? 158 :
-                136;
-
 // ── Header row ────────────────────────────────────────────────────────────────
 
 const HeaderRow = ({
@@ -137,11 +149,15 @@ const HeaderRow = ({
     <div style={{ display: "flex", width: 45 }} />
 
     <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
-      <span style={{ fontSize: 22, color: "white", fontWeight: "bold" }}>#</span>
+      <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold" }}>
+        #
+      </span>
     </div>
 
     <div style={{ display: "flex", flex: 1 }}>
-      <span style={{ fontSize: 22, color: "white", fontWeight: "bold" }}>Team</span>
+      <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold" }}>
+        Team
+      </span>
     </div>
 
     {headers.map((label, i) => (
@@ -153,7 +169,7 @@ const HeaderRow = ({
           justifyContent: "flex-start",
         }}
       >
-        <span style={{ fontSize: 22, color: "white", fontWeight: "bold" }}>
+        <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold" }}>
           {label}
         </span>
       </div>
@@ -169,9 +185,17 @@ interface RowProps {
   members: { displayName: string; profile: string }[];
   scores: ScoreCell[];
   scoreColumnCount: number;
+  highlighted: boolean;
 }
 
-const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) => (
+const Row = ({
+  medal,
+  position,
+  members,
+  scores,
+  scoreColumnCount,
+  highlighted,
+}: RowProps) => (
   <Layout.Box
     style={{
       display: "flex",
@@ -180,6 +204,14 @@ const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) =
       gap: 15,
       padding: "6px 15px",
       width: "100%",
+      /* Only spread when highlighted — otherwise Layout.Box keeps its own look. */
+      ...(highlighted
+        ? {
+            borderRadius: 8,
+            backgroundColor: "rgba(144, 202, 249, 0.15)",
+            border: "1px solid rgba(144, 202, 249, 0.5)",
+          }
+        : {}),
     }}
   >
     {/* Medal */}
@@ -192,15 +224,21 @@ const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) =
       }}
     >
       {medal ? (
-        <img src={loadImage(medal)} width={37} height={37} />
+        <img src={loadImage(medal)} width={MEDAL_SIZE} height={MEDAL_SIZE} />
       ) : (
-        <div style={{ display: "flex", width: 37, height: 37 }} />
+        <div style={{ display: "flex", width: MEDAL_SIZE, height: MEDAL_SIZE }} />
       )}
     </div>
 
     {/* Placement */}
     <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
-      <span style={{ fontSize: 24, color: "white", fontWeight: "bold" }}>
+      <span
+        style={{
+          fontSize: FONT.position,
+          color: highlighted ? "#90caf9" : "white",
+          fontWeight: "bold",
+        }}
+      >
         #{position}
       </span>
     </div>
@@ -229,7 +267,7 @@ const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) =
         >
           <span
             style={{
-              fontSize: 22,
+              fontSize: FONT.name,
               color: "white",
               overflow: "hidden",
               textOverflow: "ellipsis",
@@ -239,7 +277,7 @@ const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) =
             {member.displayName}
           </span>
           {i < members.length - 1 && (
-            <span style={{ fontSize: 22, color: "#9aa4b2" }}>·</span>
+            <span style={{ fontSize: FONT.separator, color: "#9aa4b2" }}>·</span>
           )}
         </div>
       ))}
@@ -258,10 +296,16 @@ const Row = ({ medal, position, members, scores, scoreColumnCount }: RowProps) =
           justifyContent: "flex-start",
         }}
       >
-        {cell.icon && <img src={loadImage(cell.icon)} width={28} height={28} />}
+        {cell.icon && (
+          <img
+            src={loadImage(cell.icon)}
+            width={SCORE_ICON_SIZE}
+            height={SCORE_ICON_SIZE}
+          />
+        )}
         <span
           style={{
-            fontSize: 22,
+            fontSize: FONT.score,
             color: "white",
             fontWeight: i === 0 ? "bold" : "normal",
           }}
@@ -290,7 +334,6 @@ export function LeaderboardProfile({
       <Event.Header
         eventType={type}
         eventName={subtitle}
-        difficulty={subtitle}
       />
 
       <HeaderRow headers={headers} scoreColumnCount={scoreColumnCount} />
@@ -303,14 +346,15 @@ export function LeaderboardProfile({
           gap: 5,
         }}
       >
-        {rows.map((row) => (
+        {rows.map((row, i) => (
           <Row
-            key={row.position}
+            key={`${row.position}-${i}`}
             medal={row.medal}
             position={row.position}
             members={row.members}
             scores={formatScoreParts(type, scoringType, row.scoreParts)}
             scoreColumnCount={scoreColumnCount}
+            highlighted={row.highlighted}
           />
         ))}
       </div>

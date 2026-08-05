@@ -365,6 +365,13 @@ export const maps = [
     "isStandard": true
   },
   {
+    "id": "Ascent",
+    "category": "Advanced",
+    "mapMusic": "",
+    "hasWater": true,
+    "isStandard": true
+  },
+  {
     "id": "MushroomGrotto",
     "category": "Advanced",
     "mapMusic": "MusicDarkA",

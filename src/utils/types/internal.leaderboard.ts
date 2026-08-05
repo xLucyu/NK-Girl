@@ -17,6 +17,8 @@ export interface Team {
 
 export interface LeaderboardPayload {
   id: string;
+  start: number;
+  end: number;
   eventType: "Boss" | "Race" | "CT";
   name: string;
   totalScores: number;

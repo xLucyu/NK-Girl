@@ -1,14 +1,10 @@
 import { ScoringType } from "@manager";
-import type { MetaBody } from "./metadata";
 
-export interface BaseTimeBody {
-  start: number;
-  end: number;
-}
-
-export interface BaseBody extends BaseTimeBody {
+export interface BaseBody {
   id: string;
   name: string;
+  start: number;
+  end: number;
 }
 
 export interface BossBody extends BaseBody {
@@ -51,10 +47,4 @@ export interface EventBody extends BaseBody {
 export interface NkData<T extends BaseBody> {
   success: boolean;
   body: T[];
-}
-
-export interface ChallengeBody extends BaseBody {
-  createdAt: number;
-  creator: null;
-  metaData: MetaBody
 }

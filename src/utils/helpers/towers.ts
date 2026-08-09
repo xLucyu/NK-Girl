@@ -46,7 +46,7 @@ export function getTowers(towers: Tower[]): TowerCategories {
       const tower = incoming.get(towerName);
       if (!tower) continue;
 
-      result[category].push({
+      availableTowers[category].push({
         name: tower.tower,
         max: tower.max,
         crossPaths: getCrossPaths(tower),

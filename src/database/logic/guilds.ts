@@ -39,10 +39,10 @@ export class GuildTable {
 
       const result = await client.query<{channel_id: string | null}>(
         `
-        SELECT channel_id
-        FROM event_announcements
-        WHERE guild_id = $1
-          AND event_type = $2
+        select channel_id
+        from event_announcements
+        where guild_id = $1
+        and event_type = $2
         `,[guildId, event]
       );
 
@@ -51,10 +51,10 @@ export class GuildTable {
 
       await client.query(
         `
-        UPDATE event_announcements
-        SET channel_id = NULL
-        WHERE guild_id = $1
-        AND event_type = $2
+        update event_announcements
+        set channel_id = NULL
+        where guild_id = $1
+        and event_type = $2
         `,
         [guildId, event]
       );
@@ -71,10 +71,10 @@ export class GuildTable {
 
       const result = await client.query<{channel_id: string}>(
         `
-        SELECT channel_id
-        FROM event_announcements
-        WHERE event_type = $1
-          AND channel_id IS NOT NULL
+        select channel_id
+        from event_announcements
+        where event_type = $1
+        and channel_id IS NOT NULL
         `,
         [event]
       );
@@ -94,10 +94,10 @@ export class GuildTable {
 
       const result = await client.query<{channel_id: string | null}>(
         `
-        SELECT channel_id
-        FROM event_announcements
-        WHERE guild_id = $1
-          AND event_type = $2
+        select channel_id
+        from event_announcements
+        where guild_id = $1
+        and event_type = $2
         `,
         [guildId, event]
       );
@@ -116,31 +116,31 @@ export class GuildTable {
 
       await client.query(
         `
-        INSERT INTO event_announcements (
+        insert into event_announcements (
           guild_id,
           event_type,
           announced_event_ids
         )
-        VALUES (
+        values (
           $1,
           $2,
-          ARRAY[$3::TEXT]
+          array[$3::text]
         )
 
-        ON CONFLICT (guild_id, event_type)
-        DO UPDATE SET
+        on conflict (guild_id, event_type)
+        do update set
           announced_event_ids =
-            CASE
-              WHEN $3::TEXT = ANY(
+            case
+              when $3::text = any(
                 event_announcements.announced_event_ids
               )
-              THEN event_announcements.announced_event_ids
+              then event_announcements.announced_event_ids
 
-              ELSE array_append(
+              else array_append(
                 event_announcements.announced_event_ids,
-                $3::TEXT
+                $3::text
               )
-            END
+            end
         `,
         [guildId, event, eventId]
       );
@@ -157,10 +157,10 @@ export class GuildTable {
 
       const result = await client.query<{announced_event_ids: string[];}>(
         `
-        SELECT announced_event_ids
-        FROM event_announcements
-        WHERE guild_id = $1
-        AND event_type = $2
+        select announced_event_ids
+        from event_announcements
+        where guild_id = $1
+        and event_type = $2
         `,
         [guildId, event]
       );

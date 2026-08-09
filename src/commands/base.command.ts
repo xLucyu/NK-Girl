@@ -7,6 +7,7 @@ import {
   InteractionContextType,
   InteractionReplyOptions,
   MessageFlags,
+  ModalSubmitInteraction,
   SlashCommandBuilder,
   SlashCommandOptionsOnlyBuilder,
   StringSelectMenuInteraction
@@ -35,7 +36,11 @@ import {
 import { getEventAutocompleteChoices } from "./auto.complete";
 import { Command } from "@client";
 
-export type InteractionType = ChatInputCommandInteraction | ButtonInteraction | StringSelectMenuInteraction;
+export type InteractionType = 
+ChatInputCommandInteraction | 
+ButtonInteraction | 
+StringSelectMenuInteraction | 
+ModalSubmitInteraction;
 
 export abstract class BaseCommand<T extends BaseBody, K> implements Command {
 
@@ -129,11 +134,7 @@ export abstract class BaseCommand<T extends BaseBody, K> implements Command {
     const key = addUnderscore(state.event || "current");
     const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", key);
 
-    try {
-      return await getData<CurrentEventData<T, K>>(eventUrl);
-    } catch (err) {
-      return null;
-    }
+    return await getData<CurrentEventData<T, K>>(eventUrl);
   }
 
   public async autoComplete(interaction: AutocompleteInteraction): Promise<void> {

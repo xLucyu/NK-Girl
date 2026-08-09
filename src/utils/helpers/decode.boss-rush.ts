@@ -1,10 +1,10 @@
 import { 
-    maps as RAW_MAPS, 
+    MAPS as RAW_MAPS, 
     type RawMap, 
     BOSS_RUSH_SETTINGS 
-} from '@utils';
+} from "@utils";
 
-type DifficultyName = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+type DifficultyName = "Beginner" | "Intermediate" | "Advanced" | "Expert";
 type Difficulty = 0 | 1 | 2 | 3;
 
 interface TowerSetting {
@@ -12,6 +12,7 @@ interface TowerSetting {
   canPopLead?: boolean;    CanPopLead?: boolean;
   canPopCamo?: boolean;    CanPopCamo?: boolean;
   isCheapTower?: boolean;  IsCheapTower?: boolean;
+  
 }
 
 interface BossSpecialEntry {
@@ -108,7 +109,7 @@ class SystemRandom {
 
 function seedFromId(id: string): number {
   if (!id || !id.trim()) return 0;
-  const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+  const chars = "0123456789abcdefghijklmnopqrstuvwxyz";
   const lower = id.toLowerCase();
   let result = 0n;
   for (let pos = 0; pos < lower.length; pos++) {
@@ -137,7 +138,7 @@ function weightedIndex(rng: SystemRandom, weights: readonly number[]): number {
     cumulative += weights[i];
     if (roll <= cumulative) return i;
   }
-  throw new Error('weightedIndex: no index selected');
+  throw new Error("weightedIndex: no index selected");
 }
 
 function weightedItem<T>(rng: SystemRandom, items: readonly T[], getWeight: (item: T) => number): T | null {
@@ -174,34 +175,73 @@ const DIFFICULTY_BY_NAME: Record<string, Difficulty> = {
   Beginner: 0, Intermediate: 1, Advanced: 2, Expert: 3,
 };
 const DIFFICULTY_NAMES: Record<Difficulty, DifficultyName> = {
-  0: 'Beginner', 1: 'Intermediate', 2: 'Advanced', 3: 'Expert',
+  0: "Beginner", 1: "Intermediate", 2: "Advanced", 3: "Expert",
 };
 
-const WATER_MAPS = new Set(['Peninsula', 'SpiceIslands']);
-const WATER_TOWERS = new Set(['MonkeySub', 'MonkeyBuccaneer']);
-const CHOSEN_PRIMARY_HERO = 'ChosenPrimaryHero';
+const WATER_MAPS = new Set(["Peninsula", "SpiceIslands"]);
+const WATER_TOWERS = new Set(["MonkeySub", "MonkeyBuccaneer"]);
+const CHOSEN_PRIMARY_HERO = "ChosenPrimaryHero";
 
 const DEFAULT_TOWER_ORDER = [
-  'Quincy', 'Gwendolin', 'StrikerJones', 'ObynGreenfoot', 'Silas', 'CaptainChurchill',
-  'Benjamin', 'PatFusty', 'Ezili', 'Rosalia', 'Adora', 'Etienne', 'Sauda',
-  'AdmiralBrickell', 'Psi', 'Geraldo', 'Corvus', 'ChosenPrimaryHero',
-  'DartMonkey', 'BoomerangMonkey', 'BombShooter', 'TackShooter', 'IceMonkey',
-  'GlueGunner', 'Desperado', 'SniperMonkey', 'MonkeySub', 'MonkeyBuccaneer',
-  'MonkeyAce', 'HeliPilot', 'MortarMonkey', 'DartlingGunner', 'WizardMonkey',
-  'SuperMonkey', 'NinjaMonkey', 'Alchemist', 'Druid', 'Mermonkey', 'BananaFarm',
-  'SpikeFactory', 'MonkeyVillage', 'EngineerMonkey', 'BeastHandler',
-] as const;
+  "Quincy", 
+  "Gwendolin", 
+  "StrikerJones", 
+  "ObynGreenfoot", 
+  "Silas", 
+  "CaptainChurchill",
+  "Benjamin", 
+  "PatFusty", 
+  "Ezili", 
+  "Rosalia", 
+  "Adora", 
+  "Etienne", 
+  "Sauda",
+  "AdmiralBrickell", 
+  "Psi", 
+  "Geraldo", 
+  "Corvus", 
+  "ChosenPrimaryHero",
+  "DartMonkey", 
+  "BoomerangMonkey", 
+  "BombShooter", 
+  "TackShooter", 
+  "IceMonkey",
+  "GlueGunner", 
+  "Desperado", 
+  "SniperMonkey", 
+  "MonkeySub", 
+  "MonkeyBuccaneer",
+  "MonkeyAce", 
+  "HeliPilot", 
+  "MortarMonkey", 
+  "DartlingGunner", 
+  "WizardMonkey",
+  "SuperMonkey", 
+  "NinjaMonkey", 
+  "Alchemist", 
+  "Druid", 
+  "Skywarden",
+  "Mermonkey", 
+  "BananaFarm",
+  "SpikeFactory", 
+  "MonkeyVillage", 
+  "EngineerMonkey", 
+  "BeastHandler",
+];
 
 const HERO_INDEX = DEFAULT_TOWER_ORDER.indexOf(CHOSEN_PRIMARY_HERO);
 const HERO_IDS: string[] = DEFAULT_TOWER_ORDER.slice(0, HERO_INDEX);
 const TOWER_IDS: string[] = DEFAULT_TOWER_ORDER.slice(HERO_INDEX + 1);
 const TOWER_DISPLAY_INDEX = new Map(TOWER_IDS.map((t, i) => [t, i]));
-const byDisplayOrder = (a: string, b: string) =>
-  (TOWER_DISPLAY_INDEX.get(a) ?? 99) - (TOWER_DISPLAY_INDEX.get(b) ?? 99);
+const byDisplayOrder = (a: string, b: string) => (TOWER_DISPLAY_INDEX.get(a) ?? 99) - (TOWER_DISPLAY_INDEX.get(b) ?? 99);
 
 const BOSS_BY_KEY: Record<string, string> = {
-  bloonarius: 'Bloonarius', dreadbloon: 'Dreadbloon', phayze: 'Phayze',
-  blastapopoulos: 'Blastapopoulos', lych: 'Lych', diamondback: 'Diamondback',
+  bloonarius: "Bloonarius", 
+  dreadbloon: "Dreadbloon", 
+  phayze: "Phayze",
+  blastapopoulos: "Blastapopoulos", 
+  lych: "Lych", 
+  diamondback: "Diamondback",
 };
 
 const rs = BOSS_RUSH_SETTINGS.RandomSettings as any;
@@ -275,7 +315,7 @@ function generateMaps(rng: SystemRandom, count: number): GameMap[] {
           !selected.includes(m),
       );
     }
-    if (candidates.length === 0) throw new Error('generateMaps: no candidate map found');
+    if (candidates.length === 0) throw new Error("generateMaps: no candidate map found");
     selected.push(candidates[rng.next(candidates.length)]);
   }
   return selected;
@@ -296,7 +336,7 @@ function generateBosses(rng: SystemRandom, count: number): string[] {
       if (lastIndex !== -1) pool.splice(lastIndex, 1);
     }
     const selected = reservoirPick(rng, pool);
-    if (selected === null) throw new Error('generateBosses: empty pool');
+    if (selected === null) throw new Error("generateBosses: empty pool");
     pool.splice(pool.indexOf(selected), 1);
     generated.push(selected);
   }
@@ -307,7 +347,7 @@ type CategoryLists = [string[], string[], string[], string[], string[]];
 
 function readCategoryLists(entry: BossSpecialEntry): CategoryLists {
   const read = (k: keyof BossSpecialEntry) => (entry[k] ?? []).map(String);
-  return [read('Primary'), read('Military'), read('Magic'), read('Support'), read('AllTowers')];
+  return [read("Primary"), read("Military"), read("Magic"), read("Support"), read("AllTowers")];
 }
 
 function getBossSpecialTowers(
@@ -360,9 +400,9 @@ function isValidTowerSet(
   mapId: string,
 ): boolean {
   if (towers.length < 3) return false;
-  const hasLead = towers.some((i) => towerFlag(ts[i], 'canPopLead', 'CanPopLead'));
-  const hasCamo = towers.some((i) => towerFlag(ts[i], 'canPopCamo', 'CanPopCamo'));
-  const cheapCount = towers.filter((i) => towerFlag(ts[i], 'isCheapTower', 'IsCheapTower')).length;
+  const hasLead = towers.some((i) => towerFlag(ts[i], "canPopLead", "CanPopLead"));
+  const hasCamo = towers.some((i) => towerFlag(ts[i], "canPopCamo", "CanPopCamo"));
+  const cheapCount = towers.filter((i) => towerFlag(ts[i], "isCheapTower", "IsCheapTower")).length;
   if (!hasLead || !hasCamo || cheapCount <= 1) return false;
   if (WATER_MAPS.has(mapId)) return towers.some((i) => WATER_TOWERS.has(i));
   return true;
@@ -424,8 +464,8 @@ function generateStageTowers(
   if (proposed.length === 0) proposed.push(...TOWER_IDS.filter((id) => bossTowers.includes(id)));
 
   if (proposed.length === 0) {
-    const leadCandidates = available.filter((id) => towerFlag(ts[id], 'canPopLead', 'CanPopLead'));
-    const camoCandidates = available.filter((id) => towerFlag(ts[id], 'canPopCamo', 'CanPopCamo'));
+    const leadCandidates = available.filter((id) => towerFlag(ts[id], "canPopLead", "CanPopLead"));
+    const camoCandidates = available.filter((id) => towerFlag(ts[id], "canPopCamo", "CanPopCamo"));
 
     const lead = weightedItem(rng, leadCandidates, (id) => chances.get(id) ?? 0);
     if (lead !== null) proposed.push(lead);
@@ -470,7 +510,7 @@ function generateTowers(
       break;
     }
   }
-  if (!final) throw new Error('generateTowers: no valid final tower set after 100 attempts');
+  if (!final) throw new Error("generateTowers: no valid final tower set after 100 attempts");
 
   const generated: string[][] = [final];
   for (let i = stageCount - 2; i >= 0; i--) {

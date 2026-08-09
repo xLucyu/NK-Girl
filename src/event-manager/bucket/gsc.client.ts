@@ -47,8 +47,6 @@ export class GscClient {
     for (const file of files) {
       const parts = file.name.split("/");
 
-      // prefix already guarantees parts[0]/parts[1]; we only need a
-      // non-empty id and an actual file at the end, not a folder marker
       if (parts.length >= 4 && parts[2].trim().length > 0 && parts.at(-1)!.endsWith(".json")) {
         ids.add(parts[2]);
       }

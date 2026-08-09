@@ -24,7 +24,6 @@ export async function handleButton(
 
   const parts = interaction.customId.split(":");
 
-  // Modal buttons must not be deferred — showModal() has to come first.
   if (isModal(parts)) return handleModalOpen(interaction, parts);
 
   return handleComponent(interaction);

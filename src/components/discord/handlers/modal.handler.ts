@@ -8,21 +8,10 @@ import { scheduleComponentCleanup } from "../cleanup";
 import { guardOwnership } from "./ownership";
 import { registry } from "@client";
 
-/**
- * customId conventions:
- *   Button that opens a modal:  "<command>:modal:<key>"
- *   The modal itself:           "<command>:modal:<key>:submit"
- *   The text input inside it:   "input"
- */
-
 export function isModal(parts: string[]): boolean {
   return parts[1] === "modal";
 }
 
-/**
- * Button click → show the modal.
- * Must NOT defer first: showModal() has to be the initial response.
- */
 export async function handleModalOpen(
   interaction: ButtonInteraction,
   parts: string[],

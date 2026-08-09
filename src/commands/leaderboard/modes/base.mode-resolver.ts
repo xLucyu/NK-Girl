@@ -9,7 +9,7 @@ export abstract class LeaderboardModeResolver {
 
   public abstract resolve(
     interaction: ChatInputCommandInteraction,
-  ): Promise<LeaderboardData | null>;
+  ): Promise<LeaderboardData>;
 
   protected resolveEventName(interaction: ChatInputCommandInteraction): string {
 

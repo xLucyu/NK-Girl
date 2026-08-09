@@ -13,7 +13,7 @@ export class BossLeaderboard extends LeaderboardModeResolver {
 
   public readonly eventType = EventType.Boss;
 
-  public async resolve(interaction: ChatInputCommandInteraction): Promise<LeaderboardData | null> {
+  public async resolve(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
     
     const event = this.resolveEventName(interaction);
     const difficulty = (interaction.options.getString("difficulty") as BossDifficulty | null) ?? "Standard";

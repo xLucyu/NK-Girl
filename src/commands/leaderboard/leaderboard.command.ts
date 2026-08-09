@@ -5,11 +5,11 @@ import {
   InteractionContextType,
   SlashCommandBuilder,
 } from "discord.js";
+import { LeaderboardModes, leaderboardSubCommand } from "./modes";
 import { getEventAutocompleteChoices } from "../auto.complete";
 import { BaseLeaderboard } from "./base.leaderboard";
-import { leaderboardModes, LeaderboardSubcommand} from "./modes";
-import { BossDifficulties, playerMultiplier } from "@utils";
 import { LeaderboardModeResolver } from "./modes/base.mode-resolver";
+import { BossDifficulties, playerMultiplier } from "@utils";
 
 export class LeaderboardCommand extends BaseLeaderboard {
 
@@ -116,6 +116,6 @@ export class LeaderboardCommand extends BaseLeaderboard {
   }
   
   private modeFromSubcommand(name: string): LeaderboardModeResolver {
-    return leaderboardModes[name as LeaderboardSubcommand];
+    return LeaderboardModes[name as leaderboardSubCommand];
   }
 }

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { BaseLeaderboard, LeaderboardData } from "../base.leaderboard";
+import { LeaderboardData } from "../base.leaderboard";
 import { 
   GOOGLE_API_ULRS, 
   EventType, 
@@ -7,14 +7,15 @@ import {
   type LeaderboardPayload
  } from "@utils";
 import { getData } from "@api";
+import { LeaderboardModeResolver } from "./base.mode-resolver";
 
 type CTMode = "Player" | "Team";
 
-export class CtLeaderboard extends BaseLeaderboard {
+export class CtLeaderboard extends LeaderboardModeResolver {
 
   public readonly eventType = EventType.CT;
 
-  protected async resolveLeaderboard(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
+  public async resolve(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
 
     const event = this.resolveEventName(interaction);
     const mode = interaction.options.getString("mode", true) as CTMode;

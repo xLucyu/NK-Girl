@@ -1,12 +1,12 @@
 export type RawMap = {
-    id: string;
-    category: string;
-    mapMusic: string;
-    hasWater: boolean;
-    isStandard: boolean;
+  id: string;
+  category: string;
+  mapMusic: string;
+  hasWater: boolean;
+  isStandard: boolean;
 }
 
-export const maps = [
+export const MAPS = [
   {
     "id": "MonkeyMeadow",
     "category": "Beginner",
@@ -176,14 +176,14 @@ export const maps = [
     "isStandard": true
   },
   {
-    "id": "EndOfTheRoad",
+    "id": "Logs",
     "category": "Beginner",
     "mapMusic": "MusicUpbeat3A",
     "hasWater": true,
     "isStandard": true
   },
   {
-    "id": "Logs",
+    "id": "EndOfTheRoad",
     "category": "Beginner",
     "mapMusic": "MusicUpbeat3A",
     "hasWater": true,

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from "discord.js";
-import { BaseLeaderboard, LeaderboardData } from "../base.leaderboard";
+import { LeaderboardData } from "../base.leaderboard";
 import { getData } from "@api";
 import { 
   GOOGLE_API_ULRS, 
@@ -7,12 +7,13 @@ import {
   addUnderscore, 
   type LeaderboardPayload 
 } from "@utils";
+import { LeaderboardModeResolver } from "./base.mode-resolver";
 
-export class RaceLeaderboard extends BaseLeaderboard {
+export class RaceLeaderboard extends LeaderboardModeResolver {
 
   public readonly eventType = EventType.Race;
 
-  protected async resolveLeaderboard(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
+  public async resolve(interaction: ChatInputCommandInteraction): Promise<LeaderboardData> {
 
     const event = this.resolveEventName(interaction);
     const data = await this.fetchLeaderboard(event);

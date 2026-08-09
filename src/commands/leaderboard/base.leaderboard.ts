@@ -7,7 +7,6 @@ import {
 } from "discord.js";
 import type { InteractionType } from "../base.command";
 import { LeaderboardProfile } from "./leaderboard.profile";
-
 import {
   BuildButtonMenu,
   BuildModalMenu,
@@ -15,7 +14,6 @@ import {
   componentState,
   render,
   scheduleComponentCleanup,
-  snapToPage,
   type BaseOptions,
   type ComponentState,
 } from "@components";
@@ -58,12 +56,6 @@ export interface LeaderboardRow extends Team {
 
 export abstract class BaseLeaderboard {
 
-  // ── Factory ─────────────────────────────────────────────────────────────
-
-  /**
-   * Turns fetched data into a live, paginated message. Expects the reply to
-   * be deferred already. A null/empty payload produces the fallback reply.
-   */
   protected async buildLeaderboard(
     interaction: ChatInputCommandInteraction,
     mode: LeaderboardModeResolver | null,
@@ -104,9 +96,6 @@ export abstract class BaseLeaderboard {
     });
   }
 
-  // ── Rendering ───────────────────────────────────────────────────────────
-
-  /** Entry point for the component router after paging or a modal submit. */
   public async renderAndReply(
     interaction: InteractionType,
     state: ComponentState,
@@ -125,10 +114,7 @@ export abstract class BaseLeaderboard {
     options.total = total;
     options.pageSize = PAGE_SIZE;
 
-    /*
-     * Pagination, medals and the search highlight are all resolved here,
-     * before the profile receives the rows.
-     */
+
     const rows = this.prepareRows(
       options.data,
       options.medalsMode,
@@ -153,9 +139,6 @@ export abstract class BaseLeaderboard {
     });
   }
 
-  // ── Modals ──────────────────────────────────────────────────────────────
-
-  /** Must stay an instance method — the router calls it on the registry object. */
   public buildModal(key: string): ModalBuilder | null {
 
     if (key === "search") {
@@ -164,7 +147,7 @@ export abstract class BaseLeaderboard {
         title: "Search Player",
         inputId: "input",
         inputLabel: "Player name",
-        placeholder: "e.g. Blastapopolous",
+        placeholder: "e.g. lucy",
       });
     }
 
@@ -181,24 +164,16 @@ export abstract class BaseLeaderboard {
     return null;
   }
 
-  /** Returns false when nothing matched, so the router can reply ephemerally. */
-  public handleModal(
-    state: ComponentState,
-    key: string,
-    input: string,
-  ): boolean {
+  public handleModal(state: ComponentState, key: string, input: string): boolean {
 
     const options = state.options as LeaderboardOptions;
 
-    const index =
-      key === "search"   ? this.findByName(options.data, input) :
-      key === "position" ? this.findByPosition(options.data, input) :
-                           null;
+    const index = key === "search" ? this.findByName(options.data, input) :
+      key === "position" ? this.findByPosition(options.data, input) : null;
 
     if (index === null) return false;
 
     options.highlight = index;
-    snapToPage(state, index);
 
     return true;
   }

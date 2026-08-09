@@ -1,13 +1,11 @@
-create table if not exists GUILDS (
-  GuildID TEXT PRIMARY KEY,
-  RaceChannelID TEXT,
-  BossChannelID TEXT,
-  OdysseyChannelID TEXT,
-  Raceids TEXT,
-  Bossids TEXT,
-  Odysseyids TEXT
-);
+create table if not exists EVENT_ANNOUNCEMENTS (
+  GuildID TEXT NOT NULL,
+  EventType TEXT NOT NULL,
+  ChannelID TEXT,
+  AnnouncedEventIDs TEXT[] NOT NULL DEFAULT '{}',
 
+  PRIMARY KEY (GuildID, EventType)
+);
 
 create table if not exists USAGE (
   Command TEXT PRIMARY KEY,

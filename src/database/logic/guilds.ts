@@ -1,158 +1,185 @@
 import { withDb } from "../pool";
 import { EventType } from "@utils";
 
+
 export class GuildTable {
 
-  
-  public async appendChannelPerGuild(guildId: string, channelId: string, event: EventType): Promise<void> {
+  public async appendChannelPerGuild(
+    guildId: string,
+    channelId: string,
+    event: EventType
+  ): Promise<void> {
 
     await withDb(async (client) => {
-      const column = `${event.toLowerCase()}channelid`;
 
       await client.query(
         `
-        INSERT INTO guilds (guildid)
-        VALUES ($1)
-        ON CONFLICT (guildid) DO NOTHING
+        INSERT INTO event_announcements (
+          guild_id,
+          event_type,
+          channel_id
+        )
+        VALUES ($1, $2, $3)
+
+        ON CONFLICT (guild_id, event_type)
+        DO UPDATE SET
+          channel_id = EXCLUDED.channel_id
         `,
-        [guildId]
+        [guildId, event, channelId]
       );
+    });
+  }
+
+  public async removeChannelFromGuild(
+    guildId: string,
+    event: EventType
+  ): Promise<string | null> {
+
+    return await withDb(async (client) => {
+
+      const result = await client.query<{channel_id: string | null}>(
+        `
+        SELECT channel_id
+        FROM event_announcements
+        WHERE guild_id = $1
+          AND event_type = $2
+        `,[guildId, event]
+      );
+
+      const channelId = result.rows[0]?.channel_id ?? null;
+      if (!channelId) return null;
 
       await client.query(
         `
-        UPDATE guilds
-        SET ${column} = $1
-        WHERE guildid = $2
+        UPDATE event_announcements
+        SET channel_id = NULL
+        WHERE guild_id = $1
+        AND event_type = $2
         `,
-        [channelId, guildId]
+        [guildId, event]
       );
+
+      return channelId;
     });
   }
 
-  public async removeChannelFromGuild(guildId: string, event: EventType): Promise<string | null> {
+  public async fetchAllRegisteredChannels(
+    event: EventType
+  ): Promise<string[]> {
 
     return await withDb(async (client) => {
-      const column = `${event.toLowerCase()}channelid`;
 
-      const result = await client.query<{ channelid: string | null }>(
+      const result = await client.query<{channel_id: string}>(
         `
-        SELECT ${column} AS channelid
-        FROM guilds
-        WHERE guildid = $1
+        SELECT channel_id
+        FROM event_announcements
+        WHERE event_type = $1
+          AND channel_id IS NOT NULL
         `,
-        [guildId]
+        [event]
       );
 
-      const oldChannelId = result.rows[0]?.channelid ?? null;
-
-      if (!oldChannelId) return null;
-
-      await client.query(
-        `
-        UPDATE guilds
-        SET ${column} = NULL
-        WHERE guildid = $1
-        `,
-        [guildId]
+      return result.rows.map(
+        (row) => row.channel_id
       );
-
-      return oldChannelId;
     });
   }
 
-  public async fetchAllRegisteredChannels(event: EventType): Promise<string[]> {
+  public async fetchRegisteredChannel(
+    event: EventType,
+    guildId: string
+  ): Promise<string | null> {
 
     return await withDb(async (client) => {
-      const column = `${event.toLowerCase()}channelid`;
 
-      const result = await client.query<{ channelid: string }>(
+      const result = await client.query<{channel_id: string | null}>(
         `
-        SELECT ${column} AS channelid
-        FROM guilds
-        WHERE ${column} IS NOT NULL
-        `
-      );
-
-      return result.rows.map((row) => row.channelid);
-    });
-  }
-
-  public async fetchRegisteredChannel(event: EventType, guildId: string): Promise<string | null> {
-
-    return await withDb(async (client) => {
-      const column = `${event.toLowerCase()}channelid`;
-
-      const result = await client.query<{ channelid: string | null }>(
-        `
-        SELECT ${column} AS channelid
-        FROM guilds
-        WHERE guildid = $1
+        SELECT channel_id
+        FROM event_announcements
+        WHERE guild_id = $1
+          AND event_type = $2
         `,
-        [guildId]
+        [guildId, event]
       );
 
-      return result.rows[0]?.channelid ?? null;
+      return result.rows[0]?.channel_id ?? null;
     });
   }
 
-  public async appendEvent(eventId: string, event: EventType, guildId: string): Promise<void> {
+  public async appendEvent(
+    eventId: string,
+    event: EventType,
+    guildId: string
+  ): Promise<void> {
 
     await withDb(async (client) => {
-      const column = `${event.toLowerCase()}ids`;
 
       await client.query(
         `
-        INSERT INTO guilds (guildid)
-        VALUES ($1)
-        ON CONFLICT (guildid) DO NOTHING
+        INSERT INTO event_announcements (
+          guild_id,
+          event_type,
+          announced_event_ids
+        )
+        VALUES (
+          $1,
+          $2,
+          ARRAY[$3::TEXT]
+        )
+
+        ON CONFLICT (guild_id, event_type)
+        DO UPDATE SET
+          announced_event_ids =
+            CASE
+              WHEN $3::TEXT = ANY(
+                event_announcements.announced_event_ids
+              )
+              THEN event_announcements.announced_event_ids
+
+              ELSE array_append(
+                event_announcements.announced_event_ids,
+                $3::TEXT
+              )
+            END
         `,
-        [guildId]
+        [guildId, event, eventId]
       );
 
-      const result = await client.query<{ ids: string[] | null }>(
-        `
-        SELECT ${column} AS ids
-        FROM guilds
-        WHERE guildid = $1
-        `,
-        [guildId]
-      );
-
-      const eventIds = result.rows[0]?.ids ?? [];
-
-      if (eventIds.includes(eventId)) return;
-
-      await client.query(
-        `
-        UPDATE guilds
-        SET ${column} = $1
-        WHERE guildid = $2
-        `,
-        [[...eventIds, eventId], guildId]
-      );
     });
   }
 
-  public async fetchEventIds(event: EventType, guildId: string): Promise<string[]> {
+  public async fetchEventIds(
+    event: EventType,
+    guildId: string
+  ): Promise<string[]> {
 
     return await withDb(async (client) => {
-      const column = `${event.toLowerCase()}ids`;
 
-      const result = await client.query<{ ids: string[] | null }>(
+      const result = await client.query<{announced_event_ids: string[];}>(
         `
-        SELECT ${column} AS ids
-        FROM guilds
-        WHERE guildid = $1
+        SELECT announced_event_ids
+        FROM event_announcements
+        WHERE guild_id = $1
+        AND event_type = $2
         `,
-        [guildId]
+        [guildId, event]
       );
 
-      return result.rows[0]?.ids ?? [];
+      return (
+        result.rows[0]?.announced_event_ids ??
+        []
+      );
     });
   }
 
-  public async hasEvent(eventId: string, event: EventType, guildId: string): Promise<boolean> {
+  public async hasEvent(
+    eventId: string,
+    event: EventType,
+    guildId: string
+  ): Promise<boolean> {
+
     const ids = await this.fetchEventIds(event, guildId);
+
     return ids.includes(eventId);
   }
 }

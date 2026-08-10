@@ -1,6 +1,7 @@
 import {
   AttachmentBuilder,
   ChannelType,
+  EmbedBuilder,
   type Message,
   type NewsChannel,
   type TextChannel,
@@ -14,7 +15,7 @@ import {
 } from "@utils";
 import { guildTable } from "@database";
 import { render } from "@components";
-import { discordClient } from "@client";
+import { discordClient, registry } from "@client";
 import { eventManager } from "@manager";
 import {
   RaceProfile,
@@ -74,142 +75,8 @@ export class EventAnnouncer {
 
   private buildAnnouncement(eventType: EventType): Announcement | null {
 
-    switch (eventType) {
-
-      case EventType.Race: {
-
-        const cache = eventManager.getEventCache(EventType.Race).getCache();
-
-        if (!cache) return null;
-
-        const {
-          data: event,
-          metaData,
-        } = cache.currentEvent;
-
-        return {
-          event,
-          profiles: [
-            RaceProfile({
-              event,
-              metaData,
-            }),
-          ],
-        };
-      }
-
-
-      case EventType.Boss: {
-
-        const cache = eventManager
-          .getEventCache(EventType.Boss)
-          .getCache();
-
-        if (!cache) return null;
-
-        const {
-          data: event,
-          metaData,
-        } = cache.currentEvent;
-
-        return {
-          event,
-
-          profiles: BossDifficulties.map(
-            (difficulty) =>
-              BossProfile({
-                event,
-                metaData: metaData[difficulty],
-                difficulty,
-              })
-          ),
-        };
-      }
-
-
-      case EventType.Odyssey: {
-
-        const cache = eventManager
-          .getEventCache(EventType.Odyssey)
-          .getCache();
-
-        if (!cache) return null;
-
-        const {
-          data: event,
-          metaData,
-        } = cache.currentEvent;
-
-        return {
-          event,
-
-          profiles: OdysseyDifficulties.map(
-            (difficulty) =>
-              OdysseyProfile({
-                event,
-                metaData: metaData[difficulty],
-                difficulty,
-              })
-          ),
-        };
-      }
-
-      case EventType.BossRush: {
-
-        const cache = eventManager
-          .getEventCache(EventType.BossRush)
-          .getCache();
-
-        if (!cache) return null;
-
-        const {
-          data: event,
-          metaData
-        } = cache.currentEvent;
-
-        return {
-
-          event,
-          profiles: [
-            BossRushProfile({
-              event,
-              metaData,
-            }),
-          ],
-        };
-      }
-
-
-      case EventType.Collection: {
-
-        const cache = eventManager
-          .getEventCache(EventType.Collection)
-          .getCache();
-
-        if (!cache) return null;
-
-        const {
-          data: event,
-          metaData,
-        } = cache.currentEvent;
-
-        return {
-          event,
-
-          profiles: [
-            CollectionProfile({
-              event,
-              metaData,
-              offset: 0,
-            }),
-          ],
-        };
-      }
-
-
-      default:
-        return null;
-    }
+    const command = registry.get(eventType.toLowerCase()); // yes i need to implement this ;w;
+    return command.buildAnnouncement?.();
   }
 
 
@@ -236,29 +103,78 @@ export class EventAnnouncer {
   }
 
 
-  public async send(
-    eventType: EventType,
-    guildId: string,
-    force = false
-  ): Promise<Message | null> {
+public async send(
+  eventType: EventType,
+  guildId: string,
+  force = false
+): Promise<Message | null> {
 
-    const announcement = this.buildAnnouncement(eventType);
+  const announcement =
+    this.buildAnnouncement(eventType);
 
-    if (!announcement) return null;
-    const { event, profiles } = announcement;
+  if (!announcement) return null;
 
-    const announced = await guildTable.fetchEventIds(eventType, guildId);
-    if (!force && announced.includes(event.id)) return null;
+  const {
+    event,
+    profiles
+  } = announcement;
 
-    const channel =await this.getChannel(guildId, eventType);
-    if (!channel) return null;
+  const announced =
+    await guildTable.fetchEventIds(
+      eventType,
+      guildId
+    );
 
-    const attachments =await this.buildAttachments(profiles);
-    const message = await channel.send({ files: attachments });
-    await guildTable.appendEvent(event.id, eventType, guildId);
-
-    return message;
+  if (
+    !force &&
+    announced.includes(event.id)
+  ) {
+    return null;
   }
+
+  const channel =
+    await this.getChannel(
+      guildId,
+      eventType
+    );
+
+  if (!channel) return null;
+
+  const buffers = await Promise.all(
+    profiles.map((profile) =>
+      render(profile)
+    )
+  );
+
+  const files = buffers.map((buffer, index) => {
+    const name = `image-${index + 1}.png`;
+      return new AttachmentBuilder(
+        buffer,
+        { name }
+      );
+    }
+  );
+
+  const embeds = buffers.map((_, index) => {
+    const name = `image-${index + 1}.png`;
+
+    return new EmbedBuilder()
+      .setImage(
+        `attachment://${name}`
+      );
+    }
+  );
+
+  const message = await channel.send({ files, embeds });
+
+  await guildTable.appendEvent(
+    event.id,
+    eventType,
+    guildId
+  );
+
+  return message;
+}
 
   public async edit(
     eventType: EventType,
@@ -270,11 +186,7 @@ export class EventAnnouncer {
 
     if (!announcement) return null;
     
-    const channel =
-      await this.getChannel(
-        guildId,
-        eventType
-      );
+    const channel =await this.getChannel(guildId, eventType);
 
     if (!channel) return null;
 
@@ -290,6 +202,63 @@ export class EventAnnouncer {
       attachments: [],
       files: attachments,
     });
+  }
+
+  public async sendAll(eventType: EventType): Promise<void> {
+
+    const announcement = this.buildAnnouncement(eventType);
+    if (!announcement) return;
+
+    const { event, profiles } = announcement;
+
+    const channelIds = await guildTable.fetchAllRegisteredChannels(eventType);
+
+    if (channelIds.length === 0) return;
+
+    const buffers = await Promise.all(profiles.map((profile) => render(profile)));
+
+    const results = await Promise.allSettled(channelIds.map(async (channelId) => {
+
+      const channel = await discordClient.client.channels
+        .fetch(channelId)
+        .catch(() => null);
+
+      if (!this.isSendableChannel(channel)) return;
+
+      const guildId = channel.guildId;
+
+      const announced = await guildTable.fetchEventIds(eventType, guildId);
+
+      if (announced.includes(event.id)) return;
+
+      const attachments = buffers.map(
+        (buffer, index) =>
+          new AttachmentBuilder(buffer, {
+            name: `image-${index + 1}.png`,
+        })
+      );
+
+      await channel.send({files: attachments });
+
+      await guildTable.appendEvent(
+        event.id,
+        eventType,
+        guildId
+      );
+    })
+  );
+
+    for (let i = 0; i < results.length; i++) {
+
+      const result = results[i];
+
+      if (result.status === "rejected") {
+        console.error(
+          `Failed to announce ${eventType} in channel ${channelIds[i]}:`,
+          result.reason
+        );
+      }
+    }
   }
 }
 

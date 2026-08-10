@@ -1,4 +1,4 @@
-import { Event, Layout, Options } from "@components";
+import { Event, Layout } from "@components";
 import {
   BossBody,
   BossImages,
@@ -11,11 +11,12 @@ import {
   loadImage,
   capitalize,
 } from "@utils";
+import type { BossDetailsOptions } from "./boss-details.command";
 
 interface BossDetailsProfileProps {
   event: BossBody;
   metaData: MetaBody;
-  options: Options;
+  options: BossDetailsOptions;
 }
 
 interface StatProps {

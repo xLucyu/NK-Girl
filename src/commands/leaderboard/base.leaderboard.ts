@@ -174,6 +174,8 @@ export abstract class BaseLeaderboard {
     if (index === null) return false;
 
     options.highlight = index;
+    options.offset = Math.floor(index / PAGE_SIZE) * PAGE_SIZE;
+
 
     return true;
   }
@@ -199,15 +201,10 @@ export abstract class BaseLeaderboard {
 
     const index = data.teams.findIndex((team) => team.position === position);
     if (index !== -1) return index;
+    console.log(position, index);
 
-    /*
-     * Ties and gaps mean not every number the user types exists as a literal
-     * position — fall back to the row at that offset.
-     */
     return position <= data.teams.length ? position - 1 : null;
   }
-
-  // ── Rows & medals ───────────────────────────────────────────────────────
 
   private prepareRows(
     data: LeaderboardPayload,

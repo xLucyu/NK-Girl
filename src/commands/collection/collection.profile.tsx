@@ -47,9 +47,15 @@ export function CollectionProfile({
 }: CollectionProfileProps): JSX.Element {
 
   const allRotations = toRotationList(metaData.Rotations);
+  const maxOffset = Math.max(
+    0,
+    (Math.ceil(allRotations.length / PAGE_SIZE) - 1) * PAGE_SIZE
+  );
 
-  const maxOffset = Math.max(0, allRotations.length - PAGE_SIZE);
-  const safeOffset = Math.min(Math.max(0, offset), maxOffset);
+  const safeOffset = Math.min(
+    Math.max(0, offset),
+    maxOffset
+  );
 
   // 10 per page, laid out as two columns of 5 inside a single box.
   const pageRotations = allRotations.slice(safeOffset, safeOffset + PAGE_SIZE);

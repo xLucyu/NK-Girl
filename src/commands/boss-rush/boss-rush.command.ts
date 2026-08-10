@@ -21,7 +21,10 @@ export class BossRushCommand extends BaseCommand<EventBody, BossRushResult> {
     return data.id;
   }
 
-  public getProfile(event: BossRushProps["currentEvent"], state: ComponentState): JSX.Element {
-    return BossRushProfile();
+  public getProfile(event: BossRushProps["currentEvent"]): JSX.Element {
+    return BossRushProfile({
+      event: event.data,
+      metaData: event.metaData
+    });
   }
 }

@@ -235,12 +235,7 @@ export abstract class BaseLeaderboard {
     const percentile = position / totalScores;
 
     for (const entry of MEDALS[mode]) {
-      /*
-       * Percentile brackets have a fractional minimum (0.10, 0.25, 0.75);
-       * placement brackets start at whole numbers (1, 4, 51). The check has
-       * to look at `min` — a percentile bracket can legitimately have
-       * max === 1.00, which would otherwise look like a placement range.
-       */
+
       const isPercentile = entry.min < 1;
 
       const matches = isPercentile
@@ -253,7 +248,6 @@ export abstract class BaseLeaderboard {
     return null;
   }
 
-  // ── Components ──────────────────────────────────────────────────────────
 
   private getComponents(
     offset: number,
@@ -268,19 +262,13 @@ export abstract class BaseLeaderboard {
         buttons: [
           {
             customId: "leaderboard:page:previous",
-            label: "Previous",
+            label: "◀",
             style: ButtonStyle.Primary,
             disabled: offset === 0,
           },
           {
-            customId: "leaderboard:page:current",
-            label: `${offset + 1}–${last} of ${total.toLocaleString("en-US")}`,
-            style: ButtonStyle.Secondary,
-            disabled: true,
-          },
-          {
             customId: "leaderboard:page:next",
-            label: "Next",
+            label: "▶",
             style: ButtonStyle.Primary,
             disabled: offset >= maxOffset,
           },

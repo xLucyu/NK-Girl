@@ -9,6 +9,7 @@ export const ModifierImages = {
   BossDecreaseSpeed: "modifiers/BossDecreaseSpeedIcon.png",
   BossIncreaseHP: "modifiers/BossIncreaseHPIcon.png",
   BossIncreaseSpeed: "modifiers/BossIncreaseSpeedIcon.png",
+  BossTier: "modifiers/BossTier.png",
   CeramicDecreaseHP: "modifiers/CeramicDecreaseHPIcon.png",
   CeramicIncreaseHP: "modifiers/CeramicIncreaseHPIcon.png",
   FasterBloons: "modifiers/FasterBloonsIcon.png",

@@ -69,6 +69,7 @@ export class EventAnnouncer {
     if (!cache) return null;
 
     const commandName = eventType.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    console.log(commandName)
     const command = registry.get(commandName);
 
     return command.buildAnnouncement?.(cache.currentEvent) ?? null;

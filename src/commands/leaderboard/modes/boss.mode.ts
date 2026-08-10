@@ -5,6 +5,7 @@ import { getData } from "@api";
 import { 
   EventType, 
   GOOGLE_API_ULRS, 
+  splitBossNumbers, 
   type BossDifficulty, 
   type LeaderboardPayload 
 } from "@utils";
@@ -20,12 +21,13 @@ export class BossLeaderboard extends LeaderboardModeResolver {
     const teamSize = interaction.options.getInteger("team_size") ?? 1;
 
     const data = await this.fetchLeaderboard(event, difficulty, teamSize);
+    const bossNumber = splitBossNumbers(data.name);
 
     return {
       query: {
         type: this.eventType,
         eventName: event,
-        subTitle: `${difficulty} - ${teamSize}-player ${data.totalScores}-scores`
+        subTitle: `${bossNumber} ${difficulty} - ${teamSize}-player ${data.totalScores}-scores`
       },
       medalsMode: difficulty,
       data: data

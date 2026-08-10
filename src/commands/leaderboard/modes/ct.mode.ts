@@ -4,7 +4,8 @@ import {
   GOOGLE_API_ULRS, 
   EventType, 
   addUnderscore, 
-  type LeaderboardPayload
+  type LeaderboardPayload,
+  getNumberForEvent
  } from "@utils";
 import { getData } from "@api";
 import { LeaderboardModeResolver } from "./base.mode-resolver";
@@ -21,12 +22,13 @@ export class CtLeaderboard extends LeaderboardModeResolver {
     const mode = interaction.options.getString("mode", true) as CTMode;
 
     const data = await this.fetchLeaderboard(event, mode);
+    const ctNumber = getNumberForEvent(data.start, this.eventType);
 
     return {
       query: {
         type: this.eventType,
         eventName: event,
-        subTitle: mode 
+        subTitle: `CT #${ctNumber} ${mode}` 
       },
       medalsMode: mode,
       data: data

@@ -1,7 +1,6 @@
 import { Event, Layout } from "@components";
 import type { LeaderboardRow, LeaderboardType } from "./base.leaderboard";
 import {
-  EventImages,
   EventType,
   ModifierImages,
   loadImage,
@@ -19,6 +18,7 @@ interface ScoreCell {
   icon?: string;
 }
 
+const CONTENTTOP = 4;
 
 const FONT = {
   header: 22,
@@ -32,18 +32,12 @@ const MEDAL_SIZE = 37;
 const SCORE_ICON_SIZE = 28;
 
 const scoreColumnWidth = (count: number) =>
-  count === 1 ? 158 :
-  count === 2 ? 158 :
-                150;
+  count === 1 ? 158 : count === 2 ? 158 : 150;
 
-// ── Formatting helpers ────────────────────────────────────────────────────────
-
-/** Format a plain numeric score (comma-separated for readability). */
 function formatScore(n: number): string {
   return n.toLocaleString("en-US");
 }
 
-/** Format a duration expressed in milliseconds → "H:MM:SS.mmm" or "M:SS.mmm". */
 function formatDuration(ms: number): string {
   if (!Number.isFinite(ms) || ms < 0) return "—";
 
@@ -63,15 +57,6 @@ function isLeastScoring(scoringType: string): boolean {
   return scoringType === "LeastCash" || scoringType === "LeastTiers";
 }
 
-/**
- * Build the score cells for one row.
- * Column count here MUST match scoreHeaders().
- *
- * Boss layout:
- *   score       → tier reached (always)
- *   secondScore → time, or the least-cash / least-tiers metric
- *   thirdScore  → tie-breaker time (least scoring only)
- */
 function formatScoreParts(
   type: LeaderboardType,
   scoringType: string,
@@ -89,23 +74,19 @@ function formatScoreParts(
     ];
   }
 
-  // Boss — the primary score is always the tier reached.
   const tier: ScoreCell = {
     value: formatScore(parts.score),
     icon: ModifierImages.BossTier,
   };
 
   if (!isLeastScoring(scoringType)) {
-    // Timed boss: tier, then the clear time.
     return [
       tier,
       { value: parts.secondScore != null ? formatDuration(parts.secondScore) : "—" },
     ];
   }
 
-  // Least cash / least tiers: tier, the metric, then time as tie-breaker.
-  const metricIcon =
-    scoringType === "LeastCash" ? EventImages.LeastCash : EventImages.LeastTiers;
+  const metricIcon = scoringType === "LeastCash" ? ModifierImages.LeastCash : ModifierImages.LeastTiers;
 
   return [
     tier,
@@ -125,8 +106,6 @@ function scoreHeaders(type: LeaderboardType, scoringType: string): string[] {
     ? ["Tier", scoringType === "LeastCash" ? "Cash" : "Tiers", "Time"]
     : ["Tier", "Time"];
 }
-
-// ── Header row ────────────────────────────────────────────────────────────────
 
 const HeaderRow = ({
   headers,
@@ -149,13 +128,13 @@ const HeaderRow = ({
     <div style={{ display: "flex", width: 45 }} />
 
     <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
-      <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold" }}>
+      <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold", marginTop: CONTENTTOP }}>
         #
       </span>
     </div>
 
     <div style={{ display: "flex", flex: 1 }}>
-      <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold" }}>
+      <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold", marginTop: CONTENTTOP }}>
         Team
       </span>
     </div>
@@ -167,6 +146,7 @@ const HeaderRow = ({
           display: "flex",
           width: scoreColumnWidth(scoreColumnCount),
           justifyContent: "flex-start",
+          marginTop: CONTENTTOP
         }}
       >
         <span style={{ fontSize: FONT.header, color: "white", fontWeight: "bold" }}>
@@ -237,6 +217,7 @@ const Row = ({
           fontSize: FONT.position,
           color: highlighted ? "#90caf9" : "white",
           fontWeight: "bold",
+          marginTop: CONTENTTOP
         }}
       >
         #{position}
@@ -253,6 +234,7 @@ const Row = ({
         flexWrap: "nowrap",
         overflow: "hidden",
         gap: 8,
+        marginTop: CONTENTTOP
       }}
     >
       {members.map((member, i) => (
@@ -308,6 +290,7 @@ const Row = ({
             fontSize: FONT.score,
             color: "white",
             fontWeight: i === 0 ? "bold" : "normal",
+            marginTop: CONTENTTOP
           }}
         >
           {cell.value}

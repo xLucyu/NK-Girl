@@ -53,7 +53,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   }
 
 
-  async check(firstUse: boolean): Promise<void> {
+  async check(firstUse: boolean): Promise<EventType | null> {
 
     const now = Date.now(); // get date time
 
@@ -61,7 +61,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const currentEvent = this.getCurrentActiveEvent(events, now, firstUse); // get the ongoing event
 
-    if (this.cache && this.cache.currentEvent.data.id === currentEvent.id) return;
+    if (this.cache && this.cache.currentEvent.data.id === currentEvent.id) return null;
 
     const metaData = await this.getMetaData(currentEvent); // get meta data for the event
 
@@ -77,10 +77,12 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     }
     console.log(this.cache);
 
-    if (firstUse) {
+    if (!firstUse) {
       const bucketPath = this.getBucketPath(currentEvent);
       await this.uploadToBucket(bucketPath);
+      return this.eventType;
     }
+    return null;
   }
 
   protected abstract getCurrentActiveEvent(events: T[], now: number, firstUse: boolean): T;

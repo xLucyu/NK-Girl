@@ -6,6 +6,7 @@ import {
 import { BaseCommand } from "../base.command";
 import { BossProfile } from "./boss.profile";
 import type { 
+  Announcement,
   CurrentEventData, 
   EventCacheEntry, 
   PreviousEvent 
@@ -60,6 +61,19 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
 
   protected getIdentity(data: BossBody): string {
     return data.name;
+  }
+
+  public buildAnnouncement(eventProps: BossProps["currentEvent"]): Announcement {
+    return {
+      event: eventProps.data,
+      profiles: BossDifficulties.map((difficulty) => 
+        BossProfile({
+          event: eventProps.data,
+          metaData: eventProps.metaData[difficulty],
+          difficulty: difficulty
+        })
+      )
+    };
   }
 
   public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {

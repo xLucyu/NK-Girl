@@ -53,91 +53,48 @@ export class EventCommand {
     );
 
 
-public async execute(
-  interaction: ChatInputCommandInteraction
-) {
+  public async execute(interaction: ChatInputCommandInteraction) {
 
-  if (
-    !interaction.memberPermissions?.has(
-      PermissionFlagsBits.ManageGuild
-    )
-  ) {
-    throw new Error();
-  }
+    if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) throw new Error();
 
-  await interaction.deferReply();
+    await interaction.deferReply();
 
-  const subCommand =
-    interaction.options.getSubcommand();
+    const subCommand = interaction.options.getSubcommand();
 
-  const guildId =
-    interaction.guildId;
+    const guildId = interaction.guildId;
 
-  if (!guildId) {
-    await interaction.editReply(
-      "This command can only be used in a server."
-    );
-    return;
-  }
-
-  const eventType =
-    interaction.options.getString(
-      "event_type",
-      true
-    ) as EventType;
-
-
-  if (subCommand === "send") {
-
-    const message =
-      await eventAnnouncer.send(
-        eventType,
-        guildId,
-        true
-      );
-
-    if (!message) {
-      await interaction.editReply(
-        `Could not send **${eventType}**. Make sure an announcement channel is configured.`
-      );
+    if (!guildId) {
+      await interaction.editReply("This command can only be used in a server.");
       return;
     }
 
-    await interaction.editReply(
-      `Successfully sent **${eventType}** in <#${message.channelId}>.`
-    );
+    const eventType = interaction.options.getString("event_type",true) as EventType;
 
-    return;
-  }
+    if (subCommand === "send") {
 
+      const message = await eventAnnouncer.send(eventType, guildId, true);
 
-  if (subCommand === "edit") {
+      if (!message) {
+        await interaction.editReply(`Could not send **${eventType}**. Make sure an announcement channel is configured.`);
+        return;
+      }
 
-    const messageId =
-      interaction.options.getString(
-        "message_id",
-        true
-      );
-
-    const message =
-      await eventAnnouncer.edit(
-        eventType,
-        guildId,
-        messageId
-      );
-
-    if (!message) {
-      await interaction.editReply(
-        `Could not edit the **${eventType}** announcement.`
-      );
+      await interaction.editReply(`Successfully sent **${eventType}** in <#${message.channelId}>.`);
       return;
     }
 
-    await interaction.editReply(
-      `Successfully updated **${eventType}**.`
-    );
+    if (subCommand === "edit") {
 
-    return;
+      const messageId = interaction.options.getString("message_id", true);
+      const message = await eventAnnouncer.edit(eventType, guildId, messageId);
+
+      if (!message) {
+        await interaction.editReply(`Could not edit the **${eventType}** announcement.`);
+        return;
+      }
+
+      await interaction.editReply(`Successfully updated **${eventType}**.`);
+      return;
+    }
   }
-}
 }

@@ -2,7 +2,7 @@ import { ButtonStyle, InteractionReplyOptions } from "discord.js";
 import { BaseCommand } from "../base.command";
 import { CollectionProfile } from "./collection.profile";
 import { BuildButtonMenu, ComponentState, BaseOptions } from "@components";
-import { CurrentEventData, EventCacheEntry } from "@manager";
+import { Announcement, CurrentEventData, EventCacheEntry } from "@manager";
 import { EventType, type EventBody, type InstaSchedule } from "@utils";
 
 const PAGE_SIZE = 10;
@@ -28,6 +28,26 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
 
   protected getIdentity(data: EventBody): string {
     return data.id;
+  }
+
+  public buildAnnouncement(eventProps: CollectionProps["currentEvent"]): Announcement {
+
+    const total = Object.keys(eventProps.metaData.Rotations).length;
+    const pageCount = Math.ceil(total / PAGE_SIZE);
+
+    return {
+      event: eventProps.data,
+      profiles:
+        Array.from(
+          { length: pageCount },
+          (_, page) => 
+            CollectionProfile({
+              event: eventProps.data,
+              metaData: eventProps.metaData,
+              offset: page * PAGE_SIZE
+            })
+        )
+    };
   }
 
   public getProfile(

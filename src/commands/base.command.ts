@@ -34,7 +34,6 @@ import {
   type BaseBody, 
 } from "@utils";
 import { getEventAutocompleteChoices } from "./auto.complete";
-import { Command } from "@client";
 
 export type InteractionType = 
 ChatInputCommandInteraction | 
@@ -42,7 +41,7 @@ ButtonInteraction |
 StringSelectMenuInteraction | 
 ModalSubmitInteraction;
 
-export abstract class BaseCommand<T extends BaseBody, K> implements Command {
+export abstract class BaseCommand<T extends BaseBody, K> {
 
   protected abstract readonly eventType: EventType;
   protected abstract readonly urlKey: keyof typeof GOOGLE_API_ULRS;

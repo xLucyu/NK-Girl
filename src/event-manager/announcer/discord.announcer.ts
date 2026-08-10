@@ -9,25 +9,16 @@ import {
 } from "discord.js";
 import {
   EventType,
-  BossDifficulties,
-  OdysseyDifficulties,
   type BaseBody,
 } from "@utils";
 import { guildTable } from "@database";
 import { render } from "@components";
 import { discordClient, registry } from "@client";
-import { eventManager } from "@manager";
-import {
-  RaceProfile,
-  BossRushProfile,
-  OdysseyProfile,
-  BossProfile,
-  CollectionProfile
-} from "@commands";
+import { eventManager } from "../manager";
 
 type AnnounceableChannel = TextChannel | NewsChannel | ThreadChannel;
 
-interface Announcement {
+export interface Announcement {
   event: BaseBody;
   profiles: JSX.Element[];
 }
@@ -57,11 +48,10 @@ export class EventAnnouncer {
     eventType: EventType
   ): Promise<AnnounceableChannel | undefined> {
 
-    const channelId =
-      await guildTable.fetchRegisteredChannel(
-        eventType,
-        guildId
-      );
+    const channelId = await guildTable.fetchRegisteredChannel(
+      eventType,
+      guildId
+    );
 
     if (!channelId) return;
 
@@ -75,8 +65,13 @@ export class EventAnnouncer {
 
   private buildAnnouncement(eventType: EventType): Announcement | null {
 
-    const command = registry.get(eventType.toLowerCase()); // yes i need to implement this ;w;
-    return command.buildAnnouncement?.();
+    const cache = eventManager.getEventCache(eventType).getCache();
+    if (!cache) return null;
+
+    const commandName = eventType.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    const command = registry.get(commandName);
+
+    return command.buildAnnouncement?.(cache.currentEvent) ?? null;
   }
 
 

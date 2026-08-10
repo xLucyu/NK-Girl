@@ -1,6 +1,6 @@
 import { BaseCommand } from "../base.command";
 import { BossRushProfile } from "./boss-rush.profile";
-import type { EventCacheEntry } from "@manager";
+import type { Announcement, EventCacheEntry } from "@manager";
 import type { ComponentState } from "@components";
 import { 
     type BossRushResult, 
@@ -19,6 +19,18 @@ export class BossRushCommand extends BaseCommand<EventBody, BossRushResult> {
 
   protected getIdentity(data: EventBody): string {
     return data.id;
+  }
+
+  public buildAnnouncement(eventProps: BossRushProps["currentEvent"]): Announcement {
+    return {
+      event: eventProps.data,
+      profiles: [
+        BossRushProfile({
+          event: eventProps.data,
+          metaData: eventProps.metaData
+        })
+      ]
+    };
   }
 
   public getProfile(event: BossRushProps["currentEvent"]): JSX.Element {

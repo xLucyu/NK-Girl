@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 import type { InteractionType } from "../commands/base.command";
 import type { ComponentState } from "@components";
-import type { Announcement } from "@manager";
+import type { Announcement, CurrentEventData } from "@manager";
 
 export interface Command {
   commandData: SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder;
@@ -16,7 +16,7 @@ export interface Command {
   renderAndReply?(interaction: InteractionType, state: ComponentState): Promise<void>;
   handleModal?(state: ComponentState, key: string, input: string): boolean;
   buildModal?(key: string): ModalBuilder | null;
-  buildAnnouncement?(): Announcement;
+  buildAnnouncement?(event: CurrentEventData<any, any>): Announcement | null;
 }
 
 class CommandRegistry {

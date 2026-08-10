@@ -2,6 +2,7 @@ import { InteractionReplyOptions } from "discord.js";
 import { BaseCommand } from "../base.command";
 import { RaceProfile } from "./race.profile";
 import { 
+  Announcement,
   type CurrentEventData, 
   EventCacheEntry, 
   type PreviousEvent 
@@ -33,6 +34,18 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 
   protected getIdentity(data: RaceBody): string {
     return data.name;
+  }
+
+  public buildAnnouncement(eventProps: RaceProps["currentEvent"]): Announcement {
+    return {
+      event: eventProps.data,
+      profiles: [
+        RaceProfile({
+          event: eventProps.data,
+          metaData: eventProps.metaData
+        })
+      ]
+    };
   }
 
 	public getComponents(

@@ -60,6 +60,19 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
     return data.name;
   }
 
+  public buildAnnouncement(eventProps: OdysseyProps["currentEvent"]) {
+    return {
+      event: eventProps.data,
+      profiles: OdysseyDifficulties.map((difficulty) => 
+        OdysseyProfile({
+          event: eventProps.data,
+          metaData: eventProps.metaData[difficulty],
+          difficulty: difficulty
+        })
+      )
+    };
+  } 
+
   public getProfile(eventProps: OdysseyProps["currentEvent"], state: ComponentState): JSX.Element {
 
     const difficulty = state.options.difficulty as OdysseyDifficulty;

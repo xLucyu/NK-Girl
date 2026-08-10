@@ -7,7 +7,8 @@ import {
   CTCache,
   BossLeaderboardSerivce,
   RaceLeaderboardService,
-  CTLeaderboardService
+  CTLeaderboardService,
+  eventAnnouncer
 } from "@manager";
 import { EventType } from "@utils";
 import { BossRushCache } from "./cache/events/boss-rush";
@@ -70,7 +71,16 @@ export class EventManager {
       Object.values(this.caches).map((cache) => cache.check(firstUse))
     );
 
-    this.logError(results);
+    for (const result of results) {
+      if (result.status === "rejected") {
+        this.logError(result.reason);
+        continue 
+      }
+      
+      const eventType = result.value as EventType;
+
+      await eventAnnouncer.sendAll(eventType);
+    }
   }
 
   private async runLeaderboardChecks(): Promise<void> {

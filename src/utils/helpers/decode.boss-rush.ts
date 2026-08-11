@@ -1,7 +1,8 @@
 import { 
     MAPS as RAW_MAPS, 
     type RawMap, 
-    BOSS_RUSH_SETTINGS 
+    BOSS_RUSH_SETTINGS,
+    DEFAULT_TOWERS, 
 } from "@utils";
 
 type DifficultyName = "Beginner" | "Intermediate" | "Advanced" | "Expert";
@@ -171,69 +172,27 @@ function weightedFromMap<T>(rng: SystemRandom, map: ReadonlyMap<T, number>): T |
   return fallback;
 }
 
-const DIFFICULTY_BY_NAME: Record<string, Difficulty> = {
-  Beginner: 0, Intermediate: 1, Advanced: 2, Expert: 3,
-};
-const DIFFICULTY_NAMES: Record<Difficulty, DifficultyName> = {
-  0: "Beginner", 1: "Intermediate", 2: "Advanced", 3: "Expert",
-};
+  const DIFFICULTY_BY_NAME: Record<string, Difficulty> = {
+    Beginner: 0, Intermediate: 1, Advanced: 2, Expert: 3,
+  };
+  const DIFFICULTY_NAMES: Record<Difficulty, DifficultyName> = {
+    0: "Beginner", 1: "Intermediate", 2: "Advanced", 3: "Expert",
+  };
 
-const WATER_MAPS = new Set(["Peninsula", "SpiceIslands"]);
-const WATER_TOWERS = new Set(["MonkeySub", "MonkeyBuccaneer"]);
-const CHOSEN_PRIMARY_HERO = "ChosenPrimaryHero";
+  const WATER_MAPS = new Set(["Peninsula", "SpiceIslands"]);
+  const WATER_TOWERS = new Set(["MonkeySub", "MonkeyBuccaneer"]);
+  const CHOSEN_PRIMARY_HERO = "ChosenPrimaryHero";
 
-const DEFAULT_TOWER_ORDER = [
-  "Quincy", 
-  "Gwendolin", 
-  "StrikerJones", 
-  "ObynGreenfoot", 
-  "Silas", 
-  "CaptainChurchill",
-  "Benjamin", 
-  "PatFusty", 
-  "Ezili", 
-  "Rosalia", 
-  "Adora", 
-  "Etienne", 
-  "Sauda",
-  "AdmiralBrickell", 
-  "Psi", 
-  "Geraldo", 
-  "Corvus", 
-  "ChosenPrimaryHero",
-  "DartMonkey", 
-  "BoomerangMonkey", 
-  "BombShooter", 
-  "TackShooter", 
-  "IceMonkey",
-  "GlueGunner", 
-  "Desperado", 
-  "SniperMonkey", 
-  "MonkeySub", 
-  "MonkeyBuccaneer",
-  "MonkeyAce", 
-  "HeliPilot", 
-  "MortarMonkey", 
-  "DartlingGunner", 
-  "WizardMonkey",
-  "SuperMonkey", 
-  "NinjaMonkey", 
-  "Alchemist", 
-  "Druid", 
-  "Skywarden",
-  "Mermonkey", 
-  "BananaFarm",
-  "SpikeFactory", 
-  "MonkeyVillage", 
-  "EngineerMonkey", 
-  "BeastHandler",
-];
+  const HERO_IDS: string[] = DEFAULT_TOWERS
+    .filter(tower => tower.category === "Heroes" && tower.id !== CHOSEN_PRIMARY_HERO)
+    .map(tower => tower.id);
 
-const HERO_INDEX = DEFAULT_TOWER_ORDER.indexOf(CHOSEN_PRIMARY_HERO);
-const HERO_IDS: string[] = DEFAULT_TOWER_ORDER.slice(0, HERO_INDEX);
-const TOWER_IDS: string[] = DEFAULT_TOWER_ORDER.slice(HERO_INDEX + 1);
-const TOWER_DISPLAY_INDEX = new Map(TOWER_IDS.map((t, i) => [t, i]));
-const byDisplayOrder = (a: string, b: string) => (TOWER_DISPLAY_INDEX.get(a) ?? 99) - (TOWER_DISPLAY_INDEX.get(b) ?? 99);
+  const TOWER_IDS: string[] = DEFAULT_TOWERS
+    .filter(tower => tower.category !== "Heroes")
+    .map(tower => tower.id);
+    
+  const TOWER_DISPLAY_INDEX = new Map(TOWER_IDS.map((t, i) => [t, i]));
+  const byDisplayOrder = (a: string, b: string) => (TOWER_DISPLAY_INDEX.get(a) ?? 99) - (TOWER_DISPLAY_INDEX.get(b) ?? 99);
 
 const BOSS_BY_KEY: Record<string, string> = {
   bloonarius: "Bloonarius", 

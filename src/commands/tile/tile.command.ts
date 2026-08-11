@@ -16,13 +16,20 @@ interface TileOptions extends BaseOptions {
 type TileCache = Record<string, TileCode>;
 type TileProps = EventCacheEntry<CTBody, TileCache>;
 
+const bannerEmojis: Record<number, string> = {
+  2: "Race",
+  4: "BossChallenge",
+  8: "LeastTiers",
+  9: "LeastCash"
+}
+
 export class TileCommand extends BaseCommand<CTBody, TileCache> {
 
   protected readonly eventType = EventType.CT;
   protected readonly urlKey = EventType.CT;
 
   public commandData = BaseCommand
-    .baseSlashCommand("tile", "Show CT Tile Data.", false)
+    .baseSlashCommand("tile", "Show CT Tile Data.", true)
     .addStringOption((option) =>
       option 
         .setName("tile_code")
@@ -67,6 +74,10 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
     const banners = tiles.filter((tile) => tile.TileType === "Banner");
     const relics = tiles.filter((tile) => tile.TileType === "Relic");
 
+    const getBannerEmoji = (tile: TileCode): string => {
+      return bannerEmojis[tile.GameData.subGameType];
+    }
+
     return [
       BuildSelectMenu({
         customId: "tile:tileCode:banner",
@@ -74,7 +85,8 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
         options: banners.slice(0, 25).map((tile) => ({
           label: tile.Code,
           value: tile.Code,
-          default: tile.Code === state.options.tileCode
+          default: tile.Code === state.options.tileCode,
+          emoji: getBannerEmoji(tile)
         }))
       }),
 

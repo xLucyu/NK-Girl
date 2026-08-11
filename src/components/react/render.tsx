@@ -7,19 +7,19 @@ const loadFont = readFileSync(join(process.cwd(), "src/utils/assets/font/Luckies
 
 export async function render(element: JSX.Element) {
     
-    const image = new ImageResponse(element, {
-        width: 1280,
-        height: 720,
-        fonts: [
-            {
-                name: "LuckyGuy",
-                data: loadFont,
-                style: "normal",
-                weight: 400
-            }
-        ]
-    });
+  const image = new ImageResponse(element, {
+    width: 1280,
+    height: 720,
+    fonts: [
+      {
+        name: "LuckyGuy",
+        data: loadFont,
+        style: "normal",
+        weight: 400
+      }
+    ]
+  });
 
-    const arrayBuffer = await image.arrayBuffer();
-    return Buffer.from(arrayBuffer);
+  const arrayBuffer = await image.arrayBuffer();
+  return Buffer.from(arrayBuffer);
 }

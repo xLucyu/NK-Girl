@@ -21,7 +21,7 @@ interface BossRushProfileProps {
 type BossRushStage = BossRushResult["stages"][number];
 
 const TOWER_SIZE = 42;
-const RELIC_SIZE = 42;
+const RELIC_SIZE = 38;
 
 interface RelicTileProps {
   relic: string;
@@ -136,8 +136,8 @@ function StageCard({stage}: StageCardProps): JSX.Element {
             height={70}
             style={{
               position: "absolute",
-              bottom: 8,
-              right: 8,
+              bottom: 4,
+              right: 4,
               objectFit: "contain"
             }}
             />

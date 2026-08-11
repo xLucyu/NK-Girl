@@ -23,7 +23,6 @@ export interface Announcement {
   profiles: JSX.Element[];
 }
 
-
 export class EventAnnouncer {
 
   private isSendableChannel(channel: unknown): channel is AnnounceableChannel {
@@ -69,7 +68,6 @@ export class EventAnnouncer {
     if (!cache) return null;
 
     const commandName = eventType.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-    console.log(commandName)
     const command = registry.get(commandName);
 
     return command.buildAnnouncement?.(cache.currentEvent) ?? null;
@@ -105,42 +103,27 @@ public async send(
   force = false
 ): Promise<Message | null> {
 
-  const announcement =
-    this.buildAnnouncement(eventType);
+  const announcement = this.buildAnnouncement(eventType);
 
   if (!announcement) return null;
 
-  const {
-    event,
-    profiles
-  } = announcement;
+  const { event, profiles } = announcement;
 
-  const announced =
-    await guildTable.fetchEventIds(
-      eventType,
-      guildId
-    );
+  const announced = await guildTable.fetchEventIds(
+    eventType,
+    guildId
+  );
 
-  if (
-    !force &&
-    announced.includes(event.id)
-  ) {
-    return null;
-  }
+  if (!force && announced.includes(event.id)) return null;
 
-  const channel =
-    await this.getChannel(
-      guildId,
-      eventType
-    );
+  const channel = await this.getChannel(
+    guildId,
+    eventType
+  );
 
   if (!channel) return null;
 
-  const buffers = await Promise.all(
-    profiles.map((profile) =>
-      render(profile)
-    )
-  );
+  const buffers = await Promise.all(profiles.map((profile) => render(profile)));
 
   const files = buffers.map((buffer, index) => {
     const name = `image-${index + 1}.png`;
@@ -151,9 +134,8 @@ public async send(
     }
   );
 
-  const embeds = buffers.map((_, index) => {
+  const embeds = buffers.map((_, index) => { 
     const name = `image-${index + 1}.png`;
-
     return new EmbedBuilder()
       .setImage(
         `attachment://${name}`

@@ -1,8 +1,8 @@
-import { 
-  CATEGORIES, 
-  TowerImages, 
-  TowerContainers, 
-  loadImage 
+import {
+  CATEGORIES,
+  TowerImages,
+  TowerContainers,
+  loadImage,
 } from "@utils";
 import { TowerCategory } from "./sizes";
 
@@ -11,27 +11,56 @@ interface TowerIconProps {
   size: number;
   max?: string | null;
   crossPaths?: string | null;
+  blocked?: boolean;
 }
 
 const CATEGORY_LOOKUP: Record<string, TowerCategory> = (() => {
   const map: Record<string, TowerCategory> = {};
-  for (const [category, towers] of Object.entries(CATEGORIES) as [TowerCategory, string[]][]) {
-    for (const tower of towers) map[tower] = category;
+
+  for (
+    const [category, towers] of Object.entries(CATEGORIES) as [
+      TowerCategory,
+      string[],
+    ][]
+  ) {
+    for (const tower of towers) {
+      map[tower] = category;
+    }
   }
+
   return map;
 })();
 
-export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) {
+export function TowerIcon({
+  towerName,
+  size,
+  max,
+  crossPaths,
+  blocked = false,
+}: TowerIconProps) {
   const category = CATEGORY_LOOKUP[towerName];
+
   if (!category) return null;
 
-  const towerPath = TowerImages[towerName as keyof typeof TowerImages];
-  const backgroundPath = TowerContainers[category];
-  if (!towerPath || !backgroundPath) return null;
+  const towerPath =
+    TowerImages[
+      towerName as keyof typeof TowerImages
+    ];
 
-  const badgeSize = Math.max(22, Math.round(size * 0.4));
-  const badgeFontSize = Math.max(11, Math.round(size * 0.3));
+  const backgroundPath =
+    TowerContainers[category];
 
+  if (!towerPath || !backgroundPath) {
+    return null;
+  }
+
+  const badgeSize =
+    Math.max(22, Math.round(size * 0.4));
+
+  const badgeFontSize =
+    Math.max(11, Math.round(size * 0.3));
+
+  const blockedOverlayPath = "Blocked" in TowerContainers ? TowerContainers.Blocked : null;
 
   return (
     <div
@@ -43,6 +72,7 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
+        opacity: blocked ? 0.85 : 1,
       }}
     >
       <img
@@ -57,12 +87,30 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
           objectFit: "fill",
         }}
       />
+
       <img
         src={loadImage(towerPath)}
         width={size}
         height={size}
-        style={{ objectFit: "contain", borderRadius: 10 }}
+        style={{
+          position: "relative",
+          objectFit: "contain",
+          borderRadius: 10,
+        }}
       />
+
+      {blocked && blockedOverlayPath && (
+        <img
+          src={loadImage(blockedOverlayPath)}
+          width={size}
+          height={size}
+          style={{
+            position: "absolute",
+            inset: 0,
+            objectFit: "contain",
+          }}
+        />
+      )}
 
       {max && (
         <div
@@ -88,13 +136,14 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
               objectFit: "contain",
             }}
           />
+
           <span
             style={{
               color: "white",
               fontSize: badgeFontSize,
               fontWeight: 700,
               lineHeight: 1,
-              marginTop: 6, 
+              marginTop: 6,
             }}
           >
             {max}
@@ -116,10 +165,14 @@ export function TowerIcon({ towerName, size, max, crossPaths }: TowerIconProps) 
           <span
             style={{
               color: "#ff3838",
-              fontSize: Math.max(11, Math.round(size * 0.3)),
+              fontSize: Math.max(
+                11,
+                Math.round(size * 0.3),
+              ),
               fontWeight: 900,
               letterSpacing: 1,
-              textShadow: "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 3px #000",
+              textShadow:
+                "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 0 3px #000",
             }}
           >
             {crossPaths}

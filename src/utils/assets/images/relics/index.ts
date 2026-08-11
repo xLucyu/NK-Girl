@@ -43,7 +43,7 @@ export const RelicImages = {
   RoundingUp: "relics/RoundingUp.png",
   RoyalTreatment: "relics/RoyalTreatment.png",
   Sharpplosion: "relics/Sharpplosion.png",
-  Sms: "relics/Sms.png",
+  SuperMonkeyStorm: "relics/SuperMonkeyStorm.png",
   StartingStash: "relics/StartingStash.png",
   SupportSimians: "relics/SupportSimians.png",
   Techbot: "relics/Techbot.png",

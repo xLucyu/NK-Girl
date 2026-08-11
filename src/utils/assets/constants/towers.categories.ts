@@ -75,14 +75,14 @@ export const API_TOWER_ORDER = [
 ];
 
 export const INGAME_ORDER_RAW = Object.fromEntries(
-  INGAME_TOWERS.map((tower, index) => [tower.id, index])
+  DEFAULT_TOWERS.map((tower, index) => [tower.id, index])
 );
 
 export const TOWER_INFO = Object.fromEntries(
-  INGAME_TOWERS.map(tower => [tower.id, tower])
+  DEFAULT_TOWERS.map(tower => [tower.id, tower])
 );
 
-export const CATEGORIES = INGAME_TOWERS.reduce(
+export const CATEGORIES = DEFAULT_TOWERS.reduce(
   (result, tower) => {
     (result[tower.category] ??= []).push(tower.id);
     return result;

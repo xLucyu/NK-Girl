@@ -115,7 +115,7 @@ export abstract class BaseLeaderboard {
     options.pageSize = PAGE_SIZE;
 
 
-    const rows = this.prepareRows(
+    const rows = this.formatTeams(
       options.data,
       options.medalsMode,
       offset,
@@ -206,7 +206,7 @@ export abstract class BaseLeaderboard {
     return position <= data.teams.length ? position - 1 : null;
   }
 
-  private prepareRows(
+  private formatTeams(
     data: LeaderboardPayload,
     medalsMode: MedalsMode,
     offset: number,
@@ -255,8 +255,7 @@ export abstract class BaseLeaderboard {
   ): InteractionEditReplyOptions["components"] {
 
     const maxOffset = Math.max(0, total - PAGE_SIZE);
-    const last = Math.min(offset + PAGE_SIZE, total);
-
+    
     return [
       BuildButtonMenu({
         buttons: [

@@ -1,7 +1,4 @@
-import {
-  Event,
-  Layout,
-} from "@components";
+import { Event, Layout } from "@components";
 import {
   BossImages,
   CATEGORIES,
@@ -21,167 +18,19 @@ interface BossRushProfileProps {
   metaData: BossRushResult;
 }
 
-type BossRushStage =
-  BossRushResult["stages"][number];
-
-type TowerCategory =
-  keyof typeof CATEGORIES;
+type BossRushStage = BossRushResult["stages"][number];
 
 const TOWER_SIZE = 42;
-const RELIC_SIZE = 36;
-
-const CATEGORY_LOOKUP: Record<
-  string,
-  TowerCategory
-> = (() => {
-
-  const result: Record<
-    string,
-    TowerCategory
-  > = {};
-
-  for (
-    const [category, towers]
-    of Object.entries(CATEGORIES) as [
-      TowerCategory,
-      string[],
-    ][]
-  ) {
-    for (const tower of towers) {
-      result[tower] = category;
-    }
-  }
-
-  return result;
-})();
-
-function getBossIcon(
-  boss: string,
-): string | undefined {
-
-  const images =
-    BossImages[
-      boss as keyof typeof BossImages
-    ];
-
-  return images?.Standard;
-}
-
-interface TowerTileProps {
-  tower: string;
-  removed?: boolean;
-}
-
-function TowerTile({
-  tower,
-  removed = false,
-}: TowerTileProps): JSX.Element | null {
-
-  const category =
-    CATEGORY_LOOKUP[tower];
-
-  if (!category) return null;
-
-  const backgroundPath =
-    TowerContainers[category];
-
-  const towerPath =
-    TowerImages[
-      tower as keyof typeof TowerImages
-    ];
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        display: "flex",
-        width: TOWER_SIZE,
-        height: TOWER_SIZE,
-        flexShrink: 0,
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: removed ? 0.8 : 1,
-      }}
-    >
-      <img
-        src={loadImage(backgroundPath)}
-        width={TOWER_SIZE}
-        height={TOWER_SIZE}
-        style={{
-          position: "absolute",
-          inset: 0,
-          borderRadius: 7,
-        }}
-      />
-
-      {towerPath ? (
-        <img
-          src={loadImage(towerPath)}
-          width={TOWER_SIZE}
-          height={TOWER_SIZE}
-          style={{
-            position: "relative",
-            objectFit: "contain",
-            borderRadius: 7,
-          }}
-        />
-      ) : (
-        <span
-          style={{
-            position: "relative",
-            color: "white",
-            fontSize: 20,
-          }}
-        >
-          ?
-        </span>
-      )}
-
-      {removed ? (
-        <BlockedBadge />
-      ) : null}
-    </div>
-  );
-}
-
-function BlockedBadge(): JSX.Element {
-  return (
-    <div
-      style={{
-        position: "absolute",
-        display: "flex",
-        top: -4,
-        left: -4,
-        width: 20,
-        height: 20,
-        border: "4px solid #ff4a16",
-        borderRadius: "50%",
-        boxSizing: "border-box",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor:
-          "rgba(30, 20, 20, 0.45)",
-        filter:
-          "drop-shadow(0 1px 1px #000)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          width: 14,
-          height: 4,
-          borderRadius: 2,
-          backgroundColor: "#ff4a16",
-          transform: "rotate(-45deg)",
-        }}
-      />
-    </div>
-  );
-}
+const RELIC_SIZE = 42;
 
 interface RelicTileProps {
   relic: string;
   isNew: boolean;
+}
+
+interface StageCardProps {
+  stage: BossRushStage;
+  hero: string | null;
 }
 
 function RelicTile({
@@ -189,10 +38,7 @@ function RelicTile({
   isNew,
 }: RelicTileProps): JSX.Element | null {
 
-  const imagePath =
-    RelicImages[
-      relic as keyof typeof RelicImages
-    ];
+  const imagePath = RelicImages[relic as keyof typeof RelicImages];
 
   if (!imagePath) return null;
 
@@ -241,11 +87,7 @@ function RelicTile({
   );
 }
 
-function SectionTitle({
-  children,
-}: {
-  children: string;
-}): JSX.Element {
+function SectionTitle({children}: { children: string }): JSX.Element {
 
   return (
     <div
@@ -266,16 +108,9 @@ function SectionTitle({
   );
 }
 
-interface StageCardProps {
-  stage: BossRushStage;
-  hero: string | null;
-}
+function StageCard({stage}: StageCardProps): JSX.Element {
 
-function StageCard({
-  stage,
-}: StageCardProps): JSX.Element {
-
-  const bossIcon = getBossIcon(stage.boss);
+  const bossIcon = BossImages[stage.boss as keyof typeof BossImages].Standard;
 
   return (
     <Layout.Box
@@ -294,7 +129,19 @@ function StageCard({
       <Event.Map
         map={stage.map}
         height={116}
-        iconPath={bossIcon}
+        overlay={
+          <img
+            src={loadImage(bossIcon)}
+            width={70}
+            height={70}
+            style={{
+              position: "absolute",
+              bottom: 8,
+              right: 8,
+              objectFit: "contain"
+            }}
+            />
+        }
       />
 
       <SectionTitle>
@@ -314,17 +161,19 @@ function StageCard({
         }}
       >
         {stage.towers.map((tower, index) => (
-          <TowerTile
+          <Event.TowerIcon
             key={`available-${tower}-${index}`}
-            tower={tower}
+            towerName={tower}
+            size={TOWER_SIZE}
           />
         ))}
 
         {stage.removed.map((tower, index) => (
-          <TowerTile
+          <Event.TowerIcon
             key={`removed-${tower}-${index}`}
-            tower={tower}
-            removed
+            towerName={tower}
+            size={TOWER_SIZE}
+            blocked
           />
         ))}
       </div>
@@ -361,14 +210,11 @@ export function BossRushProfile({
   metaData,
 }: BossRushProfileProps): JSX.Element {
 
-  console.log(getNumberForEvent(event.start, EventType.BossRush));
   return (
     <Layout.Container>
       <Event.Header
-        eventType={splitUppercase(
-          EventType.BossRush,
-        )}
-        eventName={event.name}
+        eventType={splitUppercase(EventType.BossRush)}
+        eventName={`${EventType.BossRush} #${getNumberForEvent(event.start, EventType.BossRush)}`}
       />
 
       <Event.Bar

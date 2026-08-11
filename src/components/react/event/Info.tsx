@@ -101,6 +101,7 @@ function InfoCell({ item, fullWidth }: InfoCellProps) {
             fontSize: 22,
             lineHeight: `${ICON_SIZE}px`,
             whiteSpace: "nowrap",
+            marginTop: 4
           }}
         >
           {String(item.value)}

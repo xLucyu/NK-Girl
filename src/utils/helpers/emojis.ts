@@ -26,28 +26,28 @@ const EmojiCache = new Map<string, FormattedEmojiData>();
 
 export async function loadEmojis(): Promise<void> {
 
-    try {
-        const data = await getData<EmojiResponse>(
-            API_URLS.Emojis.replace("{}", config.BOT_ID),
-            {
-                Authorization: `Bot ${config.BOT_TOKEN}`,
-                "Content-Type": "application/json"
-            }
-        )
-
-        for (const emoji of data?.items) {
-            EmojiCache.set(emoji.name, emoji)
+  try {
+    const data = await getData<EmojiResponse>(
+      API_URLS.Emojis.replace("{}", config.BOT_ID),
+        {
+          Authorization: `Bot ${config.BOT_TOKEN}`,
+          "Content-Type": "application/json"
         }
-        console.log("Emojis loaded");
-    } catch (error) {
-        console.warn("Failed to load Emojis", error);
+    )
+
+    for (const emoji of data?.items) {
+      EmojiCache.set(emoji.name, emoji)
     }
+    console.log("Emojis loaded");
+  } catch (error) {
+    console.warn("Failed to load Emojis", error);
+  }
 }
 
 export function getEmoji(name: string): FormattedEmojiData | undefined {
 
   const emoji = EmojiCache.get(name);
-  console.log(EmojiCache);
+
   if (!emoji) {
     console.warn(`Emoji ${name} wasn't found.`);
     return undefined;

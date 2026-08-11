@@ -1,10 +1,9 @@
-import { DiscordClient, registry } from "@client";
+import { discordClient, registry } from "@client";
 import { allCommands } from "@commands";
 import { db } from "@database";
 import { loadEmojis } from "@utils";
 
 async function main() {
-  const discordClient = new DiscordClient();
   await discordClient.start();
   await discordClient.addListeners();
   await discordClient.startEventManager();

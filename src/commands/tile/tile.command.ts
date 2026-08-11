@@ -84,7 +84,8 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
         options: relics.slice(0, 25).map((tile) => ({
           label: tile.Code,
           value: tile.Code,
-          default: tile.Code === state.options.tileCode
+          default: tile.Code === state.options.tileCode,
+          emoji: tile.RelicType
         })),
       }),
     ];

@@ -13,14 +13,15 @@ export function BuildSelectMenu(args: {
     label: string, 
     value: string, 
     default?: boolean,
-    emoji?: APIMessageComponentEmoji | string
+    emoji?: string
   }[];
 }) {
 
   const resolved = args.options.map(({ emoji, ...rest }) => ({
     ...rest,
-    emoji: typeof emoji === "string" ? getEmoji(emoji) : emoji
+    emoji: emoji ? getEmoji(emoji) : emoji
   }));
+
 
   return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
     new StringSelectMenuBuilder()

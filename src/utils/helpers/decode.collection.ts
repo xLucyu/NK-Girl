@@ -1,5 +1,5 @@
 // credits go to minecool and halfhydra
-
+import { API_TOWER_ORDER } from "../assets";
 
 const TWO64 = 1n << 64n;
 const TWO63 = 1n << 63n;
@@ -22,16 +22,6 @@ export interface EventData {
   start: number;
   end: number;
 }
-
-const featuredInstas: string[] = [
-  "Alchemist", "BananaFarm", "BombShooter", "BoomerangMonkey",
-  "DartMonkey", "Druid", "GlueGunner", "HeliPilot",
-  "IceMonkey", "MonkeyAce", "MonkeyBuccaneer", "MonkeySub",
-  "MonkeyVillage", "NinjaMonkey", "SniperMonkey", "SpikeFactory",
-  "SuperMonkey", "TackShooter", "WizardMonkey", "MortarMonkey",
-  "EngineerMonkey", "DartlingGunner", "BeastHandler",
-  "Mermonkey", "Desperado"
-];
 
 function toLong(num: bigint): bigint {
   let v = num & (TWO64 - 1n);
@@ -167,7 +157,7 @@ export function getCollectionCycle(eventData: EventData): InstaSchedule {
     (eventData.end - eventData.start) / (secondsPerRotation * 1000)
   );
 
-  const shuffledInstas = shuffleSeed(seed, featuredInstas);
+  const shuffledInstas = shuffleSeed(seed, API_TOWER_ORDER);
 
   const helper = new CollectionEventHelper();
   helper.instasList = shuffledInstas;

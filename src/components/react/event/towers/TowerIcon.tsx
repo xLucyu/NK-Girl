@@ -60,7 +60,10 @@ export function TowerIcon({
   const badgeFontSize =
     Math.max(11, Math.round(size * 0.3));
 
-  const blockedOverlayPath = "Blocked" in TowerContainers ? TowerContainers.Blocked : null;
+  const blockedOverlayPath =
+    "Blocked" in TowerContainers
+      ? TowerContainers.Blocked
+      : null;
 
   return (
     <div
@@ -102,11 +105,12 @@ export function TowerIcon({
       {blocked && blockedOverlayPath && (
         <img
           src={loadImage(blockedOverlayPath)}
-          width={size}
-          height={size}
+          width={badgeSize}
+          height={badgeSize}
           style={{
             position: "absolute",
-            inset: 0,
+            top: -4,
+            left: -4,
             objectFit: "contain",
           }}
         />

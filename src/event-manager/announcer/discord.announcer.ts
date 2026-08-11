@@ -1,7 +1,10 @@
 import {
   AttachmentBuilder,
   ChannelType,
-  EmbedBuilder,
+  ContainerBuilder,
+  MediaGalleryBuilder,
+  MediaGalleryItemBuilder,
+  MessageFlags,
   type Message,
   type NewsChannel,
   type TextChannel,
@@ -28,7 +31,7 @@ export class EventAnnouncer {
   private isSendableChannel(channel: unknown): channel is AnnounceableChannel {
 
     if (!channel || typeof channel !== "object") return false;
-    
+
     return (
       "type" in channel &&
       "send" in channel &&
@@ -40,7 +43,6 @@ export class EventAnnouncer {
       )
     );
   }
-
 
   private async getChannel(
     guildId: string,
@@ -61,7 +63,6 @@ export class EventAnnouncer {
     return channel;
   }
 
-
   private buildAnnouncement(eventType: EventType): Announcement | null {
 
     const cache = eventManager.getEventCache(eventType).getCache();
@@ -73,86 +74,78 @@ export class EventAnnouncer {
     return command.buildAnnouncement?.(cache.currentEvent) ?? null;
   }
 
-
-  private async buildAttachments(
-    profiles: JSX.Element[]
-  ): Promise<AttachmentBuilder[]> {
-
-    const buffers =
-      await Promise.all(
-        profiles.map((profile) =>
-          render(profile)
-        )
-      );
-
-    return buffers.map(
-      (buffer, index) =>
-        new AttachmentBuilder(
-          buffer,
-          {
-            name: `image-${index + 1}.png`,
-          }
-        )
-    );
+  private async renderProfiles(profiles: JSX.Element[]) {
+    return await Promise.all(profiles.map((profile) => render(profile)));
   }
 
-
-public async send(
-  eventType: EventType,
-  guildId: string,
-  force = false
-): Promise<Message | null> {
-
-  const announcement = this.buildAnnouncement(eventType);
-
-  if (!announcement) return null;
-
-  const { event, profiles } = announcement;
-
-  const announced = await guildTable.fetchEventIds(
-    eventType,
-    guildId
-  );
-
-  if (!force && announced.includes(event.id)) return null;
-
-  const channel = await this.getChannel(
-    guildId,
-    eventType
-  );
-
-  if (!channel) return null;
-
-  const buffers = await Promise.all(profiles.map((profile) => render(profile)));
+private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]) {
 
   const files = buffers.map((buffer, index) => {
     const name = `image-${index + 1}.png`;
-      return new AttachmentBuilder(
-        buffer,
-        { name }
-      );
-    }
-  );
+    return new AttachmentBuilder(buffer, { name });
+  });
 
-  const embeds = buffers.map((_, index) => { 
+  const container = new ContainerBuilder();
+
+  for (let index = 0; index < buffers.length; index++) {
     const name = `image-${index + 1}.png`;
-    return new EmbedBuilder()
-      .setImage(
-        `attachment://${name}`
-      );
-    }
-  );
 
-  const message = await channel.send({ files, embeds });
+    const gallery = new MediaGalleryBuilder().addItems(
+      new MediaGalleryItemBuilder()
+        .setURL(`attachment://${name}`)
+    );
 
-  await guildTable.appendEvent(
-    event.id,
-    eventType,
-    guildId
-  );
+    container.addMediaGalleryComponents(gallery);
+  }
 
-  return message;
+  return {
+    files,
+    components: [container],
+  };
 }
+
+  public async send(
+    eventType: EventType,
+    guildId: string,
+    force = false
+  ): Promise<Message | null> {
+
+    const announcement = this.buildAnnouncement(eventType);
+    if (!announcement) return null;
+
+    const { event, profiles } = announcement;
+
+    const announced = await guildTable.fetchEventIds(
+      eventType,
+      guildId
+    );
+
+    if (!force && announced.includes(event.id)) return null;
+
+    const channel = await this.getChannel(
+      guildId,
+      eventType
+    );
+
+    if (!channel) return null;
+
+    const buffers = await this.renderProfiles(profiles);
+    const { files, components } = this.buildMessage(buffers);
+
+    const message = await channel.send({
+      files,
+      components,
+      flags: MessageFlags.IsComponentsV2,
+    });
+
+    await guildTable.appendEvent(
+      event.id,
+      eventType,
+      guildId
+    );
+
+    return message;
+  }
 
   public async edit(
     eventType: EventType,
@@ -161,11 +154,9 @@ public async send(
   ): Promise<Message | null> {
 
     const announcement = this.buildAnnouncement(eventType);
-
     if (!announcement) return null;
-    
-    const channel =await this.getChannel(guildId, eventType);
 
+    const channel = await this.getChannel(guildId, eventType);
     if (!channel) return null;
 
     const message = await channel.messages
@@ -174,11 +165,15 @@ public async send(
 
     if (!message) return null;
 
-    const attachments = await this.buildAttachments(announcement.profiles);
+    const buffers = await this.renderProfiles(announcement.profiles);
+    const { files, components } = this.buildMessage(buffers);
 
     return await message.edit({
       attachments: [],
-      files: attachments,
+      embeds: [],
+      files,
+      components,
+      flags: MessageFlags.IsComponentsV2,
     });
   }
 
@@ -190,10 +185,9 @@ public async send(
     const { event, profiles } = announcement;
 
     const channelIds = await guildTable.fetchAllRegisteredChannels(eventType);
-
     if (channelIds.length === 0) return;
 
-    const buffers = await Promise.all(profiles.map((profile) => render(profile)));
+    const buffers = await this.renderProfiles(profiles);
 
     const results = await Promise.allSettled(channelIds.map(async (channelId) => {
 
@@ -204,30 +198,26 @@ public async send(
       if (!this.isSendableChannel(channel)) return;
 
       const guildId = channel.guildId;
-
       const announced = await guildTable.fetchEventIds(eventType, guildId);
 
       if (announced.includes(event.id)) return;
 
-      const attachments = buffers.map(
-        (buffer, index) =>
-          new AttachmentBuilder(buffer, {
-            name: `image-${index + 1}.png`,
-        })
-      );
+      const { files, components } = this.buildMessage(buffers);
 
-      await channel.send({files: attachments });
+      await channel.send({
+        files,
+        components,
+        flags: MessageFlags.IsComponentsV2,
+      });
 
       await guildTable.appendEvent(
         event.id,
         eventType,
         guildId
       );
-    })
-  );
+    }));
 
     for (let i = 0; i < results.length; i++) {
-
       const result = results[i];
 
       if (result.status === "rejected") {

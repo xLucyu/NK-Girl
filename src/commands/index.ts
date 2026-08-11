@@ -10,6 +10,7 @@ import { SyncCommand } from "./sync/sync.command";
 import { HelpCommand } from "./help/help.command";
 import { LeaderboardCommand } from "./leaderboard/leaderboard.command";
 import { ChannelCommand } from "./events/channel.command";
+import { EventCommand } from "./events/events.command";
 
 export const allCommands: Command[] = [
   new BossCommand(),
@@ -22,7 +23,8 @@ export const allCommands: Command[] = [
   new SyncCommand(),
   new HelpCommand(),
   new LeaderboardCommand(),
-  new ChannelCommand()
+  new ChannelCommand(),
+  new EventCommand()
 ]
 
 export * from "./interaction";

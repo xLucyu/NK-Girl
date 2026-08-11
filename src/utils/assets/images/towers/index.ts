@@ -41,6 +41,7 @@ export const TowerImages = {
   SuperMonkey: "towers/SuperMonkey.png",
   TackShooter: "towers/TackShooter.png",
   WizardMonkey: "towers/WizardMonkey.png",
+  Skywarden: "towers/Skywarden.png"
 };
 
 export const TowerContainers = {
@@ -49,5 +50,6 @@ export const TowerContainers = {
   Military: "towers/TowerContainerMilitary.png",
   Magic: "towers/TowerContainerMagic.png",
   Support: "towers/TowerContainerSupport.png",
-  Max: "towers/TowerMax.png"
+  Max: "towers/TowerMax.png",
+  Blocked: "towers/Blocked.png"
 };

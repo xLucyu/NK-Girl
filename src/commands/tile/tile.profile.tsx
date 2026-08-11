@@ -8,6 +8,7 @@ import {
   EventType, 
   filterModifiers, 
   getTowers, 
+  RelicImages, 
   splitUppercase, 
   TileCode 
 } from "@utils"
@@ -45,6 +46,14 @@ const getTitle = (tile: TileCode): string => {
   return splitUppercase(subGameType[tile.GameData.subGameType]);
 }
 
+const getIcon = (tile: TileCode): string => {
+  return tile.TileType === "Relic" 
+  ? RelicImages[tile.RelicType as keyof typeof RelicImages]
+  : tile.TileType === "Banner" 
+  ? RelicImages.Banner 
+  : RelicImages.Regular
+}
+
 const getEndRound = (tile: TileCode): number => {
   if (tile.GameData.bossData) return tile.GameData.bossData.TierCount * 20 + 20;
   return tile.GameData.dcModel.startRules.endRound;
@@ -53,7 +62,6 @@ const getEndRound = (tile: TileCode): number => {
 export function TileProfile({ event, tile }: CtProps): JSX.Element {
 
   const ctNumber = tile.EventNumber;
-  const ctIcon = EventImages.CT;
   const modifiers = filterModifiers(buildCTModifiers(tile.GameData));
 
   const infoItems = [
@@ -76,7 +84,7 @@ export function TileProfile({ event, tile }: CtProps): JSX.Element {
         <Layout.Box style={{ flex: 1}}>
           <Event.Map
             map={tile.GameData.selectedMap}
-            iconPath={ctIcon}
+            iconPath={getIcon(tile)}
           />
         </Layout.Box>
         <Layout.Column flex={1}>

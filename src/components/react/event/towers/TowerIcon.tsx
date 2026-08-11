@@ -3,6 +3,7 @@ import {
   TowerImages,
   TowerContainers,
   loadImage,
+  TOWER_INFO,
 } from "@utils";
 import { TowerCategory } from "./sizes";
 
@@ -38,27 +39,17 @@ export function TowerIcon({
   crossPaths,
   blocked = false,
 }: TowerIconProps) {
-  const category = CATEGORY_LOOKUP[towerName];
 
-  if (!category) return null;
+  const towerInfo = TOWER_INFO[towerName];
+  if (!towerInfo) return null;
 
-  const towerPath =
-    TowerImages[
-      towerName as keyof typeof TowerImages
-    ];
+  const towerPath = TowerImages[towerName as keyof typeof TowerImages];
+  const backgroundPath = TowerContainers[towerInfo.category as keyof typeof TowerContainers];
 
-  const backgroundPath =
-    TowerContainers[category];
+  if (!towerPath || !backgroundPath) return null;
 
-  if (!towerPath || !backgroundPath) {
-    return null;
-  }
-
-  const badgeSize =
-    Math.max(22, Math.round(size * 0.4));
-
-  const badgeFontSize =
-    Math.max(11, Math.round(size * 0.3));
+  const badgeSize = Math.max(22, Math.round(size * 0.4));
+  const badgeFontSize = Math.max(11, Math.round(size * 0.3));
 
   const blockedOverlayPath =
     "Blocked" in TowerContainers

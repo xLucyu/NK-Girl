@@ -1,4 +1,9 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import { 
+  ApplicationIntegrationType, 
+  ChatInputCommandInteraction, 
+  InteractionContextType, 
+  SlashCommandBuilder 
+} from "discord.js";
 import { deployCommands } from "@client";
 import { config } from "@config";
 import { MissingPermission } from "@utils";
@@ -17,7 +22,9 @@ export class SyncCommand {
         { name: "global", value: "global" },
         { name: "debug", value: "debug" }
       )
-    );
+    )
+    .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+    .setContexts(InteractionContextType.Guild);
 
   public async execute(interaction: ChatInputCommandInteraction) {
 

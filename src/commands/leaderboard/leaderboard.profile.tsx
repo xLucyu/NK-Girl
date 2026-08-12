@@ -4,6 +4,7 @@ import {
   EventType,
   ModifierImages,
   loadImage,
+  msToTimeFormat
 } from "@utils";
 
 interface LeaderboardProfileProps {
@@ -38,21 +39,6 @@ function formatScore(n: number): string {
   return n.toLocaleString("en-US");
 }
 
-function formatDuration(ms: number): string {
-  if (!Number.isFinite(ms) || ms < 0) return "—";
-
-  const hours   = Math.floor(ms / 3_600_000);
-  const minutes = Math.floor((ms % 3_600_000) / 60_000);
-  const seconds = Math.floor((ms % 60_000) / 1000);
-  const millis  = ms % 1000;
-
-  const mm  = String(minutes).padStart(2, "0");
-  const ss  = String(seconds).padStart(2, "0");
-  const mmm = String(millis).padStart(3, "0");
-
-  return hours > 0 ? `${hours}:${mm}:${ss}.${mmm}` : `${minutes}:${ss}.${mmm}`;
-}
-
 function isLeastScoring(scoringType: string): boolean {
   return scoringType === "LeastCash" || scoringType === "LeastTiers";
 }
@@ -70,7 +56,7 @@ function formatScoreParts(
   if (type === EventType.Race) {
     return [
       { value: formatScore(parts.score) },
-      { value: parts.secondScore != null ? formatDuration(parts.secondScore) : "—" },
+      { value: parts.secondScore != null ? msToTimeFormat(parts.secondScore) : "—" },
     ];
   }
 
@@ -82,7 +68,7 @@ function formatScoreParts(
   if (!isLeastScoring(scoringType)) {
     return [
       tier,
-      { value: parts.secondScore != null ? formatDuration(parts.secondScore) : "—" },
+      { value: parts.secondScore != null ? msToTimeFormat(parts.secondScore) : "—" },
     ];
   }
 
@@ -94,12 +80,12 @@ function formatScoreParts(
       value: parts.secondScore != null ? formatScore(parts.secondScore) : "—",
       icon: metricIcon,
     },
-    { value: parts.thirdScore != null ? formatDuration(parts.thirdScore) : "—" },
+    { value: parts.thirdScore != null ? msToTimeFormat(parts.thirdScore) : "—" },
   ];
 }
 
 function scoreHeaders(type: LeaderboardType, scoringType: string): string[] {
-  if (type === EventType.CT)   return ["Score"];
+  if (type === EventType.CT) return ["Score"];
   if (type === EventType.Race) return ["Score", "Time"];
 
   return isLeastScoring(scoringType)
@@ -124,7 +110,6 @@ const HeaderRow = ({
       width: "100%",
     }}
   >
-    {/* Medal spacer */}
     <div style={{ display: "flex", width: 45 }} />
 
     <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
@@ -157,7 +142,6 @@ const HeaderRow = ({
   </Layout.Box>
 );
 
-// ── Row ───────────────────────────────────────────────────────────────────────
 
 interface RowProps {
   medal: string | null;
@@ -184,7 +168,6 @@ const Row = ({
       gap: 15,
       padding: "6px 15px",
       width: "100%",
-      /* Only spread when highlighted — otherwise Layout.Box keeps its own look. */
       ...(highlighted
         ? {
             borderRadius: 8,
@@ -194,7 +177,6 @@ const Row = ({
         : {}),
     }}
   >
-    {/* Medal */}
     <div
       style={{
         display: "flex",
@@ -209,8 +191,6 @@ const Row = ({
         <div style={{ display: "flex", width: MEDAL_SIZE, height: MEDAL_SIZE }} />
       )}
     </div>
-
-    {/* Placement */}
     <div style={{ display: "flex", width: 68, justifyContent: "flex-end" }}>
       <span
         style={{
@@ -223,8 +203,6 @@ const Row = ({
         #{position}
       </span>
     </div>
-
-    {/* Player name(s) */}
     <div
       style={{
         display: "flex",
@@ -299,8 +277,6 @@ const Row = ({
     ))}
   </Layout.Box>
 );
-
-// ── Main profile ──────────────────────────────────────────────────────────────
 
 export function LeaderboardProfile({
   type,

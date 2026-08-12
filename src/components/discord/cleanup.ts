@@ -26,8 +26,9 @@ export function scheduleComponentCleanup(parameters: {
       await parameters.editReply({ components: [] });
     } catch {
       return;
+    } finally {
+      parameters.onExpire();
     }
-    parameters.onExpire();
   }, delay);
 
   cleanupTimers.set(parameters.messageId, timer);

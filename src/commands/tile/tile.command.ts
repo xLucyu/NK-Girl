@@ -5,7 +5,8 @@ import type { CurrentEventData, EventCacheEntry } from "@manager";
 import { 
   type CTBody, 
   EventType, 
-  type TileCode 
+  type TileCode, 
+  TileNotFound
 } from "@utils";
 import { BuildSelectMenu, ComponentState, BaseOptions } from "@components";
 
@@ -29,7 +30,7 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
   protected readonly urlKey = EventType.CT;
 
   public commandData = BaseCommand
-    .baseSlashCommand("tile", "Show CT Tile Data.", true)
+    .baseSlashCommand("tile", "Show CT Tile Data.", false)
     .addStringOption((option) =>
       option 
         .setName("tile_code")
@@ -43,7 +44,7 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
 
     const tileCode = state.options.tileCode as string;
 
-    if (!tileCode) throw new Error();
+    if (!tileCode) throw new TileNotFound();
 
     const event = props.data;
     const tile = props.metaData[tileCode];
@@ -56,7 +57,7 @@ export class TileCommand extends BaseCommand<CTBody, TileCache> {
 
   protected getOptions(interaction: ChatInputCommandInteraction): TileOptions {
     return {
-      tileCode: interaction.options.getString("tile_code", true).toLocaleUpperCase()
+      tileCode: interaction.options.getString("tile_code", true).toUpperCase()
     };
   }
 

@@ -72,14 +72,8 @@ export class EventManager {
     );
 
     for (const result of results) {
-      if (result.status === "rejected") {
-        this.logError(result.reason);
-        continue 
-      }
-      
-      const eventType = result.value as EventType;
-
-      await eventAnnouncer.sendAll(eventType);
+      if (result.status === "rejected" || result.value === null) continue;
+      await eventAnnouncer.sendAll(result.value);
     }
   }
 
@@ -90,7 +84,7 @@ export class EventManager {
         const currentEvent = this.caches[service.eventType as keyof typeof this.caches]
           .getCache()?.currentEvent.data;
         if (!currentEvent) return;
-        service.check(currentEvent as never);
+        return service.check(currentEvent as never);
       })
     );
     this.logError(results);

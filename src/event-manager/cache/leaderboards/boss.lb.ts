@@ -43,6 +43,8 @@ export class BossLeaderboardSerivce extends BaseLeaderboardService<BossBody, Lea
           data: {
             id: event.id,
               eventType: EventType.Boss,
+              start: event.start,
+              end: event.end,
               name: event.name,
               totalScores: teams.length,
               scoringType: currentScoringType,

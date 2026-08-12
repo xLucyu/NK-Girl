@@ -22,11 +22,11 @@ import {
 } from "@utils";
 import { CurrentEventData } from "@manager";
 
-interface BossDetailsOptions extends BaseOptions {
+export interface BossDetailsOptions extends BaseOptions {
   difficulty: string;
   playerCount: number;
   boss: Boss;
-  hpModifier: number;
+  hpModifier?: number | null;
 }
 
 export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
@@ -85,7 +85,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
       difficulty: interaction.options.getString("difficulty") ?? BossDifficulties[0],
       playerCount: interaction.options.getInteger("player_count") ?? 1,
       boss: interaction.options.getString("boss") as Boss ?? null,
-      hpModifier: interaction.options.getNumber("hp_modifier") ?? 1
+      hpModifier: interaction.options.getNumber("hp_modifier")
     };
   }
 
@@ -105,7 +105,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
     return BossDetailsProfile({
       event,
       metaData,
-      options: state.options
+      options: state.options as BossDetailsOptions
     })
   }
 
@@ -130,7 +130,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
           label: `${playerCount} Player${playerCount === "1" ? "" : "s"}`,
           value: playerCount,
           default: Number(playerCount) === state.options.playerCount,
-          emoji: { id: "1341515962410598521", name: "Coop" }
+          emoji: "Coop"
         }))  
       }),
     ];

@@ -31,6 +31,8 @@ export class CTLeaderboardService extends BaseLeaderboardService<CTBody, Leaderb
                 path: `Leaderboard/CT/${event.id}/${mode}/leaderboard.json`,
                 data: {
                     id: event.id,
+                    start: event.start,
+                    end: event.end,
                     eventType: EventType.CT,
                     name: event.name,
                     totalScores: teams.length,
@@ -62,7 +64,6 @@ export class CTLeaderboardService extends BaseLeaderboardService<CTBody, Leaderb
         }
         return teams;
   }
-
 
   private mapEntryToTeam(entry: LeaderboardBody, position: number): Team {
 

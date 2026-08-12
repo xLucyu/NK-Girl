@@ -6,6 +6,7 @@ import {
   type Leaderboard,
   type LeaderboardBody,
   type Team,
+  addUnderscore,
 } from "@utils";
 import { BaseLeaderboardService, Payload } from "./base";
 import { getData } from "@api";
@@ -22,9 +23,11 @@ export class RaceLeaderboardService extends BaseLeaderboardService<RaceBody,Lead
 
     return [
       {
-        path: `Leaderboard/Race/${event.name}/leaderboard.json`,
+        path: `Leaderboard/Race/${addUnderscore(event.name)}/leaderboard.json`,
         data: {
           id: event.id,
+          start: event.start,
+          end: event.end,
           eventType: EventType.Race,
           name: event.name,
           totalScores: teams.length,

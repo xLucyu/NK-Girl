@@ -4,10 +4,10 @@ import { db } from "@database";
 import { loadEmojis } from "@utils";
 
 async function main() {
-  await discordClient.start();
-  await discordClient.addListeners();
-  await discordClient.startEventManager();
   registry.register(allCommands);
+  await discordClient.addListeners();
+  await discordClient.start();
+  await discordClient.startEventManager();
   await loadEmojis();
 
   const shutdown = async (signal: string) => {
@@ -22,4 +22,7 @@ async function main() {
   process.on("unhandledRejection", (reason) => console.error("Unhandled Rejection", reason));
 };
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+})

@@ -65,10 +65,11 @@ export class EventAnnouncer {
 
   private buildAnnouncement(eventType: EventType): Announcement | null {
 
+    if (eventType === EventType.CT) return null;
     const cache = eventManager.getEventCache(eventType).getCache();
     if (!cache) return null;
 
-    const commandName = eventType.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    const commandName = eventType.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
     const command = registry.get(commandName);
 
     return command.buildAnnouncement?.(cache.currentEvent) ?? null;

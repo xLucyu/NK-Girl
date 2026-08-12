@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 import { deployCommands } from "@client";
 import { config } from "@config";
+import { MissingPermission } from "@utils";
 
 export class SyncCommand {
 
@@ -22,10 +23,7 @@ export class SyncCommand {
 
     await interaction.deferReply();
 
-    if (interaction.user.id !== config.OWNER_ID) await interaction.followUp({
-      content: "You don't have permission to run this command.",
-      ephemeral: true
-    })
+    if (interaction.user.id !== config.OWNER_ID) throw new MissingPermission();
 
     const option = interaction.options.getString("sync_option");
 

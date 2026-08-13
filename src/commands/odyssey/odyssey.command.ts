@@ -114,7 +114,7 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
             label: splitUppercase(event.name),
             value: addUnderscore(event.name),
             default: state.event === event.name,
-            emoji: { id: "1338551267043180635", name: "OdysseyCrewBtn" }
+            emoji: "Odyssey"
           })),
         ],
       }),

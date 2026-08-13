@@ -115,7 +115,7 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
             label: splitBossNumbers(event.name),
             value: event.name,
             default: state.event === event.name,
-            emoji: { id: "1338550202889404487", name: "BossChallenge" }
+            emoji: "BossChallenge"
           })),
         ],
       }),

@@ -5,7 +5,7 @@ import {
     ApplicationIntegrationType,
     InteractionContextType
 } from "discord.js";
-import { EventType } from "@utils";
+import { EventType, MissingGuildID, MissingPermission } from "@utils";
 import { eventChoices } from "./channel.command";
 import { eventAnnouncer } from "@manager";
 
@@ -55,18 +55,14 @@ export class EventCommand {
 
   public async execute(interaction: ChatInputCommandInteraction) {
 
-    if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) throw new Error();
-
     await interaction.deferReply();
+    
+    if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) throw new MissingPermission();
 
     const subCommand = interaction.options.getSubcommand();
-
     const guildId = interaction.guildId;
 
-    if (!guildId) {
-      await interaction.editReply("This command can only be used in a server.");
-      return;
-    }
+    if (!guildId) throw new MissingGuildID();
 
     const eventType = interaction.options.getString("event_type",true) as EventType;
 

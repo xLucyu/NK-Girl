@@ -61,7 +61,7 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 					label: splitUppercase(event.name),
 					value: addUnderscore(event.name),
 					default: addUnderscore(state.event) === addUnderscore(event.name),
-					emoji: "Race" 
+					emoji: "Race"
 				})),
 			}),
 		];

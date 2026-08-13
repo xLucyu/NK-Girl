@@ -200,8 +200,8 @@ export function filterModifiers(modifiers: Modifier[]) {
 
         if (typeof value === "boolean") return value === true;
         if (modifier.hasKey) return value !== 1 && value !== -1 && value !== 9999;
-        if (modifier.label === "Paragon Limit" && value === 10) return false;
-        if (modifier.label === "Tower Limit" && value === 0) return false;
+        if (modifier.label === "Paragon Limit") return value !== 10;
+        if (modifier.label === "Tower Limit") return value !== 0 && value !== 9999;
 
         return value !== -1 && value !== 9999 && value !== 0;
     });

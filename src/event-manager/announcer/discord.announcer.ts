@@ -21,6 +21,12 @@ import { eventManager } from "../manager";
 
 type AnnounceableChannel = TextChannel | NewsChannel | ThreadChannel;
 
+type AnnouncementMessage = {
+  files: AttachmentBuilder[];
+  components?: ContainerBuilder[];
+  flags?: MessageFlags.IsComponentsV2;
+};
+
 export interface Announcement {
   event: BaseBody;
   profiles: JSX.Element[];
@@ -66,6 +72,7 @@ export class EventAnnouncer {
   private buildAnnouncement(eventType: EventType): Announcement | null {
 
     if (eventType === EventType.CT) return null;
+
     const cache = eventManager.getEventCache(eventType).getCache();
     if (!cache) return null;
 
@@ -79,31 +86,35 @@ export class EventAnnouncer {
     return await Promise.all(profiles.map((profile) => render(profile)));
   }
 
-private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]) {
+  private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]): AnnouncementMessage {
 
-  const files = buffers.map((buffer, index) => {
-    const name = `image-${index + 1}.png`;
-    return new AttachmentBuilder(buffer, { name });
-  });
+    if (buffers.length === 0) throw new Error("Announcement contains no profiles.");
 
-  const container = new ContainerBuilder();
+    const files = buffers.map((buffer, index) => {
+      const name = `image-${index + 1}.png`;
+      return new AttachmentBuilder(buffer, { name });
+    });
 
-  for (let index = 0; index < buffers.length; index++) {
-    const name = `image-${index + 1}.png`;
+    if (buffers.length === 1) return { files };
 
-    const gallery = new MediaGalleryBuilder().addItems(
-      new MediaGalleryItemBuilder()
-        .setURL(`attachment://${name}`)
-    );
+    const container = new ContainerBuilder();
 
-    container.addMediaGalleryComponents(gallery);
+    for (let index = 0; index < buffers.length; index++) {
+      const name = `image-${index + 1}.png`;
+
+      const gallery = new MediaGalleryBuilder().addItems(
+        new MediaGalleryItemBuilder().setURL(`attachment://${name}`)
+      );
+
+      container.addMediaGalleryComponents(gallery);
+    }
+
+    return {
+      files,
+      components: [container],
+      flags: MessageFlags.IsComponentsV2,
+    };
   }
-
-  return {
-    files,
-    components: [container],
-  };
-}
 
   public async send(
     eventType: EventType,
@@ -111,39 +122,34 @@ private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]) {
     force = false
   ): Promise<Message | null> {
 
+    if (eventType === EventType.CT) return null;
+
+    const cache = eventManager.getEventCache(eventType).getCache();
+    if (!cache) return null;
+
+    const eventId = cache.currentEvent.data.id;
+    const alreadyAnnounced = await guildTable.hasEvent(eventId, eventType, guildId);
+
+    if (!force && alreadyAnnounced) return null;
+
+    const channel = await this.getChannel(guildId, eventType);
+    if (!channel) return null;
+
     const announcement = this.buildAnnouncement(eventType);
     if (!announcement) return null;
 
     const { event, profiles } = announcement;
 
-    const announced = await guildTable.fetchEventIds(
-      eventType,
-      guildId
-    );
-
-    if (!force && announced.includes(event.id)) return null;
-
-    const channel = await this.getChannel(
-      guildId,
-      eventType
-    );
-
-    if (!channel) return null;
-
     const buffers = await this.renderProfiles(profiles);
-    const { files, components } = this.buildMessage(buffers);
+    const message = await channel.send(this.buildMessage(buffers));
 
-    const message = await channel.send({
-      files,
-      components,
-      flags: MessageFlags.IsComponentsV2,
-    });
-
-    await guildTable.appendEvent(
-      event.id,
-      eventType,
-      guildId
-    );
+    if (!alreadyAnnounced) {
+      await guildTable.appendEvent(
+        event.id,
+        eventType,
+        guildId
+      );
+    }
 
     return message;
   }
@@ -167,54 +173,66 @@ private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]) {
     if (!message) return null;
 
     const buffers = await this.renderProfiles(announcement.profiles);
-    const { files, components } = this.buildMessage(buffers);
+    const messageData = this.buildMessage(buffers);
 
     return await message.edit({
       attachments: [],
       embeds: [],
-      files,
-      components,
-      flags: MessageFlags.IsComponentsV2,
+      components: [],
+      ...messageData,
     });
   }
 
   public async sendAll(eventType: EventType): Promise<void> {
 
-    const announcement = this.buildAnnouncement(eventType);
-    if (!announcement) return;
+    if (eventType === EventType.CT) return;
 
-    const { event, profiles } = announcement;
+    const cache = eventManager.getEventCache(eventType).getCache();
+    if (!cache) return;
+
+    const eventId = cache.currentEvent.data.id;
 
     const channelIds = await guildTable.fetchAllRegisteredChannels(eventType);
     if (channelIds.length === 0) return;
 
-    const buffers = await this.renderProfiles(profiles);
-
-    const results = await Promise.allSettled(channelIds.map(async (channelId) => {
+    const targets = (await Promise.all(channelIds.map(async (channelId) => {
 
       const channel = await discordClient.client.channels
         .fetch(channelId)
         .catch(() => null);
 
-      if (!this.isSendableChannel(channel)) return;
+      if (!this.isSendableChannel(channel)) return null;
 
-      const guildId = channel.guildId;
-      const announced = await guildTable.fetchEventIds(eventType, guildId);
+      const alreadyAnnounced = await guildTable.hasEvent(
+        eventId,
+        eventType,
+        channel.guildId
+      );
 
-      if (announced.includes(event.id)) return;
+      if (alreadyAnnounced) return null;
 
-      const { files, components } = this.buildMessage(buffers);
+      return {
+        channelId,
+        channel,
+      };
+    }))).filter((target) => target !== null);
 
-      await channel.send({
-        files,
-        components,
-        flags: MessageFlags.IsComponentsV2,
-      });
+    if (targets.length === 0) return;
+
+    const announcement = this.buildAnnouncement(eventType);
+    if (!announcement) return;
+
+    const { event, profiles } = announcement;
+    const buffers = await this.renderProfiles(profiles);
+
+    const results = await Promise.allSettled(targets.map(async ({ channel }) => {
+
+      await channel.send(this.buildMessage(buffers));
 
       await guildTable.appendEvent(
         event.id,
         eventType,
-        guildId
+        channel.guildId
       );
     }));
 
@@ -223,7 +241,7 @@ private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]) {
 
       if (result.status === "rejected") {
         console.error(
-          `Failed to announce ${eventType} in channel ${channelIds[i]}:`,
+          `Failed to announce ${eventType} in channel ${targets[i].channelId}:`,
           result.reason
         );
       }

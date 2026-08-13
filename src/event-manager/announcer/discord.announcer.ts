@@ -143,6 +143,8 @@ export class EventAnnouncer {
     const buffers = await this.renderProfiles(profiles);
     const message = await channel.send(this.buildMessage(buffers));
 
+    if (channel.type === ChannelType.GuildAnnouncement) await message.crosspost();
+
     if (!alreadyAnnounced) {
       await guildTable.appendEvent(
         event.id,
@@ -227,7 +229,9 @@ export class EventAnnouncer {
 
     const results = await Promise.allSettled(targets.map(async ({ channel }) => {
 
-      await channel.send(this.buildMessage(buffers));
+      const message = await channel.send(this.buildMessage(buffers));
+
+      if (channel.type === ChannelType.GuildAnnouncement) await message.crosspost();
 
       await guildTable.appendEvent(
         event.id,

@@ -116,17 +116,15 @@ const reward = (metaData: OdysseyMetaData & { mapsData: MetaBody[] }): string =>
   return splitUppercase(rewardValue);
 }
 
-const formatDifficulty = (isExtreme: boolean, difficulty: OdysseyDifficulty): string => {
+const formatDifficulty = (difficulty: OdysseyDifficulty, isExtreme: boolean): string => {
   return `${difficulty}${isExtreme ? ", Extreme" : ""}`
 }
 
 export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfileProps): JSX.Element {
 
-  const odysseyImage = OdysseyImages[difficulty];
   const odysseyEventNumber = getNumberForEvent(event.start, EventType.Odyssey);
 
   const infoItems = [
-    { label: "Difficulty", value: formatDifficulty(metaData.isExtreme, difficulty), image: odysseyImage },
     { label: "Lives", value: metaData.startingHealth, image: EventImages.Lives },
     { label: "Max Seats", value: metaData.maxMonkeySeats },
     { label: "Max Monkeys", value: metaData.maxMonkeysOnBoat, image: ModifierImages.MaxTowers },
@@ -138,7 +136,7 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
       <Event.Header
         eventType={`${EventType.Odyssey} #${odysseyEventNumber}`}
         eventName={splitUppercase(event.name)}
-        difficulty={difficulty}
+        difficulty={formatDifficulty(difficulty, metaData.isExtreme)}
       />
       <Layout.Row>
         <Layout.Column>

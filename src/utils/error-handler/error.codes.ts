@@ -14,6 +14,15 @@ export class CommandOnCooldown extends BotError {
   }
 }
 
+export class MissingGuildID extends BotError {
+  constructor() {
+    super(
+      "Missing Guild ID",
+      "This Command can only be used in a Guild or the Guild was deleted."
+    )
+  }
+}
+
 export class MissingPermission extends BotError {
   constructor() {
     super(
@@ -28,15 +37,6 @@ export class TileNotFound extends BotError {
     super(
       "Tile Code not found",
       "The tile code you entered wasn't found. Please check your typing."
-    );
-  }
-}
-
-export class CTNotFound extends BotError {
-  constructor() {
-    super(
-      "CT Event not found",
-      "This CT event does not exist."
     );
   }
 }

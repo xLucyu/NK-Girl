@@ -9,7 +9,7 @@ import {
 } from "discord.js";
 
 import { guildTable } from "@database";
-import { EventType } from "@utils";
+import { EventType, MissingGuildID, MissingPermission } from "@utils";
 
 export const eventChoices = Object.values(EventType)
   .filter((value) => value !== EventType.CT)
@@ -64,17 +64,19 @@ export class ChannelCommand {
 
   public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
 
-    const guildId = interaction.guildId;
+    await interaction.deferReply();
 
-    if (!guildId) throw new Error();
+    if (!interaction.memberPermissions?.has(PermissionFlagsBits.ManageGuild)) throw new MissingPermission();
+
+    const guildId = interaction.guildId;
+    if (!guildId) throw new MissingGuildID();
 
     const subCommand = interaction.options.getSubcommand();
-
-    const eventType =interaction.options.getString("event_type",true) as EventType;
+    const eventType =interaction.options.getString("event_type", true) as EventType;
 
     if (subCommand === "add") {
 
-      const channel =interaction.options.getChannel("channel",true);
+      const channel =interaction.options.getChannel("channel", true);
 
       await guildTable.appendChannelPerGuild(
         guildId,
@@ -82,22 +84,14 @@ export class ChannelCommand {
         eventType,
       );
 
-      await interaction.reply({
-        content: `Set **${eventType}** announcements to <#${channel.id}>.`,
-        flags: MessageFlags.Ephemeral,
-      });
-
+      await interaction.editReply({content: `Set **${eventType}** announcements to <#${channel.id}>.`});
       return;
     }
 
     const channelId = await guildTable.removeChannelFromGuild(guildId, eventType);
 
     if (!channelId) {
-      await interaction.reply({
-        content: `There is no channel registered for **${eventType}**.`,
-        flags: MessageFlags.Ephemeral,
-      });
-
+      await interaction.editReply({content: `There is no channel registered for **${eventType}**.`});
       return;
     }
 

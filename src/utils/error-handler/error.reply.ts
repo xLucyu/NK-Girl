@@ -22,19 +22,16 @@ export async function sendCommandError(interaction: ChatInputCommandInteraction,
           error instanceof Error ? error.message : String(error)
         }`
       );
-    }
-
-  await logError(interaction, error);
+    await logError(interaction, error);
+  }
 
   embed.setAuthor({
     name: interaction.user.username,
     iconURL: interaction.user.displayAvatarURL(),
   });
 
-  if (interaction.replied || interaction.deferred) {
-    return interaction.editReply({ embeds: [embed] });
-  }
-
+  if (interaction.replied || interaction.deferred) return interaction.editReply({ embeds: [embed] });
+  
   return interaction.reply({
     embeds: [embed]
   });

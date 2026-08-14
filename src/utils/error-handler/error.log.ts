@@ -5,15 +5,12 @@ import {
   WebhookClient 
 } from "discord.js";
 import { config } from "@config";
-import { InteractionType } from "@commands";
 
 const webhook = new WebhookClient({
   url: config.WEBHOOK_URL
 });
 
-export async function logError(interaction: ChatInputCommandInteraction, error: unknown) {
-
-  const context = `${interaction.commandName} - ${interaction.user.username} - ${interaction.user.id}`;
+export async function logError(context: string, error: unknown) {
 
   console.error(`[${context}]`, error);
 

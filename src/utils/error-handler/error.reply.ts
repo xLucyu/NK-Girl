@@ -4,6 +4,7 @@ import {
   Colors,
 } from "discord.js";
 import { BotError } from "./error.codes";
+import { logError } from "./error.log";
 
 export async function sendCommandError(interaction: ChatInputCommandInteraction, error: unknown) {
 
@@ -21,7 +22,9 @@ export async function sendCommandError(interaction: ChatInputCommandInteraction,
           error instanceof Error ? error.message : String(error)
         }`
       );
-  }
+    }
+
+  await logError(interaction, error);
 
   embed.setAuthor({
     name: interaction.user.username,

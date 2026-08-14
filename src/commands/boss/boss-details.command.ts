@@ -100,7 +100,7 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
     const event = eventProps.data;
     const metaData = eventProps.metaData[difficulty];
 
-    if (!metaData) throw new Error();
+    if (!metaData) throw new Error(`Missing MetaData for event ${event.id}`);
 
     return BossDetailsProfile({
       event,

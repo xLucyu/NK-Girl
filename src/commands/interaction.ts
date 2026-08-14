@@ -39,7 +39,7 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
     try {
       await handleSelectMenu(interaction);
     } catch (error) {
-      console.error(`[SelectMenu:${interaction.customId}]`, error);
+      await logError(`[SelectMenu:${interaction.customId}]`, error);
     }
     return;
   }

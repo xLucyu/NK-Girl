@@ -17,12 +17,10 @@ export async function sendCommandError(interaction: ChatInputCommandInteraction,
   } else {
     embed
       .setTitle("Unexpected Error")
-      .setDescription(
-        `Something unexpected went wrong.\nError: ${
-          error instanceof Error ? error.message : String(error)
-        }`
-      );
-    await logError(interaction, error);
+      .setDescription(`
+        Something unexpected went wrong.\nError: ${error instanceof Error ? error.message : String(error)}
+        `);
+    await logError(`${interaction.user.displayName} - ${interaction.commandName} - ${interaction.id} `, error);
   }
 
   embed.setAuthor({
@@ -31,7 +29,7 @@ export async function sendCommandError(interaction: ChatInputCommandInteraction,
   });
 
   if (interaction.replied || interaction.deferred) return interaction.editReply({ embeds: [embed] });
-  
+
   return interaction.reply({
     embeds: [embed]
   });

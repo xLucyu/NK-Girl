@@ -21,29 +21,29 @@ export class CTLeaderboardService extends BaseLeaderboardService<CTBody, Leaderb
 
     protected async formatLeaderboard(event: CTBody): Promise<Payload<LeaderboardPayload>[]> {
         
-        const payloads: Payload<LeaderboardPayload>[] = [];
+      const payloads: Payload<LeaderboardPayload>[] = [];
 
-        for (const mode of modes) {
-            const url = `${this.baseUrl}/${event.id}/leaderboard/${mode}`;
-            const teams = await this.handleFormatting(url);
+      for (const mode of modes) {
+        const url = `${this.baseUrl}/${event.id}/leaderboard/${mode}`;
+        const teams = await this.handleFormatting(url);
 
-            payloads.push({
-                path: `Leaderboard/CT/${event.id}/${mode}/leaderboard.json`,
-                data: {
-                    id: event.id,
-                    start: event.start,
-                    end: event.end,
-                    eventType: EventType.CT,
-                    name: event.name,
-                    totalScores: teams.length,
-                    scoringType: "CTPoints",
-                    teams
-                }
-            });
-            await sleep(5_000);
-        }
-        return payloads;
-    }
+        payloads.push({
+          path: `Leaderboard/CT/${event.id}/${mode}/leaderboard.json`,
+          data: {
+            id: event.id,
+            start: event.start,
+            end: event.end,
+            eventType: EventType.CT,
+            name: event.name,
+            totalScores: teams.length,
+            scoringType: "CTPoints",
+            teams
+          }
+        });
+        await sleep(5_000);
+      }
+    return payloads;
+  }
 
     private async handleFormatting(url: string): Promise<Team[]> {
 

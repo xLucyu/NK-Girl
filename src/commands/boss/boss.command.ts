@@ -1,41 +1,45 @@
 import { 
-  ButtonStyle, 
+  ButtonStyle,
   ChatInputCommandInteraction, 
   InteractionReplyOptions 
 } from "discord.js";
 import { BaseCommand } from "../base.command";
-import type { BossMeta, BossProps } from "./boss.command";
-import { BossDetailsProfile } from "./boss-details.profile";
+import { BossProfile } from "./boss.profile";
+import type { 
+  Announcement,
+  CurrentEventData, 
+  EventCacheEntry, 
+  PreviousEvent 
+} from "@manager";
+import { 
+  EventType, 
+  BossDifficulties,
+  splitBossNumbers,
+  type BossBody, 
+  type MetaBody,
+  type BossDifficulty
+ } from "@utils";
 import { 
   BuildButtonMenu, 
   BuildSelectMenu, 
   ComponentState, 
-  BaseOptions 
+  BaseOptions
 } from "@components";
-import { 
-  Boss, 
-  BossDifficulties, 
-  EventType,
-  playerMultiplier, 
-  type BossBody, 
-  type BossDifficulty, 
-} from "@utils";
-import { CurrentEventData } from "@manager";
 
-export interface BossDetailsOptions extends BaseOptions {
+interface BossOptions extends BaseOptions {
   difficulty: string;
-  playerCount: number;
-  boss: Boss;
-  hpModifier?: number | null;
 }
 
-export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
+export type BossMeta = Record<BossDifficulty, MetaBody>;
+export type BossProps = EventCacheEntry<BossBody, BossMeta>;
 
-  protected readonly eventType = EventType.Boss;
-  protected readonly urlKey = EventType.Boss;
+export class BossCommand extends BaseCommand<BossBody, BossMeta> {
+
+	protected readonly eventType = EventType.Boss;
+	protected readonly urlKey = EventType.Boss;
 
   public commandData = BaseCommand
-    .baseSlashCommand("boss_details", "Check the Stats of a Boss.", false)
+    .baseSlashCommand("boss", "Show Boss Event Data", true)
     .addStringOption((option) =>
       option 
         .setName("difficulty")
@@ -47,50 +51,29 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
             value: difficulty 
           }))
         )
-      )
-    .addIntegerOption((option) =>
-      option
-        .setName("player_count")
-        .setDescription("choose a coop mode.")
-        .setRequired(false)
-        .addChoices(
-          ...Object.keys(playerMultiplier).map((playerCount) => ({
-            name: `${playerCount} Player${playerCount === "1" ? "" : "s"}`,
-            value: Number(playerCount)
-          }))
-        )
-      )
-    .addStringOption((option) =>
-      option 
-        .setName("boss")
-        .setDescription("Choose a difficulty")
-        .setRequired(false)
-        .addChoices(
-          ...Object.values(Boss).map((boss) => ({
-            name: boss,
-            value: boss
-          }))
-        )
-      )
-    .addNumberOption((option) => 
-      option
-        .setName("hp_modifier")
-        .setDescription("Custom Hp Modifier.")
-        .setRequired(false)
-        .setMinValue(0.1)
-      )
+    )
 
-  protected getOptions(interaction: ChatInputCommandInteraction): BossDetailsOptions {
+  protected getOptions(interaction: ChatInputCommandInteraction): BossOptions {
     return {
-      difficulty: interaction.options.getString("difficulty") ?? BossDifficulties[0],
-      playerCount: interaction.options.getInteger("player_count") ?? 1,
-      boss: interaction.options.getString("boss") as Boss ?? null,
-      hpModifier: interaction.options.getNumber("hp_modifier")
+      difficulty: interaction.options.getString("difficulty") ?? BossDifficulties[0]
     };
   }
 
   protected getIdentity(data: BossBody): string {
     return data.name;
+  }
+
+  public buildAnnouncement(eventProps: BossProps["currentEvent"]): Announcement {
+    return {
+      event: eventProps.data,
+      profiles: BossDifficulties.map((difficulty) => 
+        BossProfile({
+          event: eventProps.data,
+          metaData: eventProps.metaData[difficulty],
+          difficulty: difficulty
+        })
+      )
+    };
   }
 
   public getProfile(eventProps: BossProps["currentEvent"], state: ComponentState): JSX.Element {
@@ -102,36 +85,39 @@ export class BossDetailsCommand extends BaseCommand<BossBody, BossMeta> {
 
     if (!metaData) throw new Error(`Missing MetaData for event ${event.id}`);
 
-    return BossDetailsProfile({
+    return BossProfile({
       event,
       metaData,
-      options: state.options as BossDetailsOptions
+      difficulty
     })
   }
 
-  public getComponents(
+  protected getComponents(
     _event: CurrentEventData<BossBody, BossMeta>,
-    state: ComponentState
-    ): InteractionReplyOptions["components"] {
-  
+    state: ComponentState, 
+    previousEvents: PreviousEvent[]
+  ): InteractionReplyOptions["components"] {
+
     return [
       BuildButtonMenu({
         buttons: BossDifficulties.map((difficulty) => ({
           label: difficulty,
-          customId: `boss_details:difficulty:${difficulty}`,
+          customId: `boss:difficulty:${difficulty}`,
           style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
         })),
       }),
       
       BuildSelectMenu({
-        customId: "boss_details:playerCount:Select",
-        placeholder: "Choose a Coop Mode.",
-        options: Object.keys(playerMultiplier).map((playerCount) => ({
-          label: `${playerCount} Player${playerCount === "1" ? "" : "s"}`,
-          value: playerCount,
-          default: Number(playerCount) === state.options.playerCount,
-          emoji: "Coop"
-        }))  
+        customId: "boss:eventId:Select",
+        placeholder: "Choose a Boss Event.",
+        options: [
+          ...previousEvents.map((event) => ({
+            label: splitBossNumbers(event.name),
+            value: event.name,
+            default: state.event === event.name,
+            emoji: "BossChallenge"
+          })),
+        ],
       }),
     ];
   }

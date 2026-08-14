@@ -3,6 +3,7 @@ import { sendCommandError } from "@utils";
 import { handleButton, handleModalSubmit, handleSelectMenu } from "@components";
 import { checkCooldown } from "./cooldown";
 import { registry } from "@client";
+import { logError } from "../utils/error-handler/error.log";
 
 const CMDCOOLDOWN = 5000;
 
@@ -15,9 +16,8 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
     try {
       command.autoComplete?.(interaction);
     } catch (error) {
-      {
-        throw new Error();
-      }
+      console.error(`[Autocomplete:${interaction.commandName}]`, error);
+      await interaction.respond([]).catch(() => {});
     }
   }
 
@@ -28,9 +28,9 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
     if (!command) return;
       try {
         checkCooldown(interaction.user.id, interaction.commandName, CMDCOOLDOWN);
-          await command.execute(interaction);
+        await command.execute(interaction);
       } catch (error) {
-          await sendCommandError(interaction, error);
+        await sendCommandError(interaction, error);
       }
       return;
   }
@@ -39,7 +39,7 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
     try {
       await handleSelectMenu(interaction);
     } catch (error) {
-      throw new Error();
+      console.error(`[SelectMenu:${interaction.customId}]`, error);
     }
     return;
   }
@@ -48,12 +48,18 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
     try {
       await handleButton(interaction);
     } catch (error) {
-      throw new Error();
+      await logError(`Button:${interaction.customId}`, error);
+
     }
     return;
   }
 
   if (interaction.isModalSubmit()) {
+    try {
     await handleModalSubmit(interaction);
+    } catch (error) {
+     await logError(`Modal:${interaction.customId}`, error);
+    }
+    return;
   }
 }

@@ -1,10 +1,12 @@
-import { CTMetaData, MetaBody } from "@utils";
+import { CTMetaData, MetaBody, ModifierImages } from "@utils";
+
+type ModifierImage = (typeof ModifierImages)[keyof typeof ModifierImages];
 
 export interface Modifier {
   label: string;
   api: number | boolean;
   hasKey: boolean;
-  imageKey: (value: number | boolean) => string | null;
+  imageKey: (value: number | boolean) => ModifierImage | null;
 }
 
 function increaseDecrease(increaseImage: string, decreaseImage: string) {
@@ -24,121 +26,124 @@ export function buildModifiers(body: MetaBody, customRounds: boolean = false): M
       label: "Boss Health",
       api: body._bloonModifiers.healthMultipliers.boss,
       hasKey: true,
-      imageKey: increaseDecrease("BossIncreaseHP", "BossDecreaseHP"),
+      imageKey: increaseDecrease(ModifierImages.BossIncreaseHP, ModifierImages.BossDecreaseHP),
     },
     {
       label: "Boss Speed",
       api: body._bloonModifiers.bossSpeedMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("BossIncreaseSpeed", "BossDecreaseSpeed"),
+      imageKey: increaseDecrease(ModifierImages.BossIncreaseSpeed, ModifierImages.BossDecreaseSpeed),
     },
     {
       label: "MOAB Health",
       api: body._bloonModifiers.healthMultipliers.moabs,
       hasKey: true,
-      imageKey: increaseDecrease("MoabBoost", "MoabDecreaseHP"),
+      imageKey: increaseDecrease(ModifierImages.MoabHealthIncrease, ModifierImages.MoabHealthDecrease),
     },
     {
       label: "MOAB Speed",
       api: body._bloonModifiers.moabSpeedMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("FasterMoab", "SlowerMoab"),
+      imageKey: increaseDecrease(ModifierImages.MoabSpeedIncrease, ModifierImages.MoabSpeedDecrease),
     },
     {
-      label: "Bloon Health",
+      label: "Ceramic Health",
       api: body._bloonModifiers.healthMultipliers.bloons,
       hasKey: true,
-      imageKey: increaseDecrease("BloonBoost", "BloonDecreaseHP"),
+      imageKey: increaseDecrease(ModifierImages.CeramicIncreaseHP, ModifierImages.CeramicDecreaseHP),
     },
     {
       label: "Bloon Speed",
       api: body._bloonModifiers.speedMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("FasterBloons", "SlowerBloons"),
+      imageKey: increaseDecrease(ModifierImages.BloonsSpeedIncrease, ModifierImages.BloonsSpeedDecrease)
     },
     {
       label: "Regrow Rate",
       api: body._bloonModifiers.regrowRateMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("RegrowRateIncrease", "RegrowRateDecrease"),
+      imageKey: increaseDecrease(ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease)
     },
     {
       label: "Ability Cooldown",
       api: body.abilityCooldownReductionMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("AbilityCooldownReductionIncreaseIcon", "AbilityCooldownReductionDecreaseIcon"),
+      imageKey: increaseDecrease(
+        ModifierImages.AbilityCooldownReductionIncrease,
+        ModifierImages.AbilityCooldownReductionDecrease
+      )
     },
     {
       label: "Removable Cost",
       api: body.removeableCostMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("RemovableCostIncrease", "RemovableCostDecrease"),
+      imageKey: increaseDecrease(ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease),
     },
     {
       label: "Tower Limit",
       api: body.maxTowers,
       hasKey: false,
-      imageKey: () => "MaxTowers",
+      imageKey: () => ModifierImages.MaxTowers,
     },
     {
       label: "Paragon Limit",
       api: body.maxParagons,
       hasKey: false,
-      imageKey: () => "Paragon",
+      imageKey: () => ModifierImages.Paragon
     },
     {
       label: "Cash Limit",
       api: body.leastCashUsed,
       hasKey: false,
-      imageKey: () => "LeastCash",
+      imageKey: () => ModifierImages.LeastCash
     },
     {
       label: "Tier Limit",
       api: body.leastTiersUsed,
       hasKey: false,
-      imageKey: () => "LeastTiers",
+      imageKey: () => ModifierImages.LeastTiers
     },
     {
       label: "Monkey Knowledge Disabled",
       api: body.disableMK,
       hasKey: false,
-      imageKey: () => "NoKnowledge",
+      imageKey: () => ModifierImages.NoKnowledge
     },
     {
       label: "Selling Disabled",
       api: body.disableSelling,
       hasKey: false,
-      imageKey: () => "SellingDisabled",
+      imageKey: () => ModifierImages.SellingDisabled
     },
     {
       label: "Powers Disabled",
       api: body.disablePowers,
       hasKey: false,
-      imageKey: () => "PowersDisabled",
+      imageKey: () => ModifierImages.PowersDisabled
     },
     {
       label: "No Continues",
       api: body.noContinues,
       hasKey: false,
-      imageKey: () => "NoContinues",
+      imageKey: () => ModifierImages.NoContinues
     },
     {
       label: "All Regen",
       api: body._bloonModifiers.allRegen,
       hasKey: false,
-      imageKey: () => "AllRegen"
+      imageKey: () => ModifierImages.AllRegen
     },
     {
       label: "All Camo",
       api: body._bloonModifiers.allCamo,
       hasKey: false,
-      imageKey: () => "AllCamo"
+      imageKey: () => ModifierImages.AllCamo
     },
     {
     label: "Custom Rounds",
     api: customRounds,
     hasKey: false,
-    imageKey: () => "CustomRounds"
+    imageKey: () => ModifierImages.CustomRounds
     }
   ];
 }
@@ -151,43 +156,43 @@ export function buildCTModifiers(body: CTMetaData): Modifier[] {
       label: "Moab Health", 
       api: body.dcModel.bloonModifiers.healthMultipliers.moabs, 
       hasKey: true,
-      imageKey: increaseDecrease("FasterMoab", "SlowerMoab"),
+      imageKey: increaseDecrease(ModifierImages.MoabHealthIncrease, ModifierImages.MoabHealthDecrease),
     },
     { 
       label: "Ceramic Health", 
       api: body.dcModel.bloonModifiers.healthMultipliers.bloons, 
       hasKey: true,
-      imageKey: increaseDecrease("FasterBloons", "SlowerBloons"),
+      imageKey: increaseDecrease(ModifierImages.CeramicIncreaseHP, ModifierImages.CeramicDecreaseHP),
     },
     {
       label: "Bloon Speed",
       api: body.dcModel.bloonModifiers.speedMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("FasterBloons", "SlowerBloons"),
+      imageKey: increaseDecrease(ModifierImages.BloonsSpeedIncrease, ModifierImages.BloonsSpeedDecrease),
     },
     {
       label: "Regrow Rate",
       api: body.dcModel.bloonModifiers.regrowRateMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease("RegrowRateIncrease", "RegrowRateDecrease"),
+      imageKey: increaseDecrease(ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease),
     },
     {
       label: "Tower Limit",
       api: body.dcModel.maxTowers,
       hasKey: false,
-      imageKey: () => "MaxTowers",
+      imageKey: () => ModifierImages.MaxTowers
     },
     {
       label: "Monkey Knowledge Disabled",
       api: body.dcModel.disableMK,
       hasKey: false,
-      imageKey: () => "NoKnowledge",
+      imageKey: () => ModifierImages.NoKnowledge
     },
     {
       label: "Selling Disabled",
       api: body.dcModel.disableSelling,
       hasKey: false,
-      imageKey: () => "SellingDisabled",
+      imageKey: () => ModifierImages.SellingDisabled
     }
   ];
 }

@@ -2,6 +2,7 @@ import {
   AutocompleteInteraction, 
   ChatInputCommandInteraction, 
   ModalBuilder, 
+  ModalSubmitInteraction, 
   SlashCommandOptionsOnlyBuilder, 
   SlashCommandSubcommandsOnlyBuilder 
 } from "discord.js";
@@ -14,7 +15,7 @@ export interface Command {
   execute(interaction: ChatInputCommandInteraction): Promise<void>;
   autoComplete?(interaction: AutocompleteInteraction): Promise<void>;
   renderAndReply?(interaction: InteractionType, state: ComponentState): Promise<void>;
-  handleModal?(state: ComponentState, key: string, input: string): boolean;
+  handleModal?(interaction: ModalSubmitInteraction): Promise<void>;
   buildModal?(key: string): ModalBuilder | null;
   buildAnnouncement?(event: CurrentEventData<any, any>): Announcement | null;
 }

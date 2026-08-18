@@ -1,4 +1,4 @@
-import { Interaction } from "discord.js";
+import { ChatInputCommandInteraction, Interaction } from "discord.js";
 import { sendCommandError, logError } from "@utils";
 import { checkCooldown } from "./cooldown";
 import { registry } from "@client";
@@ -6,6 +6,17 @@ import { handleButton, handleSelectMenu } from "@components";
 import { usageTable } from "@database";
 
 const CMDCOOLDOWN = 5000;
+
+const getFullCommandName = (interaction: ChatInputCommandInteraction): string => {
+  const group = interaction.options.getSubcommandGroup(false);
+  const subCommand = interaction.options.getSubcommand(false);
+
+  return [
+    interaction.commandName, 
+    group,
+    subCommand
+  ].filter(Boolean).join(" ");
+}
 
 export async function handleInteraction(interaction: Interaction): Promise<void> {
 
@@ -29,7 +40,7 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
       try {
         checkCooldown(interaction.user.id, interaction.commandName, CMDCOOLDOWN);
         await command.execute(interaction);
-        await usageTable.increaseCommandUsage(interaction.commandName);
+        await usageTable.increaseCommandUsage(getFullCommandName(interaction));
       } catch (error) {
         await sendCommandError(interaction, error);
       }

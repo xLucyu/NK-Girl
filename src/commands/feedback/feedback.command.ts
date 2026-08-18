@@ -1,6 +1,5 @@
 import { 
   ApplicationIntegrationType, 
-  ChannelType, 
   ChatInputCommandInteraction, 
   Colors, 
   EmbedBuilder, 
@@ -28,12 +27,11 @@ export class FeedbackCommand {
     )
 
   public async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.deferReply();
     const modal = this.buildModal();
     await interaction.showModal(modal);
   }
 
-  private buildModal() {
+  public buildModal() {
     return BuildModalMenu({
       customId: "feedback:modal:submit",
       title: "Feedback",
@@ -43,8 +41,9 @@ export class FeedbackCommand {
     });
   }
 
-  public async handleModal(interaction: ModalSubmitInteraction) {
+  public async handleModal(interaction: ModalSubmitInteraction): Promise<void> {
 
+    await interaction.deferReply();
     const feedback = interaction.fields.getTextInputValue("input");
     const channel = await discordClient.client.channels.fetch(config.SUBMISSIONCHANNEL);
 
@@ -72,7 +71,7 @@ export class FeedbackCommand {
     });
     } catch {
       await interaction.followUp({
-        content: "Something went wrong, a notification has been sent to the owner. Please try again",
+        content: "Something went wrong, please try again",
         flags: MessageFlags.Ephemeral
       });
     }

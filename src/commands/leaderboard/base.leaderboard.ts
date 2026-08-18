@@ -2,7 +2,9 @@ import {
   AttachmentBuilder,
   ButtonStyle,
   ChatInputCommandInteraction,
+  MessageFlags,
   ModalBuilder,
+  ModalSubmitInteraction,
   type InteractionEditReplyOptions,
 } from "discord.js";
 import type { InteractionType } from "../base.command";
@@ -11,6 +13,7 @@ import {
   BuildButtonMenu,
   BuildModalMenu,
   CreateComponentState,
+  TIMEOUT,
   componentState,
   render,
   scheduleComponentCleanup,
@@ -114,7 +117,6 @@ export abstract class BaseLeaderboard {
     options.total = total;
     options.pageSize = PAGE_SIZE;
 
-
     const rows = this.formatTeams(
       options.data,
       options.medalsMode,
@@ -164,20 +166,71 @@ export abstract class BaseLeaderboard {
     return null;
   }
 
-  public handleModal(state: ComponentState, key: string, input: string): boolean {
+  public async handleModal(interaction: ModalSubmitInteraction): Promise<void> {
+
+    const parts = interaction.customId.split(":");
+    const [, , key, action] = parts;
+
+    if (action !== "submit" || !key) return;
+
+    const messageId = interaction.message?.id;
+    if (!messageId) return;
+
+    const state = componentState.get(messageId);
+
+    if (!state) {
+      await interaction.reply({
+        content: "This message has expired. Please run the command again.",
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
+
+    if (Date.now() > state.expiresAt) {
+      componentState.delete(messageId);
+
+      await interaction.reply({
+        content: "This message has expired. Please run the command again.",
+        flags: MessageFlags.Ephemeral,
+      });
+
+      return;
+    }
+
+    const input = interaction.fields.getTextInputValue("input");
 
     const options = state.options as LeaderboardOptions;
 
-    const index = key === "search" ? this.findByName(options.data, input) :
-      key === "position" ? this.findByPosition(options.data, input) : null;
+    const index = key === "search"
+      ? this.findByName(options.data, input)
+      : key === "position"
+        ? this.findByPosition(options.data, input)
+        : null;
 
-    if (index === null) return false;
+    if (index === null) {
+      await interaction.reply({
+        content: `No result found for \`${input}\`.`,
+        flags: MessageFlags.Ephemeral,
+      });
+      return;
+    }
 
     options.highlight = index;
     options.offset = Math.floor(index / PAGE_SIZE) * PAGE_SIZE;
 
+    await interaction.deferUpdate();
 
-    return true;
+    state.expiresAt = Date.now() + TIMEOUT;
+    componentState.set(messageId, state);
+
+    scheduleComponentCleanup({
+      messageId,
+      editReply: (options) => interaction.editReply(options),
+      expiresAt: state.expiresAt,
+      onExpire: () => componentState.delete(messageId),
+    });
+
+    await this.renderAndReply(interaction, state);
   }
 
   private findByName(data: LeaderboardPayload, input: string): number | null {

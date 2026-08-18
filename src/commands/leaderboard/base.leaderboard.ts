@@ -15,6 +15,7 @@ import {
   CreateComponentState,
   TIMEOUT,
   componentState,
+  guardOwnership,
   render,
   scheduleComponentCleanup,
   type BaseOptions,
@@ -177,6 +178,9 @@ export abstract class BaseLeaderboard {
     if (!messageId) return;
 
     const state = componentState.get(messageId);
+    if (!state) return;
+
+    if (!(await guardOwnership(interaction, state))) return;
 
     if (!state) {
       await interaction.reply({

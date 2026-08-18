@@ -1,8 +1,9 @@
 import { Interaction } from "discord.js";
 import { sendCommandError, logError } from "@utils";
-import { handleButton, handleSelectMenu } from "@components";
 import { checkCooldown } from "./cooldown";
 import { registry } from "@client";
+import { handleButton, handleSelectMenu } from "@components";
+import { usageTable } from "@database";
 
 const CMDCOOLDOWN = 5000;
 
@@ -13,7 +14,7 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
     const command = registry.get(interaction.commandName);
 
     try {
-      command.autoComplete?.(interaction);
+      await command.autoComplete?.(interaction);
     } catch (error) {
       console.error(`[Autocomplete:${interaction.commandName}]`, error);
       await interaction.respond([]).catch(() => {});
@@ -28,6 +29,7 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
       try {
         checkCooldown(interaction.user.id, interaction.commandName, CMDCOOLDOWN);
         await command.execute(interaction);
+        await usageTable.increaseCommandUsage(interaction.commandName);
       } catch (error) {
         await sendCommandError(interaction, error);
       }

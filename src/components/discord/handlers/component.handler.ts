@@ -16,6 +16,23 @@ export async function handleSelectMenu(interaction: StringSelectMenuInteraction,
 }
 
 export async function handleButton(interaction: ButtonInteraction): Promise<void> {
+
+  const parts = interaction.customId.split(":");
+  const [commandKey, field, key] = parts;
+
+  if (field === "modal" && key) {
+
+    const state = componentState.get(interaction.message.id);
+    if (!state) return;
+    if (!(await guardOwnership(interaction, state))) return;
+
+    const command = registry.get(commandKey);
+    const modal = command.buildModal?.(key);
+
+    if (modal) await interaction.showModal(modal);
+    return;
+  }
+
   return handleComponent(interaction);
 }
 
@@ -63,7 +80,6 @@ async function handleComponent(interaction: ComponentInteraction): Promise<void>
   }
 }
 
-/** Write a select/button value into state. Returns true if anything changed. */
 function applyValue(
   state: ComponentState,
   interaction: ComponentInteraction,
@@ -71,9 +87,7 @@ function applyValue(
   buttonValue: string | undefined,
 ): boolean {
 
-  const value = interaction.isStringSelectMenu()
-    ? interaction.values[0]
-    : buttonValue;
+  const value = interaction.isStringSelectMenu() ? interaction.values[0] : buttonValue;
 
   if (value === undefined) return false;
 

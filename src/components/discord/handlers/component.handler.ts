@@ -6,26 +6,16 @@ import {
 import { componentState, type ComponentState, TIMEOUT } from "../state";
 import { scheduleComponentCleanup } from "../cleanup";
 import { applyPagination, isPagination } from "./pagination.handler";
-import { handleModalOpen, isModal } from "./modal.handler";
 import { guardOwnership } from "./ownership";
 import { registry } from "@client";
 
 type ComponentInteraction = StringSelectMenuInteraction | ButtonInteraction;
 
-export async function handleSelectMenu(
-  interaction: StringSelectMenuInteraction,
-): Promise<void> {
+export async function handleSelectMenu(interaction: StringSelectMenuInteraction,): Promise<void> {
   return handleComponent(interaction);
 }
 
-export async function handleButton(
-  interaction: ButtonInteraction,
-): Promise<void> {
-
-  const parts = interaction.customId.split(":");
-
-  if (isModal(parts)) return handleModalOpen(interaction, parts);
-
+export async function handleButton(interaction: ButtonInteraction): Promise<void> {
   return handleComponent(interaction);
 }
 
@@ -100,7 +90,6 @@ function applyValue(
   return true;
 }
 
-/** Extend the expiry window and re-arm the cleanup timer. */
 function refreshState(
   interaction: ComponentInteraction,
   state: ComponentState,

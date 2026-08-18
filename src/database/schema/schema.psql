@@ -4,7 +4,7 @@ create table if not exists event_announcements (
   channel_id TEXT,
   announced_event_ids TEXT[] NOT NULL DEFAULT '{}',
 
-  PRIMARY KEY (GuildID, EventType)
+  PRIMARY KEY (guild_id, event_type)
 );
 
 create table if not exists usage (

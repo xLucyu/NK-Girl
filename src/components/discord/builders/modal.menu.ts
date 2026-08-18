@@ -1,9 +1,17 @@
 import {
     ActionRowBuilder,
     ModalBuilder,
+    ModalSubmitInteraction,
     TextInputBuilder,
     TextInputStyle
 } from "discord.js";
+
+export interface ModalContext {
+    interaction: ModalSubmitInteraction;
+    state?: ModalSubmitInteraction;
+    key?: string;
+    input: string;
+}
 
 export function BuildModalMenu(parameters: {
     customId: string;

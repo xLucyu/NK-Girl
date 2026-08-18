@@ -11,6 +11,7 @@ import { HelpCommand } from "./help/help.command";
 import { LeaderboardCommand } from "./leaderboard/leaderboard.command";
 import { ChannelCommand } from "./events/channel.command";
 import { EventCommand } from "./events/events.command";
+import { FeedbackCommand } from "./feedback/feedback.command";
 
 export const allCommands: Command[] = [
   new BossCommand(),
@@ -24,7 +25,8 @@ export const allCommands: Command[] = [
   new HelpCommand(),
   new LeaderboardCommand(),
   new ChannelCommand(),
-  new EventCommand()
+  new EventCommand(),
+  new FeedbackCommand()
 ]
 
 export * from "./interaction";

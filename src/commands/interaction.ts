@@ -1,9 +1,8 @@
 import { Interaction } from "discord.js";
-import { sendCommandError } from "@utils";
-import { handleButton, handleModalSubmit, handleSelectMenu } from "@components";
+import { sendCommandError, logError } from "@utils";
+import { handleButton, handleSelectMenu } from "@components";
 import { checkCooldown } from "./cooldown";
 import { registry } from "@client";
-import { logError } from "../utils/error-handler/error.log";
 
 const CMDCOOLDOWN = 5000;
 
@@ -56,7 +55,9 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
 
   if (interaction.isModalSubmit()) {
     try {
-    await handleModalSubmit(interaction);
+      const commandKey = interaction.customId.split(":")[0];
+      const command = registry.get(commandKey);
+      await command.handleModal?.(interaction);
     } catch (error) {
      await logError(`Modal:${interaction.customId}`, error);
     }

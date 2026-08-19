@@ -7,15 +7,26 @@
     "outDir": "dist",
     "strict": true,
     "jsx": "react-jsx",
+    "resolveJsonModule": true,
     "paths": {
-      "@api": ["./src/api"],
-      "@utils": ["./src/utils"],
-      "@manager": ["./src/event-manager"],
+      "@app": ["./src/app"],
+      "@app/*": ["./src/app/*"],
+      "@btd6": ["./src/btd6"],
+      "@btd6/*": ["./src/btd6/*"],
       "@commands": ["./src/commands"],
-      "@components": ["./src/components"],
+      "@commands/*": ["./src/commands/*"],
       "@database": ["./src/database"],
-      "@client": ["./src/client"],
-      "@config": ["./src/config"]
+      "@database/*": ["./src/database/*"],
+      "@discord": ["./src/discord"],
+      "@discord/*": ["./src/discord/*"],
+      "@lib": ["./src/lib"],
+      "@lib/*": ["./src/lib/*"],
+      "@services": ["./src/services"],
+      "@services/*": ["./src/services/*"],
+      "@ui": ["./src/ui"],
+      "@ui/*": ["./src/ui/*"]
     }
-  }
+  },
+
+  "include": ["src"]
 }

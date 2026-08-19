@@ -7,5 +7,7 @@ export class BotError extends Error {
     super(userMessage);
     this.title = title;
     this.userMessage = userMessage;
+
+    this.name = new.target.name;
   }
 }

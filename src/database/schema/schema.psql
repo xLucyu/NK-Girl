@@ -1,0 +1,13 @@
+create table if not exists event_announcements (
+  guild_id TEXT NOT NULL,
+  event_type TEXT NOT NULL,
+  channel_id TEXT,
+  announced_event_ids TEXT[] NOT NULL DEFAULT '{}',
+
+  PRIMARY KEY (guild_id, event_type)
+);
+
+create table if not exists usage (
+  command TEXT PRIMARY KEY,
+  uses INTEGER DEFAULT 0
+);

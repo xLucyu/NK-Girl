@@ -1,7 +1,10 @@
-
+import { 
+  ChatInputCommandInteraction, 
+  EmbedBuilder, 
+  SlashCommandBuilder 
+} from "discord.js";
 import { calculateGoal, calculateSend, TimeCalculation } from "@btd6";
 import { Command, getEmoji } from "@discord";
-import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 
 @Command({
   description: "Calculate your Race Time",

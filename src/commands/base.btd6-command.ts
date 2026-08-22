@@ -3,7 +3,7 @@ import {
   AutocompleteInteraction, 
   ChatInputCommandInteraction, 
   InteractionReplyOptions, 
-  SlashCommandSubcommandsOnlyBuilder 
+  SlashCommandOptionsOnlyBuilder
 } from "discord.js";
 import { 
   BaseBody, 
@@ -31,7 +31,7 @@ export abstract class BaseCommand<T extends BaseBody, K> {
 
   protected abstract readonly eventType: EventType;
   protected abstract readonly urlKey: keyof typeof GOOGLE_API_ULRS;
-  public abstract commandData: SlashCommandSubcommandsOnlyBuilder;
+  public abstract commandData: SlashCommandOptionsOnlyBuilder;
 
   public async execute(interaction: ChatInputCommandInteraction): Promise<void> {
 

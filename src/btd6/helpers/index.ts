@@ -5,3 +5,4 @@ export * from "./decode.boss-rush";
 export * from "./decode.collection";
 export * from "./modifiers";
 export * from "./towers";
+export * from "./format";

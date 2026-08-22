@@ -1,7 +1,7 @@
 import { loadEmojis} from "@discord";
 import { discordClient } from "./discord.client";
-import { eventScheduler } from "@btd6/services";
-import { loadCommands } from "@discord/command/command.loader";
+import { eventScheduler } from "@btd6";
+import { loadCommands } from "@discord";
 
 export async function bootstrap(): Promise<void> {
 

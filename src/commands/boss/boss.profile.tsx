@@ -29,15 +29,11 @@ const scoreTypeImage: Record<ScoringType, string> = {
   [ScoringType.CTPoints]: ""
 }
 
-const hasCustomRounds = (metaData: MetaBody, event: BossBody) => {
-  return metaData.roundSets.some((set) => set.name !== event.bossType)
-}
-
 export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
   
   const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
   const bossIcon = BossImages[bossTypeKey]?.[difficulty];
-  const customRounds = hasCustomRounds(metaData, event);
+  const customRounds = metaData.roundSets.some((set) => set.name === event.bossType);
 
   const modifiers = filterModifiers(buildModifiers(metaData, customRounds));
 

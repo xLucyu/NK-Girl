@@ -27,13 +27,13 @@ export function buildModifiers(body: MetaBody, customRounds: boolean = false): M
       label: "Boss Health",
       api: body._bloonModifiers.healthMultipliers.boss,
       hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.BossIncreaseHP, ModifierImages.BossDecreaseHP),
+      imageKey: increaseDecrease(ModifierImages.BossHealthIncrease, ModifierImages.BossHealthDecrease),
     },
     {
       label: "Boss Speed",
       api: body._bloonModifiers.bossSpeedMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.BossIncreaseSpeed, ModifierImages.BossDecreaseSpeed),
+      imageKey: increaseDecrease(ModifierImages.BossSpeedIncrease, ModifierImages.BossSpeedDecrease),
     },
     {
       label: "MOAB Health",
@@ -51,7 +51,7 @@ export function buildModifiers(body: MetaBody, customRounds: boolean = false): M
       label: "Ceramic Health",
       api: body._bloonModifiers.healthMultipliers.bloons,
       hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.CeramicIncreaseHP, ModifierImages.CeramicDecreaseHP),
+      imageKey: increaseDecrease(ModifierImages.CeramicHealthIncrease, ModifierImages.CeramicHealthDecrease),
     },
     {
       label: "Bloon Speed",
@@ -163,7 +163,7 @@ export function buildCTModifiers(body: CTMetaData): Modifier[] {
       label: "Ceramic Health", 
       api: body.dcModel.bloonModifiers.healthMultipliers.bloons, 
       hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.CeramicIncreaseHP, ModifierImages.CeramicDecreaseHP),
+      imageKey: increaseDecrease(ModifierImages.CeramicHealthIncrease, ModifierImages.CeramicHealthDecrease),
     },
     {
       label: "Bloon Speed",

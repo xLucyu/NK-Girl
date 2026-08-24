@@ -1,6 +1,6 @@
 import { Box } from "../layout/Box";
 import { loadImage } from "@ui/load-image";
-import { Modifier, ModifierImages,  } from "@btd6";
+import { Modifier, ModifierImages } from "@btd6";
 
 interface ModifiersProps {
   modifiers: Modifier[];
@@ -94,11 +94,9 @@ function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
 }
 
 function CompactModifierPill({ modifier, sizing }: {modifier: Modifier; sizing: ModifierSizing; }) {
-  const imageKey = modifier.imageKey(modifier.api);
-  if (!imageKey) return null;
 
-  const imagePath = ModifierImages[imageKey as keyof typeof ModifierImages];
-  if (!imagePath) return null;
+  const imagePath = modifier.imageKey(modifier.api);
+  if (!imagePath) return;
 
   const value = formatCompactValue(modifier);
 
@@ -136,11 +134,8 @@ function CompactModifierPill({ modifier, sizing }: {modifier: Modifier; sizing: 
 
 function ModifierRow({ modifier, sizing }: { modifier: Modifier; sizing: ModifierSizing; }) {
 
-  const imageKey = modifier.imageKey(modifier.api);
-  if (!imageKey) return null;
-
-  const imagePath = ModifierImages[imageKey as keyof typeof ModifierImages];
-  if (!imagePath) return null;
+  const imagePath = modifier.imageKey(modifier.api);
+  if (!imagePath) return;
 
   return (
     <div

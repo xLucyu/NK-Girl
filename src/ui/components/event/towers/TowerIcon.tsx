@@ -1,7 +1,5 @@
-
-import { CATEGORIES, TOWER_INFO, TowerContainers, TowerImages } from "@btd6";
-import { TowerCategory } from "./sizes";
 import { loadImage } from "@ui/load-image";
+import {TOWER_INFO, TowerContainers, TowerImages } from "@btd6";
 
 interface TowerIconProps {
   towerName: string;
@@ -10,23 +8,6 @@ interface TowerIconProps {
   crossPaths?: string | null;
   blocked?: boolean;
 }
-
-const CATEGORY_LOOKUP: Record<string, TowerCategory> = (() => {
-  const map: Record<string, TowerCategory> = {};
-
-  for (
-    const [category, towers] of Object.entries(CATEGORIES) as [
-      TowerCategory,
-      string[],
-    ][]
-  ) {
-    for (const tower of towers) {
-      map[tower] = category;
-    }
-  }
-
-  return map;
-})();
 
 export function TowerIcon({
   towerName,

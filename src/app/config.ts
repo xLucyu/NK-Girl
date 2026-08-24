@@ -21,5 +21,7 @@ export const CONFIG = {
   USER: validate("USER"),
   PASSWORD: validate("PASSWORD"),
   SUBMISSION_CHANNEL: validate("SUBMISSION_CHANNEL"),
-  WEBHOOK_URL: validate("WEBHOOK_URL")
+  WEBHOOK_URL: validate("WEBHOOK_URL"),
+  SERVICE_ACCOUNT: validate("SERVICE_ACCOUNT"),
+  BUCKET: validate("BUCKET")
 };

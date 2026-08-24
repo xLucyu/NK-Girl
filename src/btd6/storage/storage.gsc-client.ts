@@ -1,5 +1,6 @@
 import { Storage, Bucket } from "@google-cloud/storage";
 import { EventType } from "@btd6/types";
+import { CONFIG } from "@app";
 
 export type BucketRoot = "Event" | "Leaderboard";
 
@@ -61,10 +62,9 @@ export class GscClient {
   public invalidate(eventType?: EventType, root?: BucketRoot): void {
     if (!eventType) return void this.cache.clear();
     if (root) return void this.cache.delete(`${root}:${eventType}`);
-    for (const key of this.cache.keys()) {
-      if (key.endsWith(`:${eventType}`)) this.cache.delete(key);
-    }
+    for (const key of this.cache.keys()) if (key.endsWith(`:${eventType}`)) this.cache.delete(key);
+    
   }
 }
 
-export const gsc = new GscClient("serviceAccount.json", "btd6api");
+export const gsc = new GscClient(CONFIG.SERVICE_ACCOUNT, CONFIG.BUCKET);

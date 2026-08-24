@@ -78,7 +78,7 @@ export function buildModifiers(body: MetaBody, customRounds: boolean = false): M
       label: "Removable Cost",
       api: body.removeableCostMultiplier,
       hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease),
+      imageKey: increaseDecrease(ModifierImages.RemovableCostIncrease, ModifierImages.RemovableCostDecrease),
     },
     {
       label: "Tower Limit",

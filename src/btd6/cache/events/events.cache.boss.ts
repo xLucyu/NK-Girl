@@ -30,6 +30,6 @@ export class BossCache extends BaseEventCache<BossBody,Record<BossDifficulty, Me
   }
 
   public getBucketPath(event: BossBody): string {
-    return `Event/Boss/${event.id}/event.json`;
+    return `Event/Boss/${event.name}/event.json`;
   }
 }

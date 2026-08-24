@@ -1,4 +1,5 @@
-import { CTMetaData, MetaBody,  } from "@btd6/types";
+import { ModifierImages } from "@btd6/assets";
+import { CTMetaData, MetaBody } from "@btd6/types";
 
 type ModifierImage = (typeof ModifierImages)[keyof typeof ModifierImages];
 

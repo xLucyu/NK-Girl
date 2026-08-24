@@ -7,7 +7,6 @@ import {
   EventCacheEntry, 
   EventType, 
   MetaBody,
-  MetaData, 
   PreviousEvent, 
   RaceBody 
 } from "@btd6";
@@ -41,7 +40,7 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 
   public buildAnnouncement(event: RaceProps["currentEvent"]): Announcement {
     return {
-      event: event.data,
+      eventBody: event.data,
       profiles: [
         RaceProfile({
           event: event.data,

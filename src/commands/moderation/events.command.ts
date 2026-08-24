@@ -1,14 +1,12 @@
-import { Command } from "@discord";
 import { 
-    SlashCommandBuilder, 
-    ChatInputCommandInteraction, 
-    PermissionFlagsBits, 
-    ApplicationIntegrationType,
-    InteractionContextType
+  SlashCommandBuilder, 
+  ChatInputCommandInteraction, 
+  PermissionFlagsBits
 } from "discord.js";
 import { eventChoices } from "./channel.command";
-import { MissingGuildID, MissingPermission } from "@lib";
-import { eventAnnouncer, EventType } from "@btd6";
+import { Command } from "@discord";
+import { ChannelNotFound, EventNotFound, MissingGuildID, MissingPermission } from "@lib";
+import { eventAnnouncer, EventType, eventScheduler } from "@btd6";
 
 @Command({
   description: "Send or edit an Event in coordinates to the discord channel",
@@ -50,12 +48,6 @@ export class EventCommand {
             .setRequired(true)
         )
     )
-    .setIntegrationTypes(
-        ApplicationIntegrationType.GuildInstall,
-    )
-    .setContexts(
-          InteractionContextType.Guild,
-    );
 
 
   public async execute(interaction: ChatInputCommandInteraction) {
@@ -70,15 +62,15 @@ export class EventCommand {
     if (!guildId) throw new MissingGuildID();
 
     const eventType = interaction.options.getString("event_type",true) as EventType;
+    const cache = eventScheduler.getEventCache(eventType).getCache();
+
+    if (!cache) throw new EventNotFound();
 
     if (subCommand === "send") {
 
-      const message = await eventAnnouncer.send(eventType, guildId, true);
+      const message = await eventAnnouncer.send(cache, guildId, true);
 
-      if (!message) {
-        await interaction.editReply(`Could not send **${eventType}**. Make sure an announcement channel is configured.`);
-        return;
-      }
+      if (!message) throw new ChannelNotFound();
 
       await interaction.editReply(`Successfully sent **${eventType}** in <#${message.channelId}>.`);
       return;
@@ -87,12 +79,9 @@ export class EventCommand {
     if (subCommand === "edit") {
 
       const messageId = interaction.options.getString("message_id", true);
-      const message = await eventAnnouncer.edit(eventType, guildId, messageId);
+      const message = await eventAnnouncer.edit(cache, guildId, messageId);
 
-      if (!message) {
-        await interaction.editReply(`Could not edit the **${eventType}** announcement.`);
-        return;
-      }
+      if (!message) throw new ChannelNotFound();
 
       await interaction.editReply(`Successfully updated **${eventType}**.`);
       return;

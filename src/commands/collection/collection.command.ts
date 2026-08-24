@@ -4,7 +4,7 @@ import {
   SlashCommandBuilder 
 } from "discord.js";
 import { BaseCommand } from "@commands/base.btd6-command";
-import { CollectionProfile } from "./collectiion.profile";
+import { CollectionProfile } from "./collection.profile";
 import { 
   Announcement, 
   CurrentEventData, 
@@ -56,7 +56,7 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
     const pageCount = Math.ceil(total / PAGE_SIZE);
 
     return {
-      event: eventProps.data,
+      eventBody: eventProps.data,
       profiles:
         Array.from(
           { length: pageCount },

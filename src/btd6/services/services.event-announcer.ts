@@ -5,17 +5,17 @@ import {
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
   MessageFlags,
-  type Message,
-  type NewsChannel,
-  type TextChannel,
-  type ThreadChannel,
+  Message,
+  NewsChannel,
+  TextChannel,
+  ThreadChannel,
 } from "discord.js";
-import { eventScheduler } from "./services.event-scheduler";
-import { discordClient } from "@app/discord.client";
 import { BaseBody, EventType } from "@btd6/types";
+import { discordClient } from "@app";
 import { registry } from "@discord";
-import { render } from "@ui/render";
+import { render } from "@ui";
 import { guildTable } from "@database";
+import { CurrentEventData, EventCacheEntry } from "@btd6/cache";
 
 
 type AnnounceableChannel = TextChannel | NewsChannel | ThreadChannel;
@@ -27,7 +27,7 @@ type AnnouncementMessage = {
 };
 
 export interface Announcement {
-  event: BaseBody;
+  eventBody: BaseBody;
   profiles: JSX.Element[];
 }
 
@@ -47,36 +47,28 @@ export class EventAnnouncer {
     );
   }
 
-  private async getChannel(
-    guildId: string,
-    eventType: EventType
-  ): Promise<AnnounceableChannel | undefined> {
+  private async getChannel(guildId: string, eventType: EventType): Promise<AnnounceableChannel | undefined> {
 
     const channelId = await guildTable.fetchRegisteredChannel(
       eventType,
       guildId
     );
-
     if (!channelId) return;
 
     const channel = await discordClient.client.channels.fetch(channelId);
-
     if (!this.isSendableChannel(channel)) return;
 
     return channel;
   }
 
-  private buildAnnouncement(eventType: EventType): Announcement | null {
+  private buildAnnouncement(event: EventCacheEntry<any, any>): Announcement | null {
 
-    if (eventType === EventType.CT) return null;
+    if (event.eventType === EventType.CT) return null;
 
-    const cache = eventScheduler.getEventCache(eventType).getCache();
-    if (!cache) return null;
-
-    const commandName = eventType.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
+    const commandName = event.eventType.replace(/([a-z])([A-Z])/g, "$1_$2").toLowerCase();
     const command = registry.get(commandName);
 
-    return command.buildAnnouncement?.(cache.currentEvent) ?? null;
+    return command.buildAnnouncement?.(event.currentEvent) ?? null;
   }
 
   private async renderProfiles(profiles: JSX.Element[]) {
@@ -114,28 +106,24 @@ export class EventAnnouncer {
   }
 
   public async send(
-    eventType: EventType,
+    event: EventCacheEntry<any, any>,
     guildId: string,
     force = false
   ): Promise<Message | null> {
 
-    if (eventType === EventType.CT) return null;
+    if (event.eventType === EventType.CT) return null;
 
-    const cache = eventScheduler.getEventCache(eventType).getCache();
-    if (!cache) return null;
-
-    const eventId = cache.currentEvent.data.id;
-    const alreadyAnnounced = await guildTable.hasEvent(eventId, eventType, guildId);
+    const alreadyAnnounced = await guildTable.hasEvent(event.currentEvent.data.id, event.eventType, guildId);
 
     if (!force && alreadyAnnounced) return null;
 
-    const channel = await this.getChannel(guildId, eventType);
+    const channel = await this.getChannel(guildId, event.eventType);
     if (!channel) return null;
 
-    const announcement = this.buildAnnouncement(eventType);
+    const announcement = this.buildAnnouncement(event);
     if (!announcement) return null;
 
-    const { event, profiles } = announcement;
+    const { eventBody, profiles } = announcement;
 
     const buffers = await this.renderProfiles(profiles);
     const message = await channel.send(this.buildMessage(buffers));
@@ -144,8 +132,8 @@ export class EventAnnouncer {
 
     if (!alreadyAnnounced) {
       await guildTable.appendEvent(
-        event.id,
-        eventType,
+        eventBody.id,
+        event.eventType,
         guildId
       );
     }
@@ -154,15 +142,15 @@ export class EventAnnouncer {
   }
 
   public async edit(
-    eventType: EventType,
+    event: EventCacheEntry<any, any>,
     guildId: string,
     messageId: string
   ): Promise<Message | null> {
 
-    const announcement = this.buildAnnouncement(eventType);
+    const announcement = this.buildAnnouncement(event);
     if (!announcement) return null;
 
-    const channel = await this.getChannel(guildId, eventType);
+    const channel = await this.getChannel(guildId, event.eventType);
     if (!channel) return null;
 
     const message = await channel.messages
@@ -182,16 +170,13 @@ export class EventAnnouncer {
     });
   }
 
-  public async sendAll(eventType: EventType): Promise<void> {
+  public async sendAll(event: EventCacheEntry<any, any>): Promise<void> {
 
-    if (eventType === EventType.CT) return;
+    if (event.eventType === EventType.CT) return;
 
-    const cache = eventScheduler.getEventCache(eventType).getCache();
-    if (!cache) return;
+    const eventId = event.currentEvent.data.id;
 
-    const eventId = cache.currentEvent.data.id;
-
-    const channelIds = await guildTable.fetchAllRegisteredChannels(eventType);
+    const channelIds = await guildTable.fetchAllRegisteredChannels(event.eventType);
     if (channelIds.length === 0) return;
 
     const targets = (await Promise.all(channelIds.map(async (channelId) => {
@@ -204,7 +189,7 @@ export class EventAnnouncer {
 
       const alreadyAnnounced = await guildTable.hasEvent(
         eventId,
-        eventType,
+        event.eventType,
         channel.guildId
       );
 
@@ -218,10 +203,10 @@ export class EventAnnouncer {
 
     if (targets.length === 0) return;
 
-    const announcement = this.buildAnnouncement(eventType);
+    const announcement = this.buildAnnouncement(event);
     if (!announcement) return;
 
-    const { event, profiles } = announcement;
+    const { eventBody, profiles } = announcement;
     const buffers = await this.renderProfiles(profiles);
 
     const results = await Promise.allSettled(targets.map(async ({ channel }) => {
@@ -231,8 +216,8 @@ export class EventAnnouncer {
       if (channel.type === ChannelType.GuildAnnouncement) await message.crosspost();
 
       await guildTable.appendEvent(
-        event.id,
-        eventType,
+        eventBody.id,
+        event.eventType,
         channel.guildId
       );
     }));
@@ -242,7 +227,7 @@ export class EventAnnouncer {
 
       if (result.status === "rejected") {
         console.error(
-          `Failed to announce ${eventType} in channel ${targets[i].channelId}:`,
+          `Failed to announce ${event.eventType} in channel ${targets[i].channelId}:`,
           result.reason
         );
       }

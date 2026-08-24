@@ -69,7 +69,7 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
 
   public buildAnnouncement(eventProps: BossProps["currentEvent"]): Announcement {
     return {
-      event: eventProps.data,
+      eventBody: eventProps.data,
       profiles: BossDifficulties.map((difficulty) => 
         BossProfile({
           event: eventProps.data,

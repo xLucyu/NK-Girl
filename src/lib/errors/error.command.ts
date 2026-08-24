@@ -26,3 +26,12 @@ export class MissingPermission extends BotError {
     );
   }
 }
+
+export class ChannelNotFound extends BotError {
+  constructor() {
+    super(
+      "Channel not found",
+      "You didn't set a channel for this event yet."
+    )
+  }
+}

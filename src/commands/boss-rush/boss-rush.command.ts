@@ -30,7 +30,7 @@ export class BossRushCommand extends BaseCommand<EventBody, BossRushResult> {
 
   public buildAnnouncement(eventProps: BossRushProps["currentEvent"]): Announcement {
     return {
-      event: eventProps.data,
+      eventBody: eventProps.data,
       profiles: [
         BossRushProfile({
           event: eventProps.data,

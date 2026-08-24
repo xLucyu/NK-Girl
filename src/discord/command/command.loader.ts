@@ -7,7 +7,7 @@ import { registry } from "./command.registry";
 
 export async function loadCommands(): Promise<void> {
 
-  const commandsPath = path.join(__dirname, "../../commands");
+  const commandsPath = path.join(__dirname, "../../commands"); // in prod needs to be changed to /app/dist
 
   await loadDirectory(commandsPath);
   registry.register([...commandClasses].map(Command => new Command()));

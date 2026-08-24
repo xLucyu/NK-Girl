@@ -31,9 +31,12 @@ services:
         RUN npm ci --omit=dev && npm cache clean --force
 
         COPY --from=build /app/dist ./dist
-        COPY --from=build /app/src/utils/assets ./src/utils/assets
 
-        RUN ln -s /app/src/utils/assets /app/assets
+        # Runtime assets used by loadImage()
+        COPY --from=build /app/src/btd6/assets ./btd6/assets/images
+
+        # Runtime font used by render()
+        COPY --from=build /app/src/ui/fonts ./src/ui/fonts
 
         CMD ["npm", "start"]
 

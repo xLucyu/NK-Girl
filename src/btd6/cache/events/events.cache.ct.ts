@@ -17,7 +17,7 @@ export class CTCache extends BaseEventCache<CTBody, Record<string, TileCode>> {
   protected async getMetaData(event: CTBody): Promise<Record<string, TileCode>> {
      
     const eventNumber = getNumberForEvent(event.start, EventType.CT);
-    const url = API_URLS.Tile.replace("{}", String(eventNumber));
+    const url = API_URLS.Tile.replace("{event}", String(eventNumber));
     const data = await getData<Record<string,TileCode>>(url);
     return data;
   }

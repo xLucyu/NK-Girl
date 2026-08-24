@@ -2,7 +2,7 @@ import { logError } from "@discord/error/error.log";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-const ASSET_ROOT = resolve(__dirname, "../btd6/assets/images");
+const ASSET_ROOT = resolve(__dirname, "../btd6/assets");
 const cache = new Map<string, string>();
 
 export function loadImage(path: string): string {

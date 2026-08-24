@@ -3,7 +3,8 @@ import {
   Colors, 
   EmbedBuilder, 
   MessageFlags, 
-  ModalSubmitInteraction 
+  ModalSubmitInteraction, 
+  SlashCommandBuilder
 } from "discord.js";
 import { CONFIG, discordClient } from "@app";
 import { BuildModalMenu, Command } from "@discord";
@@ -14,6 +15,8 @@ import { BuildModalMenu, Command } from "@discord";
   cooldown: 25000
 })
 export class FeedbackCommand {
+
+  public commandData = new SlashCommandBuilder();
 
   public async execute(interaction: ChatInputCommandInteraction) {
     const modal = this.buildModal();

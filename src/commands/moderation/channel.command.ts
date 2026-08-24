@@ -94,9 +94,8 @@ export class ChannelCommand {
       return;
     }
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `Removed **${eventType}** announcements from <#${channelId}>.`,
-      flags: MessageFlags.Ephemeral,
     });
   }
 }

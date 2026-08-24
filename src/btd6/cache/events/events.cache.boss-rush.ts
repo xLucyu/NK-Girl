@@ -10,12 +10,12 @@ export class BossRushCache extends BaseEventCache<EventBody, BossRushResult> {
 
   protected override getCurrentEvent(events: EventBody[], now: number, getLatest = false): EventBody | undefined {
 
-  return super.getCurrentEvent(
-    events.filter(event => event.type === "bossRush"),
-    now,
-    getLatest
-  );
-}
+    return super.getCurrentEvent(
+      events.filter(event => event.type === "bossRush"),
+      now,
+      getLatest
+    );
+  }
 
   protected async getMetaData(event: EventBody): Promise<BossRushResult> {
     return generateBossRush(event.id);

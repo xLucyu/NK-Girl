@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { commandClasses } from "./command.decorator";
 
 import { registry } from "./command.registry";
@@ -27,6 +28,6 @@ async function loadDirectory(directory: string): Promise<void> {
 
     if (!entry.name.endsWith(".command.js") && !entry.name.endsWith(".command.ts")) continue;
 
-    await import(fullPath);
+    await import(pathToFileURL(fullPath).href);
   }
 }

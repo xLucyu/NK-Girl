@@ -16,8 +16,7 @@ import { BossDifficulties, playerMultiplier } from "@btd6";
 })
 export class LeaderboardCommand extends BaseLeaderboard {
 
-  public commandData = new SlashCommandBuilder()
-    
+  public commandData = new SlashCommandBuilder() 
     .addSubcommand((command) =>
       command
         .setName("boss")

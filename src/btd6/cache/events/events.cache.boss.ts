@@ -15,21 +15,6 @@ export class BossCache extends BaseEventCache<BossBody,Record<BossDifficulty, Me
   protected readonly eventType = EventType.Boss;
   protected readonly url = API_URLS.Boss;
 
-  protected getCurrentEvent(
-    events: BossBody[],
-    now: number
-  ): BossBody {
-
-    const currentEvent = events.find(
-      (event) =>
-        event.start <= now &&
-        event.end > now
-    );
-
-    if (!currentEvent) throw new Error("No active Boss event found");
-    return currentEvent;
-  }
-
   protected async getMetaData(event: BossBody): Promise<Record<BossDifficulty, MetaBody>> {
 
     const entries = await Promise.all(

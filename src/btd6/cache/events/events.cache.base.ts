@@ -83,6 +83,8 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
       previousEvents: this.getPreviousEvents(events)
     };
 
+    console.log(this.cache);
+
     if (!firstLoad) await this.uploadToBucket(currentEvent);
     return this.cache;
   }

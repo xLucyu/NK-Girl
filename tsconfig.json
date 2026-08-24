@@ -21,8 +21,6 @@
       "@discord/*": ["./src/discord/*"],
       "@lib": ["./src/lib"],
       "@lib/*": ["./src/lib/*"],
-      "@services": ["./src/services"],
-      "@services/*": ["./src/services/*"],
       "@ui": ["./src/ui"],
       "@ui/*": ["./src/ui/*"]
     }

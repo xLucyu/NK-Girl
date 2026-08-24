@@ -53,7 +53,7 @@ export abstract class BaseCommand<T extends BaseBody, K> {
 
   public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
 
-    await interaction.deferReply();
+    if (interaction.isChatInputCommand()) await interaction.deferReply();
 
     const eventProps = this.getEventProps();
     const event = await this.resolveEvent(eventProps, state);

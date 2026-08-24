@@ -1,4 +1,4 @@
-import { MedalImages } from "../images";
+import { MedalImages } from "@btd6/assets";
 
 export type MedalsMode = "Race" | "Standard" | "Elite" | "Player" | "Team";
 

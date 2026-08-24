@@ -1,7 +1,5 @@
 import {
-  ApplicationIntegrationType,
   ChannelType,
-  InteractionContextType,
   MessageFlags,
   PermissionFlagsBits,
   SlashCommandBuilder,

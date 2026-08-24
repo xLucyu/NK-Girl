@@ -1,16 +1,14 @@
 import cron, { ScheduledTask } from "node-cron";
-
 import { EventType } from "@btd6/types";
-
 import {
   BossCache,
   BossRushCache,
   RaceCache,
   OdysseyCache,
   CollectionCache,
-  CTCache
+  CTCache,
+  EventCacheEntry
 } from "@btd6/cache/events";
-
 import {
   BossLeaderboard,
   RaceLeaderboard,
@@ -94,7 +92,7 @@ export class EventScheduler {
         continue;
       }
 
-      await this.handleAnnouncement(event.eventType);
+      await this.handleAnnouncement(event);
     }
   }
 
@@ -115,8 +113,8 @@ export class EventScheduler {
     this.logErrors(results);
   }
 
-  private async handleAnnouncement(eventType: EventType): Promise<void> {
-    await eventAnnouncer.sendAll(eventType);
+  private async handleAnnouncement(event: EventCacheEntry<any, any>): Promise<void> {
+    await eventAnnouncer.sendAll(event);
   }
 
   private logErrors(results: PromiseSettledResult<unknown>[]): void {

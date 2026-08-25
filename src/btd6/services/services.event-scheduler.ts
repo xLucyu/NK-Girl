@@ -15,6 +15,7 @@ import {
   CTLeaderboard
 } from "@btd6/cache/leaderboards";
 import { eventAnnouncer } from "./services.event-announcer";
+import { logError } from "@discord";
 
 interface CacheMap {
   [EventType.Boss]: BossCache;
@@ -79,7 +80,7 @@ export class EventScheduler {
     for (const result of results) {
 
       if (result.status === "rejected") {
-        console.error(result.reason);
+        await this.logErrors(results);
         continue;
       }
 
@@ -110,17 +111,17 @@ export class EventScheduler {
       })
     );
 
-    this.logErrors(results);
+    await this.logErrors(results);
   }
 
   private async handleAnnouncement(event: EventCacheEntry<any, any>): Promise<void> {
     await eventAnnouncer.sendAll(event);
   }
 
-  private logErrors(results: PromiseSettledResult<unknown>[]): void {
+  private async logErrors(results: PromiseSettledResult<unknown>[]): Promise<void> {
 
     for (const result of results) {
-      if (result.status === "rejected") console.error(result.reason);
+      if (result.status === "rejected") await logError("Announcer", result.reason);
     }
   }
 }

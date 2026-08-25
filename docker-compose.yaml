@@ -33,7 +33,7 @@ services:
         COPY --from=build /app/dist ./dist
 
         # Runtime assets used by loadImage()
-        COPY --from=build /app/src/btd6/assets ./btd6/assets
+        COPY --from=build /app/src/btd6/assets ./dist/btd6/assets
 
         # Runtime font used by render()
         COPY --from=build /app/src/ui/fonts ./src/ui/fonts

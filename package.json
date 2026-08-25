@@ -13,9 +13,10 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "tsc-alias": "^1.9.2",
     "tsup": "^8.5.1",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.2"
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3"
   },
   "name": "nk-girl",
   "version": "1.0.0",
@@ -25,7 +26,7 @@
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
-    "build": "tsc --noEmit && tsup src/index.ts --minify"
+    "build": "tsc && tsc-alias"
   },
   "repository": {
     "type": "git",

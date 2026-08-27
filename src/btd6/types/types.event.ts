@@ -4,7 +4,8 @@ export enum EventType {
   Race =  "Race",
   Odyssey = "Odyssey",
   Collection = "Collection",
-  CT = "CT"
+  CT = "CT",
+  DailyChallenge = "DailyChallenge"
 }
 
 export interface BaseBody {

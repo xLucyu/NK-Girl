@@ -8,3 +8,4 @@ export * from "./types.metadata";
 export * from "./types.odyssey";
 export * from "./types.race";
 export * from "./types.tile";
+export * from "./types.daily";

@@ -43,14 +43,12 @@ export async function getData<T>(url: string, headers?: HeadersInit): Promise<T>
 
           throw new ServerDown();
 
-        default:
-          throw new RequestNoSuccess();
+        default: throw new RequestNoSuccess();
       }
     } catch (error) {
 
-      if (error instanceof RequestNoSuccess || error instanceof ServerDown) {
-        throw error;
-      }
+      if (error instanceof RequestNoSuccess || error instanceof ServerDown) throw error;
+      
 
       if (attempt < RETRIES) {
         await sleep(RETRY_DELAY);

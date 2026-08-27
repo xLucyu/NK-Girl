@@ -1,41 +1,78 @@
-import { DailyChallengeBody, DailyChallengeType, EventType, MetaBody, MetaData } from "@btd6/types";
-import { BaseEventCache } from "./events.cache.base";
-import { getNumberForEvent } from "@btd6/helpers";
+import {
+  DailyChallengeBody,
+  DailyChallengeType,
+  EventType,
+  MetaBody,
+  MetaData,
+} from "@btd6/types";
 import { API_URLS } from "@btd6/constants";
+import { getNumberForEvent } from "@btd6/helpers";
 import { getData } from "@lib";
+import { BaseEventCache } from "./events.cache.base";
 
 export class DailyChallengeCache extends BaseEventCache<DailyChallengeBody, MetaBody> {
 
-  protected eventType = EventType.DailyChallenge;
-  protected url = API_URLS.ChallengeDaily;
+  protected readonly eventType = EventType.DailyChallenge;
+  protected readonly url = API_URLS.ChallengeDaily;
 
   constructor(private readonly challengeType: DailyChallengeType) {
     super();
   }
 
-  protected override getCurrentEvent(events: DailyChallengeBody[], now: number, getLatest?: boolean): DailyChallengeBody | undefined {
-    
-    const eventNumber = getNumberForEvent(now, this.eventType);
-    return events.find(event => this.getChallenge(event.name, this.challengeType, eventNumber));
+  protected override getCurrentEvent(
+    events: DailyChallengeBody[],
+    now: number,
+    _getLatest?: boolean
+  ): DailyChallengeBody | undefined {
+
+    const number = getNumberForEvent(
+      now,
+      this.challengeType
+    );
+
+    return events.find(event =>
+      event.name.startsWith(
+        `${this.challengeType} ${number}:`
+      )
+    );
   }
 
-  private getChallenge(name: string, type: DailyChallengeType, eventNumber: number): boolean {
+  protected override async getMetaData(
+    event: DailyChallengeBody
+  ): Promise<MetaBody> {
 
-    const prefix = {
-      Standard: `Standard ${eventNumber}:`,
-      Advanced: `Advanced ${eventNumber}:`,
-      Coop: `Coop ${eventNumber}:`,
-    }[type];
+    const data = await getData<MetaData>(
+      event.metadata
+    );
 
-    return name.startsWith(prefix);
-  }
-
-  protected async getMetaData(event: DailyChallengeBody): Promise<MetaBody> {
-    const data = await getData<MetaData>(event.metadata);
     return data.body;
   }
 
-  public getBucketPath(event: DailyChallengeBody): string {
-    return `Challenge/${this.challengeType}/${event}/event.json`;
+  public override getBucketPath(
+    event: DailyChallengeBody
+  ): string {
+
+    const number = this.getChallengeNumber(
+      event.name
+    );
+
+    return `Challenge/${this.challengeType}/${number}/event.json`;
+  }
+
+  private getChallengeNumber(
+    name: string
+  ): number {
+
+    const match = name.match(
+      /^(?:Standard|Advanced)\s+(\d+):/
+    );
+
+    if (!match) {
+      throw new Error(
+        `Invalid daily challenge name: ${name}`
+      );
+    }
+
+    return Number(match[1]);
   }
 }

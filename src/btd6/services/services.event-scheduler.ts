@@ -7,7 +7,8 @@ import {
   OdysseyCache,
   CollectionCache,
   CTCache,
-  EventCacheEntry
+  EventCacheEntry,
+  DailyChallengeCache
 } from "@btd6/cache/events";
 import {
   BossLeaderboard,
@@ -24,6 +25,7 @@ interface CacheMap {
   [EventType.Odyssey]: OdysseyCache;
   [EventType.Collection]: CollectionCache;
   [EventType.CT]: CTCache;
+  [EventType.DailyChallenge]: DailyChallengeCache;
 }
 
 export class EventScheduler {
@@ -37,7 +39,8 @@ export class EventScheduler {
     [EventType.Race]: new RaceCache(),
     [EventType.Odyssey]: new OdysseyCache(),
     [EventType.Collection]: new CollectionCache(),
-    [EventType.CT]: new CTCache()
+    [EventType.CT]: new CTCache(),
+    [EventType.DailyChallenge]: new DailyChallengeCache()
   };
 
   private readonly leaderboards = {

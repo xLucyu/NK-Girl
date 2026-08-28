@@ -85,7 +85,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     console.log(this.cache);
 
-    if (!firstLoad) await this.uploadToBucket(currentEvent);
+    if (firstLoad) await this.uploadToBucket(currentEvent);
     return this.cache;
   }
 

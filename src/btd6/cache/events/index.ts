@@ -5,3 +5,4 @@ export * from "./events.cache.collection";
 export * from "./events.cache.ct";
 export * from "./events.cache.odyssey";
 export * from "./events.cache.race";
+export * from "./events.cache.daily";

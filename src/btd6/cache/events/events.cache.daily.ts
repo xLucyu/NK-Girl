@@ -1,78 +1,120 @@
 import {
   DailyChallengeBody,
+  DailyChallengeSetBody,
+  DailyChallengeSetMeta,
   DailyChallengeType,
   EventType,
-  MetaBody,
   MetaData,
+  NKData,
 } from "@btd6/types";
 import { API_URLS } from "@btd6/constants";
 import { getNumberForEvent } from "@btd6/helpers";
 import { getData } from "@lib";
 import { BaseEventCache } from "./events.cache.base";
 
-export class DailyChallengeCache extends BaseEventCache<DailyChallengeBody, MetaBody> {
+
+const DAILY_CHALLENGE_TYPES: DailyChallengeType[] = [
+  "Standard",
+  "Advanced",
+];
+
+
+export class DailyChallengeCache extends BaseEventCache<DailyChallengeSetBody,DailyChallengeSetMeta> {
 
   protected readonly eventType = EventType.DailyChallenge;
   protected readonly url = API_URLS.ChallengeDaily;
 
-  constructor(private readonly challengeType: DailyChallengeType) {
-    super();
-  }
+  protected override async getEventData(): Promise<DailyChallengeSetBody[]> {
 
-  protected override getCurrentEvent(
-    events: DailyChallengeBody[],
-    now: number,
-    _getLatest?: boolean
-  ): DailyChallengeBody | undefined {
+    const data = await getData<NKData<DailyChallengeBody>>(this.url);
 
-    const number = getNumberForEvent(
-      now,
-      this.challengeType
-    );
+    const now = Date.now();
 
-    return events.find(event =>
-      event.name.startsWith(
-        `${this.challengeType} ${number}:`
-      )
-    );
-  }
+    const challenges = {} as Record<Lowercase<DailyChallengeType>,
+      {
+        number: number;
+        challenge: DailyChallengeBody;
+      }
+    >;
 
-  protected override async getMetaData(
-    event: DailyChallengeBody
-  ): Promise<MetaBody> {
+    for (const type of DAILY_CHALLENGE_TYPES) {
 
-    const data = await getData<MetaData>(
-      event.metadata
-    );
+      const number = getNumberForEvent(now, type);
 
-    return data.body;
-  }
-
-  public override getBucketPath(
-    event: DailyChallengeBody
-  ): string {
-
-    const number = this.getChallengeNumber(
-      event.name
-    );
-
-    return `Challenge/${this.challengeType}/${number}/event.json`;
-  }
-
-  private getChallengeNumber(
-    name: string
-  ): number {
-
-    const match = name.match(
-      /^(?:Standard|Advanced)\s+(\d+):/
-    );
-
-    if (!match) {
-      throw new Error(
-        `Invalid daily challenge name: ${name}`
+      const challenge = data.body.find(event =>
+        event.name.startsWith(
+          `${type} ${number}:`
+        )
       );
+
+      if (!challenge) throw new Error(`Could not find ${type} Daily Challenge ${number}`);
+      
+      const key = type.toLowerCase() as Lowercase<DailyChallengeType>;
+
+      challenges[key] = {
+        number,
+        challenge,
+      };
     }
 
-    return Number(match[1]);
+
+    return [{
+      id: [
+        challenges.standard.challenge.id,
+        challenges.advanced.challenge.id,
+      ].join(":"),
+      name:
+        `Standard ${challenges.standard.number} / ` +
+        `Advanced ${challenges.advanced.number}`,
+      start: 0,
+      end: 0,
+      Standard: challenges.standard,
+      Advanced: challenges.advanced,
+    }];
+  }
+
+
+  protected override getCurrentEvent(
+    events: DailyChallengeSetBody[],
+    _now: number,
+    _getLatest?: boolean
+  ): DailyChallengeSetBody | undefined {
+
+    return events[0];
+  }
+
+
+  protected override async getMetaData(
+    event: DailyChallengeSetBody
+  ): Promise<DailyChallengeSetMeta> {
+
+    const [standard, advanced] = await Promise.all([
+      getData<MetaData>(event.Standard.challenge.metadata),
+      getData<MetaData>(event.Advanced.challenge.metadata),
+    ]);
+
+
+    return {
+      Standard: standard.body,
+      Advanced: advanced.body,
+    };
+  }
+
+
+  public override getBucketPath(
+    _event: DailyChallengeSetBody
+  ): string {
+
+    const date = new Intl.DateTimeFormat(
+      "en-CA",
+      {
+        timeZone: "Europe/Berlin",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }
+    ).format(new Date());
+
+    return `Event/DailyChallenge/${date}/event.json`;
   }
 }

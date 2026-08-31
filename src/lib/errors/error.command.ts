@@ -35,3 +35,12 @@ export class ChannelNotFound extends BotError {
     )
   }
 }
+
+export class CodeNotFound extends BotError {
+  constructor() {
+    super(
+      "Challenge Code Not Found",
+      "The Code you entered doesn't exist."
+    )
+  }
+}

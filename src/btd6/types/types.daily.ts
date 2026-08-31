@@ -1,7 +1,8 @@
 import { BaseBody } from "./types.event";
 import { MetaBody } from "./types.metadata";
 
-export type DailyChallengeType = "Standard" | "Advanced";
+export const DailyChallengeDifficulties = ["Standard", "Advanced"] as const;
+export type DailyChallengeDifficulty = typeof DailyChallengeDifficulties[number];
 
 export interface DailyChallengeBody extends BaseBody {
   createdAt: number;

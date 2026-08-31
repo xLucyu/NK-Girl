@@ -25,7 +25,7 @@ interface CacheMap {
   [EventType.Odyssey]: OdysseyCache;
   [EventType.Collection]: CollectionCache;
   [EventType.CT]: CTCache;
-  [EventType.DailyChallenge]: DailyChallengeCache;
+  [EventType.Challenge]: DailyChallengeCache;
 }
 
 export class EventScheduler {
@@ -39,7 +39,7 @@ export class EventScheduler {
     [EventType.Odyssey]: new OdysseyCache(),
     [EventType.Collection]: new CollectionCache(),
     [EventType.CT]: new CTCache(),
-    [EventType.DailyChallenge]: new DailyChallengeCache()
+    [EventType.Challenge]: new DailyChallengeCache()
   };
 
   private readonly leaderboards = {

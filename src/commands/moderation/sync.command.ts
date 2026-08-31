@@ -33,7 +33,7 @@ export class SyncCommand {
 
     await interaction.deferReply();
 
-    if (interaction.user.id !== CONFIG.OWNER_ID) throw new MissingPermission();
+  //  if (interaction.user.id !== CONFIG.OWNER_ID) throw new MissingPermission();
 
     const option = interaction.options.getString("sync_option");
 

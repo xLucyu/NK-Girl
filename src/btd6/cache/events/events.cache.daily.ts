@@ -2,10 +2,11 @@ import {
   DailyChallengeBody,
   DailyChallengeSetBody,
   DailyChallengeSetMeta,
-  DailyChallengeType,
+  DailyChallengeDifficulties,
   EventType,
   MetaData,
   NKData,
+  DailyChallengeDifficulty,
 } from "@btd6/types";
 import { API_URLS } from "@btd6/constants";
 import { getNumberForEvent } from "@btd6/helpers";
@@ -13,15 +14,9 @@ import { getData } from "@lib";
 import { BaseEventCache } from "./events.cache.base";
 
 
-const DAILY_CHALLENGE_TYPES: DailyChallengeType[] = [
-  "Standard",
-  "Advanced",
-];
+export class DailyChallengeCache extends BaseEventCache<DailyChallengeSetBody, DailyChallengeSetMeta> {
 
-
-export class DailyChallengeCache extends BaseEventCache<DailyChallengeSetBody,DailyChallengeSetMeta> {
-
-  protected readonly eventType = EventType.DailyChallenge;
+  protected readonly eventType = EventType.Challenge;
   protected readonly url = API_URLS.ChallengeDaily;
 
   protected override async getEventData(): Promise<DailyChallengeSetBody[]> {
@@ -30,14 +25,14 @@ export class DailyChallengeCache extends BaseEventCache<DailyChallengeSetBody,Da
 
     const now = Date.now();
 
-    const challenges = {} as Record<Lowercase<DailyChallengeType>,
+    const challenges = {} as Record<Lowercase<DailyChallengeDifficulty>,
       {
         number: number;
         challenge: DailyChallengeBody;
       }
     >;
 
-    for (const type of DAILY_CHALLENGE_TYPES) {
+    for (const type of DailyChallengeDifficulties) {
 
       const number = getNumberForEvent(now, type);
 
@@ -49,7 +44,7 @@ export class DailyChallengeCache extends BaseEventCache<DailyChallengeSetBody,Da
 
       if (!challenge) throw new Error(`Could not find ${type} Daily Challenge ${number}`);
       
-      const key = type.toLowerCase() as Lowercase<DailyChallengeType>;
+      const key = type.toLowerCase() as Lowercase<DailyChallengeDifficulty>;
 
       challenges[key] = {
         number,

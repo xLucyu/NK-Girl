@@ -57,16 +57,22 @@ export class CollectionCommand extends BaseCommand<EventBody, InstaSchedule> {
 
     return {
       eventBody: eventProps.data,
-      profiles:
-        Array.from(
-          { length: pageCount },
-          (_, page) => 
-            CollectionProfile({
-              event: eventProps.data,
-              metaData: eventProps.metaData,
-              offset: page * PAGE_SIZE
-            })
-        )
+      profiles: Array.from(
+      { length: pageCount },
+      (_, page) => {
+        const offset = page * PAGE_SIZE;
+        return {
+          cacheKey:
+            this.createProfileCacheKey(eventProps.data, { offset }),
+            profile:
+              CollectionProfile({
+                event: eventProps.data,
+                metaData: eventProps.metaData,
+                offset
+              })
+          };
+        }
+      )
     };
   }
 

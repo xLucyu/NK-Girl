@@ -32,10 +32,13 @@ export class BossRushCommand extends BaseCommand<EventBody, BossRushResult> {
     return {
       eventBody: eventProps.data,
       profiles: [
-        BossRushProfile({
-          event: eventProps.data,
-          metaData: eventProps.metaData
-        })
+        {
+          cacheKey: this.createProfileCacheKey(eventProps.data),
+          profile: BossRushProfile({
+            event: eventProps.data,
+            metaData: eventProps.metaData
+          })
+        }
       ]
     };
   }

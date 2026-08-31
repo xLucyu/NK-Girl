@@ -70,13 +70,14 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
   public buildAnnouncement(eventProps: OdysseyProps["currentEvent"]) {
     return {
       eventBody: eventProps.data,
-      profiles: OdysseyDifficulties.map((difficulty) => 
-        OdysseyProfile({
+      profiles: OdysseyDifficulties.map(difficulty => ({
+        cacheKey: this.createProfileCacheKey(eventProps.data, { difficulty }),
+        profile: OdysseyProfile({
           event: eventProps.data,
           metaData: eventProps.metaData[difficulty],
-          difficulty: difficulty
-        })
-      )
+          difficulty
+        }),
+      }))
     };
   } 
 

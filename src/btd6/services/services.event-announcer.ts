@@ -13,9 +13,9 @@ import {
 import { BaseBody, EventType } from "@btd6/types";
 import { discordClient } from "@app";
 import { registry } from "@discord";
-import { render } from "@ui";
+import { imageBufferCache, render } from "@ui";
 import { guildTable } from "@database";
-import { CurrentEventData, EventCacheEntry } from "@btd6/cache";
+import { EventCacheEntry } from "@btd6/cache";
 
 
 type AnnounceableChannel = TextChannel | NewsChannel | ThreadChannel;
@@ -26,9 +26,14 @@ type AnnouncementMessage = {
   flags?: MessageFlags.IsComponentsV2;
 };
 
+export interface AnnouncementProfile {
+  cacheKey: string;
+  profile: JSX.Element;
+}
+
 export interface Announcement {
   eventBody: BaseBody;
-  profiles: JSX.Element[];
+  profiles: AnnouncementProfile[];
 }
 
 export class EventAnnouncer {
@@ -71,11 +76,16 @@ export class EventAnnouncer {
     return command.buildAnnouncement?.(event.currentEvent) ?? null;
   }
 
-  private async renderProfiles(profiles: JSX.Element[]) {
-    return await Promise.all(profiles.map((profile) => render(profile)));
+  private async renderProfiles(profiles: AnnouncementProfile[]): Promise<Buffer[]> {
+    return Promise.all(
+      profiles.map(({ cacheKey, profile }) => 
+        imageBufferCache.getOrSet(
+          cacheKey, () => render(profile)
+        ))
+    )
   }
 
-  private buildMessage(buffers: Awaited<ReturnType<typeof render>>[]): AnnouncementMessage {
+  private buildMessage(buffers: Buffer[]): AnnouncementMessage {
 
     if (buffers.length === 0) throw new Error("Announcement contains no profiles.");
 

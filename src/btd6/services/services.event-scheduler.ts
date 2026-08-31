@@ -31,7 +31,6 @@ interface CacheMap {
 export class EventScheduler {
 
   private job: ScheduledTask | null = null;
-  private readonly initialized = new Set<EventType>();
 
   private readonly caches: CacheMap = {
     [EventType.Boss]: new BossCache(),
@@ -82,22 +81,14 @@ export class EventScheduler {
 
     for (const result of results) {
 
-      if (result.status === "rejected") {
-        await this.logErrors(results);
-        continue;
-      }
-
+      if (result.status === "rejected") continue;
       const event = result.value;
-
       if (!event) continue;
-
-      if (!this.initialized.has(event.eventType)) {
-        this.initialized.add(event.eventType);
-        continue;
-      }
 
       await this.handleAnnouncement(event);
     }
+
+    await this.logErrors(results);
   }
 
   private async runLeaderboardChecks(): Promise<void> {

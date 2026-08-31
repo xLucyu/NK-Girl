@@ -42,10 +42,13 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
     return {
       eventBody: event.data,
       profiles: [
-        RaceProfile({
-          event: event.data,
-          metaData: event.metaData
-        })
+        {
+          cacheKey: this.createProfileCacheKey(event.data),
+          profile: RaceProfile({
+            event: event.data,
+            metaData: event.metaData
+          })
+        }
       ]
     };
   }

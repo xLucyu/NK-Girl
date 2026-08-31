@@ -26,6 +26,7 @@ import {
 } from "@discord";
 import { addUnderscore, EventNotFound, getData } from "@lib";
 import { render } from "@ui/render";
+import { createImageCacheKey, imageBufferCache } from "@ui";
 
 
 export abstract class BaseCommand<T extends BaseBody, K> {
@@ -54,16 +55,23 @@ export abstract class BaseCommand<T extends BaseBody, K> {
 
   public async renderAndReply(interaction: InteractionType, state: ComponentState): Promise<void> {
 
-    if (interaction.isChatInputCommand()) await interaction.deferReply();
-    else await interaction.deferUpdate();
+    if (!interaction.deferred && !interaction.replied) {
+      if (interaction.isChatInputCommand()) await interaction.deferReply();
+      else await interaction.deferUpdate();
+    }
 
     const eventProps = this.getEventProps();
     const event = await this.resolveEvent(eventProps, state);
 
     if (!event) throw new EventNotFound();
 
-    const profile = this.getProfile(event, state);
-    const buffer = await render(profile);
+    const cacheKey = this.createProfileCacheKey(event.data, state.options);
+
+    const buffer = await imageBufferCache.getOrSet(
+      cacheKey, () => render(
+        this.getProfile(event, state)
+      )
+    );
 
     const attachment = new AttachmentBuilder(buffer, { name: "image.png" });
     const components = this.getComponents(
@@ -76,7 +84,14 @@ export abstract class BaseCommand<T extends BaseBody, K> {
       files: [attachment],
       components
     })
+  }
 
+  protected createProfileCacheKey(data: T, options: BaseOptions = {}): string {
+    return createImageCacheKey(
+      this.eventType, 
+      this.getIdentity(data), 
+      options
+    );
   }
 
   protected getEventProps(): EventCacheEntry<T, K> | null {
@@ -108,7 +123,6 @@ export abstract class BaseCommand<T extends BaseBody, K> {
     if (eventProps && state.event) {
       if (this.getIdentity(eventProps.currentEvent.data) === state.event) return eventProps.currentEvent;
     }
-
 
     const key = addUnderscore(state.event || "current");
     const eventUrl = GOOGLE_API_ULRS[this.urlKey].replace("{}", key);

@@ -70,13 +70,14 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
   public buildAnnouncement(eventProps: BossProps["currentEvent"]): Announcement {
     return {
       eventBody: eventProps.data,
-      profiles: BossDifficulties.map((difficulty) => 
-        BossProfile({
+      profiles: BossDifficulties.map(difficulty => ({
+        cacheKey: this.createProfileCacheKey(eventProps.data, { difficulty }),
+        profile: BossProfile({
           event: eventProps.data,
           metaData: eventProps.metaData[difficulty],
-          difficulty: difficulty
-        })
-      )
+          difficulty
+        }),
+      }))
     };
   }
 

@@ -35,7 +35,7 @@ function RelicTile({
 }: RelicTileProps): JSX.Element | null {
 
   const imagePath = RelicImages[relic as keyof typeof RelicImages];
-
+  
   if (!imagePath) return null;
 
   return (
@@ -201,10 +201,7 @@ function StageCard({stage}: StageCardProps): JSX.Element {
   );
 }
 
-export function BossRushProfile({
-  event,
-  metaData,
-}: BossRushProfileProps): JSX.Element {
+export function BossRushProfile({ event, metaData }: BossRushProfileProps): JSX.Element {
 
   return (
     <Layout.Container>

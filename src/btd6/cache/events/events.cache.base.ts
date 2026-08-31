@@ -32,14 +32,17 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected getCurrentEvent(events: T[], now: number, getLatest = false): T | undefined {
 
+    const upcomingEvent = events
+      .filter(event => event.start > now)
+      .sort((a, b) => a.start - b.start)[0];
+    if (upcomingEvent) return upcomingEvent;
+
     const currentEvent = events.find(event => event.start <= now && event.end > now);
     if (currentEvent) return currentEvent;
 
     if (!getLatest) return undefined;
 
-    return events
-      .filter(event => event.end <= now)
-      .sort((a, b) => b.end - a.end)[0];
+    return events.filter(event => event.end <= now).sort((a, b) => b.end - a.end)[0];
   }
 
   protected getPreviousEvents(events: T[]): PreviousEvent[] {
@@ -83,9 +86,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
       previousEvents: this.getPreviousEvents(events)
     };
 
-    console.log(this.cache);
-
-    if (firstLoad) await this.uploadToBucket(currentEvent);
+    if (!firstLoad) await this.uploadToBucket(currentEvent);
     return this.cache;
   }
 

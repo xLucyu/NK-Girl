@@ -1,4 +1,4 @@
-const MAX_CACHE_BYTES = 64 * 1024 * 1024;
+const MAX_CACHE_BYTES = 512 * 1024 * 1024;
 
 class ImageBufferCache {
 

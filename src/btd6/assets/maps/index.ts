@@ -46,6 +46,7 @@ export const MapImages = {
   MiddleOfTheRoad: "maps/MiddleOfTheRoad.png",
   MidnightMansion: "maps/MidnightMansion.png",
   MonkeyMeadow: "maps/MonkeyMeadow.png",
+  Tutorial: "maps/MonkeyMeadow.png",
   MoonLanding: "maps/MoonLanding.png",
   MuddyPuddles: "maps/MuddyPuddles.png",
   OffTheCoast: "maps/OffTheCoast.png",

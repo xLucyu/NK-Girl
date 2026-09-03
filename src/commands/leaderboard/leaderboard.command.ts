@@ -11,7 +11,7 @@ import { BossDifficulties, playerMultiplier } from "@btd6";
 
 @Command({
   description: "Show Leaderboards for the current Event",
-  autoComplete: false,
+  autoComplete: true,
   cooldown: 10_000
 })
 export class LeaderboardCommand extends BaseLeaderboard {

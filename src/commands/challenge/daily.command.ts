@@ -105,13 +105,14 @@ export class ChallengeCommand extends BaseCommand<DailyChallengeSetBody, DailyCh
 
     return {
       eventBody: event.data,
-      profiles: (["Advanced"] as const).map(difficulty => ({
-        cacheKey: this.createProfileCacheKey(event.data, { difficulty }),
-        profile:ChallengeProfile({
-            event: event.data[difficulty],
-            metaData: event.metaData[difficulty],
-          }),
-      })),
+      profiles: [{
+        cacheKey: this.createProfileCacheKey(event.data, { difficulty: "Advanced" }),
+        profile: ChallengeProfile({
+          event: event.data["Advanced"],
+          metaData: event.metaData["Advanced"],
+          difficulty: "Advanced"
+        })
+      }]
     };
   }
 

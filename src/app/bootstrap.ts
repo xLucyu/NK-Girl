@@ -7,6 +7,6 @@ export async function bootstrap(): Promise<void> {
   await loadCommands();
   await loadEmojis();
   await discordClient.addListeners();
-  await eventScheduler.start();
   await discordClient.start();
+  await eventScheduler.start();
 }

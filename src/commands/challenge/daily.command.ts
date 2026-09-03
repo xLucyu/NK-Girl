@@ -110,6 +110,7 @@ export class ChallengeCommand extends BaseCommand<DailyChallengeSetBody, DailyCh
         profile:ChallengeProfile({
             event: event.data[difficulty],
             metaData: event.metaData[difficulty],
+	    difficulty
           }),
       })),
     };

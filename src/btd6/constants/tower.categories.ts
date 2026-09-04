@@ -17,6 +17,7 @@ export const DEFAULT_TOWERS = [
   { id: "Corvus", category: "Heroes" },
   { id: "Rosalia", category: "Heroes" },
   { id: "Silas", category: "Heroes" },
+  { id: "DanDMonke", category: "Heroes" },  
   { id: "DartMonkey", category: "Primary" },
   { id: "BoomerangMonkey", category: "Primary" },
   { id: "BombShooter", category: "Primary" },

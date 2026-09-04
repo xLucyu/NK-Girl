@@ -10,6 +10,7 @@ export const TowerImages = {
   CaptainChurchill: "towers/CaptainChurchill.png",
   ChosenPrimaryHero: "towers/ChosenPrimaryHero.png",
   Corvus: "towers/Corvus.png",
+  DanDMonke: "towers/DanDMonke",
   DartlingGunner: "towers/DartlingGunner.png",
   DartMonkey: "towers/DartMonkey.png",
   Druid: "towers/Druid.png",

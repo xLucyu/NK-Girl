@@ -200,15 +200,14 @@ export function buildCTModifiers(body: CTMetaData): Modifier[] {
 
 export function filterModifiers(modifiers: Modifier[]) {
     
-    return modifiers.filter((modifier) => {
-        
-        const value = modifier.api;
+  return modifiers.filter((modifier) => {  
+    const value = modifier.api;
 
-        if (typeof value === "boolean") return value === true;
-        if (modifier.hasKey) return value !== 1 && value !== -1 && value !== 9999;
-        if (modifier.label === "Paragon Limit") return value !== 10;
-        if (modifier.label === "Tower Limit") return value !== 0 && value !== 9999;
+    if (typeof value === "boolean") return value === true;
+    if (modifier.hasKey) return value !== 1 && value !== -1 && value !== 9999;
+    if (modifier.label === "Paragon Limit") return value !== 10;
+    if (modifier.label === "Tower Limit") return value !== 0 && value !== 9999;
 
-        return value !== -1 && value !== 9999 && value !== 0;
+    return value !== -1 && value !== 9999 && value !== 0;
     });
 }

@@ -190,8 +190,8 @@ function getCompactSizing(count: number): ModifierSizing {
 }
 
 function getColumnCount(count: number): number {
-  if (count < 6) return 1;
-  if (count < 12) return 2;
+  if (count <= 6) return 1;
+  if (count <= 12) return 2;
   return 3;
 }
 

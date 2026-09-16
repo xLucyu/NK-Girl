@@ -29,6 +29,19 @@ export class GscClient {
     });
   }
 
+  public async read<T>(path: string): Promise<T | null> {
+
+    let content: Buffer;
+    try {
+      [content] = await this.bucket.file(path).download();
+    } catch (error) {
+      if (typeof error === "object" && error !== null && "code" in error &&
+        (error.code === 404 || error.code === "404")) return null;
+      throw error;
+    }
+    return JSON.parse(content.toString("utf8")) as T;
+  }
+
   public async getEventIds(
     eventType: EventType,
     options: { root?: BucketRoot; refresh?: boolean } = {},
@@ -63,7 +76,6 @@ export class GscClient {
     if (!eventType) return void this.cache.clear();
     if (root) return void this.cache.delete(`${root}:${eventType}`);
     for (const key of this.cache.keys()) if (key.endsWith(`:${eventType}`)) this.cache.delete(key);
-    
   }
 }
 

@@ -16,7 +16,6 @@ export class CTLeaderboard extends BaseLeaderboard<CTBody> {
 
   public readonly eventType = EventType.CT;
 
-
   protected async formatLeaderboard(event: CTBody): Promise<LeaderboardJob[]> {
 
     const jobs: LeaderboardJob[] = [];
@@ -46,7 +45,6 @@ export class CTLeaderboard extends BaseLeaderboard<CTBody> {
     return jobs;
   }
 
-
   private async getTeams(url: string): Promise<Team[]> {
 
     let page = 1;
@@ -58,7 +56,8 @@ export class CTLeaderboard extends BaseLeaderboard<CTBody> {
 
       const data = await getData<Leaderboard>(`${url}?page=${page}`);
 
-      if (!data.success || !data.body.length) break;
+      if (!data.success) throw new Error(`Failed to fetch leaderboard page ${page}: ${url}`);
+      if (!data.body.length) break;
 
       for (const entry of data.body) {
         teams.push(this.mapEntry(entry, position));
@@ -68,7 +67,6 @@ export class CTLeaderboard extends BaseLeaderboard<CTBody> {
     }
     return teams;
   }
-
 
   private mapEntry(entry: LeaderboardBody, position: number): Team {
     return {

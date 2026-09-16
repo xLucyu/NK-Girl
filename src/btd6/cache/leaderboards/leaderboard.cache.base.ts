@@ -17,7 +17,9 @@ export abstract class BaseLeaderboard<T extends BaseBody> {
   public async refresh(event: T): Promise<void> {
 
     const payloads = await this.formatLeaderboard(event);
+    const populated = payloads.filter(payload => payload.data.teams.length > 0);
     await Promise.all(payloads.map(payload => gsc.write(payload.path, payload.data)));
+    if (populated.length > 0) gsc.invalidate(this.eventType, "Leaderboard");
 
   }
 

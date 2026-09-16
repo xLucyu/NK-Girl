@@ -31,6 +31,7 @@ interface CacheMap {
 export class EventScheduler {
 
   private job: ScheduledTask | null = null;
+  private running = false;
 
   private readonly caches: CacheMap = {
     [EventType.Boss]: new BossCache(),
@@ -50,7 +51,7 @@ export class EventScheduler {
 
   public async start(): Promise<void> {
 
-    await this.runEventChecks();
+    await this.runCycle();
 
     this.job = cron.schedule("0 * * * *", async () => {
       await this.runCycle();
@@ -68,9 +69,14 @@ export class EventScheduler {
   }
 
   private async runCycle(): Promise<void> {
-
-    await this.runEventChecks();
-    await this.runLeaderboardChecks();
+    if (this.running) return;
+    this.running = true;
+    try {
+      await this.runEventChecks();
+      await this.runLeaderboardChecks();
+    } finally {
+      this.running = false;
+    }
   }
 
   private async runEventChecks(): Promise<void> {
@@ -97,7 +103,7 @@ export class EventScheduler {
       Object.values(this.leaderboards).map(async leaderboard => {
 
         const cache = this.caches[leaderboard.eventType];
-        const event = cache.getCache()?.currentEvent.data;
+        const event = cache.getLeaderboardEvents()[0];
 
         if (!event) return;
 

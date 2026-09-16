@@ -1,4 +1,4 @@
-import { getData } from "@lib";
+import { getData, RequestNoSuccess } from "@lib";
 import { NKData, type BaseBody, type EventType } from "@btd6/types";
 import { gsc } from "@btd6/storage";
 
@@ -21,13 +21,21 @@ export interface EventCacheEntry<T extends BaseBody, K> {
 export abstract class BaseEventCache<T extends BaseBody, K> {
 
   protected cache: EventCacheEntry<T, K> | null = null;
+  private events: T[] = [];
   protected abstract readonly eventType: EventType;
   protected abstract readonly url: string;
 
   protected async getEventData(): Promise<T[]> {
     
     const data = await getData<NKData<T>>(this.url);
+    if (!data.success) throw new RequestNoSuccess();
     return data.body;
+  }
+
+  public getLeaderboardEvents(now = Date.now()): T[] {
+    return this.events
+      .filter(event => event.start <= now)
+      .sort((a, b) => b.start - a.start);
   }
 
   protected getCurrentEvent(events: T[], now: number, getLatest = false): T | undefined {
@@ -35,6 +43,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     const upcomingEvent = events
       .filter(event => event.start > now)
       .sort((a, b) => a.start - b.start)[0];
+      
     if (upcomingEvent) return upcomingEvent;
 
     const currentEvent = events.find(event => event.start <= now && event.end > now);
@@ -52,12 +61,10 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     }));
   }
 
-  private async uploadToBucket(event: T): Promise<void> {
-
-    if (!this.cache) return;
+  private async uploadToBucket(event: T, entry: EventCacheEntry<T, K>): Promise<void> {
 
     const path = this.getBucketPath(event);
-    await gsc.write(path, this.cache.currentEvent);
+    await gsc.write(path, entry.currentEvent);
     gsc.invalidate(this.eventType, "Event");
   }
 
@@ -69,7 +76,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const now = Date.now();
     const events = await this.getEventData();
-    const firstLoad = this.cache === null;
+    this.events = events;
 
     const currentEvent = this.getCurrentEvent(events, now, this.cache === null);
 
@@ -77,7 +84,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const metaData = await this.getMetaData(currentEvent);
 
-    this.cache = {
+    const entry = {
       eventType: this.eventType,
       currentEvent: {
         data: currentEvent,
@@ -86,7 +93,8 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
       previousEvents: this.getPreviousEvents(events)
     };
 
-    if (!firstLoad) await this.uploadToBucket(currentEvent);
+    await this.uploadToBucket(currentEvent, entry);
+    this.cache = entry;
     return this.cache;
   }
 

@@ -1,16 +1,14 @@
 import { BaseLeaderboard, type LeaderboardJob } from "./leaderboard.cache.base";
-
 import { API_URLS } from "@btd6/constants";
 import { getData, sleep } from "@lib";
-
 import {
   BossDifficulties,
   EventType,
   ScoringType,
-  type BossBody,
-  type Leaderboard,
-  type LeaderboardBody,
-  type Team
+  BossBody,
+  Leaderboard,
+  LeaderboardBody,
+  Team
 } from "@btd6/types";
 
 const players = [1, 2, 3, 4];
@@ -28,7 +26,7 @@ export class BossLeaderboard extends BaseLeaderboard<BossBody> {
 
         const url = `${API_URLS.Boss}/${event.id}/leaderboard/${difficulty.toLowerCase()}/${playerCount}`;
         const scoringType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
-        const teams = Array.from((await this.getTeams(url, scoringType)).values());
+        const teams = Array.from((await this.getTeams(url, scoringType, playerCount)).values());
 
         jobs.push({
           path: `Leaderboard/Boss/${event.name}/${difficulty}/${playerCount}/leaderboard.json`,
@@ -51,7 +49,7 @@ export class BossLeaderboard extends BaseLeaderboard<BossBody> {
   }
 
 
-  private async getTeams(url: string, scoringType: ScoringType): Promise<Map<string, Team>> {
+  private async getTeams(url: string, scoringType: ScoringType, playerCount: number): Promise<Map<string, Team>> {
 
     let page = 1;
     let position = 1;
@@ -62,13 +60,14 @@ export class BossLeaderboard extends BaseLeaderboard<BossBody> {
 
       const data = await getData<Leaderboard>(`${url}?page=${page}`);
 
-      if (!data.success || !data.body.length) break;
+      if (!data.success) throw new Error(`Failed to fetch leaderboard page ${page}: ${url}`);
+      if (!data.body.length) break;
 
       for (const player of data.body) {
 
         const { actualScore, bucketedScore } = this.getScoreKey(player, scoringType);
 
-        const key = bucketedScore.join("-");
+        const key = playerCount === 1 ? String(position) : bucketedScore.join("-");
         const existing = teams.get(key);
 
         if (existing) {

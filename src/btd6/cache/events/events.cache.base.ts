@@ -1,4 +1,4 @@
-import { getData, RequestNoSuccess } from "@lib";
+import { getData } from "@lib";
 import { NKData, type BaseBody, type EventType } from "@btd6/types";
 import { gsc } from "@btd6/storage";
 
@@ -28,7 +28,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   protected async getEventData(): Promise<T[]> {
     
     const data = await getData<NKData<T>>(this.url);
-    if (!data.success) throw new RequestNoSuccess();
+    if (!data.success) throw new Error(`Failed to fetch ${this.eventType} events.`);
     return data.body;
   }
 
@@ -43,7 +43,6 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
     const upcomingEvent = events
       .filter(event => event.start > now)
       .sort((a, b) => a.start - b.start)[0];
-      
     if (upcomingEvent) return upcomingEvent;
 
     const currentEvent = events.find(event => event.start <= now && event.end > now);
@@ -84,7 +83,7 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
 
     const metaData = await this.getMetaData(currentEvent);
 
-    const entry = {
+    const entry: EventCacheEntry<T, K> = {
       eventType: this.eventType,
       currentEvent: {
         data: currentEvent,
@@ -101,3 +100,4 @@ export abstract class BaseEventCache<T extends BaseBody, K> {
   protected abstract getMetaData(event: T): Promise<K>;
   public abstract getBucketPath(event: T): string;
 }
+

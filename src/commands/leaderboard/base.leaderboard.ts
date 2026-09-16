@@ -1,6 +1,31 @@
-import { EventType, LeaderboardPayload, MEDALS, MedalsMode, Team } from "@btd6";
-import { BaseOptions, BuildButtonMenu, BuildModalMenu, ComponentState, componentState, CreateComponentState, guardOwnership, InteractionType, scheduleComponentCleanup, TIMEOUT } from "@discord";
-import { AttachmentBuilder, ButtonStyle, ChatInputCommandInteraction, InteractionEditReplyOptions, MessageFlags, ModalBuilder, ModalSubmitInteraction } from "discord.js";
+import { 
+  AttachmentBuilder, 
+  ButtonStyle, 
+  ChatInputCommandInteraction, 
+  InteractionEditReplyOptions, 
+  MessageFlags, 
+  ModalBuilder, 
+  ModalSubmitInteraction 
+} from "discord.js";
+import { 
+  EventType, 
+  LeaderboardPayload, 
+  MEDALS, 
+  MedalsMode, 
+  Team 
+} from "@btd6";
+import { 
+  BaseOptions, 
+  BuildButtonMenu, 
+  BuildModalMenu, 
+  ComponentState, 
+  componentState, 
+  CreateComponentState, 
+  guardOwnership, 
+  InteractionType, 
+  scheduleComponentCleanup, 
+  TIMEOUT 
+} from "@discord";
 import { LeaderboardModeResolver } from "./modes/base.mode-resolver";
 import { LeaderboardProfile } from "./leaderboard.profile";
 import { render } from "@ui";
@@ -84,7 +109,7 @@ export abstract class BaseLeaderboard {
     const options = state.options as LeaderboardOptions;
 
     const total = options.data.teams.length;
-    const maxOffset = Math.max(0, total - PAGE_SIZE);
+    const maxOffset = Math.max(0, Math.floor((total - 1) / PAGE_SIZE) * PAGE_SIZE);
     const offset = Math.min(
       Math.max(0, Math.trunc(Number(options.offset) || 0)),
       maxOffset,
@@ -287,7 +312,7 @@ export abstract class BaseLeaderboard {
     total: number,
   ): InteractionEditReplyOptions["components"] {
 
-    const maxOffset = Math.max(0, total - PAGE_SIZE);
+    const maxOffset = Math.max(0, Math.floor((total - 1) / PAGE_SIZE) * PAGE_SIZE);
     
     return [
       BuildButtonMenu({

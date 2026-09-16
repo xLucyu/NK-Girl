@@ -10,8 +10,8 @@ import { Command, getEventAutocompleteChoices } from "@discord";
 import { BossDifficulties, playerMultiplier } from "@btd6";
 
 @Command({
-  description: "Show Leaderboards for the current Event",
-  autoComplete: true,
+  description: "Show the latest leaderboard with results",
+  autoComplete: false,
   cooldown: 10_000
 })
 export class LeaderboardCommand extends BaseLeaderboard {
@@ -24,7 +24,7 @@ export class LeaderboardCommand extends BaseLeaderboard {
         .addStringOption((option) =>
           option
             .setName("event")
-            .setDescription("Select a Boss Event, default is the current one")
+            .setDescription("Select a Boss Event; defaults to the latest leaderboard with results")
             .setAutocomplete(true)
             .setRequired(false),
         )
@@ -58,7 +58,7 @@ export class LeaderboardCommand extends BaseLeaderboard {
         .addStringOption((option) =>
           option
             .setName("event")
-            .setDescription("Select a Race Event, default is the current one")
+            .setDescription("Select a Race Event; defaults to the latest leaderboard with results")
             .setAutocomplete(true)
             .setRequired(false),
         ),
@@ -80,7 +80,7 @@ export class LeaderboardCommand extends BaseLeaderboard {
       .addStringOption((option) =>
           option
             .setName("event")
-            .setDescription("CT event — defaults to the current event")
+            .setDescription("Select a CT event; defaults to the latest leaderboard with results")
             .setAutocomplete(true)
             .setRequired(false),
         )

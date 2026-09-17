@@ -59,9 +59,7 @@ export class BossLeaderboard extends BaseLeaderboard<BossBody> {
     while (true) {
 
       const data = await getData<Leaderboard>(`${url}?page=${page}`);
-
-      if (!data.success) throw new Error(`Failed to fetch leaderboard page ${page}: ${url}`);
-      if (!data.body.length) break;
+      if (!data.success) break;
 
       for (const player of data.body) {
 

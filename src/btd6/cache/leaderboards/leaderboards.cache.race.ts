@@ -45,13 +45,12 @@ export class RaceLeaderboard extends BaseLeaderboard<RaceBody> {
     while (true) {
 
       const data = await getData<Leaderboard>(`${url}?page=${page}`);
+      if (!data.success) break;
 
-      if (!data.success) throw new Error(`Failed to fetch leaderboard page ${page}: ${url}`);
-      if (!data.body.length) break;
+      for (const player of data.body) { 
 
-      for (const player of data.body) {
-        teams.push(this.mapPlayer(player, position));
-        position++;
+        teams.push(this.mapPlayer(player, position)); 
+        position++; 
       }
       page++;
     }

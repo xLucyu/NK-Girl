@@ -1,6 +1,6 @@
 import { BaseLeaderboard, type LeaderboardJob } from "./leaderboard.cache.base";
 import { API_URLS } from "@btd6/constants";
-import { getData, sleep } from "@lib";
+import { getData, RequestNoSuccess, sleep } from "@lib";
 import {
   BossDifficulties,
   EventType,
@@ -58,8 +58,16 @@ export class BossLeaderboard extends BaseLeaderboard<BossBody> {
 
     while (true) {
 
-      const data = await getData<Leaderboard>(`${url}?page=${page}`);
-      if (!data.success) break;
+      let data: Leaderboard;
+
+      try {
+        data = await getData<Leaderboard>(`${url}?page=${page}`);
+      } catch (error) {
+        if (error instanceof RequestNoSuccess) break;
+        throw error;
+      }
+
+      if (!data.success || data.body.length === 0) break;
 
       for (const player of data.body) {
 

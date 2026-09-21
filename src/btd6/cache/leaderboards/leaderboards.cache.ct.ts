@@ -1,6 +1,6 @@
 import { BaseLeaderboard, type LeaderboardJob } from "./leaderboard.cache.base";
 import { API_URLS } from "@btd6/constants";
-import { getData, sleep } from "@lib";
+import { getData, RequestNoSuccess, sleep } from "@lib";
 import {
   EventType,
   ScoringType,
@@ -27,8 +27,7 @@ export class CTLeaderboard extends BaseLeaderboard<CTBody> {
       const teams = await this.getTeams(url);
 
       jobs.push({
-        path:
-          `Leaderboard/CT/${event.id}/${mode}/leaderboard.json`,
+        path: `Leaderboard/CT/${event.id}/${mode}/leaderboard.json`,
         data: {
           id: event.id,
           start: event.start,
@@ -54,19 +53,28 @@ export class CTLeaderboard extends BaseLeaderboard<CTBody> {
 
     while (true) {
 
-      const data = await getData<Leaderboard>(`${url}?page=${page}`);
-      if (!data.success) break;
+      let data: Leaderboard;
 
-      for (const entry of data.body) {
-        teams.push(this.mapEntry(entry, position));
-        position++;
+      try {
+        data = await getData<Leaderboard>(`${url}?page=${page}`);
+      } catch (error) {
+        if (error instanceof RequestNoSuccess) break;
+        throw error;
       }
-      page++;
+
+      if (!data.success || data.body.length === 0) break;
+
+      for (const player of data.body) {
+        teams.push(this.mapPlayer(player, position));
+        position++
+      }
+      page++
     }
+
     return teams;
   }
 
-  private mapEntry(entry: LeaderboardBody, position: number): Team {
+  private mapPlayer(entry: LeaderboardBody, position: number): Team {
     return {
       position,
       members: [{

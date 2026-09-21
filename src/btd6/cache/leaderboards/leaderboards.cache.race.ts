@@ -1,5 +1,5 @@
 import { BaseLeaderboard, LeaderboardJob } from "./leaderboard.cache.base";
-import { addUnderscore, getData } from "@lib";
+import { addUnderscore, getData, RequestNoSuccess } from "@lib";
 import { API_URLS } from "@btd6/constants";
 import {
   EventType,
@@ -44,16 +44,24 @@ export class RaceLeaderboard extends BaseLeaderboard<RaceBody> {
 
     while (true) {
 
-      const data = await getData<Leaderboard>(`${url}?page=${page}`);
-      if (!data.success) break;
+      let data: Leaderboard;
 
-      for (const player of data.body) { 
-
-        teams.push(this.mapPlayer(player, position)); 
-        position++; 
+      try {
+        data = await getData<Leaderboard>(`${url}?page=${page}`);
+      } catch (error) {
+        if (error instanceof RequestNoSuccess) break;
+        throw error;
       }
-      page++;
+
+      if (!data.success || data.body.length === 0) break;
+
+      for (const player of data.body) {
+        teams.push(this.mapPlayer(player, position));
+        position++
+      }
+      page++
     }
+
     return teams;
   }
 

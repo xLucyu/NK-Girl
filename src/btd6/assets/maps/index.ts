@@ -80,6 +80,7 @@ export const MapImages = {
   TheCabin: "maps/TheCabin.png",
   Tinkerton: "maps/Tinkerton.png",
   TownCentre: "maps/TownCentre.png",
+  TownCenter: "maps/TownCentre.png",
   TreeStump: "maps/TreeStump.png",
   ThreeMinesAround: "maps/ThreeMinesAround.png",
   TrickyTracks: "maps/TrickyTracks.png",

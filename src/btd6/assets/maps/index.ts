@@ -54,7 +54,7 @@ export const MapImages = {
   OneTwoTree: "maps/OneTwoTree.png",
   Ouch: "maps/Ouch.png",
   ParkPath: "maps/ParkPath.png",
-  PartyParade: "maps/PartyParade",
+  PartyParade: "maps/PartyParade.png",
   PatsPond: "maps/PatsPond.png",
   Peninsula: "maps/Peninsula.png",
   Polyphemus: "maps/Polyphemus.png",

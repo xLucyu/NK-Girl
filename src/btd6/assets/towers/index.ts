@@ -36,6 +36,7 @@ export const TowerImages = {
   Quincy: "towers/Quincy.png",
   Rosalia: "towers/Rosalia.png",
   Sauda: "towers/Sauda.png",
+  Silas: "towers/Silas.png",
   SniperMonkey: "towers/SniperMonkey.png",
   SpikeFactory: "towers/SpikeFactory.png",
   StrikerJones: "towers/StrikerJones.png",

@@ -16,14 +16,11 @@ const formatEventName = (id: string): string => {
 
   const match = cleanedId.match(/^(.+?)(\d+)$/u);
 
-  if (!match) {
-    return splitUppercase(cleanedId).trim() || cleanedId;
-  }
-
+  if (!match) return splitUppercase(cleanedId).trim() || cleanedId;
+  
   const [, rawName, number] = match;
 
-  const formattedName =
-    splitUppercase(rawName).trim() || rawName.trim();
+  const formattedName = splitUppercase(rawName).trim() || rawName.trim();
 
   return `${formattedName} ${number}`;
 };

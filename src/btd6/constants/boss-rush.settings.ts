@@ -1,11 +1,5 @@
 export const BOSS_RUSH_SETTINGS = {
-  "StageScores": [
-    850,
-    1175,
-    1850,
-    2850,
-    3350
-  ],
+  "StageScores": [250, 500, 1100, 3000, 5225],
   "DailyScoreSlots": 4,
   "StageRewards": [
     "MonkeyMoney:100#Trophy:10#TeamTrophy:150#CollectionEvent:5#RandomPower:Attack,1#RandomInstaMonkey:1,1",
@@ -88,7 +82,8 @@ export const BOSS_RUSH_SETTINGS = {
       "DarkCastle",
       "TrickyTracks",
       "EnchantedGlade",
-      "MushroomGrotto"
+      "MushroomGrotto",
+      "ShipCapture"
     ],
     "BannedRelics": null,
     "BannedHeroes": [
@@ -475,16 +470,16 @@ export const BOSS_RUSH_SETTINGS = {
     "InitialHealths": {
       "Phayze": 300,
       "Bloonarius": 400,
-      "Dreadbloon": 130,
-      "Blastapopoulos": 350,
+      "Dreadbloon": 140,
+      "Blastapopoulos": 325,
       "Lych": 300,
       "Diamondback": 500
     },
     "BossSpeeds": {
       "Phayze": 1.15625,
-      "Bloonarius": 1.25,
+      "Bloonarius": 1.2,
       "Dreadbloon": 1.25,
-      "Blastapopoulos": 1.25,
+      "Blastapopoulos": 1.2,
       "Lych": 1.25,
       "Diamondback": 1.25
     },
@@ -506,12 +501,12 @@ export const BOSS_RUSH_SETTINGS = {
       "Diamondback": 2500
     },
     "KillCash": {
-      "Phayze": 1000,
+      "Phayze": 1100,
       "Bloonarius": 1000,
       "Dreadbloon": 1000,
-      "Blastapopoulos": 1000,
-      "Lych": 1000,
-      "Diamondback": 1000
+      "Blastapopoulos": 1100,
+      "Lych": 1100,
+      "Diamondback": 1100
     },
     "MapKillCashMultiplier": {
       "MapName": 1
@@ -537,4 +532,4 @@ export const BOSS_RUSH_SETTINGS = {
     "BaseTowerSet": null
   },
   "MaximumScore": 300
-};
+}

@@ -365,6 +365,13 @@ export const MAPS = [
     "isStandard": true
   },
   {
+    "id": "Ship Capture",
+    "category": "Advanced",
+    "mapMusic": "Sails Again",
+    "hasWater": true,
+    "isStandard": true
+  },
+  {
     "id": "Ascent",
     "category": "Advanced",
     "mapMusic": "",

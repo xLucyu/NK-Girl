@@ -19,5 +19,6 @@ export function getNumberForEvent(eventStart: number, mode: string): number {
 
   const timeDifference = eventStart - selectedEvent.firstEvent;
   const calculate = Math.floor(timeDifference / (selectedEvent.duration * 24 * 60 * 60 * 1000));
+  if (selectedEvent.mode === "BossRush") return Math.max(0, calculate - 1);
   return Math.max(0, calculate);
 }

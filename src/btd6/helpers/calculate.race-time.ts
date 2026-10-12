@@ -1,6 +1,12 @@
-import { ABR, REGULAR } from "@btd6/constants";
-import { EndRoundOutOfBounds, GoalTimeTooLow, InvalidStartRound, InvalidTimeFormat, StartRoundOutOfBounds } from "@lib";
 import { msToTimeFormat } from "./format";
+import { ABR, REGULAR } from "@btd6/constants";
+import { 
+  EndRoundOutOfBounds, 
+  GoalTimeTooLow, 
+  InvalidStartRound, 
+  InvalidTimeFormat, 
+  StartRoundOutOfBounds 
+} from "@lib";
 
 export interface TimeCalculation {
   title: string;

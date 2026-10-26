@@ -77,6 +77,7 @@ export const MapImages = {
   SulfurSprings: "maps/SulfurSprings.png",
   SunkenColumns: "maps/SunkenColumns.png",
   SunsetGulch: "maps/SunsetGulch.png",
+  ShipCapture: "maps/ShipCapture.png",
   TheCabin: "maps/TheCabin.png",
   Tinkerton: "maps/Tinkerton.png",
   TownCentre: "maps/TownCentre.png",

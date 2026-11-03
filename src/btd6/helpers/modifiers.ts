@@ -2,212 +2,198 @@ import { ModifierImages } from "@btd6/assets";
 import { CTMetaData, MetaBody } from "@btd6/types";
 
 type ModifierImage = (typeof ModifierImages)[keyof typeof ModifierImages];
+type Value = number | boolean;
+
+interface ModifierDefinition<T> {
+  label: string;
+  get: (value: T) => Value;
+  image: ModifierImage | readonly [increase: ModifierImage, decrease: ModifierImage];
+  off?: readonly number[];
+}
 
 export interface Modifier {
   label: string;
-  api: number | boolean;
-  hasKey: boolean;
-  imageKey: (value: number | boolean) => ModifierImage | null;
+  value: Value;
+  image: ModifierImage;
 }
 
-function increaseDecrease(increaseImage: string, decreaseImage: string) {
+const MULT_OFF = [1, -1, 9999] as const;
+const LIMT_OFF = [0, -1, 9999] as const;
 
-  return (value: number | boolean): string | null => {
-    if (typeof value !== "number") return null;
-    if (value === 1) return increaseImage;
+const EVENT_MODIFIERS = {
+  BossHealth: {
+    label: "Boss Health",
+    get: (b) => b._bloonModifiers.healthMultipliers.boss,
+    off: MULT_OFF,
+    image: [ModifierImages.BossHealthIncrease, ModifierImages.BossHealthDecrease],
+  },
+  BossSpeed: {
+    label: "Boss Speed",
+    get: (b) => b._bloonModifiers.bossSpeedMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.BossSpeedIncrease, ModifierImages.BossSpeedDecrease],
+  },
+  MoabHealth: {
+    label: "MOAB Health",
+    get: (b) => b._bloonModifiers.healthMultipliers.moabs,
+    off: MULT_OFF,
+    image: [ModifierImages.MoabHealthIncrease, ModifierImages.MoabHealthDecrease],
+  },
+  MoabSpeed: {
+    label: "MOAB Speed",
+    get: (b) => b._bloonModifiers.moabSpeedMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.MoabSpeedIncrease, ModifierImages.MoabSpeedDecrease],
+  },
+  CeramicHealth: {
+    label: "Ceramic Health",
+    get: (b) => b._bloonModifiers.healthMultipliers.bloons,
+    off: MULT_OFF,
+    image: [ModifierImages.CeramicHealthIncrease, ModifierImages.CeramicHealthDecrease],
+  },
+  BloonSpeed: {
+    label: "Bloon Speed",
+    get: (b) => b._bloonModifiers.speedMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.BloonsSpeedIncrease, ModifierImages.BloonsSpeedDecrease],
+  },
+  RegrowRate: {
+    label: "Regrow Rate",
+    get: (b) => b._bloonModifiers.regrowRateMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease],
+  },
+  AbilityCooldown: {
+    label: "Ability Cooldown",
+    get: (b) => b.abilityCooldownReductionMultiplier,
+    off: MULT_OFF,
+    image: [
+      ModifierImages.AbilityCooldownReductionIncrease,
+      ModifierImages.AbilityCooldownReductionDecrease,
+    ],
+  },
+  RemovableCost: {
+    label: "Removable Cost",
+    get: (b) => b.removeableCostMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.RemovableCostIncrease, ModifierImages.RemovableCostDecrease],
+  },
+  TowerLimit: {
+    label: "Tower Limit",
+    get: (b) => b.maxTowers,
+    image: ModifierImages.MaxTowers,
+  },
+  ParagonLimit: {
+    label: "Paragon Limit",
+    get: (b) => b.maxParagons,
+    off: [10, -1, 9999],
+    image: ModifierImages.Paragon,
+  },
+  CashLimit: {
+    label: "Cash Limit",
+    get: (b) => b.leastCashUsed,
+    image: ModifierImages.LeastCash,
+  },
+  TierLimit: {
+    label: "Tier Limit",
+    get: (b) => b.leastTiersUsed,
+    image: ModifierImages.LeastTiers,
+  },
+  NoMK: {
+    label: "Monkey Knowledge Disabled",
+    get: (b) => b.disableMK,
+    image: ModifierImages.NoKnowledge,
+  },
+  NoSelling: {
+    label: "Selling Disabled",
+    get: (b) => b.disableSelling,
+    image: ModifierImages.SellingDisabled,
+  },
+  NoPowers: {
+    label: "Powers Disabled",
+    get: (b) => b.disablePowers,
+    image: ModifierImages.PowersDisabled,
+  },
+  NoContinues: {
+    label: "No Continues",
+    get: (b) => b.noContinues,
+    image: ModifierImages.NoContinues,
+  },
+  AllRegen: {
+    label: "All Regen",
+    get: (b) => b._bloonModifiers.allRegen,
+    image: ModifierImages.AllRegen,
+  },
+  AllCamo: {
+    label: "All Camo",
+    get: (b) => b._bloonModifiers.allCamo,
+    image: ModifierImages.AllCamo,
+  },
+} satisfies Record<string, ModifierDefinition<MetaBody>>;
 
-    return value > 1 ? increaseImage : decreaseImage;
-  };
+const CT_MODIFIERS = {
+  MoabHealth: {
+    label: "MOAB Health",
+    get: (c) => c.dcModel.bloonModifiers.healthMultipliers.moabs,
+    off: MULT_OFF,
+    image: [ModifierImages.MoabHealthIncrease, ModifierImages.MoabHealthDecrease],
+  },
+  CeramicHealth: {
+    label: "Ceramic Health",
+    get: (c) => c.dcModel.bloonModifiers.healthMultipliers.bloons,
+    off: MULT_OFF,
+    image: [ModifierImages.CeramicHealthIncrease, ModifierImages.CeramicHealthDecrease],
+  },
+  BloonSpeed: {
+    label: "Bloon Speed",
+    get: (c) => c.dcModel.bloonModifiers.speedMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.BloonsSpeedIncrease, ModifierImages.BloonsSpeedDecrease],
+  },
+  RegrowRate: {
+    label: "Regrow Rate",
+    get: (c) => c.dcModel.bloonModifiers.regrowRateMultiplier,
+    off: MULT_OFF,
+    image: [ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease],
+  },
+  TowerLimit: {
+    label: "Tower Limit",
+    get: (c) => c.dcModel.maxTowers,
+    image: ModifierImages.MaxTowers,
+  },
+  NoMK: {
+    label: "Monkey Knowledge Disabled",
+    get: (c) => c.dcModel.disableMK,
+    image: ModifierImages.NoKnowledge,
+  },
+  NoSelling: {
+    label: "Selling Disabled",
+    get: (c) => c.dcModel.disableSelling,
+    image: ModifierImages.SellingDisabled,
+  },
+} satisfies Record<string, ModifierDefinition<CTMetaData>>;
+
+export type MetaModifierKey = keyof typeof EVENT_MODIFIERS;
+export type CTModifierKey = keyof typeof CT_MODIFIERS;
+
+function resolve<T>(definitions: Record<string, ModifierDefinition<T>>, source: T): Modifier[] {
+
+  return Object.values(definitions).flatMap(({ label, get, image, off = LIMT_OFF }) => {
+    const value = get(source);
+    const isActive = typeof value === "boolean" ? value : !off.includes(value);
+    if (!isActive) return [];
+
+    const img = Array.isArray(image) ? (value as number > 1 ? image[0] : image[1]) : image;
+    return [{ label, value, image: img as ModifierImage}];
+  });
 }
 
 export function buildModifiers(body: MetaBody, customRounds: boolean = false): Modifier[] {
-
-  return [
-    {
-      label: "Boss Health",
-      api: body._bloonModifiers.healthMultipliers.boss,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.BossHealthIncrease, ModifierImages.BossHealthDecrease),
-    },
-    {
-      label: "Boss Speed",
-      api: body._bloonModifiers.bossSpeedMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.BossSpeedIncrease, ModifierImages.BossSpeedDecrease),
-    },
-    {
-      label: "MOAB Health",
-      api: body._bloonModifiers.healthMultipliers.moabs,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.MoabHealthIncrease, ModifierImages.MoabHealthDecrease),
-    },
-    {
-      label: "MOAB Speed",
-      api: body._bloonModifiers.moabSpeedMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.MoabSpeedIncrease, ModifierImages.MoabSpeedDecrease),
-    },
-    {
-      label: "Ceramic Health",
-      api: body._bloonModifiers.healthMultipliers.bloons,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.CeramicHealthIncrease, ModifierImages.CeramicHealthDecrease),
-    },
-    {
-      label: "Bloon Speed",
-      api: body._bloonModifiers.speedMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.BloonsSpeedIncrease, ModifierImages.BloonsSpeedDecrease)
-    },
-    {
-      label: "Regrow Rate",
-      api: body._bloonModifiers.regrowRateMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease)
-    },
-    {
-      label: "Ability Cooldown",
-      api: body.abilityCooldownReductionMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(
-        ModifierImages.AbilityCooldownReductionIncrease,
-        ModifierImages.AbilityCooldownReductionDecrease
-      )
-    },
-    {
-      label: "Removable Cost",
-      api: body.removeableCostMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.RemovableCostIncrease, ModifierImages.RemovableCostDecrease),
-    },
-    {
-      label: "Tower Limit",
-      api: body.maxTowers,
-      hasKey: false,
-      imageKey: () => ModifierImages.MaxTowers,
-    },
-    {
-      label: "Paragon Limit",
-      api: body.maxParagons,
-      hasKey: false,
-      imageKey: () => ModifierImages.Paragon
-    },
-    {
-      label: "Cash Limit",
-      api: body.leastCashUsed,
-      hasKey: false,
-      imageKey: () => ModifierImages.LeastCash
-    },
-    {
-      label: "Tier Limit",
-      api: body.leastTiersUsed,
-      hasKey: false,
-      imageKey: () => ModifierImages.LeastTiers
-    },
-    {
-      label: "Monkey Knowledge Disabled",
-      api: body.disableMK,
-      hasKey: false,
-      imageKey: () => ModifierImages.NoKnowledge
-    },
-    {
-      label: "Selling Disabled",
-      api: body.disableSelling,
-      hasKey: false,
-      imageKey: () => ModifierImages.SellingDisabled
-    },
-    {
-      label: "Powers Disabled",
-      api: body.disablePowers,
-      hasKey: false,
-      imageKey: () => ModifierImages.PowersDisabled
-    },
-    {
-      label: "No Continues",
-      api: body.noContinues,
-      hasKey: false,
-      imageKey: () => ModifierImages.NoContinues
-    },
-    {
-      label: "All Regen",
-      api: body._bloonModifiers.allRegen,
-      hasKey: false,
-      imageKey: () => ModifierImages.AllRegen
-    },
-    {
-      label: "All Camo",
-      api: body._bloonModifiers.allCamo,
-      hasKey: false,
-      imageKey: () => ModifierImages.AllCamo
-    },
-    {
-    label: "Custom Rounds",
-    api: customRounds,
-    hasKey: false,
-    imageKey: () => ModifierImages.CustomRounds
-    }
-  ];
+  const active = resolve(EVENT_MODIFIERS, body);
+  if (customRounds) active.push({ label: "Custom Rounds", value: true, image: ModifierImages.CustomRounds });
+  return active;
 }
-
 
 export function buildCTModifiers(body: CTMetaData): Modifier[] {
-
-  return [
-    { 
-      label: "Moab Health", 
-      api: body.dcModel.bloonModifiers.healthMultipliers.moabs, 
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.MoabHealthIncrease, ModifierImages.MoabHealthDecrease),
-    },
-    { 
-      label: "Ceramic Health", 
-      api: body.dcModel.bloonModifiers.healthMultipliers.bloons, 
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.CeramicHealthIncrease, ModifierImages.CeramicHealthDecrease),
-    },
-    {
-      label: "Bloon Speed",
-      api: body.dcModel.bloonModifiers.speedMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.BloonsSpeedIncrease, ModifierImages.BloonsSpeedDecrease),
-    },
-    {
-      label: "Regrow Rate",
-      api: body.dcModel.bloonModifiers.regrowRateMultiplier,
-      hasKey: true,
-      imageKey: increaseDecrease(ModifierImages.RegrowRateIncrease, ModifierImages.RegrowRateDecrease),
-    },
-    {
-      label: "Tower Limit",
-      api: body.dcModel.maxTowers,
-      hasKey: false,
-      imageKey: () => ModifierImages.MaxTowers
-    },
-    {
-      label: "Monkey Knowledge Disabled",
-      api: body.dcModel.disableMK,
-      hasKey: false,
-      imageKey: () => ModifierImages.NoKnowledge
-    },
-    {
-      label: "Selling Disabled",
-      api: body.dcModel.disableSelling,
-      hasKey: false,
-      imageKey: () => ModifierImages.SellingDisabled
-    }
-  ];
-}
-
-export function filterModifiers(modifiers: Modifier[]) {
-    
-  return modifiers.filter((modifier) => {  
-    const value = modifier.api;
-
-    if (typeof value === "boolean") return value === true;
-    if (modifier.hasKey) return value !== 1 && value !== -1 && value !== 9999;
-    if (modifier.label === "Paragon Limit") return value !== 10;
-    if (modifier.label === "Tower Limit") return value !== 0 && value !== 9999;
-
-    return value !== -1 && value !== 9999 && value !== 0;
-    });
+  return resolve(CT_MODIFIERS, body);
 }

@@ -4,8 +4,7 @@ import {
   DailyChallenge, 
   DailyChallengeDifficulty, 
   EventImages, 
-  EventType, 
-  filterModifiers,  
+  EventType,   
   getTowers,  
   MetaBody, 
   splitUppercase 
@@ -23,7 +22,7 @@ export function ChallengeProfile({ event, difficulty, code, metaData }: Challeng
 
   const challengeIcon = EventImages.CT;
   const hasCustomRounds = metaData.roundSets.length > 1;
-  const modifiers = filterModifiers(buildModifiers(metaData, hasCustomRounds));
+  const modifiers = buildModifiers(metaData, hasCustomRounds);
 
   const creator = metaData.name.replace(/'s Challenge$/, "");
   const title = event ? `${difficulty} Challenge #${event.number} by ${creator}` : `Challenge by ${creator} - ${code}`;

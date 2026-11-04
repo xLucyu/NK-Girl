@@ -1,6 +1,6 @@
 import { Box } from "../layout/Box";
 import { loadImage } from "@ui/load-image";
-import { Modifier, ModifierImages } from "@btd6";
+import { Modifier } from "@btd6";
 
 interface ModifiersProps {
   modifiers: Modifier[];
@@ -16,14 +16,29 @@ interface ModifierSizing {
 
 const COLUMN_GAP = 20;
 
+const MULTIPLIER_MODIFIERS = new Set([
+  "Boss Health",
+  "Boss Speed",
+  "MOAB Health",
+  "MOAB Speed",
+  "Ceramic Health",
+  "Bloon Speed",
+  "Regrow Rate",
+  "Ability Cooldown",
+  "Removable Cost",
+]);
+
 export function Modifiers({ modifiers, compact = false }: ModifiersProps) {
-  
+
   if (modifiers.length === 0) return null;
 
   if (compact) return <CompactModifiers modifiers={modifiers} />;
 
   const sizing = getSizing(modifiers.length);
-  const columns = splitIntoColumns(modifiers, getColumnCount(modifiers.length));
+  const columns = splitIntoColumns(
+    modifiers,
+    getColumnCount(modifiers.length),
+  );
 
   return (
     <Box
@@ -47,11 +62,21 @@ export function Modifiers({ modifiers, compact = false }: ModifiersProps) {
         Modifiers
       </span>
 
-      <div style={{ display: "flex", flexDirection: "row", gap: COLUMN_GAP }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: COLUMN_GAP,
+        }}
+      >
         {columns.map((column, i) => (
           <div
             key={i}
-            style={{ display: "flex", flexDirection: "column", gap: sizing.gap }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: sizing.gap,
+            }}
           >
             {column.map((modifier) => (
               <ModifierRow
@@ -67,7 +92,11 @@ export function Modifiers({ modifiers, compact = false }: ModifiersProps) {
   );
 }
 
-function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
+function CompactModifiers({
+  modifiers,
+}: {
+  modifiers: Modifier[];
+}) {
 
   const sizing = getCompactSizing(modifiers.length);
 
@@ -79,7 +108,7 @@ function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
         flexWrap: "wrap",
         gap: sizing.gap,
         width: "100%",
-        alignItems: "center"
+        alignItems: "center",
       }}
     >
       {modifiers.map((modifier) => (
@@ -93,10 +122,13 @@ function CompactModifiers({ modifiers }: { modifiers: Modifier[] }) {
   );
 }
 
-function CompactModifierPill({ modifier, sizing }: {modifier: Modifier; sizing: ModifierSizing; }) {
-
-  const imagePath = modifier.imageKey(modifier.api);
-  if (!imagePath) return;
+function CompactModifierPill({
+  modifier,
+  sizing,
+}: {
+  modifier: Modifier;
+  sizing: ModifierSizing;
+}) {
 
   const value = formatCompactValue(modifier);
 
@@ -111,11 +143,15 @@ function CompactModifierPill({ modifier, sizing }: {modifier: Modifier; sizing: 
       }}
     >
       <img
-        src={loadImage(imagePath)}
+        src={loadImage(modifier.image)}
         width={sizing.iconSize}
         height={sizing.iconSize}
-        style={{ objectFit: "contain", flexShrink: 0 }}
+        style={{
+          objectFit: "contain",
+          flexShrink: 0,
+        }}
       />
+
       {value && (
         <span
           style={{
@@ -132,10 +168,13 @@ function CompactModifierPill({ modifier, sizing }: {modifier: Modifier; sizing: 
   );
 }
 
-function ModifierRow({ modifier, sizing }: { modifier: Modifier; sizing: ModifierSizing; }) {
-
-  const imagePath = modifier.imageKey(modifier.api);
-  if (!imagePath) return;
+function ModifierRow({
+  modifier,
+  sizing,
+}: {
+  modifier: Modifier;
+  sizing: ModifierSizing;
+}) {
 
   return (
     <div
@@ -147,13 +186,21 @@ function ModifierRow({ modifier, sizing }: { modifier: Modifier; sizing: Modifie
       }}
     >
       <img
-        src={loadImage(imagePath)}
+        src={loadImage(modifier.image)}
         width={sizing.iconSize}
         height={sizing.iconSize}
-        style={{ objectFit: "contain", flexShrink: 0 }}
+        style={{
+          objectFit: "contain",
+          flexShrink: 0,
+        }}
       />
+
       <span
-        style={{ color: "white", fontSize: sizing.fontSize, lineHeight: 1.1 }}
+        style={{
+          color: "white",
+          fontSize: sizing.fontSize,
+          lineHeight: 1.1,
+        }}
       >
         {formatLabel(modifier)}
       </span>
@@ -161,32 +208,84 @@ function ModifierRow({ modifier, sizing }: { modifier: Modifier; sizing: Modifie
   );
 }
 
-function formatLabel(modifier: Modifier): string {
-  const { api: value, label, hasKey } = modifier;
+function formatValue(modifier: Modifier): string {
 
-  if (typeof value === "boolean") return label;
-  if (hasKey) return `${Math.round(Number(value) * 100)}% ${label}`;
-  return `${value} ${label}`;
+  if (typeof modifier.value === "boolean") {
+    return "";
+  }
+
+  if (MULTIPLIER_MODIFIERS.has(modifier.label)) {
+    return `${Math.round(modifier.value * 100)}%`;
+  }
+
+  return String(modifier.value);
+}
+
+function formatLabel(modifier: Modifier): string {
+
+  if (typeof modifier.value === "boolean") {
+    return modifier.label;
+  }
+
+  return `${formatValue(modifier)} ${modifier.label}`;
 }
 
 function formatCompactValue(modifier: Modifier): string {
-  const { api: value, hasKey } = modifier;
-
-  if (typeof value === "boolean") return "";
-  if (hasKey) return `${Math.round(Number(value) * 100)}%`;
-  return String(value);
+  return formatValue(modifier);
 }
 
 function getSizing(count: number): ModifierSizing {
-  if (count < 6) return { iconSize: 36, fontSize: 16, gap: 8, padding: 12 };
-  if (count < 12) return { iconSize: 32, fontSize: 14, gap: 6, padding: 10 };
-  return { iconSize: 28, fontSize: 12, gap: 5, padding: 8 };
+  if (count < 6) {
+    return {
+      iconSize: 36,
+      fontSize: 16,
+      gap: 8,
+      padding: 12,
+    };
+  }
+
+  if (count < 12) {
+    return {
+      iconSize: 32,
+      fontSize: 14,
+      gap: 6,
+      padding: 10,
+    };
+  }
+
+  return {
+    iconSize: 28,
+    fontSize: 12,
+    gap: 5,
+    padding: 8,
+  };
 }
 
 function getCompactSizing(count: number): ModifierSizing {
-  if (count < 4) return { iconSize: 28, fontSize: 16, gap: 6, padding: 4 };
-  if (count < 8) return { iconSize: 24, fontSize: 14, gap: 5, padding: 3 };
-  return { iconSize: 20, fontSize: 12, gap: 4, padding: 2 };
+  if (count < 4) {
+    return {
+      iconSize: 28,
+      fontSize: 16,
+      gap: 6,
+      padding: 4,
+    };
+  }
+
+  if (count < 8) {
+    return {
+      iconSize: 24,
+      fontSize: 14,
+      gap: 5,
+      padding: 3,
+    };
+  }
+
+  return {
+    iconSize: 20,
+    fontSize: 12,
+    gap: 4,
+    padding: 2,
+  };
 }
 
 function getColumnCount(count: number): number {
@@ -195,9 +294,19 @@ function getColumnCount(count: number): number {
   return 3;
 }
 
-function splitIntoColumns<T>(items: T[], columns: number): T[][] {
+function splitIntoColumns<T>(
+  items: T[],
+  columns: number,
+): T[][] {
+
   const perColumn = Math.ceil(items.length / columns);
-  return Array.from({ length: columns }, (_, i) =>
-    items.slice(i * perColumn, (i + 1) * perColumn),
+
+  return Array.from(
+    { length: columns },
+    (_, i) =>
+      items.slice(
+        i * perColumn,
+        (i + 1) * perColumn,
+      ),
   );
 }

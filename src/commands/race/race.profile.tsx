@@ -5,7 +5,6 @@ import {
   RaceBody, 
   buildModifiers, 
   convertCash, 
-  filterModifiers, 
   getNumberForEvent, 
   getTowers, 
   splitUppercase 
@@ -22,7 +21,7 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
 
   const raceIcon = EventImages.Race;
   const hasCustomRounds = metaData.roundSets.length > 1;
-  const modifiers = filterModifiers(buildModifiers(metaData, hasCustomRounds));
+  const modifiers = buildModifiers(metaData, hasCustomRounds);
 
   const raceNumber = getNumberForEvent(event.start, EventType.Race)
 

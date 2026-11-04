@@ -7,7 +7,6 @@ import {
   TileCode, 
   convertCash, 
   EventType, 
-  filterModifiers, 
   getTowers, 
   splitUppercase 
 } from "@btd6";
@@ -63,7 +62,7 @@ const getEndRound = (tile: TileCode): number => {
 export function TileProfile({ event, tile }: TileProps): JSX.Element {
 
   const ctNumber = tile.EventNumber;
-  const modifiers = filterModifiers(buildCTModifiers(tile.GameData));
+  const modifiers = buildCTModifiers(tile.GameData);
 
   const infoItems = [
     { label: "Difficulty", value: tile.GameData.selectedDifficulty },

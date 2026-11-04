@@ -21,11 +21,11 @@ export function BuildModalMenu(parameters: {
   placeholder?: string;
 }) {
   const input = new TextInputBuilder()
-  .setCustomId(parameters.inputId)
-  .setStyle(TextInputStyle.Short)
-  .setRequired(true)
-  .setMinLength(1)
-  .setMaxLength(50);
+    .setCustomId(parameters.inputId)
+    .setStyle(TextInputStyle.Short)
+    .setRequired(true)
+    .setMinLength(1)
+    .setMaxLength(50);
 
   if (parameters.placeholder) input.setPlaceholder(parameters.placeholder);
 

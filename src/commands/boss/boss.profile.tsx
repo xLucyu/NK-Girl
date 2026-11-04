@@ -6,7 +6,6 @@ import {
   BossImages, 
   buildModifiers, 
   EventImages, 
-  filterModifiers, 
   getTowers, 
   ScoringType, 
   splitBossNumbers, 
@@ -33,9 +32,9 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
   
   const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
   const bossIcon = BossImages[bossTypeKey]?.[difficulty];
-  const customRounds = metaData.roundSets.some((set) => set.name === event.bossType);
+  const customRounds = metaData.roundSets.some((set) => set.name !== event.bossType);
 
-  const modifiers = filterModifiers(buildModifiers(metaData, customRounds));
+  const modifiers = buildModifiers(metaData, customRounds);
 
   const scoreType = difficulty === "Elite" ? event.eliteScoringType : event.normalScoringType;
 

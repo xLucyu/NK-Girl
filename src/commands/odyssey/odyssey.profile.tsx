@@ -6,7 +6,6 @@ import {
   ModifierImages, 
   EventImages, 
   EventType, 
-  filterModifiers, 
   getNumberForEvent,
   getTowers, 
   convertCash, 
@@ -25,7 +24,7 @@ export interface OdysseyProfileProps {
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
 
   const hasCustomRounds = map.roundSets.length > 1;
-  const modifiers = filterModifiers(buildModifiers(map, hasCustomRounds));
+  const modifiers = buildModifiers(map, hasCustomRounds);
 
   return (
     <Layout.Box

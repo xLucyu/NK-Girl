@@ -1,6 +1,24 @@
 import { withDb } from "@database/pool";
-import { EventType } from "@btd6";
+import { EventType } from "@btd6/types";
 
+// Boss, Race, and Odyssey IDs have been stored both raw and prefixed with the event name.
+function announcementKey(eventType: EventType, eventId: string): [EventType, string, string | null] {
+  if (eventType === EventType.Boss || eventType === EventType.Race || eventType === EventType.Odyssey) {
+    const shortId = eventId.match(/^(?:.+_)?([a-z0-9]{8})$/)?.[1];
+    if (shortId) return [eventType, shortId, `_${shortId}`];
+  }
+
+  return [eventType, eventId, null];
+}
+
+const unclaimedEvent = `
+  NOT ($2::text = ANY(pending_event_ids))
+  AND NOT EXISTS (
+    SELECT 1
+    FROM unnest(announced_event_ids) AS stored(id)
+    WHERE stored.id = $2::text OR right(stored.id, length($3::text)) = $3::text
+  )
+`;
 
 export class GuildTable {
 
@@ -63,25 +81,21 @@ export class GuildTable {
     });
   }
 
-  public async fetchAllRegisteredChannels(
-    event: EventType
+  public async fetchUnannouncedChannels(
+    eventType: EventType,
+    eventId: string
   ): Promise<string[]> {
-
     return await withDb(async (client) => {
-
-      const result = await client.query<{channel_id: string}>(
+      const result = await client.query<{ channel_id: string }>(
         `
-        select channel_id
-        from event_announcements
-        where event_type = $1
-        and channel_id IS NOT NULL
+        SELECT channel_id
+        FROM event_announcements
+        WHERE event_type = $1 AND channel_id IS NOT NULL AND ${unclaimedEvent}
         `,
-        [event]
+        announcementKey(eventType, eventId)
       );
 
-      return result.rows.map(
-        (row) => row.channel_id
-      );
+      return result.rows.map((row) => row.channel_id);
     });
   }
 
@@ -106,81 +120,52 @@ export class GuildTable {
     });
   }
 
-  public async appendEvent(
+  public async claimEvent(
+    eventType: EventType,
     eventId: string,
-    event: EventType,
-    guildId: string
-  ): Promise<void> {
-
-    await withDb(async (client) => {
-
-      await client.query(
-        `
-        insert into event_announcements (
-          guild_id,
-          event_type,
-          announced_event_ids
-        )
-        values (
-          $1,
-          $2,
-          array[$3::text]
-        )
-
-        on conflict (guild_id, event_type)
-        do update set
-          announced_event_ids =
-            case
-              when $3::text = any(
-                event_announcements.announced_event_ids
-              )
-              then event_announcements.announced_event_ids
-
-              else array_append(
-                event_announcements.announced_event_ids,
-                $3::text
-              )
-            end
-        `,
-        [guildId, event, eventId]
-      );
-
-    });
-  }
-
-  public async fetchEventIds(
-    event: EventType,
-    guildId: string
-  ): Promise<string[]> {
+    guildId: string,
+    channelId: string
+  ): Promise<string | null> {
+    const key = announcementKey(eventType, eventId);
 
     return await withDb(async (client) => {
-
-      const result = await client.query<{announced_event_ids: string[];}>(
+      // PostgreSQL rechecks the predicate after a concurrent update to this guild's row.
+      const result = await client.query(
         `
-        select announced_event_ids
-        from event_announcements
-        where guild_id = $1
-        and event_type = $2
+        UPDATE event_announcements
+        SET pending_event_ids = array_append(pending_event_ids, $2::text)
+        WHERE event_type = $1 AND guild_id = $4 AND channel_id = $5 AND ${unclaimedEvent}
+        RETURNING guild_id
         `,
-        [guildId, event]
+        [...key, guildId, channelId]
       );
 
-      return (
-        result.rows[0]?.announced_event_ids ??
-        []
-      );
+      return result.rowCount === 1 ? key[1] : null;
     });
   }
 
-  public async hasEvent(
+  public async finishEvent(
+    eventType: EventType,
     eventId: string,
-    event: EventType,
-    guildId: string
-  ): Promise<boolean> {
+    guildId: string,
+    sent: boolean
+  ): Promise<void> {
+    const [, id] = announcementKey(eventType, eventId);
 
-    const ids = await this.fetchEventIds(event, guildId);
-
-    return ids.includes(eventId);
+    await withDb(async (client) => {
+      await client.query(
+        `
+        UPDATE event_announcements
+        SET pending_event_ids = array_remove(pending_event_ids, $2::text),
+            announced_event_ids = CASE
+              WHEN $4::boolean THEN array_append(announced_event_ids, $2::text)
+              ELSE announced_event_ids
+            END
+        WHERE event_type = $1 AND guild_id = $3 AND $2::text = ANY(pending_event_ids)
+        `,
+        [eventType, id, guildId, sent]
+      );
+    });
   }
 }
 

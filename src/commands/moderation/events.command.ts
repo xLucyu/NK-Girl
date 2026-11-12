@@ -68,9 +68,13 @@ export class EventCommand {
 
     if (subCommand === "send") {
 
-      const message = await eventAnnouncer.send(cache, guildId, true);
+      const message = await eventAnnouncer.send(cache, guildId);
 
       if (!message) throw new ChannelNotFound();
+      if (message === "skipped") {
+        await interaction.editReply("This event was already announced, has a pending announcement, or its channel changed.");
+        return;
+      }
 
       await interaction.editReply(`Successfully sent **${eventType}** in <#${message.channelId}>.`);
       return;

@@ -7,6 +7,10 @@ create table if not exists event_announcements (
   PRIMARY KEY (guild_id, event_type)
 );
 
+-- Also apply this to databases created before announcement claims were added.
+ALTER TABLE event_announcements
+  ADD COLUMN IF NOT EXISTS pending_event_ids TEXT[] NOT NULL DEFAULT '{}';
+
 create table if not exists usage (
   command TEXT PRIMARY KEY,
   uses INTEGER DEFAULT 0

@@ -1,4 +1,4 @@
-{
+export const BOSS_RUSH_SETTINGS = {
   "StageScores": [
     250,
     500,

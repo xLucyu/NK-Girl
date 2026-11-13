@@ -1,5 +1,11 @@
-export const BOSS_RUSH_SETTINGS = {
-  "StageScores": [250, 500, 1100, 3000, 5225],
+{
+  "StageScores": [
+    250,
+    500,
+    1100,
+    2000,
+    4000
+  ],
   "DailyScoreSlots": 4,
   "StageRewards": [
     "MonkeyMoney:100#Trophy:10#TeamTrophy:150#CollectionEvent:5#RandomPower:Attack,1#RandomInstaMonkey:1,1",

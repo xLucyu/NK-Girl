@@ -7,7 +7,6 @@ import {
   OdysseyCache,
   CollectionCache,
   CTCache,
-  EventCacheEntry,
   DailyChallengeCache
 } from "@btd6/cache/events";
 import {
@@ -82,17 +81,14 @@ export class EventScheduler {
   private async runEventChecks(): Promise<void> {
 
     const results = await Promise.allSettled(
-      Object.values(this.caches).map(cache => cache.refresh())
+      Object.values(this.caches).map(async (cache) => {
+        const refreshed = await cache.refresh();
+        const event = refreshed ?? cache.getCache();
+        if (!event || (!refreshed && event.currentEvent.data.end <= Date.now())) return;
+
+        await eventAnnouncer.sendAll(event);
+      })
     );
-
-    for (const result of results) {
-
-      if (result.status === "rejected") continue;
-      const event = result.value;
-      if (!event) continue;
-
-      await this.handleAnnouncement(event);
-    }
 
     await this.logErrors(results);
   }
@@ -112,10 +108,6 @@ export class EventScheduler {
     );
 
     await this.logErrors(results);
-  }
-
-  private async handleAnnouncement(event: EventCacheEntry<any, any>): Promise<void> {
-    await eventAnnouncer.sendAll(event);
   }
 
   private async logErrors(results: PromiseSettledResult<unknown>[]): Promise<void> {

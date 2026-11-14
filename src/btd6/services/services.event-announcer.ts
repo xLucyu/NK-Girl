@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
 import {
   AttachmentBuilder,
   ChannelType,
+  DiscordAPIError,
   ContainerBuilder,
   MediaGalleryBuilder,
   MediaGalleryItemBuilder,
@@ -115,40 +117,64 @@ export class EventAnnouncer {
     };
   }
 
+  private async sendToChannel(
+    channel: AnnounceableChannel,
+    eventType: EventType,
+    eventId: string,
+    buffers: Buffer[]
+  ): Promise<Message | "skipped"> {
+    const payload = this.buildMessage(buffers);
+    const guildId = channel.guildId;
+    const claimedId = await guildTable.claimEvent(eventType, eventId, guildId, channel.id);
+    if (claimedId === null) return "skipped";
+
+    // Discord deduplicates recent requests with the same nonce, including HTTP retries.
+    const nonce = createHash("sha256")
+      .update(JSON.stringify([channel.id, eventType, claimedId]))
+      .digest("hex")
+      .slice(0, 25);
+    const context = `${eventType} ${claimedId} in guild ${guildId}, channel ${channel.id}`;
+
+    let message: Message;
+    try {
+      message = await channel.send({ ...payload, nonce, enforceNonce: true });
+    } catch (error) {
+      if (error instanceof DiscordAPIError && [400, 401, 403, 404].includes(error.status)) {
+        await guildTable.finishEvent(eventType, claimedId, guildId, false).catch((releaseError) => {
+          console.error(`Failed to release announcement claim for ${context}:`, releaseError);
+        });
+      } else {
+        // A transport or server error can arrive after Discord created the message.
+        console.error(`Keeping announcement claim after uncertain delivery of ${context}:`, error);
+      }
+      throw error;
+    }
+
+    await guildTable.finishEvent(eventType, claimedId, guildId, true).catch((error) => {
+      console.error(`Failed to record announcement message ${message.id} for ${context}:`, error);
+    });
+
+    if (channel.type === ChannelType.GuildAnnouncement) {
+      await message.crosspost().catch((error) => {
+        console.error(`Failed to crosspost announcement message ${message.id} for ${context}:`, error);
+      });
+    }
+
+    return message;
+  }
+
   public async send(
     event: EventCacheEntry<any, any>,
-    guildId: string,
-    force = false
-  ): Promise<Message | null> {
-
-    if (event.eventType === EventType.CT) return null;
-
-    const alreadyAnnounced = await guildTable.hasEvent(event.currentEvent.data.id, event.eventType, guildId);
-
-    if (!force && alreadyAnnounced) return null;
-
+    guildId: string
+  ): Promise<Message | "skipped" | null> {
     const channel = await this.getChannel(guildId, event.eventType);
     if (!channel) return null;
 
     const announcement = this.buildAnnouncement(event);
     if (!announcement) return null;
 
-    const { eventBody, profiles } = announcement;
-
-    const buffers = await this.renderProfiles(profiles);
-    const message = await channel.send(this.buildMessage(buffers));
-
-    if (channel.type === ChannelType.GuildAnnouncement) await message.crosspost();
-
-    if (!alreadyAnnounced) {
-      await guildTable.appendEvent(
-        eventBody.id,
-        event.eventType,
-        guildId
-      );
-    }
-
-    return message;
+    const buffers = await this.renderProfiles(announcement.profiles);
+    return this.sendToChannel(channel, event.eventType, event.currentEvent.data.id, buffers);
   }
 
   public async edit(
@@ -186,58 +212,24 @@ export class EventAnnouncer {
 
     const eventId = event.currentEvent.data.id;
 
-    const channelIds = await guildTable.fetchAllRegisteredChannels(event.eventType);
+    const channelIds = await guildTable.fetchUnannouncedChannels(event.eventType, eventId);
     if (channelIds.length === 0) return;
-
-    const targets = (await Promise.all(channelIds.map(async (channelId) => {
-
-      const channel = await discordClient.client.channels
-        .fetch(channelId)
-        .catch(() => null);
-
-      if (!this.isSendableChannel(channel)) return null;
-
-      const alreadyAnnounced = await guildTable.hasEvent(
-        eventId,
-        event.eventType,
-        channel.guildId
-      );
-
-      if (alreadyAnnounced) return null;
-
-      return {
-        channelId,
-        channel,
-      };
-    }))).filter((target) => target !== null);
-
-    if (targets.length === 0) return;
 
     const announcement = this.buildAnnouncement(event);
     if (!announcement) return;
 
-    const { eventBody, profiles } = announcement;
-    const buffers = await this.renderProfiles(profiles);
+    const buffers = await this.renderProfiles(announcement.profiles);
 
-    const results = await Promise.allSettled(targets.map(async ({ channel }) => {
-
-      const message = await channel.send(this.buildMessage(buffers));
-
-      if (channel.type === ChannelType.GuildAnnouncement) await message.crosspost();
-
-      await guildTable.appendEvent(
-        eventBody.id,
-        event.eventType,
-        channel.guildId
-      );
+    const results = await Promise.allSettled(channelIds.map(async (channelId) => {
+      const channel = await discordClient.client.channels.fetch(channelId);
+      if (!this.isSendableChannel(channel)) return;
+      await this.sendToChannel(channel, event.eventType, eventId, buffers);
     }));
 
-    for (let i = 0; i < results.length; i++) {
-      const result = results[i];
-
+    for (const [index, result] of results.entries()) {
       if (result.status === "rejected") {
         console.error(
-          `Failed to announce ${event.eventType} in channel ${targets[i].channelId}:`,
+          `Failed to announce ${event.eventType} in channel ${channelIds[index]}:`,
           result.reason
         );
       }

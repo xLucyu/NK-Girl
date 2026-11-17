@@ -50,10 +50,7 @@ function formatScoreParts(
   }
 
   if (type === EventType.Race) {
-    return [
-      { value: formatScore(parts.score) },
-      { value: parts.secondScore != null ? msToTimeFormat(parts.secondScore) : "—" },
-    ];
+    return [{ value: msToTimeFormat(parts.score) }];
   }
 
   const tier: ScoreCell = {
@@ -82,7 +79,7 @@ function formatScoreParts(
 
 function scoreHeaders(type: LeaderboardType, scoringType: string): string[] {
   if (type === EventType.CT) return ["Score"];
-  if (type === EventType.Race) return ["Score", "Time"];
+  if (type === EventType.Race) return ["Time"];
 
   return isLeastScoring(scoringType)
     ? ["Tier", scoringType === "LeastCash" ? "Cash" : "Tiers", "Time"]

@@ -9,6 +9,7 @@ import { handleButton, handleSelectMenu } from ".";
 import { registry, checkCooldown } from "@discord/command";
 import { sendCommandError } from "@discord/error/error.reply";
 import { logError } from "@discord/error/error.log";
+import { usageTable } from "@database";
 
 export type InteractionType =
   ChatInputCommandInteraction |
@@ -47,6 +48,7 @@ export async function handleInteraction(interaction: Interaction): Promise<void>
       );
 
       await command.execute(interaction);
+      if (command.metadata.usage) usageTable.increaseCommandUsage(interaction.commandName);
 
     } catch (error) {
       await sendCommandError(interaction, error);

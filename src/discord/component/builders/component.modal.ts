@@ -25,7 +25,7 @@ export function BuildModalMenu(parameters: {
     .setStyle(TextInputStyle.Short)
     .setRequired(true)
     .setMinLength(1)
-    .setMaxLength(50);
+    .setMaxLength(500);
 
   if (parameters.placeholder) input.setPlaceholder(parameters.placeholder);
 

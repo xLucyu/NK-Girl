@@ -22,7 +22,7 @@ export function BuildModalMenu(parameters: {
 }) {
   const input = new TextInputBuilder()
     .setCustomId(parameters.inputId)
-    .setStyle(TextInputStyle.Short)
+    .setStyle(TextInputStyle.Paragraph)
     .setRequired(true)
     .setMinLength(1)
     .setMaxLength(500);

@@ -5,11 +5,13 @@ import {
   SlashCommandBuilder 
 } from "discord.js";
 import { BaseCommand } from "@commands/base.btd6-command";
+import { DisabledTowersProfile } from "@ui";
 import { OdysseyProfile } from "./odyssey.profile";
 import { 
   CurrentEventData, 
   EventCacheEntry, 
   EventType, 
+  getNumberForEvent,
   MetaBody, 
   OdysseyBody, 
   OdysseyDifficulties, 
@@ -89,6 +91,15 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
     const metaData = eventProps.metaData[difficulty];
   
     if (!metaData) throw new Error();
+
+    if (state.options.view === "disabled") {
+      return DisabledTowersProfile({
+        eventType: `Odyssey #${getNumberForEvent(event.start, EventType.Odyssey)}`,
+        eventName: splitUppercase(event.name),
+        difficulty: `${difficulty}${metaData.isExtreme ? ", Extreme" : ""}`,
+        towers: metaData._availableTowers
+      });
+    }
   
     return OdysseyProfile({
       event,
@@ -105,13 +116,20 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
     
     return [
       BuildButtonMenu({
-        buttons: OdysseyDifficulties.map((difficulty) => ({
-          label: difficulty,
-          customId: `odyssey:difficulty:${difficulty}`,
-          style: difficulty === "Hard" ? ButtonStyle.Danger 
-            : difficulty === "Medium" ? ButtonStyle.Success 
-            : ButtonStyle.Primary 
-        })),
+        buttons: [
+          ...OdysseyDifficulties.map((difficulty) => ({
+            label: difficulty,
+            customId: `odyssey:difficulty:${difficulty}`,
+            style: difficulty === "Hard" ? ButtonStyle.Danger
+              : difficulty === "Medium" ? ButtonStyle.Success
+              : ButtonStyle.Primary
+          })),
+          {
+            label: state.options.view === "disabled" ? "Full Event" : "Disabled Towers",
+            customId: `odyssey:view:${state.options.view === "disabled" ? "full" : "disabled"}`,
+            style: state.options.view === "disabled" ? ButtonStyle.Primary : ButtonStyle.Secondary
+          }
+        ],
       }),
         
       BuildSelectMenu({

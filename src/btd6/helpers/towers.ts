@@ -56,3 +56,36 @@ export function getTowers(towers: Tower[]): TowerCategories {
   }
   return availableTowers;
 }
+
+/** Towers absent from the allowed list (or explicitly capped at zero). */
+export function getDisabledTowers(towers: Tower[]): TowerCategories {
+  const available = new Set(
+    towers.filter((tower) => tower.max !== 0).map((tower) => tower.tower)
+  );
+  const anyHeroAllowed = available.has("ChosenPrimaryHero");
+
+  const disabled = {
+    Heroes: [],
+    Primary: [],
+    Military: [],
+    Magic: [],
+    Support: [],
+  } as TowerCategories;
+
+  for (const [category, canonicalOrder] of Object.entries(CATEGORIES) as [keyof typeof CATEGORIES, string[]][]) {
+    for (const towerName of canonicalOrder) {
+      // ChosenPrimaryHero is a wildcard, not a separate playable hero.
+      if (towerName === "ChosenPrimaryHero") continue;
+      if (category === "Heroes" && anyHeroAllowed) continue;
+      if (available.has(towerName)) continue;
+
+      disabled[category].push({
+        name: towerName,
+        max: -1,
+        crossPaths: [5, 5, 5],
+      });
+    }
+  }
+
+  return disabled;
+}

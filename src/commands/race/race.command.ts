@@ -1,17 +1,19 @@
-import { InteractionReplyOptions, SlashCommandBuilder } from "discord.js";
-import { BuildSelectMenu, Command, ComponentState } from "@discord";
+import { ButtonStyle, InteractionReplyOptions, SlashCommandBuilder } from "discord.js";
+import { BuildButtonMenu, BuildSelectMenu, Command, ComponentState } from "@discord";
 import { RaceProfile } from "./race.profile";
 import { 
   Announcement,
   CurrentEventData, 
   EventCacheEntry, 
   EventType, 
+  getNumberForEvent,
   MetaBody,
   PreviousEvent, 
   RaceBody 
 } from "@btd6";
 import { splitUppercase } from "@btd6/helpers/format";
 import { BaseCommand } from "@commands/base.btd6-command";
+import { DisabledTowersProfile } from "@ui";
 import { addUnderscore } from "@lib";
 
 export type RaceProps = EventCacheEntry<RaceBody, MetaBody>;
@@ -27,7 +29,15 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
 
   public commandData = new SlashCommandBuilder();
 
-  public getProfile(event: CurrentEventData<RaceBody, MetaBody>): JSX.Element {
+  public getProfile(event: CurrentEventData<RaceBody, MetaBody>, state: ComponentState): JSX.Element {
+    if (state.options.view === "disabled") {
+      return DisabledTowersProfile({
+        eventType: `Race #${getNumberForEvent(event.data.start, EventType.Race)}`,
+        eventName: splitUppercase(event.data.name),
+        towers: event.metaData._towers
+      });
+    }
+
     return RaceProfile({
       event: event.data,
       metaData: event.metaData
@@ -60,6 +70,13 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
   ): InteractionReplyOptions["components"] {
 
     return [
+      BuildButtonMenu({
+        buttons: [{
+          label: state.options.view === "disabled" ? "Full Event" : "Disabled Towers",
+          customId: `race:view:${state.options.view === "disabled" ? "full" : "disabled"}`,
+          style: state.options.view === "disabled" ? ButtonStyle.Primary : ButtonStyle.Secondary
+        }]
+      }),
       BuildSelectMenu({
         customId: "race:eventId:Select",
         placeholder: "Choose a Race Event",

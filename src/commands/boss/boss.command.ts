@@ -18,6 +18,7 @@ import {
   splitBossNumbers 
 } from "@btd6";
 import { BaseCommand } from "@commands/base.btd6-command";
+import { DisabledTowersProfile } from "@ui";
 import { 
   BaseOptions, 
   BuildButtonMenu, 
@@ -90,6 +91,15 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
 
     if (!metaData) throw new Error(`Missing MetaData for event ${event.id}`);
 
+    if (state.options.view === "disabled") {
+      return DisabledTowersProfile({
+        eventType: "Boss",
+        eventName: splitBossNumbers(event.name),
+        difficulty,
+        towers: metaData._towers
+      });
+    }
+
     return BossProfile({
       event,
       metaData,
@@ -105,11 +115,18 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
 
     return [
       BuildButtonMenu({
-        buttons: BossDifficulties.map((difficulty) => ({
-          label: difficulty,
-          customId: `boss:difficulty:${difficulty}`,
-          style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
-        })),
+        buttons: [
+          ...BossDifficulties.map((difficulty) => ({
+            label: difficulty,
+            customId: `boss:difficulty:${difficulty}`,
+            style: difficulty === "Elite" ? ButtonStyle.Danger : ButtonStyle.Success
+          })),
+          {
+            label: state.options.view === "disabled" ? "Full Event" : "Disabled Towers",
+            customId: `boss:view:${state.options.view === "disabled" ? "full" : "disabled"}`,
+            style: state.options.view === "disabled" ? ButtonStyle.Primary : ButtonStyle.Secondary
+          }
+        ],
       }),
       
       BuildSelectMenu({

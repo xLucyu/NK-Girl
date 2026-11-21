@@ -6,17 +6,18 @@ import { TowerCategory, getTowerSize } from "./sizes";
 interface TowersProps {
   towers: TowerCategories;
   compact?: boolean;
+  blocked?: boolean;
 }
 
 const NON_HERO_CATEGORIES: TowerCategory[] = ["Primary", "Military", "Magic", "Support"];
 
-export function Towers({ towers, compact = false }: TowersProps) {
+export function Towers({ towers, compact = false, blocked = false }: TowersProps) {
   const heroCount = towers.Heroes.length;
   const towerCount = NON_HERO_CATEGORIES.reduce((sum, c) => sum + towers[c].length, 0);
 
   if (heroCount === 0 && towerCount === 0) return null;
 
-  if (compact) return <CompactTowers towers={towers} heroCount={heroCount} towerCount={towerCount} />;
+  if (compact) return <CompactTowers towers={towers} heroCount={heroCount} towerCount={towerCount} blocked={blocked} />;
 
   const size = getTowerSize(Math.max(heroCount, towerCount));
 
@@ -33,7 +34,7 @@ export function Towers({ towers, compact = false }: TowersProps) {
       {heroCount > 0 && (
         <TowerGroup title="Heroes">
           {towers.Heroes.map((tower) => (
-            <TowerIcon key={tower.name} towerName={tower.name} size={size} />
+            <TowerIcon key={tower.name} towerName={tower.name} size={size} blocked={blocked} />
           ))}
         </TowerGroup>
       )}
@@ -48,6 +49,7 @@ export function Towers({ towers, compact = false }: TowersProps) {
                 size={size}
                 max={formatMax(tower)}
                 crossPaths={formatCrossPaths(tower)}
+                blocked={blocked}
               />
             )),
           )}
@@ -61,10 +63,12 @@ function CompactTowers({
   towers,
   heroCount,
   towerCount,
+  blocked,
 }: {
   towers: TowerCategories;
   heroCount: number;
   towerCount: number;
+  blocked: boolean;
 }) {
   const size = getCompactTowerSize(Math.max(heroCount, towerCount));
 
@@ -81,7 +85,7 @@ function CompactTowers({
       {heroCount > 0 && (
         <CompactTowerGroup title="Heroes">
           {towers.Heroes.map((tower) => (
-            <TowerIcon key={tower.name} towerName={tower.name} size={size} />
+            <TowerIcon key={tower.name} towerName={tower.name} size={size} blocked={blocked} />
           ))}
         </CompactTowerGroup>
       )}
@@ -96,6 +100,7 @@ function CompactTowers({
                 size={size}
                 max={formatMax(tower)}
                 crossPaths={formatCrossPaths(tower)}
+                blocked={blocked}
               />
             )),
           )}

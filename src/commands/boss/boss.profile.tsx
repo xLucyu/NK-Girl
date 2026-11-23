@@ -7,6 +7,7 @@ import {
   buildModifiers, 
   EventImages, 
   getTowers, 
+  getDisabledTowers,
   ScoringType, 
   splitBossNumbers, 
   splitUppercase 
@@ -19,6 +20,7 @@ interface BossProfileProps {
   event: BossBody;
   metaData: MetaBody;
   difficulty: BossDifficulty;
+  disabledTowers?: boolean;
 }
 
 const scoreTypeImage: Record<ScoringType, string> = {
@@ -28,7 +30,7 @@ const scoreTypeImage: Record<ScoringType, string> = {
   [ScoringType.CTPoints]: ""
 }
 
-export function BossProfile({ event, metaData, difficulty }: BossProfileProps): JSX.Element {
+export function BossProfile({ event, metaData, difficulty, disabledTowers = false }: BossProfileProps): JSX.Element {
   
   const bossTypeKey = capitalize(event.bossType) as keyof typeof BossImages;
   const bossIcon = BossImages[bossTypeKey]?.[difficulty];
@@ -70,7 +72,12 @@ export function BossProfile({ event, metaData, difficulty }: BossProfileProps): 
       <Layout.Row>
         <Event.Modifiers modifiers={modifiers} />
         <Layout.Column>
-          <Event.Towers towers={getTowers(metaData._towers ?? [])} />
+          <Event.Towers
+            towers={disabledTowers
+              ? getDisabledTowers(metaData._towers ?? [])
+              : getTowers(metaData._towers ?? [])}
+            blocked={disabledTowers}
+          />
         </Layout.Column>
       </Layout.Row>
     </Layout.Container>

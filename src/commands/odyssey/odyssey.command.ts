@@ -5,13 +5,11 @@ import {
   SlashCommandBuilder 
 } from "discord.js";
 import { BaseCommand } from "@commands/base.btd6-command";
-import { DisabledTowersProfile } from "@ui";
 import { OdysseyProfile } from "./odyssey.profile";
 import { 
   CurrentEventData, 
   EventCacheEntry, 
   EventType, 
-  getNumberForEvent,
   MetaBody, 
   OdysseyBody, 
   OdysseyDifficulties, 
@@ -92,19 +90,11 @@ export class OdysseyCommand extends BaseCommand<OdysseyBody, OdysseyCache> {
   
     if (!metaData) throw new Error();
 
-    if (state.options.view === "disabled") {
-      return DisabledTowersProfile({
-        eventType: `Odyssey #${getNumberForEvent(event.start, EventType.Odyssey)}`,
-        eventName: splitUppercase(event.name),
-        difficulty: `${difficulty}${metaData.isExtreme ? ", Extreme" : ""}`,
-        towers: metaData._availableTowers
-      });
-    }
-  
     return OdysseyProfile({
       event,
       metaData,
-      difficulty
+      difficulty,
+      disabledTowers: state.options.view === "disabled"
     })
   }
 

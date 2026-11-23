@@ -6,14 +6,12 @@ import {
   CurrentEventData, 
   EventCacheEntry, 
   EventType, 
-  getNumberForEvent,
   MetaBody,
   PreviousEvent, 
   RaceBody 
 } from "@btd6";
 import { splitUppercase } from "@btd6/helpers/format";
 import { BaseCommand } from "@commands/base.btd6-command";
-import { DisabledTowersProfile } from "@ui";
 import { addUnderscore } from "@lib";
 
 export type RaceProps = EventCacheEntry<RaceBody, MetaBody>;
@@ -30,17 +28,10 @@ export class RaceCommand extends BaseCommand<RaceBody, MetaBody> {
   public commandData = new SlashCommandBuilder();
 
   public getProfile(event: CurrentEventData<RaceBody, MetaBody>, state: ComponentState): JSX.Element {
-    if (state.options.view === "disabled") {
-      return DisabledTowersProfile({
-        eventType: `Race #${getNumberForEvent(event.data.start, EventType.Race)}`,
-        eventName: splitUppercase(event.data.name),
-        towers: event.metaData._towers
-      });
-    }
-
     return RaceProfile({
       event: event.data,
-      metaData: event.metaData
+      metaData: event.metaData,
+      disabledTowers: state.options.view === "disabled"
     })
   }
 

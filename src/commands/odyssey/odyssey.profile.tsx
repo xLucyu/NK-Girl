@@ -8,6 +8,7 @@ import {
   EventType, 
   getNumberForEvent,
   getTowers, 
+  getDisabledTowers,
   convertCash, 
   buildModifiers, 
   splitUppercase 
@@ -19,6 +20,7 @@ export interface OdysseyProfileProps {
   event: OdysseyBody;
   metaData: OdysseyMetaData & { mapsData: MetaBody[] };
   difficulty: OdysseyDifficulty;
+  disabledTowers?: boolean;
 }
 
 const MapDisplay = ({ map, size }: { map: MetaBody; size: number }) => {
@@ -117,7 +119,7 @@ const formatDifficulty = (difficulty: OdysseyDifficulty, isExtreme: boolean): st
   return `${difficulty}${isExtreme ? ", Extreme" : ""}`
 }
 
-export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfileProps): JSX.Element {
+export function OdysseyProfile({ event, metaData, difficulty, disabledTowers = false }: OdysseyProfileProps): JSX.Element {
 
   const odysseyEventNumber = getNumberForEvent(event.start, EventType.Odyssey);
 
@@ -143,7 +145,13 @@ export function OdysseyProfile({ event, metaData, difficulty }: OdysseyProfilePr
           <Event.Bar start={event.start} end={event.end} />
         </Layout.Column>
         <Layout.Column flex={1}>
-          <Event.Towers towers={getTowers(metaData._availableTowers ?? [])} compact/>
+          <Event.Towers
+            towers={disabledTowers
+              ? getDisabledTowers(metaData._availableTowers ?? [])
+              : getTowers(metaData._availableTowers ?? [])}
+            compact
+            blocked={disabledTowers}
+          />
        </Layout.Column>
       </Layout.Row>
       <Layout.Row style={{ flex: 1, justifyContent: "flex-start", gap: 12}}>

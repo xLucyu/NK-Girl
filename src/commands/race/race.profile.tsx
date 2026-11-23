@@ -7,6 +7,7 @@ import {
   convertCash, 
   getNumberForEvent, 
   getTowers, 
+  getDisabledTowers,
   splitUppercase 
 } from "@btd6";
 import { Event, Layout } from "@ui";
@@ -15,9 +16,10 @@ import { Event, Layout } from "@ui";
 export interface RaceProfileProps {
   event: RaceBody;
   metaData: MetaBody;
+  disabledTowers?: boolean;
 }
 
-export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element {
+export function RaceProfile({ event, metaData, disabledTowers = false }: RaceProfileProps): JSX.Element {
 
   const raceIcon = EventImages.Race;
   const hasCustomRounds = metaData.roundSets.length > 1;
@@ -57,7 +59,12 @@ export function RaceProfile({ event, metaData }: RaceProfileProps): JSX.Element 
       <Layout.Row>
         <Event.Modifiers modifiers={modifiers} />
         <Layout.Column>
-          <Event.Towers towers={getTowers(metaData._towers ?? [])} />
+          <Event.Towers
+            towers={disabledTowers
+              ? getDisabledTowers(metaData._towers ?? [])
+              : getTowers(metaData._towers ?? [])}
+            blocked={disabledTowers}
+          />
         </Layout.Column>
       </Layout.Row>
     </Layout.Container>

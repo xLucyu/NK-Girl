@@ -18,7 +18,6 @@ import {
   splitBossNumbers 
 } from "@btd6";
 import { BaseCommand } from "@commands/base.btd6-command";
-import { DisabledTowersProfile } from "@ui";
 import { 
   BaseOptions, 
   BuildButtonMenu, 
@@ -91,19 +90,11 @@ export class BossCommand extends BaseCommand<BossBody, BossMeta> {
 
     if (!metaData) throw new Error(`Missing MetaData for event ${event.id}`);
 
-    if (state.options.view === "disabled") {
-      return DisabledTowersProfile({
-        eventType: "Boss",
-        eventName: splitBossNumbers(event.name),
-        difficulty,
-        towers: metaData._towers
-      });
-    }
-
     return BossProfile({
       event,
       metaData,
-      difficulty
+      difficulty,
+      disabledTowers: state.options.view === "disabled"
     })
   }
 

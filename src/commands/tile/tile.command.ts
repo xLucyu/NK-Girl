@@ -26,8 +26,8 @@ type TileProps = EventCacheEntry<CTBody, TileCache>;
 const bannerEmojis: Record<number, string> = {
   2: "Race",
   4: "BossChallenge",
-  8: "LeastTiers",
-  9: "LeastCash"
+  8: "LeastCash",
+  9: "LeastTiers"
 }
 
 @Command({

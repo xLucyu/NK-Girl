@@ -27,8 +27,8 @@ const liveCount: Record<string, number> = {
 const subGameType: Record<number, string> = {
   2: "Race",
   4: "Boss",
-  8: "LeastTiers",
-  9: "LeastCash"
+  8: "LeastCash",
+  9: "LeastTiers"
 }
 
 const bossType: Record<number, Boss> = {
